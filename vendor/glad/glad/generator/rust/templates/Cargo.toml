@@ -1,0 +1,11 @@
+[package]
+name = "glad-{{ feature_set.name }}"
+version = "{{ version }}"
+authors = ["David Herberth <github@dav1d.de>"]
+license = "(WTFPL OR CC0-1.0) AND Apache-2.0"
+
+[features]
+{% for platform in spec.platforms.values() %}
+{{ platform.protect }} = []
+{{ platform.name }} = ["{{ platform.protect }}"]
+{% endfor %}
