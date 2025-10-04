@@ -1,4 +1,4 @@
-#include "engine/VertexLayout.hpp"
+#include "engine/VertexLayout.h"
 #include <stdexcept>
 
 template <typename>

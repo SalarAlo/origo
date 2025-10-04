@@ -1,7 +1,8 @@
 #pragma once
 
 #include "engine/VertexBuffer.h"
-#include "engine/VertexLayout.hpp"
+#include "engine/VertexLayout.h"
+
 class VertexArray {
 public:
 	VertexArray();

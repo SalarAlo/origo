@@ -34,32 +34,35 @@ in vec2 vUv;
 
 out vec4 FragColor;
 
+uniform sampler2D u_Atlas;
+uniform vec2 u_UvOffset;
+uniform vec2 u_UvScale;
 uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
-uniform sampler2D u_Texture;
 
 void main() {
-	vec3 objectColor = texture(u_Texture, vUv).rgb;
+    // remap UVs into atlas space
+    vec2 atlasUv = u_UvOffset + vUv * u_UvScale;
+    vec3 objectColor = texture(u_Atlas, atlasUv).rgb;
 
-	// === 2. Lighting (Phong) ===
-	vec3 lightColor = vec3(1.0);
+    // lighting
+    vec3 lightColor = vec3(1.0);
 
-	// Ambient
-	vec3 ambient = 0.2 * lightColor;
+    // Ambient
+    vec3 ambient = 0.2 * lightColor;
 
-	// Diffuse
-	vec3 norm = normalize(vNormal);
-	vec3 lightDir = normalize(u_LightPos - vFragPos);
-	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor;
+    // Diffuse
+    vec3 norm = normalize(vNormal);
+    vec3 lightDir = normalize(u_LightPos - vFragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
 
-	// Specular
-	vec3 viewDir = normalize(u_ViewPos - vFragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-	vec3 specular = 0.5 * spec * lightColor;
+    // Specular
+    vec3 viewDir = normalize(u_ViewPos - vFragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = 0.5 * spec * lightColor;
 
-	// === 3. Combine ===
-	vec3 result = (ambient + diffuse + specular) * objectColor;
-	FragColor = vec4(result, 1.0);
+    vec3 result = (ambient + diffuse + specular) * objectColor;
+    FragColor = vec4(result, 1.0);
 }

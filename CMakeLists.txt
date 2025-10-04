@@ -15,7 +15,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_OBJECT_PATH_MAX 512)
 
 # Dependencies
-
 find_package(Threads REQUIRED)   # for Threads::Threads
 
 # GLFW (already has its own CMakeLists.txt)

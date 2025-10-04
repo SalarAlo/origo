@@ -4,10 +4,11 @@
 #include "engine/ScreenWindow.h"
 #include "engine/CubeVertices.h"
 #include "engine/Shader.h"
-#include "engine/Texture.h"
+#include "engine/TextureAtlas.h"
 #include "engine/VertexArray.h"
 #include "engine/VertexBuffer.h"
-#include "engine/VertexLayout.hpp"
+#include "engine/VertexLayout.h"
+
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
 
@@ -40,12 +41,20 @@ int main() {
 	vertexArray.ConnectBufferWithLayout(layout, vertexBuffer);
 	Shader shader { "normal" };
 
-	Texture text { "rowlett.jpg" };
+	TextureAtlas atlas {};
+	int rowlettHandle { atlas.AddImageFromFile("rowlett.jpg") };
+	atlas.Finalize();
+
 	while (!window.ShouldClose()) {
 		glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		atlas.Bind(0);
+
 		shader.UseProgram();
+
+		shader.SetUniformInt("u_Atlas", 0);
+		atlas.BindTexture(rowlettHandle, shader);
 
 		shader.SetUniformMat4("u_ProjectionMatrix", camera.GetProjection());
 		shader.SetUniformMat4("u_ViewMatrix", camera.GetView());
