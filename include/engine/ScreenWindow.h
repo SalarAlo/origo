@@ -3,6 +3,8 @@
 #include "ScreenWindowSettings.h"
 
 class ScreenWindow {
+	friend class EventSystem;
+
 public:
 	static void InitGlfw();
 
@@ -13,6 +15,8 @@ public:
 
 	void SetWidth(int width);
 	void SetHeight(int height);
+
+	float GetAspectResolution() const;
 
 private:
 	static void InitGlad();

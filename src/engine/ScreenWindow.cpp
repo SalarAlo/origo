@@ -55,3 +55,7 @@ void ScreenWindow::SetHeight(int height) {
 void ScreenWindow::SetWidth(int width) {
 	m_ScreenWindowSettings.Width = width;
 }
+
+float ScreenWindow::GetAspectResolution() const {
+	return static_cast<float>(m_ScreenWindowSettings.Width) / m_ScreenWindowSettings.Height;
+}

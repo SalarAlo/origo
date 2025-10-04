@@ -7,6 +7,9 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+	std::size_t GetElementCount() const;
+
 private:
 	GLuint m_BufferId {};
+	std::size_t m_ElementCount {};
 };

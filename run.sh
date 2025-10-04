@@ -1,1 +1,1 @@
-./build/bin/Debug-Linux/Doom
+./build/bin/Debug-Linux/NonEuclidianEngine
