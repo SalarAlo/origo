@@ -1,6 +1,7 @@
 #include "engine/Camera.h"
 #include "engine/EventSystem.h"
 #include "engine/IndexBuffer.h"
+#include "engine/RenderTarget.h"
 #include "engine/ScreenWindow.h"
 #include "engine/CubeVertices.h"
 #include "engine/Shader.h"
@@ -8,6 +9,7 @@
 #include "engine/VertexArray.h"
 #include "engine/VertexBuffer.h"
 #include "engine/VertexLayout.h"
+#include "engine/Renderable.h"
 
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -20,32 +22,30 @@ int main() {
 
 	EventSystem eventSystem { window };
 
-	VertexArray vertexArray {};
-	vertexArray.Bind();
-
-	VertexBuffer vertexBuffer { CUBE_VERTICES };
-	vertexBuffer.Bind();
-
-	IndexBuffer indexBuffer { CUBE_INDICES };
-	indexBuffer.Bind();
-
 	VertexLayout layout {};
-
-	// position
 	layout.AddAttribute<float>(3);
-	// normals
 	layout.AddAttribute<float>(3);
-	// UV
 	layout.AddAttribute<float>(2);
 
-	vertexArray.ConnectBufferWithLayout(layout, vertexBuffer);
+	Mesh CubeMesh {
+		.Vertices = CUBE_VERTICES,
+		.Indices = CUBE_INDICES,
+		.Layout = layout
+	};
+
+	Renderable cube { CubeMesh };
+
 	Shader shader { "normal" };
 
 	TextureAtlas atlas {};
 	int rowlettHandle { atlas.AddImageFromFile("rowlett.jpg") };
 	atlas.Finalize();
 
+	RenderTarget target(540, 540); // render at 640×360 internally
+
+	int frames {};
 	while (!window.ShouldClose()) {
+		target.Bind();
 		glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -64,12 +64,16 @@ int main() {
 
 		auto model { glm::mat4 { 1.0f } };
 		model = glm::translate(model, { 0.0f, 1.0f, 0.0f });
+		model = glm::rotate(model, frames * 0.01f, { 0.0f, 1.0f, 1.0f });
 		shader.SetUniformMat4("u_ModelMatrix", model);
 
-		glDrawElements(GL_TRIANGLES, indexBuffer.GetElementCount(), GL_UNSIGNED_INT, nullptr);
+		cube.Render(shader);
+
+		target.DrawToScreen(window.GetWidth(), window.GetHeight());
 
 		window.SwapBuffers();
 		eventSystem.CheckEvents();
+		frames++;
 	}
 
 	return 0;
