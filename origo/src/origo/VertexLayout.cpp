@@ -1,4 +1,4 @@
-#include "engine/VertexLayout.h"
+#include "origo/VertexLayout.h"
 
 template <>
 void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized) {

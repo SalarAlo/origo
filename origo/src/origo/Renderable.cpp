@@ -1,4 +1,4 @@
-#include "engine/Renderable.h"
+#include "origo/Renderable.h"
 
 Renderable::Renderable(const Mesh& mesh)
     : m_Mesh(mesh)

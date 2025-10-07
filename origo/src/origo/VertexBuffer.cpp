@@ -1,4 +1,4 @@
-#include "engine/VertexBuffer.h"
+#include "origo/VertexBuffer.h"
 
 VertexBuffer::VertexBuffer(std::vector<float> data) {
 	glGenBuffers(1, &m_BufferId);

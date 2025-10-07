@@ -1,6 +1,6 @@
-#include "engine/VertexArray.h"
+#include "origo/VertexArray.h"
 
-#include "engine/Helpers.h"
+#include "origo/Helpers.h"
 
 VertexArray::VertexArray() {
 	glGenVertexArrays(1, &m_BufferId);

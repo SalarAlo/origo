@@ -1,7 +1,5 @@
-#include "engine/EventSystem.h"
-
-#include "GLFW/glfw3.h"
-#include "engine/ScreenWindow.h"
+#include "origo/EventSystem.h"
+#include "origo/ScreenWindow.h"
 
 void EventSystem::OnFrameBufferSizeCallback(GLFWwindow* window, int w, int h) {
 	auto* es { static_cast<EventSystem*>(glfwGetWindowUserPointer(window)) };

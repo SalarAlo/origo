@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/Mesh.h"
+#include "Mesh.h"
 
 class ModelLoader {
 public:

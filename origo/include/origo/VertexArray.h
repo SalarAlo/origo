@@ -1,7 +1,7 @@
 #pragma once
 
-#include "engine/VertexBuffer.h"
-#include "engine/VertexLayout.h"
+#include "origo/VertexBuffer.h"
+#include "origo/VertexLayout.h"
 
 class VertexArray {
 public:

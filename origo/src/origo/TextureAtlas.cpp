@@ -1,6 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "engine/TextureAtlas.h"
+#include "origo/TextureAtlas.h"
 #include <stb_image.h>
 
 TextureAtlas::TextureAtlas(int width, int height)

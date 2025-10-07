@@ -1,4 +1,5 @@
-#include "engine/Camera.h"
+#include "origo/Camera.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>

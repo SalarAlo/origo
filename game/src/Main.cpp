@@ -1,15 +1,4 @@
-#include "engine/Camera.h"
-#include "engine/EventSystem.h"
-#include "engine/ModelLoader.h"
-#include "engine/RenderTarget.h"
-#include "engine/ScreenWindow.h"
-#include "engine/CubeVertices.h"
-#include "engine/Shader.h"
-#include "engine/TextureAtlas.h"
-#include "engine/VertexLayout.h"
-#include "engine/Renderable.h"
-
-#include "InputManager.h"
+#include "origo/OrigoCore.h"
 
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -21,7 +10,6 @@ int main() {
 	Camera camera { window.GetAspectResolution(), { 0, 0, -3 } };
 
 	EventSystem eventSystem { window };
-	InputManager inputManager { camera, eventSystem };
 
 	VertexLayout layout {};
 	layout.AddAttribute<float>(3);

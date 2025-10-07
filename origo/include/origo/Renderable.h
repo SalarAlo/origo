@@ -1,8 +1,8 @@
 #include "Mesh.h"
-#include "engine/IndexBuffer.h"
-#include "engine/Shader.h"
-#include "engine/VertexArray.h"
-#include "engine/VertexBuffer.h"
+#include "origo/IndexBuffer.h"
+#include "origo/Shader.h"
+#include "origo/VertexArray.h"
+#include "origo/VertexBuffer.h"
 
 class Renderable {
 public:

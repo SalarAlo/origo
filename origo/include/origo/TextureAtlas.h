@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/Shader.h"
+#include "origo/Shader.h"
 
 #include "glm/ext/vector_float2.hpp"
 

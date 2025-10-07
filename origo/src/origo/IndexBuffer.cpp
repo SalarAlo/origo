@@ -1,4 +1,4 @@
-#include "engine/IndexBuffer.h"
+#include "origo/IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(const std::vector<unsigned int>& indices)
     : m_ElementCount(indices.size()) {

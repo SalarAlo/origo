@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/VertexLayout.h"
+#include "VertexLayout.h"
 
 struct Mesh {
 	std::vector<float> Vertices {};
