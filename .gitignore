@@ -11,5 +11,9 @@ compile_commands.json
 # Precompiled headers
 *.gch
 
+# My Own generate sh files
+generate.sh
+run.sh
+
 # Static libraries
 *.a
