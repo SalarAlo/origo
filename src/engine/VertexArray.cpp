@@ -1,6 +1,6 @@
 #include "engine/VertexArray.h"
 
-#include "Helpers.h"
+#include "engine/Helpers.h"
 
 VertexArray::VertexArray() {
 	glGenVertexArrays(1, &m_BufferId);

@@ -14,6 +14,7 @@ public:
 	void SetUniformVec3(std::string_view name, const glm::vec3& pos) const;
 
 	void SetUniformInt(std::string_view name, int value) const;
+	void SetUniformFloat(std::string_view name, float value) const;
 
 private:
 	unsigned int m_ProgramId {};

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "engine/VertexLayout.h"
 
 struct Mesh {

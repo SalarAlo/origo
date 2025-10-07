@@ -1,10 +1,5 @@
 #include "engine/VertexLayout.h"
-#include <stdexcept>
 
-template <typename>
-void VertexLayout::AddAttribute(unsigned int amount, bool normalized) {
-	throw std::runtime_error("Not implemented yet for this Type");
-}
 template <>
 void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized) {
 	m_Attributes.push_back({ .Type = GL_FLOAT,

@@ -1,15 +1,15 @@
 #include "engine/Camera.h"
 #include "engine/EventSystem.h"
-#include "engine/IndexBuffer.h"
+#include "engine/ModelLoader.h"
 #include "engine/RenderTarget.h"
 #include "engine/ScreenWindow.h"
 #include "engine/CubeVertices.h"
 #include "engine/Shader.h"
 #include "engine/TextureAtlas.h"
-#include "engine/VertexArray.h"
-#include "engine/VertexBuffer.h"
 #include "engine/VertexLayout.h"
 #include "engine/Renderable.h"
+
+#include "InputManager.h"
 
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -21,11 +21,15 @@ int main() {
 	Camera camera { window.GetAspectResolution(), { 0, 0, -3 } };
 
 	EventSystem eventSystem { window };
+	InputManager inputManager { camera, eventSystem };
 
 	VertexLayout layout {};
 	layout.AddAttribute<float>(3);
 	layout.AddAttribute<float>(3);
 	layout.AddAttribute<float>(2);
+
+	// link time error
+	// layout.AddAttribute<bool>(3);
 
 	Mesh CubeMesh {
 		.Vertices = CUBE_VERTICES,
@@ -34,6 +38,11 @@ int main() {
 	};
 
 	Renderable cube { CubeMesh };
+	auto pikachu { ModelLoader::LoadModel("skibidi.glb", layout) };
+	std::vector<Renderable> renderables {};
+	for (const auto& mesh : pikachu) {
+		renderables.emplace_back(mesh);
+	}
 
 	Shader shader { "normal" };
 
@@ -54,20 +63,22 @@ int main() {
 		shader.UseProgram();
 
 		shader.SetUniformInt("u_Atlas", 0);
-		atlas.BindTexture(rowlettHandle, shader);
+		// atlas.BindTexture(rowlettHandle, shader);
 
 		shader.SetUniformMat4("u_ProjectionMatrix", camera.GetProjection());
 		shader.SetUniformMat4("u_ViewMatrix", camera.GetView());
 
-		shader.SetUniformVec3("u_LightPos", glm::vec3 { 0.0f, 4.0f, -4.0f });
+		shader.SetUniformVec3("u_LightPos", camera.GetPosition());
 		shader.SetUniformVec3("u_ViewPos", camera.GetPosition());
 
 		auto model { glm::mat4 { 1.0f } };
 		model = glm::translate(model, { 0.0f, 1.0f, 0.0f });
-		model = glm::rotate(model, frames * 0.01f, { 0.0f, 1.0f, 1.0f });
+		model = glm::scale(model, { 0.1f, 0.1f, 0.1f });
 		shader.SetUniformMat4("u_ModelMatrix", model);
 
-		cube.Render(shader);
+		for (auto& renderable : renderables) {
+			renderable.Render(shader);
+		}
 
 		target.DrawToScreen(window.GetWidth(), window.GetHeight());
 

@@ -117,6 +117,14 @@ void Shader::SetUniformVec3(std::string_view name, const glm::vec3& pos) const {
 	glUniform3f(loc, pos.x, pos.y, pos.z);
 }
 
+void Shader::SetUniformFloat(std::string_view name, float val) const {
+	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
+	if (loc == -1) {
+		return;
+	}
+	glUniform1f(loc, val);
+}
+
 void Shader::SetUniformVec2(std::string_view name, const glm::vec2& pos) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
