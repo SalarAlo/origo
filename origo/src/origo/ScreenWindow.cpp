@@ -3,6 +3,7 @@
 #include <cassert>
 #include <stdexcept>
 
+namespace Origo {
 bool ScreenWindow::s_SingleInstanceCreated { false };
 
 void ScreenWindow::InitGlfw() {
@@ -66,4 +67,5 @@ int ScreenWindow::GetHeight() const {
 
 int ScreenWindow::GetWidth() const {
 	return m_ScreenWindowSettings.Width;
+}
 }

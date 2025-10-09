@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/mat4x4.hpp>
 
+namespace Origo {
 class Camera {
 public:
 	Camera(float aspect = 1,
@@ -58,3 +59,4 @@ private:
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
 };
+}

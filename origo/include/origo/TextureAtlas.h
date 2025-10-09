@@ -4,6 +4,8 @@
 
 #include "glm/ext/vector_float2.hpp"
 
+namespace Origo {
+
 struct SubTexture {
 	glm::vec2 uvOffset; // (u0, v0) bottom-left corner
 	glm::vec2 uvScale; // width/height in [0,1]
@@ -33,3 +35,5 @@ private:
 
 	std::vector<SubTexture> m_SubTextures;
 };
+
+}

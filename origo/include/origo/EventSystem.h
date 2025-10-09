@@ -4,6 +4,7 @@
 
 #include "ScreenWindow.h"
 
+namespace Origo {
 class EventSystem {
 public:
 	using ResizeCallback = std::function<void(int, int)>;
@@ -28,3 +29,4 @@ private:
 	MouseMoveCallback m_MouseMoveCallback {};
 	std::unordered_map<int, KeyCallback> m_KeyCallbacks {};
 };
+}

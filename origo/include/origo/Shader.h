@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+namespace Origo {
 class Shader {
 public:
 	Shader(std::string_view name);
@@ -19,3 +20,4 @@ public:
 private:
 	unsigned int m_ProgramId {};
 };
+}

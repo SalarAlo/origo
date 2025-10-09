@@ -1,10 +1,21 @@
+#pragma once
 
 namespace Origo {
 
 enum class EventType {
-	KEY_EVENT,
-	MOUSE_EVENT,
-	APPLICATION_EVENT,
+	WindowClose,
+	WindowResize,
+	WindowFocus,
+	WindowLostFocus,
+	WindowMoved,
+
+	KeyPressed,
+	KeyReleased,
+
+	MouseButtonPress,
+	MouseButtonRelease,
+	MouseMove,
+	MouseScroll
 };
 
 }

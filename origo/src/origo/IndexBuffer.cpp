@@ -1,5 +1,6 @@
 #include "origo/IndexBuffer.h"
 
+namespace Origo {
 IndexBuffer::IndexBuffer(const std::vector<unsigned int>& indices)
     : m_ElementCount(indices.size()) {
 	glGenBuffers(1, &m_BufferId);
@@ -17,4 +18,5 @@ void IndexBuffer::Unbind() const {
 
 std::size_t IndexBuffer::GetElementCount() const {
 	return m_ElementCount;
+}
 }

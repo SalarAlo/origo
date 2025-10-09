@@ -1,5 +1,6 @@
 #include "origo/VertexLayout.h"
 
+namespace Origo {
 template <>
 void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized) {
 	m_Attributes.push_back({ .Type = GL_FLOAT,
@@ -16,4 +17,5 @@ void VertexLayout::AddAttribute<unsigned int>(unsigned int amount, bool normaliz
 
 const std::vector<VertexAttribute>& VertexLayout::GetAttributes() const {
 	return m_Attributes;
+}
 }

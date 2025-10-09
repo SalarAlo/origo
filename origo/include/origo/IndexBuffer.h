@@ -1,5 +1,6 @@
 #pragma once
 
+namespace Origo {
 class IndexBuffer {
 public:
 	explicit IndexBuffer(const std::vector<unsigned int>& indices);
@@ -13,3 +14,4 @@ private:
 	GLuint m_BufferId {};
 	std::size_t m_ElementCount {};
 };
+}

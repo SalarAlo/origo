@@ -1,5 +1,6 @@
 #pragma once
 // clang-format off
+namespace Origo {
 
 static const std::vector<float> CUBE_VERTICES {
     // Front face (0, 0, 1)
@@ -49,3 +50,4 @@ static const std::vector<unsigned int> CUBE_INDICES = {
 };
 
 // clang-format on
+}

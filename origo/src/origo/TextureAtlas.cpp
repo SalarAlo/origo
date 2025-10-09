@@ -3,6 +3,7 @@
 #include "origo/TextureAtlas.h"
 #include <stb_image.h>
 
+namespace Origo {
 TextureAtlas::TextureAtlas(int width, int height)
     : m_Width(width)
     , m_Height(height) {
@@ -90,4 +91,5 @@ void TextureAtlas::BindTexture(int handle, const Shader& shader) const {
 void TextureAtlas::Finalize() const {
 	glBindTexture(GL_TEXTURE_2D, m_TextureArrayId);
 	glGenerateMipmap(GL_TEXTURE_2D);
+}
 }

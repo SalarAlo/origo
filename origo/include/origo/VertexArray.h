@@ -3,6 +3,7 @@
 #include "origo/VertexBuffer.h"
 #include "origo/VertexLayout.h"
 
+namespace Origo {
 class VertexArray {
 public:
 	VertexArray();
@@ -14,3 +15,4 @@ public:
 private:
 	GLuint m_BufferId {};
 };
+}

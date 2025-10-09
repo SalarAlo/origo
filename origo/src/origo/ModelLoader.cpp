@@ -3,6 +3,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
+namespace Origo {
 std::vector<Mesh> ModelLoader::LoadModel(const std::string& path, const VertexLayout& layout) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
@@ -57,4 +58,5 @@ std::vector<Mesh> ModelLoader::LoadModel(const std::string& path, const VertexLa
 	}
 
 	return meshes;
+}
 }

@@ -4,6 +4,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 
+namespace Origo {
+
 Camera::Camera(float aspect, const glm::vec3& position,
     float yaw, float pitch,
     float fov, float nearPlane, float farPlane)
@@ -94,4 +96,5 @@ void Camera::UpdateVectors() {
 	// Right and Up vectors
 	m_Right = glm::normalize(glm::cross(m_Forward, { 0.0f, 1.0f, 0.0f }));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
+}
 }

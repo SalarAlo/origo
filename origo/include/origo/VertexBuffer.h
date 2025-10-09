@@ -1,5 +1,6 @@
 #pragma once
 
+namespace Origo {
 class VertexBuffer {
 public:
 	explicit VertexBuffer(std::vector<float> data);
@@ -10,3 +11,4 @@ public:
 private:
 	GLuint m_BufferId {};
 };
+}

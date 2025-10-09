@@ -1,5 +1,6 @@
 #include "origo/VertexBuffer.h"
 
+namespace Origo {
 VertexBuffer::VertexBuffer(std::vector<float> data) {
 	glGenBuffers(1, &m_BufferId);
 	Bind();
@@ -13,4 +14,5 @@ void VertexBuffer::Bind() const {
 
 void VertexBuffer::Unbind() const {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 }

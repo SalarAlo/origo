@@ -2,6 +2,7 @@
 
 #include "origo/Helpers.h"
 
+namespace Origo {
 VertexArray::VertexArray() {
 	glGenVertexArrays(1, &m_BufferId);
 }
@@ -34,4 +35,5 @@ void VertexArray::ConnectBufferWithLayout(const VertexLayout& layout, const Vert
 		glVertexAttribPointer(i, attrib.Amount, attrib.Type, attrib.Normalized, stride, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
+}
 }

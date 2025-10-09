@@ -1,5 +1,6 @@
 #include "origo/Renderable.h"
 
+namespace Origo {
 Renderable::Renderable(const Mesh& mesh)
     : m_Mesh(mesh)
     , m_VertexArray()
@@ -22,4 +23,5 @@ void Renderable::Render(const Shader& shader) {
 
 	shader.UseProgram();
 	glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetElementCount(), GL_UNSIGNED_INT, nullptr);
+}
 }

@@ -2,12 +2,12 @@
 
 #include "ScreenWindowSettings.h"
 
+namespace Origo {
+
 class ScreenWindow {
 	friend class EventSystem;
 
 public:
-	static void InitGlfw();
-
 	explicit ScreenWindow(const ScreenWindowSettings& screenWindowConfig);
 
 	bool ShouldClose() const;
@@ -23,6 +23,7 @@ public:
 
 private:
 	static void InitGlad();
+	static void InitGlfw();
 
 private:
 	ScreenWindowSettings m_ScreenWindowSettings {};
@@ -30,3 +31,5 @@ private:
 
 	static bool s_SingleInstanceCreated;
 };
+
+}

@@ -9,6 +9,7 @@ struct ShaderData {
 	const char* FragmentShader {};
 };
 }
+namespace Origo {
 
 static GLuint CompileShader(GLenum type, const char* src) {
 	GLuint shader = glCreateShader(type);
@@ -139,4 +140,5 @@ void Shader::SetUniformInt(std::string_view name, int value) const {
 		return;
 	}
 	glUniform1i(loc, value);
+}
 }

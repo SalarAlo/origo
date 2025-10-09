@@ -1,6 +1,7 @@
 #include "origo/EventSystem.h"
 #include "origo/ScreenWindow.h"
 
+namespace Origo {
 void EventSystem::OnFrameBufferSizeCallback(GLFWwindow* window, int w, int h) {
 	auto* es { static_cast<EventSystem*>(glfwGetWindowUserPointer(window)) };
 
@@ -47,4 +48,5 @@ void EventSystem::CheckEvents() {
 	for (const auto& [key, cb] : m_KeyCallbacks)
 		if (glfwGetKey(m_ScreenWindow.m_Window, key) == GLFW_PRESS)
 			cb();
+}
 }

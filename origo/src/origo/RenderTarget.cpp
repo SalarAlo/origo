@@ -1,5 +1,6 @@
 #include "origo/RenderTarget.h"
 
+namespace Origo {
 RenderTarget::RenderTarget(int width, int height)
     : m_Width(width)
     , m_Height(height)
@@ -62,4 +63,5 @@ void RenderTarget::DrawToScreen(int screenWidth, int screenHeight) {
 	glBlitFramebuffer(0, 0, m_Width, m_Height, 0, 0, screenWidth, screenHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	Bind();
+}
 }

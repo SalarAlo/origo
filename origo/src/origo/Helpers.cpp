@@ -1,5 +1,6 @@
 #include "origo/Helpers.h"
 
+namespace Origo {
 int Glsizeof(GLuint type) {
 	switch (type) {
 	case GL_FLOAT:
@@ -9,4 +10,5 @@ int Glsizeof(GLuint type) {
 	default:
 		return -1;
 	}
+}
 }
