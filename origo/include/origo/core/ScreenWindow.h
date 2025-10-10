@@ -1,12 +1,11 @@
 #pragma once
 
 #include "ScreenWindowSettings.h"
+#include "origo/events/Event.h"
 
 namespace Origo {
 
 class ScreenWindow {
-	friend class EventSystem;
-
 public:
 	explicit ScreenWindow(const ScreenWindowSettings& screenWindowConfig);
 
@@ -20,8 +19,12 @@ public:
 	int GetHeight() const;
 
 	float GetAspectResolution() const;
+	GLFWwindow* GetNativeWindow() const;
+
+	void SetEventCallback(const EventCallbackFn& callback);
 
 private:
+	void InitCallback();
 	static void InitGlad();
 	static void InitGlfw();
 

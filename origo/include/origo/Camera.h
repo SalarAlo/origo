@@ -8,28 +8,25 @@ class Camera {
 public:
 	Camera(float aspect = 1,
 	    const glm::vec3& position = { 0.0f, 0.0f, 0.0f },
-	    float yaw = 90.0f, // facing -Z
+	    float yaw = 90.0f,
 	    float pitch = 0.0f,
 	    float fov = 90.0f,
 	    float nearPlane = 0.01f,
 	    float farPlane = 100.0f);
 
-	// --- Movement/orientation ---
 	void SetPosition(const glm::vec3& position);
 
-	void Move(const glm::vec3& delta); // relative move
+	void Move(const glm::vec3& delta);
 	void MoveRight(float step);
 	void MoveUp(float step);
 	void MoveForward(float step);
 
-	void Rotate(float yawOffset, float pitchOffset); // mouse look
+	void Rotate(float yawOffset, float pitchOffset);
 	void SetYawPitch(float yaw, float pitch);
 
-	// --- Projection controls ---
 	void SetAspect(float aspect);
 	void SetFOV(float fov);
 
-	// --- Getters ---
 	const glm::mat4& GetView() const { return m_ViewMatrix; }
 	const glm::mat4& GetProjection() const { return m_ProjectionMatrix; }
 	glm::vec3 GetPosition() const { return m_Position; }
@@ -40,7 +37,7 @@ public:
 private:
 	void UpdateView();
 	void UpdateProjection();
-	void UpdateVectors(); // recompute forward/right/up from yaw/pitch
+	void UpdateVectors();
 
 private:
 	glm::vec3 m_Position;

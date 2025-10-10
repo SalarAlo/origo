@@ -1,7 +1,7 @@
 #pragma once
 
 #include "origo/events/Event.h"
-#include "origo/ScreenWindow.h"
+#include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
 
 namespace Origo {
@@ -19,9 +19,9 @@ public:
 
 	virtual void OnInit() { }
 	virtual void OnShutdown() { }
-	virtual void OnUpdate(float deltaTime) { }
+	virtual void OnUpdate(double deltaTime) { }
 	virtual void OnRender() { }
-	virtual void OnEvent(Event& event) { }
+	virtual void OnEvent(const Event& event) { }
 
 private:
 	bool m_Running {};

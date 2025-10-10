@@ -1,4 +1,6 @@
-#include "origo/ScreenWindow.h"
+#include "origo/core/ScreenWindow.h"
+#include "GLFW/glfw3.h"
+#include "origo/events/Event.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -32,14 +34,22 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 	m_Window = glfwCreateWindow(m_ScreenWindowSettings.Width, m_ScreenWindowSettings.Height, m_ScreenWindowSettings.Title.c_str(), nullptr, nullptr);
 
 	glfwMakeContextCurrent(m_Window);
+	glfwSetWindowUserPointer(m_Window, &m_ScreenWindowSettings);
 
 	InitGlad();
 
 	glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height);
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	InitCallback();
+
 	s_SingleInstanceCreated = true;
 }
+
+void ScreenWindow::InitCallback() {
+}
+
+#pragma region SIMPLE_OPERATIONS
 
 bool ScreenWindow::ShouldClose() const {
 	return glfwWindowShouldClose(m_Window);
@@ -68,4 +78,14 @@ int ScreenWindow::GetHeight() const {
 int ScreenWindow::GetWidth() const {
 	return m_ScreenWindowSettings.Width;
 }
+
+GLFWwindow* ScreenWindow::GetNativeWindow() const {
+	return m_Window;
+}
+
+void ScreenWindow::SetEventCallback(const EventCallbackFn& fn) {
+	m_ScreenWindowSettings.EventCallback = fn;
+}
+
+#pragma endregion
 }
