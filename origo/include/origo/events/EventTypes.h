@@ -9,8 +9,7 @@ enum class EventType {
 };
 
 enum class WindowEventType {
-	WindowLoseFocus,
-	WindowGainFocus,
+	WindowFocusChange,
 	WindowResize
 };
 
@@ -21,9 +20,14 @@ enum class KeyboardEventType {
 
 enum class MouseEventType {
 	MouseMove,
-	MouseLeftClick,
-	MouseRightClick,
+	MouseClick,
 	MouseScroll,
+};
+
+enum class MouseClickEventType {
+	Left,
+	Middle,
+	Right
 };
 
 }

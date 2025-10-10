@@ -10,7 +10,7 @@ public:
 	explicit ScreenWindow(const ScreenWindowSettings& screenWindowConfig);
 
 	bool ShouldClose() const;
-	void SwapBuffers() const;
+	void OnUpdate() const;
 
 	void SetWidth(int width);
 	void SetHeight(int height);

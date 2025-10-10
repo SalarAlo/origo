@@ -1,6 +1,7 @@
 #include "origo/core/ScreenWindow.h"
 #include "GLFW/glfw3.h"
 #include "origo/events/Event.h"
+#include "origo/events/MouseEvent.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -47,6 +48,11 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 }
 
 void ScreenWindow::InitCallback() {
+	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseMoveEvent mouseMoveEvent { static_cast<int>(xpos), static_cast<int>(ypos) };
+		windowSettings->EventCallback(mouseMoveEvent);
+	});
 }
 
 #pragma region SIMPLE_OPERATIONS
@@ -55,8 +61,9 @@ bool ScreenWindow::ShouldClose() const {
 	return glfwWindowShouldClose(m_Window);
 }
 
-void ScreenWindow::SwapBuffers() const {
+void ScreenWindow::OnUpdate() const {
 	glfwSwapBuffers(m_Window);
+	glfwPollEvents();
 }
 
 void ScreenWindow::SetHeight(int height) {

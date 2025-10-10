@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventType.h"
+#include "EventTypes.h"
 #include <functional>
 
 namespace Origo {
