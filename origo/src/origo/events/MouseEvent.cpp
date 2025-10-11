@@ -1,8 +1,9 @@
+#include "origo/events/EventTypes.h"
 #include <origo/events/MouseEvent.h>
 
 namespace Origo {
 
-EventType MouseEvent::GetEventType() {
+EventType MouseEvent::GetEventType() const {
 	return EventType::Mouse;
 }
 
@@ -12,17 +13,11 @@ MouseEventType MouseMoveEvent::GetMouseEventType() const {
 	return MouseEventType::MouseMove;
 }
 
-MouseMoveEvent::MouseMoveEvent(int x, int y)
-    : m_X(x)
-    , m_Y(y) {
+MouseMoveEvent::MouseMoveEvent(const glm::vec2& coordinate)
+    : m_Coordinate(coordinate) {
 }
-
-int MouseMoveEvent::GetX() const {
-	return m_X;
-}
-
-int MouseMoveEvent::GetY() const {
-	return m_Y;
+glm::vec2 MouseMoveEvent::GetCoordinate() const {
+	return m_Coordinate;
 }
 
 #pragma endregion

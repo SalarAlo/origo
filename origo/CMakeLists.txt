@@ -14,6 +14,8 @@ target_include_directories(OrigoEngine PUBLIC
     ${CMAKE_SOURCE_DIR}/vendor/glm
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include
     ${CMAKE_SOURCE_DIR}/vendor/stb
+    ${CMAKE_SOURCE_DIR}/vendor/glfw
+
 )
 
 target_link_libraries(OrigoEngine PUBLIC

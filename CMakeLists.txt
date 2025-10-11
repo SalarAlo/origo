@@ -27,6 +27,10 @@ add_subdirectory(vendor/assimp)
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)
 
+include_directories(vendor/magic_enum/include)
+
+add_subdirectory(vendor/imgui)
+
 # Add engine + game
 add_subdirectory(origo)
 add_subdirectory(game)

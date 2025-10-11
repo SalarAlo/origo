@@ -1,4 +1,5 @@
 #include <origo/Origo.h>
+#include <magic_enum/magic_enum.hpp>
 
 class GameApplication : public Origo::Application {
 public:
@@ -7,6 +8,8 @@ public:
 	}
 
 	void OnEvent(const Origo::Event& event) override {
+		static int count {};
+		std::cout << "Received Event Nr. " << ++count << " of type " << magic_enum::enum_name(event.GetEventType()) << std::endl;
 	}
 
 private:

@@ -7,7 +7,7 @@ namespace Origo {
 
 class Event {
 public:
-	virtual EventType GetEventType() = 0;
+	virtual EventType GetEventType() const = 0;
 
 private:
 };

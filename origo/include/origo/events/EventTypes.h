@@ -13,9 +13,15 @@ enum class WindowEventType {
 	WindowResize
 };
 
-enum class KeyboardEventType {
+enum class KeyEventType {
+	KeyPress,
+
+};
+
+enum class KeyPressType {
 	KeyPressStart,
-	KeyPressEnd,
+	KeyPressRepeat,
+	KeyPressStop,
 };
 
 enum class MouseEventType {

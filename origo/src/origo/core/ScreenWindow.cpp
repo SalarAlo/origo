@@ -1,7 +1,10 @@
 #include "origo/core/ScreenWindow.h"
 #include "GLFW/glfw3.h"
 #include "origo/events/Event.h"
+#include "origo/events/EventTypes.h"
+#include "origo/events/KeyEvent.h"
 #include "origo/events/MouseEvent.h"
+#include "origo/events/WindowEvent.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -40,7 +43,7 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 	InitGlad();
 
 	glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height);
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	// glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	InitCallback();
 
@@ -48,11 +51,83 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 }
 
 void ScreenWindow::InitCallback() {
+#pragma region MOUSE_MOVE
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
 		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		MouseMoveEvent mouseMoveEvent { static_cast<int>(xpos), static_cast<int>(ypos) };
+		MouseMoveEvent mouseMoveEvent { glm::vec2(static_cast<int>(xpos), static_cast<int>(ypos)) };
 		windowSettings->EventCallback(mouseMoveEvent);
 	});
+#pragma endregion
+
+#pragma region MOUSE_CLICK
+	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
+		if (action != GLFW_PRESS)
+			return;
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseClickEventType clickType {};
+		switch (button) {
+		case GLFW_MOUSE_BUTTON_MIDDLE:
+			clickType = MouseClickEventType::Middle;
+			break;
+		case GLFW_MOUSE_BUTTON_LEFT:
+			clickType = MouseClickEventType::Left;
+			break;
+		case GLFW_MOUSE_BUTTON_RIGHT:
+			clickType = MouseClickEventType::Right;
+			break;
+		}
+		MouseClickEvent mouseClickEvent { clickType };
+		windowSettings->EventCallback(mouseClickEvent);
+	});
+#pragma endregion
+
+#pragma region MOUSE_SCROLL
+	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xScroll, double yScroll) {
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseScrollEvent mouseScrollEvent { yScroll > 0 };
+		windowSettings->EventCallback(mouseScrollEvent);
+	});
+#pragma endregion
+
+#pragma region WINDOW_FOCUS
+	glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focused) {
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		bool focusWon { focused == GLFW_TRUE };
+		WindowFocusChangeEvent windowFocusEvent { focusWon };
+		windowSettings->EventCallback(windowFocusEvent);
+	});
+#pragma endregion
+
+#pragma region WINDOW_RESIZE
+
+	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+
+		windowSettings->Height = height;
+		windowSettings->Width = width;
+
+		WindowResizeEvent windowResizeEvent { glm::vec2(width, height) };
+		windowSettings->EventCallback(windowResizeEvent);
+	});
+
+#pragma endregion
+
+#pragma region KEY_PRESS
+	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		KeyPressType pressType {};
+		switch (action) {
+		case GLFW_PRESS:
+			pressType = KeyPressType::KeyPressStart;
+		case GLFW_RELEASE:
+			pressType = KeyPressType::KeyPressStop;
+		case GLFW_REPEAT:
+			pressType = KeyPressType::KeyPressRepeat;
+		}
+		KeyPressEvent keyPress { key, pressType };
+		windowSettings->EventCallback(keyPress);
+	});
+#pragma endregion
 }
 
 #pragma region SIMPLE_OPERATIONS

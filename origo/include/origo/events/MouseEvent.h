@@ -3,23 +3,23 @@
 #include "origo/events/Event.h"
 #include "origo/events/EventTypes.h"
 
+#include "glm/glm.hpp"
+
 namespace Origo {
 class MouseEvent : public Event {
 public:
-	EventType GetEventType() override;
+	EventType GetEventType() const override;
 	virtual MouseEventType GetMouseEventType() const = 0;
 };
 
 class MouseMoveEvent : public MouseEvent {
 public:
-	MouseMoveEvent(int x, int y);
+	MouseMoveEvent(const glm::vec2& coordinate);
 	MouseEventType GetMouseEventType() const override;
-	int GetX() const;
-	int GetY() const;
+	glm::vec2 GetCoordinate() const;
 
 private:
-	int m_X {};
-	int m_Y {};
+	glm::vec2 m_Coordinate;
 };
 
 class MouseScrollEvent : public MouseEvent {
