@@ -1,4 +1,4 @@
-#include "origo/VertexLayout.h"
+#include "origo/renderer/VertexLayout.h"
 
 namespace Origo {
 template <>

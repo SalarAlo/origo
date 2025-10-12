@@ -1,6 +1,6 @@
-#include "origo/VertexArray.h"
+#include "origo/renderer/VertexArray.h"
 
-#include "origo/Helpers.h"
+#include "origo/renderer/Helpers.h"
 
 namespace Origo {
 VertexArray::VertexArray() {

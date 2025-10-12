@@ -1,4 +1,4 @@
-#include "origo/RenderTarget.h"
+#include "origo/renderer/RenderTarget.h"
 
 namespace Origo {
 RenderTarget::RenderTarget(int width, int height)

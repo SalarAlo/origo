@@ -1,5 +1,5 @@
 
-#include "origo/Shader.h"
+#include "origo/renderer/Shader.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -102,7 +102,8 @@ void Shader::UseProgram() const {
 	glUseProgram(m_ProgramId);
 }
 
-void Shader::SetUniformMat4(std::string_view name, const glm::mat4& mat) const {
+template <>
+void Shader::SetUniform<glm::mat4>(std::string_view name, const glm::mat4& mat) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;
@@ -110,7 +111,8 @@ void Shader::SetUniformMat4(std::string_view name, const glm::mat4& mat) const {
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
-void Shader::SetUniformVec3(std::string_view name, const glm::vec3& pos) const {
+template <>
+void Shader::SetUniform(std::string_view name, const glm::vec3& pos) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;
@@ -118,7 +120,8 @@ void Shader::SetUniformVec3(std::string_view name, const glm::vec3& pos) const {
 	glUniform3f(loc, pos.x, pos.y, pos.z);
 }
 
-void Shader::SetUniformFloat(std::string_view name, float val) const {
+template <>
+void Shader::SetUniform<float>(std::string_view name, const float& val) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;
@@ -126,7 +129,8 @@ void Shader::SetUniformFloat(std::string_view name, float val) const {
 	glUniform1f(loc, val);
 }
 
-void Shader::SetUniformVec2(std::string_view name, const glm::vec2& pos) const {
+template <>
+void Shader::SetUniform<glm::vec2>(std::string_view name, const glm::vec2& pos) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;
@@ -134,7 +138,8 @@ void Shader::SetUniformVec2(std::string_view name, const glm::vec2& pos) const {
 	glUniform2f(loc, pos.x, pos.y);
 }
 
-void Shader::SetUniformInt(std::string_view name, int value) const {
+template <>
+void Shader::SetUniform<int>(std::string_view name, const int& value) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;

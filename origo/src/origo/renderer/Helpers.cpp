@@ -1,4 +1,4 @@
-#include "origo/Helpers.h"
+#include "origo/renderer/Helpers.h"
 
 namespace Origo {
 int Glsizeof(GLuint type) {

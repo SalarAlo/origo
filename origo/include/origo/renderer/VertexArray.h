@@ -1,7 +1,7 @@
 #pragma once
 
-#include "origo/VertexBuffer.h"
-#include "origo/VertexLayout.h"
+#include "origo/renderer/VertexBuffer.h"
+#include "origo/renderer/VertexLayout.h"
 
 namespace Origo {
 class VertexArray {

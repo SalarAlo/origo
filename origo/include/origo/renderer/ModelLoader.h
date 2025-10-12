@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mesh.h"
+#include "origo/renderer/Mesh.h"
 
 namespace Origo {
 

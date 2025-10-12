@@ -1,6 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "origo/TextureAtlas.h"
+#include "origo/renderer/TextureAtlas.h"
 #include <stb_image.h>
 
 namespace Origo {
@@ -84,8 +84,8 @@ const SubTexture& TextureAtlas::GetSubTexture(int handle) const {
 }
 
 void TextureAtlas::BindTexture(int handle, const Shader& shader) const {
-	shader.SetUniformVec2("u_UvOffset", m_SubTextures[handle].uvOffset);
-	shader.SetUniformVec2("u_UvScale", m_SubTextures[handle].uvScale);
+	shader.SetUniform("u_UvOffset", m_SubTextures[handle].uvOffset);
+	shader.SetUniform("u_UvScale", m_SubTextures[handle].uvScale);
 }
 
 void TextureAtlas::Finalize() const {
