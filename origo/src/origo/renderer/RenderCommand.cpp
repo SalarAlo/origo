@@ -1,9 +1,10 @@
 #include "origo/renderer/RenderCommand.h"
 
 namespace Origo {
-RenderCommand::RenderCommand(Ref<Mesh> mesh, Ref<Material> material)
+RenderCommand::RenderCommand(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform)
     : m_Mesh(mesh)
-    , m_Material(material) {
+    , m_Material(material)
+    , m_Transform(transform) {
 }
 
 Ref<Material> RenderCommand::GetMaterial() const {
@@ -12,6 +13,10 @@ Ref<Material> RenderCommand::GetMaterial() const {
 
 Ref<Mesh> RenderCommand::GetMesh() const {
 	return m_Mesh;
+}
+
+Ref<Transform> RenderCommand::GetTransform() const {
+	return m_Transform;
 }
 
 }

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Batch.h"
 #include "RenderCommand.h"
+#include "origo/renderer/Material.h"
+#include "origo/renderer/Transform.h"
 #include <glm/glm.hpp>
 
 namespace Origo {
@@ -9,12 +10,15 @@ namespace Origo {
 class Renderer {
 public:
 	void BeginFrame();
-	void Submit(const RenderCommand& renderable, const glm::mat4& transform);
+	void Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
 	void Flush();
 	void EndFrame();
 
 private:
-	std::unordered_map<Ref<Material>, Batch> m_Commands {};
+	void DrawMesh(const RenderCommand& renderCommand);
+
+private:
+	std::vector<RenderCommand> m_DrawQueue;
 };
 
 }

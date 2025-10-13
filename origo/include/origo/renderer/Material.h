@@ -7,8 +7,9 @@ namespace Origo {
 
 class Material {
 public:
-	Material(Ref<UniformList> uniformList, Ref<Shader> shader);
+	Material(const Ref<UniformList>& uniformList, const Ref<Shader>& shader);
 	void Bind();
+	void WriteModel(const glm::mat4& model);
 
 private:
 	Ref<Shader> m_Shader;

@@ -53,8 +53,8 @@ std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
 		}
 
 		meshes.push_back(Mesh {
-		    .Vertices = vertices,
-		    .Indices = indices,
+		    vertices,
+		    indices,
 		});
 	}
 

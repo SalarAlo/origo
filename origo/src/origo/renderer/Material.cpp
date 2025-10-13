@@ -1,7 +1,7 @@
 #include "origo/renderer/Material.h"
 
 namespace Origo {
-Material::Material(Ref<UniformList> uniformList, Ref<Shader> shader)
+Material::Material(const Ref<UniformList>& uniformList, const Ref<Shader>& shader)
     : m_UniformList(uniformList)
     , m_Shader(shader) {
 }
@@ -9,5 +9,9 @@ Material::Material(Ref<UniformList> uniformList, Ref<Shader> shader)
 void Material::Bind() {
 	m_Shader->UseProgram();
 	m_UniformList->UploadAll(m_Shader);
+}
+
+void Material::WriteModel(const glm::mat4& modelMatrix) {
+	m_Shader->SetUniform("u_ModelMatrix", modelMatrix);
 }
 }

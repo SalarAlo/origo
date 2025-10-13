@@ -5,25 +5,29 @@ namespace Origo {
 void Renderer::BeginFrame() {
 }
 
-void Renderer::Submit(const RenderCommand& renderable, const glm::mat4& transform) {
-	auto material = renderable.GetMaterial();
-	auto mesh = renderable.GetMesh();
-
-	auto it = m_Commands.find(material);
-	if (it != m_Commands.end()) {
-		it->second.AddMesh(mesh);
-	} else {
-		Batch batch {};
-		batch.AddMesh(mesh);
-		m_Commands.emplace(material, std::move(batch));
-	}
+void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform) {
+	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
 void Renderer::Flush() {
-	for (const auto& [material, batch] : m_Commands) {
-		material->Bind();
-		batch.Render();
+	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
+		return a.GetMaterial() < b.GetMaterial();
+	});
+	Ref<Material> currentMaterial = nullptr;
+
+	for (auto& cmd : m_DrawQueue) {
+		if (cmd.GetMaterial() != currentMaterial) {
+			cmd.GetMaterial()->Bind();
+			currentMaterial = cmd.GetMaterial();
+		}
+
+		DrawMesh(cmd);
 	}
+}
+
+void Renderer::DrawMesh(const RenderCommand& renderCommand) {
+	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
+	renderCommand.GetMesh()->Render();
 }
 
 void Renderer::EndFrame() {

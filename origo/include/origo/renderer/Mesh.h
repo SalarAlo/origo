@@ -1,8 +1,17 @@
 #pragma once
 
+#include "origo/renderer/IndexBuffer.h"
+#include "origo/renderer/VertexArray.h"
+#include "origo/renderer/VertexBuffer.h"
 namespace Origo {
-struct Mesh {
-	std::vector<float> Vertices {};
-	std::vector<unsigned int> Indices {};
+class Mesh {
+public:
+	Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
+	void Render() const;
+
+private:
+	VertexBuffer m_VertexBuffer;
+	IndexBuffer m_IndexBuffer;
+	VertexArray m_VertexArray;
 };
 }

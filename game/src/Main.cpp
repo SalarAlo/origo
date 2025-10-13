@@ -4,6 +4,7 @@
 #include "origo/renderer/CubeVertices.h"
 #include "origo/renderer/Renderer.h"
 #include "origo/renderer/Shader.h"
+#include "origo/renderer/Transform.h"
 #include "origo/renderer/UniformList.hpp"
 #include <memory>
 #include <origo/Origo.h>
@@ -50,16 +51,16 @@ public:
 		    glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 1.0f)));
 
 		Origo::Material cubeMaterial {
-			std::make_shared<Origo::UniformList>(std::move(list)),
-			std::make_shared<Origo::Shader>(m_Shader)
+			MakeRef<Origo::UniformList>(std::move(list)),
+			MakeRef<Origo::Shader>(m_Shader)
 		};
 
-		Origo::RenderCommand cubeCommand {
-			std::make_shared<Origo::Mesh>(cubeMesh),
-			std::make_shared<Origo::Material>(cubeMaterial),
-		};
+		Origo::Transform transform {};
 
-		m_Renderer.Submit(cubeCommand, {});
+		m_Renderer.Submit(
+		    MakeRef<Origo::Mesh>(cubeMesh),
+		    MakeRef<Origo::Material>(cubeMaterial),
+		    MakeRef<Origo::Transform>(transform));
 	}
 
 	void OnRender() override {
