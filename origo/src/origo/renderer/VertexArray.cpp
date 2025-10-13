@@ -1,4 +1,5 @@
 #include "origo/renderer/VertexArray.h"
+#include "origo/renderer/VertexLayout.h"
 
 #include "origo/renderer/Helpers.h"
 
@@ -15,11 +16,11 @@ void VertexArray::Unbind() const {
 	glBindVertexArray(0);
 }
 
-void VertexArray::ConnectBufferWithLayout(const VertexLayout& layout, const VertexBuffer& buffer) {
+void VertexArray::ConnectBuffer(const VertexBuffer& buffer) {
 	Bind();
 	buffer.Bind();
 
-	const auto& attribs { layout.GetAttributes() };
+	const auto& attribs { STANDARD_LAYOUT.GetAttributes() };
 	int stride {};
 	for (int i {}; i < attribs.size(); i++) {
 		const auto& attrib { attribs[i] };

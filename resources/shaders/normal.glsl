@@ -34,16 +34,11 @@ in vec2 vUv;
 
 out vec4 FragColor;
 
-uniform sampler2D u_Atlas;
-uniform vec2 u_UvOffset;
-uniform vec2 u_UvScale;
 uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
 
 void main() {
-    // remap UVs into atlas space
-    vec2 atlasUv = u_UvOffset + vUv * u_UvScale;
-    vec3 objectColor = texture(u_Atlas, atlasUv).rgb;
+    vec3 objectColor = vec3(1.0);
 
     // lighting
     vec3 lightColor = vec3(1.0);

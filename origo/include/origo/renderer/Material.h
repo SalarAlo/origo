@@ -7,11 +7,12 @@ namespace Origo {
 
 class Material {
 public:
-	Material(std::shared_ptr<UniformList> uniformList, std::shared_ptr<Shader> shader);
+	Material(Ref<UniformList> uniformList, Ref<Shader> shader);
+	void Bind();
 
 private:
-	std::shared_ptr<Shader> m_Shader;
-	std::shared_ptr<UniformList> m_UniformList;
+	Ref<Shader> m_Shader;
+	Ref<UniformList> m_UniformList;
 };
 
 }

@@ -16,3 +16,5 @@
 
 #include <exception>
 #include <stdexcept>
+
+#include "origo/include/origo/core/Typedefs.h"

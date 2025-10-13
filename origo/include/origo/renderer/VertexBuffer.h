@@ -11,10 +11,9 @@ public:
 	void ReplaceData(const std::vector<float>& data);
 
 private:
-	void SetDataOpenGL() const;
+	void SetDataOpenGL(bool initialUpload) const;
 
 private:
-	bool m_Bound;
 	std::vector<float> m_Data;
 	GLuint m_BufferId {};
 };

@@ -9,7 +9,7 @@ namespace Origo {
 
 class UniformBase {
 public:
-	virtual void Upload(const Shader& shader, std::string_view name) const = 0;
+	virtual void Upload(Ref<Shader> shader, std::string_view name) const = 0;
 	virtual ~UniformBase() = default;
 };
 
@@ -19,8 +19,8 @@ public:
 	explicit Uniform(const T& value)
 	    : m_Value(value) { }
 
-	void Upload(const Shader& shader, std::string_view name) const override {
-		shader.SetUniform<T>(name, m_Value);
+	void Upload(Ref<Shader> shader, std::string_view name) const override {
+		shader->SetUniform<T>(name, m_Value);
 	}
 
 	const T& GetValue() const { return m_Value; }
@@ -36,7 +36,7 @@ public:
 		uniforms[name] = std::make_unique<Uniform<T>>(value);
 	}
 
-	void UploadAll(const Shader& shader) const {
+	void UploadAll(Ref<Shader> shader) const {
 		for (const auto& [name, uniform] : uniforms) {
 			uniform->Upload(shader, name);
 		}

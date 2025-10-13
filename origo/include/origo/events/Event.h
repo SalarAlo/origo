@@ -12,6 +12,6 @@ public:
 private:
 };
 
-using EventCallbackFn = std::function<void(const Event&)>;
+using EventCallbackFn = std::function<void(Event&)>;
 
 }

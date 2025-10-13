@@ -2,9 +2,10 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+#include "origo/renderer/VertexLayout.h"
 
 namespace Origo {
-std::vector<Mesh> ModelLoader::LoadModel(const std::string& path, const VertexLayout& layout) {
+std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
 	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs);
@@ -54,7 +55,7 @@ std::vector<Mesh> ModelLoader::LoadModel(const std::string& path, const VertexLa
 		meshes.push_back(Mesh {
 		    .Vertices = vertices,
 		    .Indices = indices,
-		    .Layout = layout });
+		});
 	}
 
 	return meshes;

@@ -21,12 +21,14 @@ public:
 	virtual void OnShutdown() { }
 	virtual void OnUpdate(double deltaTime) { }
 	virtual void OnRender() { }
-	virtual void OnEvent(const Event& event) { }
+	virtual void OnEvent(Event& event) { }
+
+protected:
+	ScreenWindow m_Window;
 
 private:
 	bool m_Running {};
 	Time::TimePoint m_LastTimeStamp {};
 	ApplicationSettings m_Settings {};
-	ScreenWindow m_Window;
 };
 }

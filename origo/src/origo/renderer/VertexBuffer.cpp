@@ -4,7 +4,7 @@ namespace Origo {
 VertexBuffer::VertexBuffer(const std::vector<float>& data)
     : m_Data(data) {
 	glGenBuffers(1, &m_BufferId);
-	SetDataOpenGL();
+	SetDataOpenGL(true);
 }
 
 void VertexBuffer::Bind() const {
@@ -16,19 +16,28 @@ void VertexBuffer::Unbind() const {
 }
 
 void VertexBuffer::AddData(const std::vector<float>& data) {
-	m_Data.insert(m_Data.end(), m_Data.begin(), m_Data.end());
-	SetDataOpenGL();
+	m_Data.insert(m_Data.end(), data.begin(), data.end());
+	SetDataOpenGL(false);
 }
 void VertexBuffer::ReplaceData(const std::vector<float>& data) {
 	m_Data = data;
-	SetDataOpenGL();
+	SetDataOpenGL(false);
 }
 
-void VertexBuffer::SetDataOpenGL() const {
-	bool initiallyBound = m_Bound;
+void VertexBuffer::SetDataOpenGL(bool initialUpload) const {
 	Bind();
-	glBufferData(GL_ARRAY_BUFFER, m_Data.size() * sizeof(float), m_Data.data(), GL_DYNAMIC_DRAW);
-	if (!initiallyBound)
-		Unbind();
+
+	static size_t previousSize = 0;
+	const size_t currentSize = m_Data.size() * sizeof(float);
+
+	if (initialUpload || currentSize > previousSize) {
+		glBufferData(GL_ARRAY_BUFFER, currentSize, m_Data.data(), GL_DYNAMIC_DRAW);
+		previousSize = currentSize;
+	} else {
+		glBufferSubData(GL_ARRAY_BUFFER, 0, currentSize, m_Data.data());
+	}
+
+	Unbind();
 }
+
 }
