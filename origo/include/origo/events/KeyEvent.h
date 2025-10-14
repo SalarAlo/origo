@@ -64,20 +64,13 @@ enum class KeyboardKey {
 };
 #pragma endregion
 
-class KeyEvent : public Event {
-public:
-	EventType GetEventType() const override;
-	virtual KeyEventType GetKeyEventType() const = 0;
-
-private:
-};
-
-class KeyPressEvent : public KeyEvent {
+class KeyPressEvent : public Event {
 public:
 	KeyPressEvent(int glfwKey, KeyPressType keyPressType);
 	KeyPressType GetKeyPressType() const;
 	KeyboardKey GetKeyPressed() const;
-	KeyEventType GetKeyEventType() const override;
+	EventType GetEventType() const override;
+	static EventType GetStaticType();
 
 private:
 	KeyPressType m_KeyPressType;

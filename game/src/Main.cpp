@@ -1,4 +1,5 @@
 #include "origo/Camera.h"
+#include "origo/events/Event.h"
 #include "origo/events/EventTypes.h"
 #include "origo/events/WindowEvent.h"
 #include "origo/renderer/CubeVertices.h"
@@ -21,18 +22,12 @@ public:
 	}
 
 	void OnEvent(Origo::Event& event) override {
-		static int count {};
+		Origo::EventDispatcher dispatcher { event };
 
-		std::cout << "Received Event Nr. " << ++count << " of type " << magic_enum::enum_name(event.GetEventType()) << std::endl;
-
-		if (event.GetEventType() == Origo::EventType::Window) {
-			auto* winEvent { dynamic_cast<Origo::WindowEvent*>(&event) };
-			if (winEvent->GetWindowEventType() == Origo::WindowEventType::WindowResize) {
-				auto* winResizeEvent { dynamic_cast<Origo::WindowResizeEvent*>(winEvent) };
-				auto size = winResizeEvent->GetSize();
-				m_Camera.SetAspect(size.x / size.y);
-			}
-		}
+		dispatcher.Dipatch<Origo::WindowResizeEvent>([&](auto& resEvent) {
+			auto size = resEvent.GetSize();
+			m_Camera.SetAspect(size.x / size.y);
+		});
 	}
 
 	void OnInit() override {

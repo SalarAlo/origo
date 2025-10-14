@@ -7,26 +7,22 @@
 
 namespace Origo {
 
-class WindowEvent : public Event {
-public:
-	EventType GetEventType() const override;
-	virtual WindowEventType GetWindowEventType() const = 0;
-};
-
-class WindowFocusChangeEvent : public WindowEvent {
+class WindowFocusChangeEvent : public Event {
 public:
 	WindowFocusChangeEvent(bool focusWon);
-	WindowEventType GetWindowEventType() const override;
+	EventType GetEventType() const override;
 	bool IsFocusWon() const;
+	static EventType GetStaticType();
 
 private:
 	bool m_FocusWon;
 };
 
-class WindowResizeEvent : public WindowEvent {
+class WindowResizeEvent : public Event {
 public:
 	WindowResizeEvent(glm::vec2 size);
-	WindowEventType GetWindowEventType() const override;
+	static EventType GetStaticType();
+	EventType GetEventType() const override;
 	glm::vec2 GetSize() const;
 
 private:

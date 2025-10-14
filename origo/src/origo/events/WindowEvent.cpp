@@ -3,21 +3,21 @@
 
 namespace Origo {
 
-EventType WindowEvent::GetEventType() const {
-	return EventType::Window;
-}
-
 #pragma region WINDOW_FOCUS_CHANGE
 
 WindowFocusChangeEvent::WindowFocusChangeEvent(bool focusWon)
     : m_FocusWon(focusWon) {
 }
-WindowEventType WindowFocusChangeEvent::GetWindowEventType() const {
-	return WindowEventType::WindowFocusChange;
+EventType WindowFocusChangeEvent::GetEventType() const {
+	return GetStaticType();
 }
 
 bool WindowFocusChangeEvent::IsFocusWon() const {
 	return m_FocusWon;
+}
+
+EventType WindowFocusChangeEvent::GetStaticType() {
+	return EventType::WindowFocusChange;
 }
 
 #pragma endregion
@@ -27,12 +27,16 @@ bool WindowFocusChangeEvent::IsFocusWon() const {
 WindowResizeEvent::WindowResizeEvent(glm::vec2 size)
     : m_Size(size) { };
 
-WindowEventType WindowResizeEvent::GetWindowEventType() const {
-	return WindowEventType::WindowResize;
+EventType WindowResizeEvent::GetEventType() const {
+	return GetStaticType();
 }
 
 glm::vec2 WindowResizeEvent::GetSize() const {
 	return m_Size;
+}
+
+EventType WindowResizeEvent::GetStaticType() {
+	return EventType::WindowResize;
 }
 #pragma endregion
 

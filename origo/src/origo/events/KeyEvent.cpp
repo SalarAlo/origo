@@ -123,10 +123,6 @@ static Origo::KeyboardKey glfwKeyToKeyboardKey(int glfwKey) {
 
 namespace Origo {
 
-EventType KeyEvent::GetEventType() const {
-	return EventType::Keyboard;
-}
-
 #pragma region KEY_PRESS_EVENT
 
 KeyPressEvent::KeyPressEvent(int glfwKey, KeyPressType keyPressType)
@@ -138,8 +134,12 @@ KeyboardKey KeyPressEvent::GetKeyPressed() const {
 	return m_KeyPressed;
 }
 
-KeyEventType KeyPressEvent::GetKeyEventType() const {
-	return KeyEventType::KeyPress;
+EventType KeyPressEvent::GetEventType() const {
+	return GetStaticType();
+}
+
+EventType KeyPressEvent::GetStaticType() {
+	return EventType::KeyPress;
 }
 
 KeyPressType KeyPressEvent::GetKeyPressType() const {

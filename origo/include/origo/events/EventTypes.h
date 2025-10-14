@@ -3,31 +3,20 @@
 namespace Origo {
 
 enum class EventType {
-	Window,
-	Mouse,
-	Keyboard
-};
-
-enum class WindowEventType {
 	WindowFocusChange,
-	WindowResize
-};
+	WindowResize,
 
-enum class KeyEventType {
+	MouseMove,
+	MouseClick,
+	MouseScroll,
+
 	KeyPress,
-
 };
 
 enum class KeyPressType {
 	KeyPressStart,
 	KeyPressRepeat,
 	KeyPressStop,
-};
-
-enum class MouseEventType {
-	MouseMove,
-	MouseClick,
-	MouseScroll,
 };
 
 enum class MouseClickEventType {

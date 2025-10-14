@@ -6,37 +6,34 @@
 #include "glm/glm.hpp"
 
 namespace Origo {
-class MouseEvent : public Event {
-public:
-	EventType GetEventType() const override;
-	virtual MouseEventType GetMouseEventType() const = 0;
-};
-
-class MouseMoveEvent : public MouseEvent {
+class MouseMoveEvent : public Event {
 public:
 	MouseMoveEvent(const glm::vec2& coordinate);
-	MouseEventType GetMouseEventType() const override;
+	EventType GetEventType() const override;
 	glm::vec2 GetCoordinate() const;
+	static EventType GetStaticType();
 
 private:
 	glm::vec2 m_Coordinate;
 };
 
-class MouseScrollEvent : public MouseEvent {
+class MouseScrollEvent : public Event {
 public:
 	MouseScrollEvent(bool scrolledUp);
-	MouseEventType GetMouseEventType() const override;
+	EventType GetEventType() const override;
 	bool IsScrollUp() const;
+	static EventType GetStaticType();
 
 private:
 	bool m_IsScrollUp;
 };
 
-class MouseClickEvent : public MouseEvent {
+class MouseClickEvent : public Event {
 public:
 	MouseClickEvent(MouseClickEventType clickType);
-	MouseEventType GetMouseEventType() const override;
+	EventType GetEventType() const override;
 	MouseClickEventType GetMouseClickEventType() const;
+	static EventType GetStaticType();
 
 private:
 	MouseClickEventType m_Type;

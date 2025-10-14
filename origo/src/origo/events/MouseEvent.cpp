@@ -3,14 +3,10 @@
 
 namespace Origo {
 
-EventType MouseEvent::GetEventType() const {
-	return EventType::Mouse;
-}
-
 #pragma region MOUSE_MOVE_EVENT
 
-MouseEventType MouseMoveEvent::GetMouseEventType() const {
-	return MouseEventType::MouseMove;
+EventType MouseMoveEvent::GetEventType() const {
+	return GetStaticType();
 }
 
 MouseMoveEvent::MouseMoveEvent(const glm::vec2& coordinate)
@@ -18,6 +14,10 @@ MouseMoveEvent::MouseMoveEvent(const glm::vec2& coordinate)
 }
 glm::vec2 MouseMoveEvent::GetCoordinate() const {
 	return m_Coordinate;
+}
+
+EventType MouseMoveEvent::GetStaticType() {
+	return EventType::MouseMove;
 }
 
 #pragma endregion
@@ -31,8 +31,12 @@ MouseScrollEvent::MouseScrollEvent(bool scrollUp)
 bool MouseScrollEvent::IsScrollUp() const {
 	return m_IsScrollUp;
 }
-MouseEventType MouseScrollEvent::GetMouseEventType() const {
-	return MouseEventType::MouseScroll;
+EventType MouseScrollEvent::GetEventType() const {
+	return GetStaticType();
+}
+
+EventType MouseScrollEvent::GetStaticType() {
+	return EventType::MouseMove;
 }
 
 #pragma endregion
@@ -45,8 +49,13 @@ MouseClickEvent::MouseClickEvent(MouseClickEventType type)
 MouseClickEventType MouseClickEvent::GetMouseClickEventType() const {
 	return m_Type;
 }
-MouseEventType MouseClickEvent::GetMouseEventType() const {
-	return MouseEventType::MouseClick;
+
+EventType MouseClickEvent::GetEventType() const {
+	return GetStaticType();
+}
+
+EventType MouseClickEvent::GetStaticType() {
+	return EventType::MouseClick;
 }
 
 #pragma endregion
