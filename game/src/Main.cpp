@@ -1,25 +1,12 @@
-#include "origo/Camera.h"
-#include "origo/events/Event.h"
-#include "origo/events/EventTypes.h"
-#include "origo/events/WindowEvent.h"
-#include "origo/renderer/CubeVertices.h"
-#include "origo/renderer/Renderer.h"
-#include "origo/renderer/Shader.h"
-#include "origo/renderer/Transform.h"
-#include "origo/renderer/UniformList.hpp"
-#include <memory>
 #include <origo/Origo.h>
-#include <magic_enum/magic_enum.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+
+#include "origo/renderer/CubeVertices.h"
 
 class GameApplication : public Origo::Application {
 public:
 	GameApplication(const Origo::ApplicationSettings& applicationSettings)
 	    : Origo::Application(applicationSettings)
-	    , m_Shader("normal")
-	    , m_Renderer()
-	    , m_Camera(m_Window.GetAspectResolution(), { 0, 0, -3 }) {
-	}
+	    , m_Camera(m_Window.GetAspectResolution(), { 0, 0, -3 }) { }
 
 	void OnEvent(Origo::Event& event) override {
 		Origo::EventDispatcher dispatcher { event };
@@ -28,44 +15,32 @@ public:
 			auto size = resEvent.GetSize();
 			m_Camera.SetAspect(size.x / size.y);
 		});
+
+		dispatcher.Dipatch<Origo::MouseMoveEvent>([&](Origo::MouseMoveEvent& resEvent) {
+			auto size = resEvent.GetCoordinate();
+			m_Transform->SetRotation(glm::vec3 { size.x / static_cast<float>(10), size.x / 4, size.y / static_cast<float>(10) });
+		});
 	}
 
 	void OnInit() override {
-		Origo::Mesh cubeMesh { Origo::CUBE_VERTICES, Origo::CUBE_INDICES };
+		m_Shader = Origo::MakeRef<Origo::Shader>("normal");
+		m_Material = Origo::MakeRef<Origo::Material>(m_Shader);
 
-		Origo::UniformList list {};
+		auto m_Mesh = Origo::MakeRef<Origo::Mesh>(Origo::CUBE_VERTICES, Origo::CUBE_INDICES);
 
-		list.AddUniform("u_ProjectionMatrix", m_Camera.GetProjection());
-		list.AddUniform("u_ViewMatrix", m_Camera.GetView());
+		auto cube { m_Scene.CreateEntity() };
+		m_Transform = cube->AttachComponent<Origo::Transform>();
+		m_Transform->SetPosition(glm::vec3 { 0, 0, 3 });
 
-		list.AddUniform("u_ViewPos", m_Camera.GetPosition());
-		list.AddUniform("u_LightPos", m_Camera.GetPosition());
-
-		list.AddUniform(
-		    "u_ModelMatrix",
-		    glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 1.0f)));
-
-		Origo::Material cubeMaterial {
-			MakeRef<Origo::UniformList>(std::move(list)),
-			MakeRef<Origo::Shader>(m_Shader)
-		};
-
-		Origo::Transform transform {};
-
-		m_Renderer.Submit(
-		    MakeRef<Origo::Mesh>(cubeMesh),
-		    MakeRef<Origo::Material>(cubeMaterial),
-		    MakeRef<Origo::Transform>(transform));
-	}
-
-	void OnRender() override {
-		m_Renderer.Flush();
+		cube->AttachComponent<Origo::MeshRenderer>(m_Material, m_Mesh);
 	}
 
 private:
-	Origo::Shader m_Shader;
-	Origo::Renderer m_Renderer {};
 	Origo::Camera m_Camera {};
+
+	Origo::Ref<Origo::Shader> m_Shader {};
+	Origo::Ref<Origo::Material> m_Material {};
+	Origo::Ref<Origo::Transform> m_Transform {};
 };
 
 Origo::Application* Origo::CreateApplication() {

@@ -7,9 +7,15 @@ namespace Origo {
 
 class Material {
 public:
-	Material(const Ref<UniformList>& uniformList, const Ref<Shader>& shader);
+	Material(const Ref<Shader>& shader);
 	void Bind();
 	void WriteModel(const glm::mat4& model);
+
+	template <typename T>
+	Material& Set(std::string_view name, const T& val) {
+		m_Shader->SetUniform(name, val);
+		return *this;
+	}
 
 private:
 	Ref<Shader> m_Shader;

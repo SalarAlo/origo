@@ -45,7 +45,7 @@ public:
 	const auto& GetUniforms() const { return uniforms; }
 
 private:
-	std::unordered_map<std::string, std::unique_ptr<UniformBase>> uniforms;
+	std::unordered_map<std::string, std::unique_ptr<UniformBase>> uniforms {};
 };
 
 }

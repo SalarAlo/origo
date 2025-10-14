@@ -1,8 +1,8 @@
 #include "origo/renderer/Material.h"
 
 namespace Origo {
-Material::Material(const Ref<UniformList>& uniformList, const Ref<Shader>& shader)
-    : m_UniformList(uniformList)
+Material::Material(const Ref<Shader>& shader)
+    : m_UniformList(MakeRef<UniformList>())
     , m_Shader(shader) {
 }
 

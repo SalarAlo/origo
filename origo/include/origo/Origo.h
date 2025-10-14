@@ -11,3 +11,13 @@
 #include "events/MouseEvent.h"
 #include "events/WindowEvent.h"
 #include "events/EventTypes.h"
+
+// RENDERING
+#include "origo/Camera.h"
+#include "origo/renderer/Mesh.h"
+#include "origo/renderer/Shader.h"
+#include "origo/renderer/Transform.h"
+
+// SCENE RELATED
+#include "origo/scene/MeshRenderer.h"
+#include "origo/scene/Scene.h"

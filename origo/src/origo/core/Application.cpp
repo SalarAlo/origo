@@ -20,7 +20,7 @@ void Application::Run() {
 
 		OnUpdate(dt.count());
 
-		OnRender();
+		m_Scene.Render();
 
 		if (m_Window.ShouldClose()) {
 			m_Running = false;

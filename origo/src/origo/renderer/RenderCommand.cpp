@@ -1,7 +1,7 @@
 #include "origo/renderer/RenderCommand.h"
 
 namespace Origo {
-RenderCommand::RenderCommand(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform)
+RenderCommand::RenderCommand(Ref<Mesh> mesh, Ref<Material> material, Ref<Transform> transform)
     : m_Mesh(mesh)
     , m_Material(material)
     , m_Transform(transform) {

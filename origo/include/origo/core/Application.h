@@ -3,6 +3,7 @@
 #include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
+#include "origo/scene/Scene.h"
 
 namespace Origo {
 struct ApplicationSettings {
@@ -20,11 +21,11 @@ public:
 	virtual void OnInit() { }
 	virtual void OnShutdown() { }
 	virtual void OnUpdate(double deltaTime) { }
-	virtual void OnRender() { }
 	virtual void OnEvent(Event& event) { }
 
 protected:
 	ScreenWindow m_Window;
+	Scene m_Scene;
 
 private:
 	bool m_Running {};

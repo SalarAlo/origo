@@ -4,8 +4,9 @@
 
 namespace Origo {
 
-Transform::Transform()
-    : m_Position(0.0f)
+Transform::Transform(class Entity& entity)
+    : Component(entity)
+    , m_Position(0.0f)
     , m_Rotation(0.0f)
     , m_Scale(1.0f)
     , m_Dirty(true) { }

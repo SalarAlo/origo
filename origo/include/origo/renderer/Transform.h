@@ -1,12 +1,13 @@
 #pragma once
 
+#include "origo/scene/Component.h"
 #include <glm/glm.hpp>
 
 namespace Origo {
 
-class Transform {
+class Transform : public Component {
 public:
-	Transform();
+	Transform(class Entity& entity);
 
 	void Translate(const glm::vec3& delta);
 	void SetPosition(const glm::vec3& position);
