@@ -1,46 +1,73 @@
-# Origo
+<div align="center">
 
-Origo is a 3D engine targeting Linux (only) developed by me and only me.
+# 🜂 Origo  
+**A Linux-first 3D Engine**
 
-![LOGO](resources/textures/origo_logo.png)
-
----
-
-## What it is
-
-- A barebones engine written in C++ & GLSL  
-- Uses CMake for build  
-- Linux-only windowing, input, rendering backends  
-- Focus: correctness, clarity, control, and performance
+![Origo Logo](resources/textures/origo_logo.png)
 
 ---
 
-_(The engine is under active development — not everything is stable.)_
+### Barebones • Correct • Clear • Controlled • Fast
+
+</div>
 
 ---
 
-## Requirements & Dependencies
+## 🧭 Overview
 
-- Linux (optimally on Fedora as I develop it on Fedora)  
-- A decent C++ compiler (supporting C++20 or newer)  
-- OpenGL drivers available  
-- CMake  
-- (Optionally) external libs you include (e.g. stb_image, GLM, etc.)
+**Origo** is a minimalistic 3D engine written entirely in **C++** and **GLSL**,  
+built from the ground up for **Linux** — no compromises, no cross-platform clutter.
+
+> _“Everything should be as simple as possible, but no simpler.”_
 
 ---
 
-## Layout
+## ⚙️ Features
 
-origo/ → engine core code
-<br>
-game/ → sample/demo project
-<br>
-resources/ → assets (shaders, textures, models)
-<br>
-vendor/ → third-party libs included
-<br>
-CMakeLists.txt → build script
-<br>
-pch.* → precompiled headers
-<br>
-overview.sh → helper script
+- 🧱 **Written in C++20** (or newer)  
+- 🎨 **GLSL shaders** for complete GPU-side control  
+- 🐧 **Linux-only** — native windowing, input, and rendering  
+- 🧩 **Modular CMake build system**  
+- 🧠 **Focus on correctness, clarity, and performance**  
+
+---
+
+## 🧰 Requirements
+
+| Requirement | Notes |
+|--------------|-------|
+| **Linux** | Optimized and tested on **Fedora** |
+| **C++ Compiler** | Must support **C++20** or newer |
+| **OpenGL** | Proper driver support required |
+| **CMake** | For building the project |
+| **(Optional)** | External libraries (e.g. `stb_image`, `GLM`, etc.) |
+
+---
+
+## 📁 Project Layout
+
+| Path | Description |
+|------|--------------|
+| `origo/` | Engine core code |
+| `game/` | Sample/demo project |
+| `resources/` | Shaders, textures, and models |
+| `vendor/` | Third-party libraries |
+| `CMakeLists.txt` | Root build script |
+| `pch.*` | Precompiled headers |
+| `overview.sh` | Helper script |
+
+---
+
+## ⚠️ Status
+
+> **Under active development.**  
+> Expect breakage, instability, and change.  
+> Origo is a living system — correctness and control take priority over stability.
+
+---
+
+<div align="center">
+
+### 🜂 *Built for Linux. Built for understanding.*
+
+</div>
