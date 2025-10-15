@@ -3,7 +3,7 @@
 # 🜂 Origo  
 **A Linux-first 3D Engine**
 
-![Origo Logo](resources/textures/origo_logo.png)
+<img src="resources/textures/origo_logo.png" alt="Origo Logo" width="300"/>
 
 ---
 
@@ -24,15 +24,23 @@ built from the ground up for **Linux** — no compromises, no cross-platform clu
 
 ## ⚙️ Features
 
-- 🧱 **Written in C++20** (or newer)  
-- 🎨 **GLSL shaders** for complete GPU-side control  
-- 🐧 **Linux-only** — native windowing, input, and rendering  
-- 🧩 **Modular CMake build system**  
-- 🧠 **Focus on correctness, clarity, and performance**  
+<div align="center">
+
+| Feature | Description |
+|----------|--------------|
+| 🧱 **Modern C++20** | Built with modern C++ for clarity and control |
+| 🎨 **GLSL shaders** | Direct GPU-level control |
+| 🐧 **Linux-only** | Native windowing, input, and rendering |
+| 🧩 **CMake-based** | Clean modular build system |
+| ⚡ **Performance-first** | Zero-overhead abstractions |
+
+</div>
 
 ---
 
 ## 🧰 Requirements
+
+<div align="center">
 
 | Requirement | Notes |
 |--------------|-------|
@@ -40,11 +48,15 @@ built from the ground up for **Linux** — no compromises, no cross-platform clu
 | **C++ Compiler** | Must support **C++20** or newer |
 | **OpenGL** | Proper driver support required |
 | **CMake** | For building the project |
-| **(Optional)** | External libraries (e.g. `stb_image`, `GLM`, etc.) |
+| **(Optional)** | External libs (e.g. `stb_image`, `GLM`, etc.) |
+
+</div>
 
 ---
 
 ## 📁 Project Layout
+
+<div align="center">
 
 | Path | Description |
 |------|--------------|
@@ -56,17 +68,16 @@ built from the ground up for **Linux** — no compromises, no cross-platform clu
 | `pch.*` | Precompiled headers |
 | `overview.sh` | Helper script |
 
----
-
-## ⚠️ Status
-
-> **Under active development.**  
-> Expect breakage, instability, and change.  
-> Origo is a living system — correctness and control take priority over stability.
+</div>
 
 ---
 
 <div align="center">
+
+### ⚠️ Under Active Development  
+_Expect instability. Correctness and control come first._
+
+---
 
 ### 🜂 *Built for Linux. Built for understanding.*
 
