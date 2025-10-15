@@ -24,23 +24,6 @@ built from the ground up for <b>Linux</b> — no compromises, no cross-platform 
 
 ---
 
-<h2 align="center">⚙️ Features</h2>
-
-<div align="center">
-
-<table>
-<tr><th>Feature</th><th>Description</th></tr>
-<tr><td>🧱 <b>Modern C++20</b></td><td>Built with modern C++ for clarity and control</td></tr>
-<tr><td>🎨 <b>GLSL shaders</b></td><td>Direct GPU-level control</td></tr>
-<tr><td>🐧 <b>Linux-only</b></td><td>Native windowing, input, and rendering</td></tr>
-<tr><td>🧩 <b>CMake-based</b></td><td>Clean modular build system</td></tr>
-<tr><td>⚡ <b>Performance-first</b></td><td>Zero-overhead abstractions</td></tr>
-</table>
-
-</div>
-
----
-
 <h2 align="center">🧰 Requirements</h2>
 
 <div align="center">
