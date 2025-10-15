@@ -26,6 +26,7 @@ void ScreenWindow::InitGlad() {
 		throw std::runtime_error("Failed to initialize OpenGL");
 	}
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	glClearColor(0, 0, 0, 1);
 }
 
@@ -43,7 +44,8 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 	InitGlad();
 
 	glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height);
-	// glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSwapInterval(1);
 
 	InitCallback();
 

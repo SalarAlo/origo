@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/events/Event.h"
 #include <glm/glm.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -11,7 +12,7 @@ public:
 	    float yaw = 90.0f,
 	    float pitch = 0.0f,
 	    float fov = 90.0f,
-	    float nearPlane = 0.01f,
+	    float nearPlane = 0.5f,
 	    float farPlane = 100.0f);
 
 	void SetPosition(const glm::vec3& position);
@@ -24,7 +25,6 @@ public:
 	void Rotate(float yawOffset, float pitchOffset);
 	void SetYawPitch(float yaw, float pitch);
 
-	void SetAspect(float aspect);
 	void SetFOV(float fov);
 
 	const glm::mat4& GetView() const { return m_ViewMatrix; }
@@ -33,6 +33,11 @@ public:
 	glm::vec3 GetForward() const { return m_Forward; }
 	glm::vec3 GetRight() const { return m_Right; }
 	glm::vec3 GetUp() const { return m_Up; }
+
+	void SetSpeed(float speed) { m_Speed = speed; }
+	void SetSensitivity(float sensitivity) { m_Sensitivity = sensitivity; }
+
+	void OnEvent(Event& event);
 
 private:
 	void UpdateView();
@@ -52,6 +57,9 @@ private:
 	float m_Aspect;
 	float m_Near;
 	float m_Far;
+
+	float m_Speed { 0.1f };
+	float m_Sensitivity { 0.1f };
 
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;

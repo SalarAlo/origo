@@ -18,10 +18,10 @@ public:
 
 	static Application& Get();
 
-	virtual void OnInit() { }
+	virtual void Awake() { }
 	virtual void OnShutdown() { }
-	virtual void OnUpdate(double deltaTime) { }
-	virtual void OnEvent(Event& event) { }
+	virtual void Update(double deltaTime) { }
+	virtual void HandleEvent(Event& event) { }
 
 protected:
 	ScreenWindow m_Window;

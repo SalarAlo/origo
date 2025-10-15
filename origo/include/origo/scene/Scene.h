@@ -10,6 +10,7 @@ class Scene {
 public:
 	Ref<Entity> CreateEntity();
 	void Render();
+	Camera& GetCamera();
 
 private:
 	std::vector<Ref<Entity>> m_Entities {};

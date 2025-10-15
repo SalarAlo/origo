@@ -64,6 +64,9 @@ enum class KeyboardKey {
 };
 #pragma endregion
 
+int KeyboardKeyToGlfwKey(KeyboardKey key);
+KeyboardKey GlfwKeyToKeyboardKey(int glfwKey);
+
 class KeyPressEvent : public Event {
 public:
 	KeyPressEvent(int glfwKey, KeyPressType keyPressType);

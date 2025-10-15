@@ -1,4 +1,6 @@
 #include "origo/Camera.h"
+#include "origo/events/MouseEvent.h"
+#include "origo/events/WindowEvent.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
@@ -6,9 +8,7 @@
 
 namespace Origo {
 
-Camera::Camera(float aspect, const glm::vec3& position,
-    float yaw, float pitch,
-    float fov, float nearPlane, float farPlane)
+Camera::Camera(float aspect, const glm::vec3& position, float yaw, float pitch, float fov, float nearPlane, float farPlane)
     : m_Position(position)
     , m_Yaw(yaw)
     , m_Pitch(pitch)
@@ -27,22 +27,22 @@ void Camera::SetPosition(const glm::vec3& position) {
 }
 
 void Camera::Move(const glm::vec3& delta) {
-	m_Position += delta;
+	m_Position += delta * m_Speed;
 	UpdateView();
 }
 
 void Camera::MoveRight(float step) {
-	Move(m_Right * step);
+	Move(m_Right * step * m_Speed);
 	UpdateView();
 }
 
 void Camera::MoveUp(float step) {
-	Move(m_Up * step);
+	Move(m_Up * step * m_Speed);
 	UpdateView();
 }
 
 void Camera::MoveForward(float step) {
-	Move(m_Forward * step);
+	Move(m_Forward * step * m_Speed);
 	UpdateView();
 }
 
@@ -67,9 +67,28 @@ void Camera::SetYawPitch(float yaw, float pitch) {
 	UpdateView();
 }
 
-void Camera::SetAspect(float aspect) {
-	m_Aspect = aspect;
-	UpdateProjection();
+void Camera::OnEvent(Event& event) {
+	EventDispatcher dispatcher { event };
+
+	dispatcher.Dispatch<WindowResizeEvent>([&](auto& resEvent) {
+		auto size = resEvent.GetSize();
+		m_Aspect = static_cast<float>(size.x) / static_cast<float>(size.y);
+	});
+
+	dispatcher.Dispatch<MouseMoveEvent>([&](MouseMoveEvent& moveEvent) {
+		const auto& coords { moveEvent.GetCoordinate() };
+
+		static int x { static_cast<int>(coords.x) };
+		static int y { static_cast<int>(coords.y) };
+
+		int dx { x - static_cast<int>(coords.x) };
+		int dy { y - static_cast<int>(coords.y) };
+
+		Rotate(-dx * m_Sensitivity, dy * m_Sensitivity);
+
+		x = coords.x;
+		y = coords.y;
+	});
 }
 
 void Camera::SetFOV(float fov) {

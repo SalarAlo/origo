@@ -17,19 +17,29 @@ set(CMAKE_OBJECT_PATH_MAX 512)
 find_package(Threads REQUIRED)
 
 # Vendor libs
-add_subdirectory(vendor/glfw)
-add_subdirectory(vendor/glm)
 
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-add_subdirectory(vendor/assimp)
+	# GLFW/GLM
+	add_subdirectory(vendor/glfw)
+	add_subdirectory(vendor/glm)
 
-add_library(glad STATIC vendor/glad/src/glad.c)
-target_include_directories(glad PUBLIC vendor/glad/include)
+	# ASSIMP
+	set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+	set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+	add_subdirectory(vendor/assimp)
 
-include_directories(vendor/magic_enum/include)
+	# GLAD
+	add_library(glad STATIC vendor/glad/src/glad.c)
+	target_include_directories(glad PUBLIC vendor/glad/include)
 
-add_subdirectory(vendor/imgui)
+	# MAGIN_ENUM
+	include_directories(vendor/magic_enum/include)
+
+	# IMGUI
+	add_subdirectory(vendor/imgui)
+
+	# SPDLOG
+	set(SPDLOG_HEADER_ONLY ON)
+	add_subdirectory(vendor/spdlog)
 
 # Add engine + game
 add_subdirectory(origo)

@@ -24,6 +24,7 @@ target_link_libraries(OrigoEngine PUBLIC
     glm
     assimp
     Threads::Threads
+    spdlog_header_only
 )
 
 target_precompile_headers(OrigoEngine PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)

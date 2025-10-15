@@ -8,4 +8,5 @@ using TimePoint = std::chrono::time_point<SystemClock>;
 using Duration = std::chrono::duration<double>;
 
 TimePoint GetNow();
+
 }

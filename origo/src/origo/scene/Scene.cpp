@@ -17,7 +17,12 @@ void Scene::Render() {
 			    x->GetMesh(), x->GetMaterial(), x->E.GetComponent<Transform>());
 		}
 	}
+
 	m_Renderer.Flush(m_Camera);
+}
+
+Camera& Scene::GetCamera() {
+	return m_Camera;
 }
 
 }

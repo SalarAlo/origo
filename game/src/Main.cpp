@@ -1,46 +1,62 @@
+#include "origo/core/Logger.h"
+#include "origo/events/KeyEvent.h"
 #include <origo/Origo.h>
-
-#include "origo/renderer/CubeVertices.h"
 
 class GameApplication : public Origo::Application {
 public:
 	GameApplication(const Origo::ApplicationSettings& applicationSettings)
 	    : Origo::Application(applicationSettings)
-	    , m_Camera(m_Window.GetAspectResolution(), { 0, 0, -3 }) { }
+	    , m_Camera(m_Scene.GetCamera()) { }
 
-	void OnEvent(Origo::Event& event) override {
-		Origo::EventDispatcher dispatcher { event };
+	void Awake() override {
+		m_Camera.SetSpeed(10);
 
-		dispatcher.Dipatch<Origo::WindowResizeEvent>([&](auto& resEvent) {
-			auto size = resEvent.GetSize();
-			m_Camera.SetAspect(size.x / size.y);
-		});
-
-		dispatcher.Dipatch<Origo::MouseMoveEvent>([&](Origo::MouseMoveEvent& resEvent) {
-			auto size = resEvent.GetCoordinate();
-			m_Transform->SetRotation(glm::vec3 { size.x / static_cast<float>(10), size.x / 4, size.y / static_cast<float>(10) });
-		});
-	}
-
-	void OnInit() override {
 		m_Shader = Origo::MakeRef<Origo::Shader>("normal");
 		m_Material = Origo::MakeRef<Origo::Material>(m_Shader);
 
-		auto m_Mesh = Origo::MakeRef<Origo::Mesh>(Origo::CUBE_VERTICES, Origo::CUBE_INDICES);
+		SpawnTestGrid();
+	}
 
-		auto cube { m_Scene.CreateEntity() };
-		m_Transform = cube->AttachComponent<Origo::Transform>();
-		m_Transform->SetPosition(glm::vec3 { 0, 0, 3 });
+	void SpawnTestGrid() {
+		auto cubeMesh = Origo::Assets::LoadShape(Origo::Assets::PrimitiveShape::CUBE);
 
-		cube->AttachComponent<Origo::MeshRenderer>(m_Material, m_Mesh);
+		for (int i {}; i < GRID_SIZE; i++) {
+			for (int j {}; j < GRID_SIZE; j++) {
+				auto entity = m_Scene.CreateEntity();
+				auto transform { entity->AttachComponent<Origo::Transform>() };
+				transform->SetPosition(glm::vec3 { i, j, 11 });
+
+				entity->AttachComponent<Origo::MeshRenderer>(m_Material, cubeMesh);
+			}
+		}
+	}
+
+	void HandleEvent(Origo::Event& event) override {
+		m_Camera.OnEvent(event);
+	}
+
+	void Update(double dt) override {
+		glm::vec3 direction(0.0f);
+
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
+			direction += m_Camera.GetForward();
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S))
+			direction -= m_Camera.GetForward();
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D))
+			direction += m_Camera.GetRight();
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A))
+			direction -= m_Camera.GetRight();
+
+		if (glm::length(direction) > 0.0f)
+			m_Camera.Move(glm::normalize(direction) * static_cast<float>(dt));
 	}
 
 private:
-	Origo::Camera m_Camera {};
+	static constexpr int GRID_SIZE { 10 };
+	Origo::Camera& m_Camera;
 
 	Origo::Ref<Origo::Shader> m_Shader {};
 	Origo::Ref<Origo::Material> m_Material {};
-	Origo::Ref<Origo::Transform> m_Transform {};
 };
 
 Origo::Application* Origo::CreateApplication() {

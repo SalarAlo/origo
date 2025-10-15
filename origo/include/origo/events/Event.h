@@ -21,7 +21,7 @@ public:
 	    : m_Event(event) { };
 
 	template <EventTypeConcept TEvent>
-	void Dipatch(std::function<void(TEvent&)> fn) {
+	void Dispatch(std::function<void(TEvent&)> fn) {
 		if (TEvent::GetStaticType() == m_Event.GetEventType()) {
 			fn(static_cast<TEvent&>(m_Event));
 		}
