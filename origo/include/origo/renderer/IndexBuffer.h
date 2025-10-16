@@ -8,17 +8,21 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+	void BindTemp() const;
+	void UnbindTemp() const;
+
 	void AddData(const std::vector<unsigned int>& data);
 	void ReplaceData(const std::vector<unsigned int>& data);
 
 	std::size_t GetElementCount() const;
 
 private:
-	void SetDataOpenGL(bool initialUpload) const;
+	void SetDataOpenGL();
 
 private:
-	GLuint m_BufferId {};
-	bool m_Bound;
+	inline static GLuint s_CurrentlyBound { false };
 	std::vector<unsigned int> m_Data;
+	GLuint m_BufferId {};
+	size_t m_Capacity {};
 };
 }

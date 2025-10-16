@@ -5,15 +5,15 @@
 
 namespace Origo {
 VertexArray::VertexArray() {
-	glGenVertexArrays(1, &m_BufferId);
+	GLCall(glGenVertexArrays(1, &m_BufferId));
 }
 
 void VertexArray::Bind() const {
-	glBindVertexArray(m_BufferId);
+	GLCall(glBindVertexArray(m_BufferId));
 }
 
 void VertexArray::Unbind() const {
-	glBindVertexArray(0);
+	GLCall(glBindVertexArray(0));
 }
 
 void VertexArray::ConnectBuffer(const VertexBuffer& buffer) {
@@ -32,9 +32,12 @@ void VertexArray::ConnectBuffer(const VertexBuffer& buffer) {
 	for (int i {}; i < attribs.size(); i++) {
 		const auto& attrib { attribs[i] };
 		const auto size { Glsizeof(attrib.Type) * attrib.Amount };
-		glEnableVertexAttribArray(i);
-		glVertexAttribPointer(i, attrib.Amount, attrib.Type, attrib.Normalized, stride, reinterpret_cast<void*>(offset));
+		GLCall(glEnableVertexAttribArray(i));
+		GLCall(glVertexAttribPointer(i, attrib.Amount, attrib.Type, attrib.Normalized, stride, reinterpret_cast<void*>(offset)));
 		offset += size;
 	}
+
+	buffer.Unbind();
+	Unbind();
 }
 }

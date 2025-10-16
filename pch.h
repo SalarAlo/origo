@@ -18,3 +18,4 @@
 #include <stdexcept>
 
 #include "origo/include/origo/core/Typedefs.h"
+#include "origo/include/origo/renderer/GlDebug.h"

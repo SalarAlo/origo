@@ -17,7 +17,6 @@ void Renderer::Flush(const Camera& camera) {
 	Ref<Material> currentMaterial = nullptr;
 
 	for (auto& cmd : m_DrawQueue) {
-
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
 			std::cerr << "[Renderer] Null reference in RenderCommand\n";
 			continue;

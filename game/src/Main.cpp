@@ -1,6 +1,12 @@
-#include "origo/core/Logger.h"
+#include "origo/core/EntryPoint.h"
+
+#include "origo/assets/PrimitiveShapes.h"
+#include "origo/core/Application.h"
 #include "origo/events/KeyEvent.h"
-#include <origo/Origo.h>
+#include "origo/input/Input.h"
+
+#include "origo/renderer/ModelLoader.h"
+#include "origo/scene/MeshRenderer.h"
 
 class GameApplication : public Origo::Application {
 public:
@@ -9,7 +15,7 @@ public:
 	    , m_Camera(m_Scene.GetCamera()) { }
 
 	void Awake() override {
-		m_Camera.SetSpeed(10);
+		m_Camera.SetSpeed(100);
 
 		m_Shader = Origo::MakeRef<Origo::Shader>("normal");
 		m_Material = Origo::MakeRef<Origo::Material>(m_Shader);
@@ -18,15 +24,20 @@ public:
 	}
 
 	void SpawnTestGrid() {
+		auto meshes = Origo::ModelLoader::LoadModel("skibidi.glb");
+
 		auto cubeMesh = Origo::Assets::LoadShape(Origo::Assets::PrimitiveShape::CUBE);
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
-				auto entity = m_Scene.CreateEntity();
-				auto transform { entity->AttachComponent<Origo::Transform>() };
-				transform->SetPosition(glm::vec3 { i, j, 11 });
+				for (const auto& mesh : meshes) {
+					auto entity = m_Scene.CreateEntity();
+					auto transform { entity->AttachComponent<Origo::Transform>() };
+					transform->SetPosition(glm::vec3 { i * 10, j * 30, 11 });
+					transform->SetScale(glm::vec3 { .1 });
 
-				entity->AttachComponent<Origo::MeshRenderer>(m_Material, cubeMesh);
+					entity->AttachComponent<Origo::MeshRenderer>(m_Material, Origo::MakeRef<Origo::Mesh>(mesh));
+				}
 			}
 		}
 	}

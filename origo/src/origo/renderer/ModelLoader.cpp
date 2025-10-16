@@ -2,7 +2,6 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
-#include "origo/renderer/VertexLayout.h"
 
 namespace Origo {
 std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
@@ -52,10 +51,7 @@ std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
 			}
 		}
 
-		meshes.push_back(Mesh {
-		    vertices,
-		    indices,
-		});
+		meshes.emplace_back(vertices, indices);
 	}
 
 	return meshes;

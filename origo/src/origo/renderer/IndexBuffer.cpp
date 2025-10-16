@@ -3,16 +3,26 @@
 namespace Origo {
 IndexBuffer::IndexBuffer(const std::vector<unsigned int>& indices)
     : m_Data(indices) {
-	glGenBuffers(1, &m_BufferId);
-	SetDataOpenGL(true);
+	GLCall(glGenBuffers(1, &m_BufferId));
+	SetDataOpenGL();
 };
 
 void IndexBuffer::Bind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId));
+	s_CurrentlyBound = m_BufferId;
 }
 
 void IndexBuffer::Unbind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	s_CurrentlyBound = 0;
+}
+
+void IndexBuffer::BindTemp() const {
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId));
+}
+
+void IndexBuffer::UnbindTemp() const {
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_CurrentlyBound));
 }
 
 std::size_t IndexBuffer::GetElementCount() const {
@@ -21,24 +31,22 @@ std::size_t IndexBuffer::GetElementCount() const {
 
 void IndexBuffer::AddData(const std::vector<unsigned int>& data) {
 	m_Data.insert(m_Data.end(), data.begin(), data.end());
-	SetDataOpenGL(false);
+	SetDataOpenGL();
 }
 void IndexBuffer::ReplaceData(const std::vector<unsigned int>& data) {
 	m_Data = data;
-	SetDataOpenGL(false);
+	SetDataOpenGL();
 }
 
-void IndexBuffer::SetDataOpenGL(bool) const {
-	Bind();
-	static size_t capacity = 0;
+void IndexBuffer::SetDataOpenGL() {
+	BindTemp();
 	size_t bytes = m_Data.size() * sizeof(unsigned int);
-	if (bytes > capacity) {
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, m_Data.data(), GL_DYNAMIC_DRAW);
-		capacity = bytes;
+	if (bytes > m_Capacity) {
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, m_Data.data(), GL_DYNAMIC_DRAW));
+		m_Capacity = bytes;
 	} else {
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, bytes, m_Data.data());
+		GLCall(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, bytes, m_Data.data()));
 	}
-	Unbind();
+	UnbindTemp();
 }
-
 }

@@ -1,18 +1,28 @@
 #include "origo/renderer/VertexBuffer.h"
 
 namespace Origo {
+
 VertexBuffer::VertexBuffer(const std::vector<float>& data)
     : m_Data(data) {
-	glGenBuffers(1, &m_BufferId);
+	GLCall(glGenBuffers(1, &m_BufferId));
 	SetDataOpenGL(true);
 }
 
 void VertexBuffer::Bind() const {
-	glBindBuffer(GL_ARRAY_BUFFER, m_BufferId);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_BufferId));
+	s_CurrentlyBound = m_BufferId;
+}
+
+void VertexBuffer::BindTemp() const {
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_BufferId));
+}
+void VertexBuffer::UnbindTemp() const {
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, s_CurrentlyBound));
 }
 
 void VertexBuffer::Unbind() const {
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	s_CurrentlyBound = 0;
 }
 
 void VertexBuffer::AddData(const std::vector<float>& data) {
@@ -24,20 +34,19 @@ void VertexBuffer::ReplaceData(const std::vector<float>& data) {
 	SetDataOpenGL(false);
 }
 
-void VertexBuffer::SetDataOpenGL(bool initialUpload) const {
-	Bind();
+void VertexBuffer::SetDataOpenGL(bool initialUpload) {
+	BindTemp();
 
-	static size_t previousSize = 0;
 	const size_t currentSize = m_Data.size() * sizeof(float);
 
-	if (initialUpload || currentSize > previousSize) {
-		glBufferData(GL_ARRAY_BUFFER, currentSize, m_Data.data(), GL_DYNAMIC_DRAW);
-		previousSize = currentSize;
+	if (initialUpload || currentSize > m_Capacity) {
+		GLCall(glBufferData(GL_ARRAY_BUFFER, currentSize, m_Data.data(), GL_DYNAMIC_DRAW));
+		m_Capacity = currentSize;
 	} else {
-		glBufferSubData(GL_ARRAY_BUFFER, 0, currentSize, m_Data.data());
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, currentSize, m_Data.data()));
 	}
 
-	Unbind();
+	UnbindTemp();
 }
 
 }

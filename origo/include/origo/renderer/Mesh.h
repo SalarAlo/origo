@@ -10,8 +10,8 @@ public:
 	void Render() const;
 
 private:
+	VertexArray m_VertexArray;
 	VertexBuffer m_VertexBuffer;
 	IndexBuffer m_IndexBuffer;
-	VertexArray m_VertexArray;
 };
 }
