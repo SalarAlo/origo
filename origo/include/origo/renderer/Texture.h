@@ -4,13 +4,16 @@
 
 namespace Origo {
 enum class TextureType {
-	Diffuse,
+	Albedo,
 };
+
+int TextureTypeToSlot(TextureType);
 
 class Texture {
 public:
-	Texture(std::string_view path, TextureType type = TextureType::Diffuse);
-	void Bind(Ref<Shader>);
+	Texture(const std::string& path, TextureType type = TextureType::Albedo);
+	void Bind(Ref<Shader>) const;
+	TextureType GetType() const;
 
 private:
 	GLuint m_TextureId;

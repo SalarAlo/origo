@@ -11,8 +11,9 @@ std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
 
 	std::vector<Mesh> meshes;
 
-	if (!scene || !scene->HasMeshes())
+	if (!scene || !scene->HasMeshes()) {
 		return meshes;
+	}
 
 	for (unsigned i = 0; i < scene->mNumMeshes; i++) {
 		aiMesh* aMesh = scene->mMeshes[i];

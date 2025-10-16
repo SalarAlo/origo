@@ -36,9 +36,10 @@ out vec4 FragColor;
 
 uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
+uniform sampler2D u_Texture_Albedo;
 
 void main() {
-    vec3 objectColor = vec3(1.0);
+    vec3 objectColor = texture(u_Texture_Albedo, vUv).rgb;
 
     // lighting
     vec3 lightColor = vec3(1.0);
