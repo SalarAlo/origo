@@ -1,4 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
+#define STBI_NO_SIMD
 #include "stb_image.h"
 
 #include "origo/renderer/Texture.h"
@@ -25,7 +26,7 @@ Texture::Texture(const std::string& path, TextureType type)
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
 	if (!data) {
-		ORG_ERROR("Failed to load Texture with path \"{}\"", path);
+		ORG_ERROR("[Texture] Failed to load Texture with path {}", path.data());
 	}
 	GLCall(glGenTextures(1, &m_TextureId));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));

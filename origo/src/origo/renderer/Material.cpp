@@ -10,7 +10,7 @@ Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo)
 		return;
 	if (m_Albedo->GetType() != TextureType::Albedo) {
 		ORG_CORE_ERROR(
-		    "Expected a Texture Type of Albedo. Received a Texture Type of {}",
+		    "[Material] Expected a Texture Type of Albedo. Received a Texture Type of {}",
 		    magic_enum::enum_name(m_Albedo->GetType()));
 	}
 }

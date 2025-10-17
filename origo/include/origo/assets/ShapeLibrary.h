@@ -3,11 +3,11 @@
 #include "CubeVertices.h"
 #include "origo/renderer/Mesh.h"
 
-namespace Origo::Assets {
+namespace Origo::ShapeLibrary {
 enum PrimitiveShape {
 	CUBE,
 };
 
-Ref<Mesh> LoadShape(PrimitiveShape shape);
+Ref<Mesh> Load(PrimitiveShape shape);
 
 }

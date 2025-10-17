@@ -1,5 +1,6 @@
 
 #include "origo/renderer/Shader.h"
+#include "origo/core/Logger.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -23,8 +24,8 @@ static GLuint CompileShader(GLenum type, const char* src) {
 		std::string log(len, '\0');
 		glGetShaderInfoLog(shader, len, &len, log.data());
 		glDeleteShader(shader);
+		ORG_CORE_ERROR("[Shader] Shader Compilation Failed!");
 		throw std::runtime_error(std::string("Shader compile failed: ") + log);
-		std::cerr << "Starting the Program\n";
 	}
 
 	return shader;
@@ -43,6 +44,7 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 		std::string log(len, '\0');
 		glGetProgramInfoLog(program, len, &len, log.data());
 		glDeleteProgram(program);
+		ORG_CORE_ERROR("[Shader] Program Linkage failed!");
 		throw std::runtime_error(std::string("Program link failed: ") + log);
 	}
 	return program;
@@ -52,6 +54,7 @@ static std::string ReadFile(std::string_view path) {
 	constexpr std::size_t readSize { 4096 };
 	auto stream = std::ifstream(path.data());
 	if (!stream) {
+		ORG_CORE_ERROR("[Shader] Trying to read non existent file!");
 		throw std::ios_base::failure("file does not exist");
 	}
 	std::string out {};
@@ -71,6 +74,7 @@ static ShaderData GetData(std::string_view name) {
 	auto fragPos { fileContent.find("#FRAGMENT") };
 
 	if (vertPos == std::string::npos || fragPos == std::string::npos) {
+		ORG_CORE_ERROR("[Shader] file missing #VERTEX or #FRAGMENT section");
 		throw std::runtime_error("Shader file missing #VERTEX or #FRAGMENT section");
 	}
 
@@ -89,6 +93,13 @@ static ShaderData GetData(std::string_view name) {
 
 Shader::Shader(std::string_view name) {
 	auto shaderData { GetData(name) };
+	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
+	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
+	m_ProgramId = LinkProgram(vertexId, fragmentId);
+}
+
+Shader::Shader(std::string_view vertShader, std::string_view fragShader) {
+	ShaderData shaderData { .VertexShader = vertShader.data(), .FragmentShader = fragShader.data() };
 	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
 	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
 	m_ProgramId = LinkProgram(vertexId, fragmentId);

@@ -11,7 +11,7 @@ namespace Origo {
 class Renderer {
 public:
 	void BeginFrame();
-	void Submit(Ref<Mesh> mesh, Ref<Material> material, Ref<Transform> transform);
+	void Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
 	void Flush(const Camera& camera);
 	void EndFrame();
 

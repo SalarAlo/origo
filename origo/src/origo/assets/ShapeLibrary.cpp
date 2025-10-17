@@ -1,9 +1,9 @@
-#include "origo/assets/PrimitiveShapes.h"
+#include "origo/assets/ShapeLibrary.h"
 #include "origo/assets/CubeVertices.h"
 
-namespace Origo::Assets {
+namespace Origo::ShapeLibrary {
 
-Ref<Mesh> LoadShape(PrimitiveShape shape) {
+Ref<Mesh> Load(PrimitiveShape shape) {
 	static Ref<Mesh> CUBE_SHAPE { MakeRef<Mesh>(CUBE_VERTICES, CUBE_INDICES) };
 
 	switch (shape) {

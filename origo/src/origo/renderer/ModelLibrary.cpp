@@ -1,10 +1,10 @@
-#include "origo/renderer/ModelLoader.h"
+#include "origo/assets/ModelLibrary.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
 namespace Origo {
-std::vector<Mesh> ModelLoader::LoadModel(const std::string& path) {
+std::vector<Mesh> ModelLibrary::Create(const std::string& path) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
 	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs);

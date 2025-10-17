@@ -14,6 +14,7 @@ bool ScreenWindow::s_SingleInstanceCreated { false };
 
 void ScreenWindow::InitGlfw() {
 	if (!glfwInit()) {
+		ORG_CORE_ERROR("[ScreenWindow] Failed to initialize GLFW");
 		throw std::runtime_error("Failed to initialize GLFW");
 	}
 
@@ -23,6 +24,7 @@ void ScreenWindow::InitGlfw() {
 
 void ScreenWindow::InitGlad() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		ORG_CORE_ERROR("[ScreenWindow] Failed to initialize OpenGL");
 		throw std::runtime_error("Failed to initialize OpenGL");
 	}
 	GLCall(glEnable(GL_DEPTH_TEST));
@@ -32,8 +34,10 @@ void ScreenWindow::InitGlad() {
 
 ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
     : m_ScreenWindowSettings(screenWindowConfig) {
-	if (s_SingleInstanceCreated)
+	if (s_SingleInstanceCreated) {
+		ORG_CORE_ERROR("[ScreenWindow] There can only be one instance at a time");
 		throw std::runtime_error("There can only be one instance at a time");
+	}
 
 	InitGlfw();
 	m_Window = glfwCreateWindow(m_ScreenWindowSettings.Width, m_ScreenWindowSettings.Height, m_ScreenWindowSettings.Title.c_str(), nullptr, nullptr);

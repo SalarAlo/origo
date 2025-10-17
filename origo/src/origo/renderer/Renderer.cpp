@@ -1,11 +1,12 @@
 #include "origo/renderer/Renderer.h"
+#include "origo/core/Logger.h"
 
 namespace Origo {
 
 void Renderer::BeginFrame() {
 }
 
-void Renderer::Submit(Ref<Mesh> mesh, Ref<Material> material, Ref<Transform> transform) {
+void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform) {
 	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -18,7 +19,7 @@ void Renderer::Flush(const Camera& camera) {
 
 	for (auto& cmd : m_DrawQueue) {
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
-			std::cerr << "[Renderer] Null reference in RenderCommand\n";
+			ORG_CORE_ERROR("[Renderer] Null reference in RenderCommand");
 			continue;
 		}
 

@@ -1,5 +1,6 @@
 #pragma once
-#include <iostream>
+
+#include "origo/core/Logger.h"
 #include <cassert>
 
 inline void GL_ClearErrors() {
@@ -28,9 +29,7 @@ inline const char* GL_ErrorString(GLenum error) {
 inline bool GL_LogCall(const char* function, const char* file, int line) {
 	bool success = true;
 	while (GLenum error = glGetError()) {
-		std::cerr << "[OpenGL Error] (" << GL_ErrorString(error)
-		          << ") in " << function
-		          << " at " << file << ":" << line << std::endl;
+		ORG_CORE_ERROR("[OpenGL Error] ({}) in {} at {} : {}", GL_ErrorString(error), function, file, line);
 		success = false;
 	}
 	return success;
