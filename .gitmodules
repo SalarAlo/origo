@@ -18,7 +18,7 @@
 	url = https://github.com/Neargye/magic_enum
 [submodule "vendor/imgui"]
 	path = vendor/imgui
-	url = https://github.com/ocornut/imgui.git
+	url = https://github.com/SalarAlo/imgui.git
 [submodule "vendor/spdlog"]
 	path = vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
