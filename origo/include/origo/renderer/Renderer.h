@@ -6,20 +6,11 @@
 #include "origo/renderer/Transform.h"
 #include <glm/glm.hpp>
 
-namespace Origo {
+namespace Origo::Renderer {
 
-class Renderer {
-public:
-	void BeginFrame();
-	void Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
-	void Flush(const Camera& camera);
-	void EndFrame();
-
-private:
-	void DrawMesh(const RenderCommand& renderCommand);
-
-private:
-	std::vector<RenderCommand> m_DrawQueue;
-};
+void BeginFrame();
+void Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
+void Flush(const Camera& camera);
+void EndFrame();
 
 }

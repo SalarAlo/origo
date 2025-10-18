@@ -4,6 +4,7 @@
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
+
 VertexArray::VertexArray() {
 	GLCall(glGenVertexArrays(1, &m_BufferId));
 }
@@ -16,7 +17,7 @@ void VertexArray::Unbind() const {
 	GLCall(glBindVertexArray(0));
 }
 
-void VertexArray::ConnectBuffer(const VertexBuffer& buffer) {
+void VertexArray::ConnectBuffer(const VertexBuffer& buffer) const {
 	Bind();
 	buffer.Bind();
 
@@ -40,4 +41,5 @@ void VertexArray::ConnectBuffer(const VertexBuffer& buffer) {
 	buffer.Unbind();
 	Unbind();
 }
+
 }

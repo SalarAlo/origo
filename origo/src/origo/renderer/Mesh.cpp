@@ -15,6 +15,7 @@ Mesh::Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& 
 }
 
 void Mesh::Render() const {
+	m_VertexArray.ConnectBuffer(m_VertexBuffer);
 	m_VertexArray.Bind();
 
 	GLCall(glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetElementCount(), GL_UNSIGNED_INT, nullptr));

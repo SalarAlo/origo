@@ -1,15 +1,18 @@
 #include "origo/assets/MaterialLibrary.h"
+#include "origo/assets/ModelLibrary.h"
 #include "origo/assets/ShaderLibrary.h"
 #include "origo/assets/TextureCache.h"
 #include "origo/assets/ShapeLibrary.h"
-#include "origo/assets/ModelLibrary.h"
 
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 
 #include "origo/input/Input.h"
 
+#include "origo/renderer/Transform.h"
+
 #include "origo/scene/MeshRenderer.h"
+#include "origo/scene/Scene.h"
 
 class GameApplication : public Origo::Application {
 public:
@@ -30,17 +33,25 @@ public:
 	}
 
 	void SpawnTestGrid() {
+		auto pikachu = Origo::ModelLibrary::Create("pikachu.glb");
 		auto cubeMesh = Origo::ShapeLibrary::Load(Origo::ShapeLibrary::PrimitiveShape::CUBE);
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
-				auto entity = m_Scene.CreateEntity();
+				int x {};
+				for (const Origo::Mesh& mesh : pikachu) {
+					auto entity = m_Scene.CreateEntity(
+					    "Pikachu_" + std::to_string(i * GRID_SIZE * pikachu.size() + j * pikachu.size() + x));
 
-				auto transform { entity->AttachComponent<Origo::Transform>() };
-				transform->SetPosition(glm::vec3 { i * 20, j * 20, 11 });
-				transform->SetScale(glm::vec3 { 10 });
+					Origo::Ref<Origo::Transform> transform {
+						entity->AttachComponent<Origo::Transform>()
+					};
+					transform->SetPosition(glm::vec3 { i * 40, j * 40, 11 });
+					transform->SetScale(glm::vec3 { 1 });
 
-				entity->AttachComponent<Origo::MeshRenderer>(m_Material, cubeMesh);
+					entity->AttachComponent<Origo::MeshRenderer>(m_Material, Origo::MakeRef<Origo::Mesh>(mesh));
+					x++;
+				}
 			}
 		}
 	}
@@ -63,6 +74,10 @@ public:
 
 		if (glm::length(direction) > 0.0f)
 			m_Camera.Move(glm::normalize(direction) * static_cast<float>(dt));
+	}
+
+	void OnShutdown() override {
+		Origo::SceneSerialization::Serialize("some.json", m_Scene);
 	}
 
 private:

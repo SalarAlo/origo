@@ -15,6 +15,8 @@ set(CMAKE_OBJECT_PATH_MAX 512)
 
 # Dependencies
 find_package(Threads REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(UUID REQUIRED uuid)
 
 # Vendor libs
 
@@ -41,6 +43,10 @@ find_package(Threads REQUIRED)
 	set(SPDLOG_HEADER_ONLY ON)
 	add_subdirectory(vendor/spdlog)
 
+	# NLOHMANN/JSON
+	add_subdirectory(vendor/json)
+
 # Add engine + game
 add_subdirectory(origo)
 add_subdirectory(game)
+add_subdirectory(editor)

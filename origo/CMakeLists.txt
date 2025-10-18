@@ -25,6 +25,7 @@ target_link_libraries(OrigoEngine PUBLIC
     assimp
     Threads::Threads
     spdlog_header_only
+    nlohmann_json::nlohmann_json
 )
 
 target_precompile_headers(OrigoEngine PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)

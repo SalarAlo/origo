@@ -3,21 +3,28 @@
 
 namespace Origo {
 
+static std::vector<RenderCommand> s_DrawQueue;
+
+static void DrawMesh(const RenderCommand& renderCommand) {
+	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
+	renderCommand.GetMesh()->Render();
+}
+
 void Renderer::BeginFrame() {
 }
 
 void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform) {
-	m_DrawQueue.emplace_back(mesh, material, transform);
+	s_DrawQueue.emplace_back(mesh, material, transform);
 }
 
 void Renderer::Flush(const Camera& camera) {
-	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
+	std::sort(s_DrawQueue.begin(), s_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
 		return a.GetMaterial() < b.GetMaterial();
 	});
 
 	Ref<Material> currentMaterial = nullptr;
 
-	for (auto& cmd : m_DrawQueue) {
+	for (auto& cmd : s_DrawQueue) {
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
 			ORG_CORE_ERROR("[Renderer] Null reference in RenderCommand");
 			continue;
@@ -36,12 +43,7 @@ void Renderer::Flush(const Camera& camera) {
 		DrawMesh(cmd);
 	}
 
-	m_DrawQueue.clear();
-}
-
-void Renderer::DrawMesh(const RenderCommand& renderCommand) {
-	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
-	renderCommand.GetMesh()->Render();
+	s_DrawQueue.clear();
 }
 
 void Renderer::EndFrame() {
