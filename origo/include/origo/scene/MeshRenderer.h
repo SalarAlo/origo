@@ -15,6 +15,7 @@ public:
 	Ref<Mesh> GetMesh();
 	Ref<Material> GetMaterial();
 
+	COMP_SERI_FWD
 private:
 	Ref<Material> m_Material {};
 	Ref<Mesh> m_Mesh {};

@@ -21,15 +21,14 @@ void Serialize(std::string_view outPath, const Scene& scene) {
 
 	sceneJson["entities"] = entitiesJson;
 
-	// --- Write to readable JSON file ---
 	std::ofstream out(std::string("resources/scenes/") + std::string(outPath),
 	    std::ios::out | std::ios::trunc);
 	if (!out) {
 		throw std::runtime_error("Failed to open output file: " + std::string(outPath));
 	}
 
-	out << sceneJson.dump(4); // 4-space indentation for readability
+	out << sceneJson.dump(8);
 	out.close();
 }
 
-} // namespace Origo::SceneSerialization
+}

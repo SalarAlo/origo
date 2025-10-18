@@ -3,7 +3,7 @@
 #include "RenderCommand.h"
 #include "origo/Camera.h"
 #include "origo/renderer/Material.h"
-#include "origo/renderer/Transform.h"
+#include "origo/scene/Transform.h"
 #include <glm/glm.hpp>
 
 namespace Origo::Renderer {

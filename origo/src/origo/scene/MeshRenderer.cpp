@@ -1,4 +1,5 @@
 #include "origo/scene/MeshRenderer.h"
+#include "origo/scene/Component.h"
 
 namespace Origo {
 MeshRenderer::MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Entity& entity)
@@ -15,4 +16,15 @@ Ref<Material> MeshRenderer::GetMaterial() {
 	return m_Material;
 }
 
+COMP_SERI_NAME_DEF(MeshRenderer)
+
+nlohmann::json MeshRenderer::Serialize() const {
+	using nlohmann::json;
+	json serializedMeshRenderer;
+
+	return serializedMeshRenderer;
+}
+
+void MeshRenderer::Deserialize(const nlohmann::json& j) {
+}
 }

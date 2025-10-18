@@ -24,6 +24,8 @@ public:
 
 	const glm::mat4& GetModelMatrix();
 
+	COMP_SERI_FWD
+
 private:
 	void RecalculateModel();
 

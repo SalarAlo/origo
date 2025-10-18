@@ -17,14 +17,14 @@
 #include "origo/Camera.h"
 #include "origo/renderer/Mesh.h"
 #include "origo/renderer/Shader.h"
-#include "origo/renderer/Transform.h"
 
 // SCENE RELATED
 #include "origo/scene/MeshRenderer.h"
+#include "origo/scene/Transform.h"
 #include "origo/scene/Scene.h"
 
 // ASSETS
-#include "origo/assets/PrimitiveShapes.h"
+#include "origo/assets/ShapeLibrary.h"
 
 // INPUT
 #include "origo/input/Input.h"

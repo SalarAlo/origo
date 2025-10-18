@@ -1,6 +1,6 @@
 #include "origo/renderer/Material.h"
 #include "origo/renderer/Mesh.h"
-#include "origo/renderer/Transform.h"
+#include "origo/scene/Transform.h"
 
 namespace Origo {
 class RenderCommand {

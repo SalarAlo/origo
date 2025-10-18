@@ -10,7 +10,7 @@ Ref<Texture> Load(const std::string& path) {
 	auto resultFind { s_Cache.find(path) };
 
 	if (resultFind == s_Cache.cend()) {
-		s_Cache[path] = MakeRef<Texture>(path);
+		s_Cache[path] = MakeRef<Texture>("resources/textures/" + path);
 	} else {
 		ORG_CORE_INFO("[TextureCache] found cached value for shader with name {}", path);
 	}

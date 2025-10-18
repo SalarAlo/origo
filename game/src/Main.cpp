@@ -9,7 +9,7 @@
 
 #include "origo/input/Input.h"
 
-#include "origo/renderer/Transform.h"
+#include "origo/scene/Transform.h"
 
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Scene.h"
@@ -24,7 +24,7 @@ public:
 	void Awake() override {
 		m_Camera.SetSpeed(100);
 
-		auto logoTexture { Origo::TextureCache::Load("resources/textures/rowlett.jpg") };
+		auto logoTexture { Origo::TextureCache::Load("rowlett.jpg") };
 
 		m_Shader = Origo::ShaderLibrary::Load("normal");
 		m_Material = Origo::MaterialLibrary::Create(m_Shader, logoTexture);
