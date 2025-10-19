@@ -13,45 +13,69 @@ Focused on clarity, control, and correctness.
 
 <h2 align="center">Overview</h2>
 
+<p align="center">
 Origo is a small, self-contained 3D engine built for Linux.  
 No portability layers or cross-platform abstractions.  
 Intended for experimentation, rendering research, and low-level engine work.
+</p>
 
 ---
-
 <h2 align="center">Requirements</h2>
 
-| Requirement   | Notes                          |
-|--------------|---------------------------------|
-| Linux        | Developed and tested on Fedora  |
-| C++ Compiler | C++20 or newer                  |
-| OpenGL       | Proper driver support required  |
-| CMake        | Build system                    |
-| Optional     | stb_image, glm, etc.            |
+<div align="center">
+  <table style="margin:auto;">
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Linux</td><td>Developed and tested on Fedora</td></tr>
+      <tr><td>C++ Compiler</td><td>C++20 or newer</td></tr>
+      <tr><td>OpenGL</td><td>Proper driver support required</td></tr>
+      <tr><td>CMake</td><td>Build system</td></tr>
+      <tr><td>Optional</td><td>stb_image, glm, etc.</td></tr>
+    </tbody>
+  </table>
+</div>
 
----
+<hr/>
 
 <h2 align="center">Project Layout</h2>
 
-| Path             | Description               |
-|------------------|---------------------------|
-| `origo/`         | Engine source             |
-| `game/`          | Example application       |
-| `editor/`        | WIP editor                |
-| `resources/`     | Shaders, textures, models |
-| `vendor/`        | Third-party deps          |
-| `CMakeLists.txt` | Root build config         |
-| `pch.*`          | Precompiled headers       |
-| `run.sh`         | Run helper                |
-| `generate.sh`    | Build helper              |
-| `overview.sh`    | Repo overview helper      |
+<div align="center">
+  <table style="margin:auto;">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>origo/</code></td><td>Engine source</td></tr>
+      <tr><td><code>game/</code></td><td>Example application</td></tr>
+      <tr><td><code>editor/</code></td><td>WIP editor</td></tr>
+      <tr><td><code>resources/</code></td><td>Shaders, textures, models</td></tr>
+      <tr><td><code>vendor/</code></td><td>Third-party deps</td></tr>
+      <tr><td><code>CMakeLists.txt</code></td><td>Root build config</td></tr>
+      <tr><td><code>pch.*</code></td><td>Precompiled headers</td></tr>
+      <tr><td><code>run.sh</code></td><td>Run helper</td></tr>
+      <tr><td><code>generate.sh</code></td><td>Build helper</td></tr>
+      <tr><td><code>overview.sh</code></td><td>Repo overview helper</td></tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
 <h2 align="center">Example</h2>
 
+<p align="center">
 A minimal client using the engine:
+</p>
 
+```cpp
     // C++
     class GameApplication : public Origo::Application {
     public:
@@ -104,24 +128,28 @@ A minimal client using the engine:
         Origo::Ref<Origo::Shader> m_Shader;
         Origo::Ref<Origo::Material> m_Material;
     };
-
+```
 ---
 
 <h2 align="center">Building</h2>
 
-    # bash
-    git clone https://github.com/<user>/Origo.git
-    cd Origo
-    mkdir build
-    ./generate.sh
+<div align="">
+  <pre><code>git clone https://github.com/&lt;user&gt;/Origo.git
+cd Origo
+mkdir build
+./generate.sh</code></pre>
+</div>
 
-**Run the example (from repo root on Linux):**
+<p align="center"><strong>Run the example (from repo root on Linux):</strong></p>
 
-    # bash
-    ./run.sh
+<div align="">
+  <pre><code>./run.sh</code></pre>
+</div>
 
 ---
 
 <h2 align="center">Status</h2>
 
+<p align="center">
 Under active development. APIs and layout may change.
+</p>
