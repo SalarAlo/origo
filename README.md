@@ -114,7 +114,7 @@ A minimal client using the engine:
   
 ## Run the example (from root if your on linux):
     
-    ./run 
+    ./run.sh
 
 ---
 
