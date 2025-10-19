@@ -1,10 +1,12 @@
 #pragma once
 
+#include "origo/core/Identifiable.h"
 #include "origo/renderer/IndexBuffer.h"
 #include "origo/renderer/VertexArray.h"
 #include "origo/renderer/VertexBuffer.h"
+
 namespace Origo {
-class Mesh {
+class Mesh : public Identifiable {
 public:
 	Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
 	void Render() const;

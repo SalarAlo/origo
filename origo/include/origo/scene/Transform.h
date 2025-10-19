@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/scene/Entity.hpp"
 #include "origo/scene/Component.h"
 #include <glm/glm.hpp>
 
@@ -7,7 +8,7 @@ namespace Origo {
 
 class Transform : public Component {
 public:
-	Transform(class Entity& entity);
+	Transform(Ref<class Entity> entity);
 
 	void Translate(const glm::vec3& delta);
 	void SetPosition(const glm::vec3& position);
@@ -24,7 +25,7 @@ public:
 
 	const glm::mat4& GetModelMatrix();
 
-	COMP_SERI_FWD
+	std::string GetName() const override { return "MeshRenderer"; }
 
 private:
 	void RecalculateModel();

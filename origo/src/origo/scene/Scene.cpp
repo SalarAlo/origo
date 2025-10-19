@@ -8,31 +8,17 @@ Scene::Scene(std::string_view name)
     : m_Name(name) { }
 
 Ref<Entity> Scene::CreateEntity(std::string_view name) {
-	EntityId entityId;
-
-	if (m_FreeIndices.empty()) {
-		m_Generation.push_back(0);
-
-		entityId.Index = m_Generation.size() - 1;
-		entityId.Generation = 0;
-	} else {
-		auto freeIdx { m_FreeIndices.front() };
-		m_FreeIndices.pop();
-		entityId.Index = freeIdx;
-		entityId.Generation = m_Generation[freeIdx];
-	}
-
-	auto entity = MakeRef<Entity>(name, entityId);
-	m_Entities.emplace(entityId, entity);
+	auto entity = MakeRef<Entity>(name);
+	m_Entities.emplace(entity->GetId(), entity);
 	return entity;
 }
 
 void Scene::Render() {
-	for (const auto& [_, e] : m_Entities) {
-		if (Ref<MeshRenderer> x = e->GetComponent<MeshRenderer>()) {
-			Renderer::Submit(
-			    x->GetMesh(), x->GetMaterial(), x->E.GetComponent<Transform>());
-		}
+	for (const auto& renderer : m_ComponentManager.GetAllComponentsOfType<MeshRenderer>()) {
+		Renderer::Submit(
+		    renderer->GetMesh(),
+		    renderer->GetMaterial(),
+		    m_ComponentManager.GetComponent<Transform>(renderer->AttachedTo));
 	}
 
 	Renderer::Flush(m_Camera);

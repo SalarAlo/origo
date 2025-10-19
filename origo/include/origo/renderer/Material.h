@@ -1,12 +1,13 @@
 #pragma once
 
+#include "origo/core/Identifiable.h"
 #include "origo/renderer/Shader.h"
 #include "origo/renderer/Texture.h"
 #include "origo/renderer/UniformList.hpp"
 
 namespace Origo {
 
-class Material {
+class Material : public Identifiable {
 public:
 	Material(const Ref<Shader>& shader, const Ref<Texture>& material = nullptr);
 	void Bind();

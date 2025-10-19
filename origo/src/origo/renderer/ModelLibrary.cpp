@@ -4,12 +4,12 @@
 #include "assimp/scene.h"
 
 namespace Origo {
-std::vector<Mesh> ModelLibrary::Create(const std::string& path) {
+std::vector<Ref<Mesh>> ModelLibrary::Create(const std::string& path) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
 	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs);
 
-	std::vector<Mesh> meshes;
+	std::vector<Ref<Mesh>> meshes;
 
 	if (!scene || !scene->HasMeshes()) {
 		return meshes;
@@ -52,7 +52,7 @@ std::vector<Mesh> ModelLibrary::Create(const std::string& path) {
 			}
 		}
 
-		meshes.emplace_back(vertices, indices);
+		meshes.emplace_back(MakeRef<Mesh>(vertices, indices));
 	}
 
 	return meshes;

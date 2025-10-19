@@ -1,8 +1,10 @@
 #pragma once
 
 #include "origo/Camera.h"
+#include "origo/core/Identifiable.h"
 #include "origo/scene/Entity.hpp"
-#include <queue>
+#include "origo/scene/ComponentManager.h"
+#include <unordered_map>
 #
 
 namespace Origo {
@@ -22,13 +24,11 @@ public:
 	Camera& GetCamera();
 	const std::string& GetName() const;
 
+	ComponentManager m_ComponentManager;
+
 private:
 	std::string m_Name;
-
-	std::unordered_map<EntityId, Ref<Entity>, EntityIdHash> m_Entities;
+	std::unordered_map<UUID, Ref<Entity>> m_Entities;
 	Camera m_Camera {};
-
-	std::queue<int> m_FreeIndices;
-	std::vector<int> m_Generation {};
 };
 }

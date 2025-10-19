@@ -1,8 +1,9 @@
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Component.h"
+#include "origo/scene/Entity.hpp"
 
 namespace Origo {
-MeshRenderer::MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Entity& entity)
+MeshRenderer::MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Ref<Entity> entity)
     : Component(entity)
     , m_Material(material)
     , m_Mesh(mesh) {
@@ -16,15 +17,4 @@ Ref<Material> MeshRenderer::GetMaterial() {
 	return m_Material;
 }
 
-COMP_SERI_NAME_DEF(MeshRenderer)
-
-nlohmann::json MeshRenderer::Serialize() const {
-	using nlohmann::json;
-	json serializedMeshRenderer;
-
-	return serializedMeshRenderer;
-}
-
-void MeshRenderer::Deserialize(const nlohmann::json& j) {
-}
 }

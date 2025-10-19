@@ -4,7 +4,7 @@
 
 namespace Origo {
 
-Transform::Transform(class Entity& entity)
+Transform::Transform(Ref<class Entity> entity)
     : Component(entity)
     , m_Position(0.0f)
     , m_Rotation(0.0f)
@@ -63,37 +63,6 @@ void Transform::RecalculateModel() {
 
 	m_ModelMatrix = translation * rotation * scale;
 	m_Dirty = false;
-}
-
-nlohmann::json Transform::Serialize() const {
-	using nlohmann::json;
-	json serializedTransform;
-
-	auto serialize = [&](std::string_view name, const glm::vec3& collection) {
-		serializedTransform[name] = { collection.x, collection.y, collection.z };
-	};
-
-	serialize("position", m_Position);
-	serialize("rotation", m_Rotation);
-	serialize("scale", m_Scale);
-
-	return serializedTransform;
-}
-
-void Transform::Deserialize(const nlohmann::json& j) {
-	auto set = [&](const std::string& name, glm::vec3& v) {
-		auto arr = j.at(name);
-		v = { arr[0], arr[1], arr[2] };
-	};
-	set("position", m_Position);
-	set("rotation", m_Rotation);
-	set("scale", m_Scale);
-
-	m_Dirty = true;
-}
-
-std::string Transform::GetName() const {
-	return "Transform";
 }
 
 }

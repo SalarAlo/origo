@@ -4,12 +4,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace {
-struct ShaderData {
-	const char* VertexShader {};
-	const char* FragmentShader {};
-};
-}
 namespace Origo {
 
 static GLuint CompileShader(GLenum type, const char* src) {
@@ -50,56 +44,9 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 	return program;
 }
 
-static std::string ReadFile(std::string_view path) {
-	constexpr std::size_t readSize { 4096 };
-	auto stream = std::ifstream(path.data());
-	if (!stream) {
-		ORG_CORE_ERROR("[Shader] Trying to read non existent file!");
-		throw std::ios_base::failure("file does not exist");
-	}
-	std::string out {};
-	std::string buf(readSize, '\0');
-	while (stream.read(&buf[0], readSize)) {
-		out.append(buf, 0, stream.gcount());
-	}
-	out.append(buf, 0, stream.gcount());
-	return out;
-}
-
-static ShaderData GetData(std::string_view name) {
-	ShaderData data {};
-	std::string fileContent { ReadFile("./resources/shaders/" + std::string(name) + ".glsl") };
-
-	auto vertPos { fileContent.find("#VERTEX") };
-	auto fragPos { fileContent.find("#FRAGMENT") };
-
-	if (vertPos == std::string::npos || fragPos == std::string::npos) {
-		ORG_CORE_ERROR("[Shader] file missing #VERTEX or #FRAGMENT section");
-		throw std::runtime_error("Shader file missing #VERTEX or #FRAGMENT section");
-	}
-
-	std::string vertexSrc { fileContent.substr(vertPos + 7, fragPos - (vertPos + 7)) };
-	std::string fragmentSrc { fileContent.substr(fragPos + 9) };
-
-	static std::string vertexStorage, fragmentStorage;
-	vertexStorage = std::move(vertexSrc);
-	fragmentStorage = std::move(fragmentSrc);
-
-	data.VertexShader = vertexStorage.c_str();
-	data.FragmentShader = fragmentStorage.c_str();
-
-	return data;
-}
-
-Shader::Shader(std::string_view name) {
-	auto shaderData { GetData(name) };
-	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
-	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
-	m_ProgramId = LinkProgram(vertexId, fragmentId);
-}
-
-Shader::Shader(std::string_view vertShader, std::string_view fragShader) {
-	ShaderData shaderData { .VertexShader = vertShader.data(), .FragmentShader = fragShader.data() };
+Shader::Shader(Ref<ShaderSource> src)
+    : m_Source(src) {
+	auto shaderData { src->GetShaderData() };
 	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
 	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
 	m_ProgramId = LinkProgram(vertexId, fragmentId);
@@ -113,6 +60,7 @@ void Shader::UseProgram() const {
 	glUseProgram(m_ProgramId);
 }
 
+#pragma region TEMPLATE_UNIFORM_SPECIALIZATIONS
 template <>
 void Shader::SetUniform<glm::mat4>(std::string_view name, const glm::mat4& mat) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
@@ -157,4 +105,5 @@ void Shader::SetUniform<int>(std::string_view name, const int& value) const {
 	}
 	glUniform1i(loc, value);
 }
+#pragma endregion
 }

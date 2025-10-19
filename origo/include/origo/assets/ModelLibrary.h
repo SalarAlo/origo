@@ -5,7 +5,7 @@
 namespace Origo {
 
 namespace ModelLibrary {
-	std::vector<Mesh> Create(const std::string& path);
+	std::vector<Ref<Mesh>> Create(const std::string& path);
 };
 
 }

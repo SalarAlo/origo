@@ -13,7 +13,6 @@
 
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Scene.h"
-
 class GameApplication : public Origo::Application {
 public:
 	GameApplication(const Origo::ApplicationSettings& applicationSettings)
@@ -39,17 +38,18 @@ public:
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
 				int x {};
-				for (const Origo::Mesh& mesh : pikachu) {
+				for (const auto& mesh : pikachu) {
 					auto entity = m_Scene.CreateEntity(
 					    "Pikachu_" + std::to_string(i * GRID_SIZE * pikachu.size() + j * pikachu.size() + x));
 
 					Origo::Ref<Origo::Transform> transform {
-						entity->AttachComponent<Origo::Transform>()
+						m_Scene.m_ComponentManager.AddComponent<Origo::Transform>(entity)
 					};
+
 					transform->SetPosition(glm::vec3 { i * 40, j * 40, 11 });
 					transform->SetScale(glm::vec3 { 1 });
 
-					entity->AttachComponent<Origo::MeshRenderer>(m_Material, Origo::MakeRef<Origo::Mesh>(mesh));
+					m_Scene.m_ComponentManager.AddComponent<Origo::MeshRenderer>(entity, m_Material, mesh);
 					x++;
 				}
 			}
@@ -62,6 +62,7 @@ public:
 
 	void Update(double dt) override {
 		glm::vec3 direction(0.0f);
+		ORG_INFO("FPS: {}", 1.0 / dt);
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera.GetForward();

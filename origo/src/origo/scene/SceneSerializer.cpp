@@ -4,6 +4,8 @@
 
 namespace Origo::SceneSerialization {
 
+// TODO: is there really no way for components to be serialized antoher way. because if clients write them we're kinda cooked
+
 void Serialize(std::string_view outPath, const Scene& scene) {
 	using nlohmann::json;
 
@@ -11,9 +13,10 @@ void Serialize(std::string_view outPath, const Scene& scene) {
 	sceneJson["scene_name"] = scene.m_Name;
 
 	json entitiesJson = json::array();
+
 	for (const auto& [id, entity] : scene.m_Entities) {
 		json singleEntityJson;
-		singleEntityJson["id"] = EntityIdHash {}(id);
+		singleEntityJson["id"] = entity->GetId().ToString();
 		singleEntityJson["name"] = entity->GetName();
 
 		entitiesJson.push_back(singleEntityJson);

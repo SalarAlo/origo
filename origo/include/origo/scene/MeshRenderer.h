@@ -10,12 +10,13 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Entity& entity);
+	MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Ref<Entity> entity);
 
 	Ref<Mesh> GetMesh();
 	Ref<Material> GetMaterial();
 
-	COMP_SERI_FWD
+	std::string GetName() const override { return "MeshRenderer"; }
+
 private:
 	Ref<Material> m_Material {};
 	Ref<Mesh> m_Mesh {};

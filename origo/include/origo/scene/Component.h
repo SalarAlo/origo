@@ -7,24 +7,17 @@ class Entity;
 
 class Component {
 public:
-	Component(Entity& entity)
-	    : E(entity) { };
+	Component(Ref<Entity> entity)
+	    : AttachedTo(entity) { };
 	virtual ~Component() = default;
-
-	virtual nlohmann::json Serialize() const = 0;
-	virtual void Deserialize(const nlohmann::json& j) = 0;
 	virtual std::string GetName() const = 0;
 
+	virtual void Awake() { };
+	virtual void Start() { };
+	virtual void Update() { };
+
 public:
-	Entity& E;
+	Ref<Entity> AttachedTo;
 };
 
 }
-
-#define COMP_SERI_FWD                              \
-	std::string GetName() const override;      \
-	nlohmann::json Serialize() const override; \
-	void Deserialize(const nlohmann::json& j) override;
-
-#define COMP_SERI_NAME_DEF(NAME) \
-	std::string NAME::GetName() const { return #NAME; }
