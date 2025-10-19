@@ -112,7 +112,8 @@ A minimal client using the engine:
     mkdir build 
     ./generate.sh
   
-Run the example (from root if your on linux):
+## Run the example (from root if your on linux):
+    
     ./run 
 
 ---
