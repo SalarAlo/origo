@@ -1,72 +1,122 @@
-<div align="center">
+# Origo
 
-<h1>🜂 Origo</h1>
-<p><strong>A Linux-first 3D Engine</strong></p>
+A Linux-first 3D engine written in C++ and GLSL.  
+Focused on clarity, control, and correctness.
 
-<img src="resources/textures/origo_logo.png" alt="Origo Logo" width="300"/>
-
-<hr style="width:50%;margin:auto;">
-
-<p><em>Barebones • Correct • Clear • Controlled • Fast</em></p>
-
-</div>
+<img src="resources/textures/origo_logo.png" alt="Origo Logo" width="400"/>
 
 ---
 
-<h2 align="center">🧭 Overview</h2>
+## Overview
 
-<p align="center">
-<b>Origo</b> is a minimalistic 3D engine written entirely in <b>C++</b> and <b>GLSL</b>,  
-built from the ground up for <b>Linux</b> — no compromises, no cross-platform clutter.
-</p>
-
-<p align="center"><em>“Everything should be as simple as possible, but no simpler.”</em></p>
+Origo is a small, self-contained 3D engine built for Linux.  
+No portability layers or cross-platform abstractions.  
+Intended for experimentation, rendering research, and low-level engine work.
 
 ---
 
-<h2 align="center">🧰 Requirements</h2>
+## Requirements
 
-<div align="center">
-
-<table>
-<tr><th>Requirement</th><th>Notes</th></tr>
-<tr><td><b>Linux</b></td><td>Optimized and tested on <b>Fedora</b></td></tr>
-<tr><td><b>C++ Compiler</b></td><td>Must support <b>C++20</b> or newer</td></tr>
-<tr><td><b>OpenGL</b></td><td>Proper driver support required</td></tr>
-<tr><td><b>CMake</b></td><td>For building the project</td></tr>
-<tr><td><b>(Optional)</b></td><td>External libs (e.g. <code>stb_image</code>, <code>GLM</code>, etc.)</td></tr>
-</table>
-
-</div>
+| Requirement   | Notes                         |
+|--------------|-------------------------------|
+| Linux        | Developed and tested on Fedora|
+| C++ Compiler | C++20 or newer                |
+| OpenGL       | Proper driver support required|
+| CMake        | Build system                  |
+| Optional     | stb_image, glm, etc.          |
 
 ---
 
-<h2 align="center">📁 Project Layout</h2>
+## Project Layout
 
-<div align="center">
-
-<table>
-<tr><th>Path</th><th>Description</th></tr>
-<tr><td><code>origo/</code></td><td>Engine core code</td></tr>
-<tr><td><code>game/</code></td><td>Sample/demo project</td></tr>
-<tr><td><code>resources/</code></td><td>Shaders, textures, and models</td></tr>
-<tr><td><code>vendor/</code></td><td>Third-party libraries</td></tr>
-<tr><td><code>CMakeLists.txt</code></td><td>Root build script</td></tr>
-<tr><td><code>pch.*</code></td><td>Precompiled headers</td></tr>
-<tr><td><code>overview.sh</code></td><td>Helper script</td></tr>
-</table>
-
-</div>
+| Path              | Description                       |
+|-------------------|-----------------------------------|
+| `origo/`          | Engine source                     |
+| `game/`           | Example application               |
+| `editor/`         | WIP editor                        |
+| `resources/`      | Shaders, textures, models         |
+| `vendor/`         | Third-party deps                  |
+| `CMakeLists.txt`  | Root build config                 |
+| `pch.*`           | Precompiled headers               |
+| `run.sh`          | Run helper                        |
+| `generate.sh`     | Build helper                      |
+| `overview.sh`     | Repo overview helper              |
 
 ---
 
-<div align="center">
+## Example
 
-<h3>⚠️ Under Active Development</h3>
-<p><em>Expect instability. Correctness and control come first.</em></p>
+A minimal client using the engine:
 
-<hr style="width:30%;margin:auto;">
+```cpp
+    class GameApplication : public Origo::Application {
+    public:
+        GameApplication(const Origo::ApplicationSettings& s)
+            : Origo::Application(s), m_Camera(m_Scene.GetCamera()) {}
 
-<h3>🜂 Built for Linux. Built for understanding.</h3>
+        void Awake() override {
+            m_Camera.SetSpeed(100);
+            auto tex = Origo::TextureCache::Load("rowlett.jpg");
+            m_Shader = Origo::ShaderLibrary::Load("normal");
+            m_Material = Origo::MaterialLibrary::Create(m_Shader, tex);
+            SpawnTestGrid();
+        }
 
-</div>
+        void SpawnTestGrid() {
+            auto model = Origo::ModelLibrary::Create("pikachu.glb");
+            for (int i = 0; i < GRID_SIZE; ++i)
+                for (int j = 0; j < GRID_SIZE; ++j)
+                    for (const auto& mesh : model) {
+                        auto entity = m_Scene.CreateEntity("Entity_" + std::to_string(i * GRID_SIZE + j));
+                        auto t = m_Scene.m_ComponentManager.AddComponent<Origo::Transform>(entity);
+                        t->SetPosition({ i * 40, j * 40, 11 });
+                        t->SetScale({ 1 });
+                        m_Scene.m_ComponentManager.AddComponent<Origo::MeshRenderer>(entity, m_Material, mesh);
+                    }
+        }
+
+        void HandleEvent(Origo::Event& e) override { m_Camera.OnEvent(e); }
+
+        void Update(double dt) override {
+            glm::vec3 dir(0.0f);
+            ORG_INFO("FPS: {}", 1.0 / dt);
+
+            if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W)) dir += m_Camera.GetForward();
+            if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S)) dir -= m_Camera.GetForward();
+            if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D)) dir += m_Camera.GetRight();
+            if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A)) dir -= m_Camera.GetRight();
+
+            if (glm::length(dir) > 0.0f)
+                m_Camera.Move(glm::normalize(dir) * static_cast<float>(dt));
+        }
+
+        void OnShutdown() override {
+            Origo::SceneSerialization::Serialize("scene.json", m_Scene);
+        }
+
+    private:
+        static constexpr int GRID_SIZE = 10;
+        Origo::Camera& m_Camera;
+        Origo::Ref<Origo::Shader> m_Shader;
+        Origo::Ref<Origo::Material> m_Material;
+    };
+
+```
+
+---
+
+## Building
+
+    git clone https://github.com/<user>/Origo.git
+    cd Origo
+    mkdir build 
+    ./generate.sh
+  
+Run the example (from root if your on linux):
+    ./run 
+
+---
+
+## Status
+
+Under active development. APIs and layout may change.
