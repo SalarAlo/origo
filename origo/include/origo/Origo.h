@@ -15,8 +15,8 @@
 
 // RENDERING
 #include "origo/Camera.h"
-#include "origo/renderer/Mesh.h"
-#include "origo/renderer/Shader.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/Shader.h"
 
 // SCENE RELATED
 #include "origo/scene/MeshRenderer.h"

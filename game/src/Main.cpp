@@ -1,18 +1,17 @@
-#include "origo/assets/MaterialLibrary.h"
-#include "origo/assets/ModelLibrary.h"
-#include "origo/assets/ShaderLibrary.h"
-#include "origo/assets/TextureCache.h"
-#include "origo/assets/ShapeLibrary.h"
 
+#include "origo/assets/PrimitiveShape.h"
+#include "origo/assets/Shader.h"
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 
 #include "origo/input/Input.h"
 
 #include "origo/scene/Transform.h"
-
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Scene.h"
+
+#include "origo/assets/AssetManager.h"
+
 class GameApplication : public Origo::Application {
 public:
 	GameApplication(const Origo::ApplicationSettings& applicationSettings)
@@ -23,35 +22,30 @@ public:
 	void Awake() override {
 		m_Camera.SetSpeed(100);
 
-		auto logoTexture { Origo::TextureCache::Load("rowlett.jpg") };
+		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "rowlett.jpg") };
 
-		m_Shader = Origo::ShaderLibrary::Load("normal");
-		m_Material = Origo::MaterialLibrary::Create(m_Shader, logoTexture);
+		m_Shader = Origo::AssetManager::CreateAsset<Origo::Shader>("Normal Shader", "normal");
+		m_Material = Origo::AssetManager::CreateAsset<Origo::Material>("Normal Material", m_Shader, logoTexture);
 
 		SpawnTestGrid();
 	}
 
 	void SpawnTestGrid() {
-		auto pikachu = Origo::ModelLibrary::Create("pikachu.glb");
-		auto cubeMesh = Origo::ShapeLibrary::Load(Origo::ShapeLibrary::PrimitiveShape::CUBE);
+		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
-				int x {};
-				for (const auto& mesh : pikachu) {
-					auto entity = m_Scene.CreateEntity(
-					    "Pikachu_" + std::to_string(i * GRID_SIZE * pikachu.size() + j * pikachu.size() + x));
+				auto entity = m_Scene.CreateEntity(
+				    "Cube_" + std::to_string(i * GRID_SIZE + j));
 
-					Origo::Ref<Origo::Transform> transform {
-						m_Scene.m_ComponentManager.AddComponent<Origo::Transform>(entity)
-					};
+				Origo::Ref<Origo::Transform> transform {
+					m_Scene.m_ComponentManager.AddComponent<Origo::Transform>(entity)
+				};
 
-					transform->SetPosition(glm::vec3 { i * 40, j * 40, 11 });
-					transform->SetScale(glm::vec3 { 1 });
+				transform->SetPosition(glm::vec3 { i, 0, j });
+				transform->SetScale(glm::vec3 { 1 });
 
-					m_Scene.m_ComponentManager.AddComponent<Origo::MeshRenderer>(entity, m_Material, mesh);
-					x++;
-				}
+				m_Scene.m_ComponentManager.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
 			}
 		}
 	}
@@ -62,7 +56,7 @@ public:
 
 	void Update(double dt) override {
 		glm::vec3 direction(0.0f);
-		ORG_INFO("FPS: {}", 1.0 / dt);
+		// ORG_INFO("FPS: {}", 1.0 / dt);
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera.GetForward();

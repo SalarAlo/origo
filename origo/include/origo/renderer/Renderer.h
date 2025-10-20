@@ -2,7 +2,7 @@
 
 #include "RenderCommand.h"
 #include "origo/Camera.h"
-#include "origo/renderer/Material.h"
+#include "origo/assets/Material.h"
 #include "origo/scene/Transform.h"
 #include <glm/glm.hpp>
 

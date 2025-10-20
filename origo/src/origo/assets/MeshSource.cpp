@@ -1,15 +1,16 @@
-#include "origo/assets/ModelLibrary.h"
+#include "origo/assets/MeshData.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
 namespace Origo {
-std::vector<Ref<Mesh>> ModelLibrary::Create(const std::string& path) {
+#pragma region IO_ASSIMP
+std::vector<MeshData> Create(const std::string& path) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
 	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs);
 
-	std::vector<Ref<Mesh>> meshes;
+	std::vector<MeshData> meshes;
 
 	if (!scene || !scene->HasMeshes()) {
 		return meshes;
@@ -52,9 +53,11 @@ std::vector<Ref<Mesh>> ModelLibrary::Create(const std::string& path) {
 			}
 		}
 
-		meshes.emplace_back(MakeRef<Mesh>(vertices, indices));
+		meshes.emplace_back(vertices, indices);
 	}
 
 	return meshes;
 }
+#pragma endregion
+
 }

@@ -1,10 +1,25 @@
-#include "origo/renderer/Mesh.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/MeshSource.h"
+#include "origo/assets/PrimitiveShape.h"
 
 namespace Origo {
 Mesh::Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices)
-    : m_VertexArray()
+    : m_Source(MakeRef<MeshSourceRaw>(vertices, indices))
+    , m_VertexArray()
     , m_VertexBuffer(vertices)
     , m_IndexBuffer(indices) {
+	Init();
+}
+
+Mesh::Mesh(PrimitiveShape shape)
+    : m_Source(MakeRef<MeshSourcePrimitiveShape>(shape))
+    , m_VertexArray()
+    , m_IndexBuffer(m_Source->GetData().Indices)
+    , m_VertexBuffer(m_Source->GetData().Vertices) {
+	Init();
+}
+
+void Mesh::Init() {
 	m_VertexArray.Bind();
 
 	m_VertexBuffer.Bind();

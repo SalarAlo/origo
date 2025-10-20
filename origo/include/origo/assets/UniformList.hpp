@@ -1,9 +1,6 @@
 #pragma once
 
-#include "origo/renderer/Shader.h"
-#include <string>
-#include <unordered_map>
-#include <memory>
+#include "origo/assets/Shader.h"
 
 namespace Origo {
 

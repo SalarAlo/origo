@@ -1,4 +1,4 @@
-#include "origo/renderer/Material.h"
+#include "origo/assets/Material.h"
 #include "origo/core/Logger.h"
 
 namespace Origo {

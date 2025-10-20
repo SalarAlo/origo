@@ -1,14 +1,15 @@
 #pragma once
 
-#include "origo/core/Identifiable.h"
-#include "origo/renderer/ShaderSource.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/ShaderSource.h"
 #include <glm/glm.hpp>
 
 namespace Origo {
 
-class Shader : public Identifiable {
+class Shader : public Asset {
 public:
-	Shader(Ref<ShaderSource> src);
+	Shader(std::string_view path);
+	Shader(std::string_view vertexShader, std::string_view fragmentShader);
 
 	~Shader();
 	void UseProgram() const;
@@ -17,6 +18,13 @@ public:
 	void SetUniform(std::string_view name, const T& value) const;
 
 	Ref<ShaderSource> GetSource() const { return m_Source; }
+
+	AssetType GetAssetType() const override {
+		return AssetType::Shader;
+	};
+
+private:
+	void Init();
 
 private:
 	Ref<ShaderSource> m_Source;

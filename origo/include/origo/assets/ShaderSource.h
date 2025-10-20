@@ -1,11 +1,8 @@
 #pragma once
 
-namespace Origo {
+#include "origo/assets/ShaderData.h"
 
-struct ShaderData {
-	const char* VertexShader {};
-	const char* FragmentShader {};
-};
+namespace Origo {
 
 class ShaderSource {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "origo/core/Identifiable.h"
-#include "origo/renderer/Shader.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/Shader.h"
 
 namespace Origo {
 enum class TextureType {
@@ -10,15 +10,19 @@ enum class TextureType {
 
 int TextureTypeToSlot(TextureType);
 
-class Texture : public Identifiable {
+class Texture : public Asset {
 public:
 	Texture(const std::string& path, TextureType type = TextureType::Albedo);
 	void Bind(Ref<Shader>) const;
 	TextureType GetType() const;
 
+	AssetType GetAssetType() const override {
+		return AssetType::Texture;
+	}
+
 private:
 	GLuint m_TextureId;
-	TextureType m_Type;
+	TextureType m_TextureType;
 };
 
 }

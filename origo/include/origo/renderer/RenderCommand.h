@@ -1,5 +1,5 @@
-#include "origo/renderer/Material.h"
-#include "origo/renderer/Mesh.h"
+#include "origo/assets/Material.h"
+#include "origo/assets/Mesh.h"
 #include "origo/scene/Transform.h"
 
 namespace Origo {
