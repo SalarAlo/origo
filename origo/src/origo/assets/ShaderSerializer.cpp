@@ -1,6 +1,4 @@
 
-#pragma once
-
 #include "origo/assets/ShaderSerializer.h"
 #include "origo/assets/AssetSerializer.h"
 #include "origo/assets/ShaderSourceSerializer.h"
@@ -10,12 +8,15 @@ namespace Origo {
 
 nlohmann::json ShaderSerializer::Serialize(const Ref<Asset>& asset) const {
 	Ref<Shader> shader = std::dynamic_pointer_cast<Shader>(asset);
-	return ShaderSourceSerializer::Serialize(shader->GetSource());
+	nlohmann::json shaderSerialized;
+	auto source { ShaderSourceSerializer::Serialize(shader->GetSource()) };
+	shaderSerialized["source"] = source;
+
+	return shaderSerialized;
 }
 
 Ref<Asset> ShaderSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
 
-REGISTER_ASSET_SERIALIZER(Shader)
 }

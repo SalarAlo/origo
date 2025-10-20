@@ -1,6 +1,7 @@
-
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Shader.h"
+
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 
@@ -9,8 +10,6 @@
 #include "origo/scene/Transform.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Scene.h"
-
-#include "origo/assets/AssetManager.h"
 
 class GameApplication : public Origo::Application {
 public:

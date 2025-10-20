@@ -1,7 +1,6 @@
 #pragma once
 #include "Asset.h"
-#include "nlohmann/json.hpp"
-#include <memory>
+#include "nlohmann/json_fwd.hpp"
 
 namespace Origo {
 
@@ -14,14 +13,8 @@ public:
 namespace AssetSerializationRegistry {
 	void Register(AssetType type, Ref<AssetSerializer> serializer);
 	Ref<AssetSerializer> Get(AssetType type);
+
+	void RegisterAllAssetSerializers();
 }
 
-#define REGISTER_ASSET_SERIALIZER(NAME)                                                                                         \
-	namespace {                                                                                                             \
-		auto x = []() {                                                                                                 \
-			::Origo::AssetSerializationRegistry::Register(                                                          \
-			    AssetType::NAME, std::dynamic_pointer_cast<AssetSerializer>(MakeRef<::Origo::NAME##Serializer>())); \
-			return true;                                                                                            \
-		}();                                                                                                            \
-	}
 }

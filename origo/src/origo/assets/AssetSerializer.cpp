@@ -1,21 +1,30 @@
 #include "origo/assets/AssetSerializer.h"
-#include <unordered_map>
+#include "origo/assets/ShaderSerializer.h"
+#include "magic_enum/magic_enum.hpp"
 
-namespace Origo {
+namespace Origo::AssetSerializationRegistry {
 
-static std::unordered_map<AssetType, Ref<AssetSerializer>> s_AssetSerializer;
+static std::unordered_map<AssetType, Ref<AssetSerializer>>& GetRegistry() {
+	static std::unordered_map<AssetType, Ref<AssetSerializer>> registry;
+	return registry;
+}
 
-namespace AssetSerializationRegistry {
-	void Register(AssetType type, Ref<AssetSerializer> serializer) {
-		s_AssetSerializer[type] = serializer;
-	}
+void Register(AssetType type, Ref<AssetSerializer> serializer) {
+	auto& reg = GetRegistry();
+	std::cout << "Registering serializer for type " << magic_enum::enum_name(type) << std::endl;
+	reg[type] = std::move(serializer);
+}
 
-	Ref<AssetSerializer> Get(AssetType type) {
-		if (s_AssetSerializer.find(type) == s_AssetSerializer.end())
-			return nullptr;
+Ref<AssetSerializer> Get(AssetType type) {
+	auto& reg = GetRegistry();
+	auto it = reg.find(type);
+	if (it != reg.end())
+		return it->second;
+	return nullptr;
+}
 
-		return s_AssetSerializer[type];
-	}
+void RegisterAllAssetSerializers() {
+	Register(AssetType::Shader, MakeRef<ShaderSerializer>());
 }
 
 }

@@ -1,5 +1,5 @@
-#include "nlohmann/json.hpp"
-#include "origo/assets/Mesh.h"
+#include "nlohmann/json_fwd.hpp"
+#include "origo/assets/Asset.h"
 #include "origo/core/Identifiable.h"
 namespace Origo {
 

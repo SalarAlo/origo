@@ -1,4 +1,8 @@
-[2025-10-20 14:29:57.129] [ORIGO] [info] Core logger initialized
-[2025-10-20 14:29:57.129] [APP] [info] Client logger initialized
-[2025-10-20 14:29:57.163] [APP] [info] The cube has 192 amount of vertices
-[2025-10-20 14:29:57.163] [APP] [info] The cube has 192 amount of vertices
+[2025-10-20 17:28:30.919] [ORIGO] [info] Core logger initialized
+[2025-10-20 17:28:30.919] [APP] [info] Client logger initialized
+[2025-10-20 17:28:30.951] [APP] [info] The cube has 192 amount of vertices
+[2025-10-20 17:28:30.951] [APP] [info] The cube has 192 amount of vertices
+[2025-10-20 17:28:42.287] [APP] [info] Asset of type Mesh has no serializer
+[2025-10-20 17:28:42.287] [APP] [info] Asset of type Material has no serializer
+[2025-10-20 17:28:42.287] [APP] [info] Asset of type Shader has a serializer
+[2025-10-20 17:28:42.287] [APP] [info] Asset of type Texture has no serializer
