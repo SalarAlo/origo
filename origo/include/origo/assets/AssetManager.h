@@ -1,3 +1,4 @@
+#include "nlohmann/json.hpp"
 #include "origo/assets/Mesh.h"
 #include "origo/core/Identifiable.h"
 namespace Origo {
@@ -24,8 +25,8 @@ public:
 		s_Assets[id] = asset;
 	}
 
-	static void SaveAll(); // serialize to disk (later)
-	static void LoadAll(); // deserialize (later)
+	static nlohmann::json SaveAll(); // serialize to disk (later)
+	static nlohmann::json LoadAll(); // deserialize (later)
 
 private:
 	inline static std::unordered_map<UUID, Ref<Asset>> s_Assets {};

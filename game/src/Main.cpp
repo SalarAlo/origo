@@ -39,13 +39,13 @@ public:
 				    "Cube_" + std::to_string(i * GRID_SIZE + j));
 
 				Origo::Ref<Origo::Transform> transform {
-					m_Scene.m_ComponentManager.AddComponent<Origo::Transform>(entity)
+					m_Scene.AddComponent<Origo::Transform>(entity)
 				};
 
 				transform->SetPosition(glm::vec3 { i, 0, j });
 				transform->SetScale(glm::vec3 { 1 });
 
-				m_Scene.m_ComponentManager.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
+				m_Scene.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
 			}
 		}
 	}

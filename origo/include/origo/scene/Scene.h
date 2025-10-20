@@ -19,14 +19,25 @@ class Scene {
 
 public:
 	Scene(std::string_view = "SampleScene");
+
 	Ref<Entity> CreateEntity(std::string_view name);
 	void Render();
-	Camera& GetCamera();
-	const std::string& GetName() const;
 
-	ComponentManager m_ComponentManager;
+	Camera& GetCamera() {
+		return m_Camera;
+	}
+
+	const std::string& GetName() const {
+		return m_Name;
+	}
+
+	template <ComponentConcept T, typename... Args>
+	Ref<T> AddComponent(const Ref<Entity>& entity, Args&&... args) {
+		return m_ComponentManager.AddComponent<T>(entity, std::forward<Args>(args)...);
+	}
 
 private:
+	ComponentManager m_ComponentManager;
 	std::string m_Name;
 	std::unordered_map<UUID, Ref<Entity>> m_Entities;
 	Camera m_Camera {};

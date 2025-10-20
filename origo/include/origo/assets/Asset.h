@@ -1,3 +1,5 @@
+#pragma once
+
 #include "origo/core/Identifiable.h"
 
 namespace Origo {

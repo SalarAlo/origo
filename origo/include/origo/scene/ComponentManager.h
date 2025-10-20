@@ -24,6 +24,7 @@ public:
 		auto& map = GetComponentsMap<T>();
 		return map[entity->GetId()];
 	}
+
 	template <ComponentConcept T>
 	std::vector<Ref<T>> GetAllComponentsOfType() {
 		auto& map = GetComponentsMap<T>();

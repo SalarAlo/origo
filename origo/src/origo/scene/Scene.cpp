@@ -24,10 +24,4 @@ void Scene::Render() {
 	Renderer::Flush(m_Camera);
 }
 
-const std::string& Scene::GetName() const { return m_Name; }
-
-Camera& Scene::GetCamera() {
-	return m_Camera;
-}
-
 }
