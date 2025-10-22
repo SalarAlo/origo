@@ -1,6 +1,7 @@
 #include "origo/assets/AssetSerializer.h"
 #include "origo/assets/MaterialSerializer.h"
 #include "origo/assets/MeshSerializer.h"
+#include "origo/assets/ModelSerializer.h"
 #include "origo/assets/ShaderSerializer.h"
 #include "origo/assets/TextureSerializer.h"
 
@@ -29,6 +30,7 @@ void RegisterAllAssetSerializers() {
 	Register(AssetType::Texture, MakeRef<TextureSerializer>());
 	Register(AssetType::Material, MakeRef<MaterialSerializer>());
 	Register(AssetType::Mesh, MakeRef<MeshSerializer>());
+	Register(AssetType::Model, MakeRef<ModelSerializer>());
 }
 
 }

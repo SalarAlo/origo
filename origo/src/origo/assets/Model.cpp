@@ -1,12 +1,15 @@
 #include "origo/assets/MeshData.h"
+#include "origo/assets/Model.h"
+#include "origo/assets/AssetManager.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+#include <string>
 
 namespace Origo {
 
 #pragma region IO_ASSIMP
-std::vector<MeshData> Create(const std::string& path) {
+std::vector<MeshData> LoadMeshData(const std::string& path) {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("./resources/models/" + path,
 	    aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs);
@@ -60,5 +63,22 @@ std::vector<MeshData> Create(const std::string& path) {
 	return meshes;
 }
 #pragma endregion
+
+Model::Model(std::string_view path)
+    : m_Path(path)
+    , m_Meshes() {
+	auto meshData { LoadMeshData(m_Path) };
+
+	for (size_t i {}; i < meshData.size(); i++) {
+		auto mesh { AssetManager::CreateAsset<Mesh>(path.data() + std::to_string('_') + std::to_string(i), m_Path, i, meshData[i]) };
+		m_Meshes.push_back(mesh);
+	}
+}
+
+void Model::Render() const {
+	for (const auto& mesh : m_Meshes) {
+		mesh->Render();
+	}
+}
 
 }

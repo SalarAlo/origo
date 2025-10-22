@@ -1,4 +1,5 @@
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Model.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Shader.h"
 
@@ -7,8 +8,8 @@
 
 #include "origo/input/Input.h"
 
+#include "origo/scene/ModelRenderer.h"
 #include "origo/scene/Transform.h"
-#include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Scene.h"
 
 class GameApplication : public Origo::Application {
@@ -31,6 +32,7 @@ public:
 
 	void SpawnTestGrid() {
 		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
+		auto pikachuMesh { Origo::AssetManager::CreateAsset<Origo::Model>("Pikachu Model", "pikachu.glb") };
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
@@ -42,9 +44,9 @@ public:
 				};
 
 				transform->SetPosition(glm::vec3 { i, 0, j });
-				transform->SetScale(glm::vec3 { 1 });
+				transform->SetScale(glm::vec3 { .01 });
 
-				m_Scene.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
+				m_Scene.AddComponent<Origo::ModelRenderer>(entity, pikachuMesh, m_Material);
 			}
 		}
 	}
@@ -74,7 +76,7 @@ public:
 	}
 
 private:
-	static constexpr int GRID_SIZE { 10 };
+	static constexpr int GRID_SIZE { 20 };
 
 	Origo::Camera& m_Camera;
 

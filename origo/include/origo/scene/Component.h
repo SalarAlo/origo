@@ -12,10 +12,6 @@ public:
 	virtual ~Component() = default;
 	virtual std::string GetName() const = 0;
 
-	virtual void Awake() { };
-	virtual void Start() { };
-	virtual void Update() { };
-
 public:
 	Ref<Entity> AttachedTo;
 };
