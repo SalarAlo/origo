@@ -12,12 +12,17 @@ namespace Origo {
 class Mesh : public Asset {
 public:
 	Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
+	Mesh(std::string_view meshPath, size_t idx, const MeshData& data);
 	Mesh(PrimitiveShape shape);
 
 	void Render() const;
 
 	AssetType GetAssetType() const override {
 		return AssetType::Mesh;
+	}
+
+	Ref<MeshSource> GetSource() {
+		return m_Source;
 	}
 
 private:

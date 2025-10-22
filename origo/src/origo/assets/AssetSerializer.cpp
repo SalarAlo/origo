@@ -1,7 +1,7 @@
 #include "origo/assets/AssetSerializer.h"
 #include "origo/assets/MaterialSerializer.h"
+#include "origo/assets/MeshSerializer.h"
 #include "origo/assets/ShaderSerializer.h"
-#include "magic_enum/magic_enum.hpp"
 #include "origo/assets/TextureSerializer.h"
 
 namespace Origo::AssetSerializationRegistry {
@@ -28,6 +28,7 @@ void RegisterAllAssetSerializers() {
 	Register(AssetType::Shader, MakeRef<ShaderSerializer>());
 	Register(AssetType::Texture, MakeRef<TextureSerializer>());
 	Register(AssetType::Material, MakeRef<MaterialSerializer>());
+	Register(AssetType::Mesh, MakeRef<MeshSerializer>());
 }
 
 }

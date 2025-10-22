@@ -9,10 +9,12 @@ enum class AssetType {
 	Texture,
 	Material,
 	Mesh,
+	Model
 };
 
 class Asset : public Identifiable {
 public:
+	virtual ~Asset() = default;
 	virtual AssetType GetAssetType() const = 0;
 
 protected:

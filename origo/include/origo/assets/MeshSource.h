@@ -8,7 +8,8 @@ namespace Origo {
 
 enum class MeshSourceType {
 	Raw,
-	Primitive
+	Primitive,
+	External
 };
 
 class MeshSource {
@@ -16,7 +17,7 @@ public:
 	virtual MeshData GetData() const = 0;
 
 	virtual nlohmann::json Serialize() const = 0;
-	virtual MeshSource Deserialize(const nlohmann::json&) const = 0;
+	virtual Ref<MeshSource> Deserialize(const nlohmann::json&) const = 0;
 
 	virtual MeshSourceType GetType() const = 0;
 
@@ -40,7 +41,7 @@ public:
 	}
 
 	nlohmann::json Serialize() const override;
-	MeshSource Deserialize(const nlohmann::json&) const override;
+	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
 
 private:
 	std::vector<float> m_Vertices;
@@ -55,7 +56,6 @@ public:
 
 	MeshData GetData() const override {
 		static auto data { GetDataFromShape(m_Shape) };
-		ORG_INFO("The cube has {} amount of vertices", data.Vertices.size());
 		return data;
 	}
 
@@ -64,10 +64,34 @@ public:
 	}
 
 	nlohmann::json Serialize() const override;
-	MeshSource Deserialize(const nlohmann::json&) const override;
+	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
 
 private:
-	PrimitiveShape m_Shape;
+	PrimitiveShape m_Shape {};
+};
+
+class MeshSourceExternal : public MeshSource {
+public:
+	MeshSourceExternal(std::string_view modelPath, size_t meshIndex, const MeshData& data)
+	    : m_ModelPath(modelPath)
+	    , m_MeshIndex(meshIndex)
+	    , m_Data(data) { }
+
+	std::string GetPath() const { return m_ModelPath; }
+	size_t GetMeshIndex() const { return m_MeshIndex; }
+	MeshData GetData() const override { return m_Data; }
+
+	MeshSourceType GetType() const override {
+		return MeshSourceType::External;
+	}
+
+	nlohmann::json Serialize() const override;
+	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
+
+private:
+	std::string m_ModelPath {};
+	MeshData m_Data {};
+	size_t m_MeshIndex {};
 };
 
 }

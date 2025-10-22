@@ -1,4 +1,5 @@
 #include "origo/assets/Mesh.h"
+#include "origo/assets/MeshSource.h"
 #include "origo/assets/PrimitiveShape.h"
 
 namespace Origo {
@@ -12,6 +13,14 @@ Mesh::Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& 
 
 Mesh::Mesh(PrimitiveShape shape)
     : m_Source(MakeRef<MeshSourcePrimitiveShape>(shape))
+    , m_VertexArray()
+    , m_IndexBuffer(m_Source->GetData().Indices)
+    , m_VertexBuffer(m_Source->GetData().Vertices) {
+	Init();
+}
+
+Mesh::Mesh(std::string_view meshPath, size_t idx, const MeshData& data)
+    : m_Source(MakeRef<MeshSourceExternal>(meshPath, idx, data))
     , m_VertexArray()
     , m_IndexBuffer(m_Source->GetData().Indices)
     , m_VertexBuffer(m_Source->GetData().Vertices) {
