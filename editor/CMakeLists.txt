@@ -7,3 +7,9 @@ add_executable(Editor ${EDITOR_SOURCES})
 target_link_libraries(Editor PRIVATE OrigoEngine)
 
 target_include_directories(Editor PRIVATE ${CMAKE_SOURCE_DIR}/origo/include)
+
+add_custom_command(TARGET Editor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:OrigoEngine>
+        $<TARGET_FILE_DIR:Editor>
+)

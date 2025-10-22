@@ -20,6 +20,8 @@ nlohmann::json AssetManager::SaveAll() {
 
 		toAdd["name"] = s_AssetNames[id];
 		toAdd["id"] = asset->GetId().ToString();
+		toAdd["asset_type"] = magic_enum::enum_name(asset->GetAssetType());
+
 		serialized.push_back(toAdd);
 	}
 
@@ -27,5 +29,6 @@ nlohmann::json AssetManager::SaveAll() {
 }
 
 static nlohmann::json LoadAll() {
+	return {};
 }
 }

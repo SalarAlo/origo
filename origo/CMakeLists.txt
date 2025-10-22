@@ -5,7 +5,7 @@ file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_SOURCE_DIR}/pch.cpp   # if you want PCH inside engine
 )
 
-add_library(OrigoEngine STATIC ${ENGINE_SOURCES})
+add_library(OrigoEngine SHARED ${ENGINE_SOURCES})
 
 target_include_directories(OrigoEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -29,3 +29,5 @@ target_link_libraries(OrigoEngine PUBLIC
 )
 
 target_precompile_headers(OrigoEngine PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)
+
+target_compile_definitions(OrigoEngine PRIVATE ORIGO_BUILD_DLL)

@@ -1,5 +1,4 @@
 #include "origo/assets/Mesh.h"
-#include "origo/assets/MeshSource.h"
 #include "origo/assets/PrimitiveShape.h"
 
 namespace Origo {

@@ -1,13 +1,24 @@
 #pragma once
 
 #include "origo/assets/PrimitiveShape.h"
+#include "nlohmann/json_fwd.hpp"
 #include "origo/core/Logger.h"
 
 namespace Origo {
 
+enum class MeshSourceType {
+	Raw,
+	Primitive
+};
+
 class MeshSource {
 public:
 	virtual MeshData GetData() const = 0;
+
+	virtual nlohmann::json Serialize() const = 0;
+	virtual MeshSource Deserialize(const nlohmann::json&) const = 0;
+
+	virtual MeshSourceType GetType() const = 0;
 
 private:
 };
@@ -19,10 +30,17 @@ public:
 	    , m_Indices(Indices) {
 	}
 
-	MeshData GetData() const {
+	MeshData GetData() const override {
 		static MeshData data { m_Vertices, m_Indices };
 		return data;
 	}
+
+	MeshSourceType GetType() const override {
+		return MeshSourceType::Raw;
+	}
+
+	nlohmann::json Serialize() const override;
+	MeshSource Deserialize(const nlohmann::json&) const override;
 
 private:
 	std::vector<float> m_Vertices;
@@ -35,11 +53,18 @@ public:
 	    : m_Shape(shape) {
 	}
 
-	MeshData GetData() const {
+	MeshData GetData() const override {
 		static auto data { GetDataFromShape(m_Shape) };
 		ORG_INFO("The cube has {} amount of vertices", data.Vertices.size());
 		return data;
 	}
+
+	MeshSourceType GetType() const override {
+		return MeshSourceType::Primitive;
+	}
+
+	nlohmann::json Serialize() const override;
+	MeshSource Deserialize(const nlohmann::json&) const override;
 
 private:
 	PrimitiveShape m_Shape;

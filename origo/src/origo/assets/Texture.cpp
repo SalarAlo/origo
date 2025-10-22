@@ -19,7 +19,8 @@ int TextureTypeToSlot(TextureType type) {
 }
 
 Texture::Texture(const std::string& path, TextureType type)
-    : m_TextureType(type) {
+    : m_TextureType(type)
+    , m_Path(path) {
 	stbi_set_flip_vertically_on_load(true);
 
 	int width, height, channels;
@@ -57,6 +58,7 @@ void Texture::Bind(Ref<Shader> shader) const {
 	int slot { TextureTypeToSlot(m_TextureType) };
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
+
 	std::string typeName { magic_enum::enum_name(m_TextureType) };
 	shader->SetUniform(
 	    "u_Texture_" + typeName,

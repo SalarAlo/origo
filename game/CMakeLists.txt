@@ -11,7 +11,7 @@ target_precompile_headers(OrigoGame PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)
 
 # Copy resources next to the binary
 add_custom_command(TARGET OrigoGame POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/resources
-            $<TARGET_FILE_DIR:OrigoGame>/resources
+    COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:OrigoEngine>
+        $<TARGET_FILE_DIR:OrigoGame>
 )

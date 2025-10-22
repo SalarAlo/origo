@@ -35,9 +35,9 @@ void Renderer::Flush(const Camera& camera) {
 			currentMaterial = cmd.GetMaterial();
 
 			currentMaterial
-			    ->Set("u_ProjectionMatrix", camera.GetProjection())
-			    .Set("u_ViewMatrix", camera.GetView())
-			    .Set("u_ViewPos", camera.GetPosition());
+			    ->SetShaderDirectly("u_ProjectionMatrix", camera.GetProjection())
+			    .SetShaderDirectly("u_ViewMatrix", camera.GetView())
+			    .SetShaderDirectly("u_ViewPos", camera.GetPosition());
 		}
 
 		DrawMesh(cmd);

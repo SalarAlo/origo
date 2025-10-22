@@ -19,7 +19,7 @@ public:
 	}
 
 	void Awake() override {
-		m_Camera.SetSpeed(100);
+		m_Camera.SetSpeed(10);
 
 		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "rowlett.jpg") };
 
@@ -55,7 +55,6 @@ public:
 
 	void Update(double dt) override {
 		glm::vec3 direction(0.0f);
-		// ORG_INFO("FPS: {}", 1.0 / dt);
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera.GetForward();

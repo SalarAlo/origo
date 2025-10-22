@@ -18,6 +18,7 @@ Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo)
 void Material::Bind() {
 	m_Shader->UseProgram();
 	m_UniformList->UploadAll(m_Shader);
+
 	if (m_Albedo)
 		m_Albedo->Bind(m_Shader);
 }

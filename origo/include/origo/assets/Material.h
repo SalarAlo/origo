@@ -1,7 +1,5 @@
 #pragma once
 
-#include "origo/assets/Mesh.h"
-#include "origo/core/Identifiable.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture.h"
 #include "origo/assets/UniformList.hpp"
@@ -12,12 +10,22 @@ class Material : public Asset {
 public:
 	Material(const Ref<Shader>& shader, const Ref<Texture>& material = nullptr);
 
+	Ref<Shader> GetShader() { return m_Shader; }
+	Ref<UniformList> GetUniformList() { return m_UniformList; }
+	Ref<Texture> GetAlbedo() { return m_Albedo; }
+
 	void Bind();
 	void WriteModel(const glm::mat4& model);
 
 	template <typename T>
-	Material& Set(std::string_view name, const T& val) {
+	Material& SetShaderDirectly(std::string_view name, const T& val) {
 		m_Shader->SetUniform(name, val);
+		return *this;
+	}
+
+	template <typename T>
+	Material& SetUniformList(std::string_view name, const T& val) {
+		m_UniformList->AddUniform<T>(name.data(), val);
 		return *this;
 	}
 

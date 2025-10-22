@@ -1,6 +1,5 @@
 #pragma once
 
-#include "origo/assets/Mesh.h"
 #include "origo/assets/Shader.h"
 
 namespace Origo {
@@ -20,9 +19,14 @@ public:
 		return AssetType::Texture;
 	}
 
+	std::string GetPath() const {
+		return m_Path;
+	}
+
 private:
 	GLuint m_TextureId;
 	TextureType m_TextureType;
+	std::string m_Path;
 };
 
 }

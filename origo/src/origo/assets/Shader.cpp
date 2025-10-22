@@ -80,7 +80,7 @@ void Shader::SetUniform<glm::mat4>(std::string_view name, const glm::mat4& mat) 
 }
 
 template <>
-void Shader::SetUniform(std::string_view name, const glm::vec3& pos) const {
+void Shader::SetUniform<glm::vec3>(std::string_view name, const glm::vec3& pos) const {
 	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
 	if (loc == -1) {
 		return;

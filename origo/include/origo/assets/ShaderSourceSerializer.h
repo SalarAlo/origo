@@ -1,7 +1,5 @@
 #pragma once
 
-#include "nlohmann/json.hpp"
-#include "origo/assets/Shader.h"
 #include "origo/assets/ShaderSource.h"
 
 namespace Origo::ShaderSourceSerializer {

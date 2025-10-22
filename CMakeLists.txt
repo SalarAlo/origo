@@ -4,7 +4,15 @@ project(Origo LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Output dirs
+# ------------------------------------------------------------------------------
+# Global configuration
+# ------------------------------------------------------------------------------
+
+# Ensure all targets (even static libs) are compiled with -fPIC
+# This is essential when linking static libs into shared libs (.so)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Output directories
 set(output_dir ${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -13,40 +21,51 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_OBJECT_PATH_MAX 512)
 
+# ------------------------------------------------------------------------------
 # Dependencies
+# ------------------------------------------------------------------------------
+
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(UUID REQUIRED uuid)
 
-# Vendor libs
+# ------------------------------------------------------------------------------
+# Vendor Libraries
+# ------------------------------------------------------------------------------
 
-	# GLFW/GLM
-	add_subdirectory(vendor/glfw)
-	add_subdirectory(vendor/glm)
+# GLFW / GLM
+add_subdirectory(vendor/glfw)
+add_subdirectory(vendor/glm)
 
-	# ASSIMP
-	set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-	set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-	add_subdirectory(vendor/assimp)
+# ASSIMP
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory(vendor/assimp)
 
-	# GLAD
-	add_library(glad STATIC vendor/glad/src/glad.c)
-	target_include_directories(glad PUBLIC vendor/glad/include)
+# GLAD (static but PIC-safe)
+add_library(glad STATIC vendor/glad/src/glad.c)
+target_include_directories(glad PUBLIC vendor/glad/include)
 
-	# MAGIN_ENUM
-	include_directories(vendor/magic_enum/include)
+# Ensure glad uses -fPIC if ever linked into shared libs
+set_target_properties(glad PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-	# IMGUI
-	add_subdirectory(vendor/imgui)
+# MAGIC_ENUM
+include_directories(vendor/magic_enum/include)
 
-	# SPDLOG
-	set(SPDLOG_HEADER_ONLY ON)
-	add_subdirectory(vendor/spdlog)
+# IMGUI
+add_subdirectory(vendor/imgui)
 
-	# NLOHMANN/JSON
-	add_subdirectory(vendor/json)
+# SPDLOG (header-only)
+set(SPDLOG_HEADER_ONLY ON)
+add_subdirectory(vendor/spdlog)
 
-# Add engine + game
+# NLOHMANN/JSON
+add_subdirectory(vendor/json)
+
+# ------------------------------------------------------------------------------
+# Engine, Game, Editor
+# ------------------------------------------------------------------------------
+
 add_subdirectory(origo)
 add_subdirectory(game)
 add_subdirectory(editor)

@@ -87,6 +87,8 @@ MeshData GetDataFromShape(PrimitiveShape shape) {
 		return { TRIANGLE_VERTICES, TRIANGLE_INDICES };
 	case PrimitiveShape::Sphere:
 		return { SPHERE_VERTICES, SPHERE_INDICES };
+	default:
+		return { {}, {} };
 	}
 }
 

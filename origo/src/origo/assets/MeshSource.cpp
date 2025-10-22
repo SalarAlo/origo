@@ -1,3 +1,6 @@
+#include "nlohmann/json.hpp"
+#include "origo/assets/MeshSource.h"
+#include "nlohmann/json_fwd.hpp"
 #include "origo/assets/MeshData.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
@@ -59,5 +62,22 @@ std::vector<MeshData> Create(const std::string& path) {
 	return meshes;
 }
 #pragma endregion
+
+nlohmann::json MeshSourceRaw::Serialize() const {
+	nlohmann::json j;
+
+	j["vertices"] = m_Vertices;
+	j["indices"] = m_Indices;
+
+	return j;
+}
+
+nlohmann::json MeshSourcePrimitiveShape::Serialize() const {
+	nlohmann::json j;
+
+	j["shape_type"] = magic_enum::enum_name(m_Shape);
+
+	return j;
+}
 
 }
