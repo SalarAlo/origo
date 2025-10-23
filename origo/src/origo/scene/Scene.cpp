@@ -5,8 +5,10 @@
 #include "origo/scene/ModelRenderer.h"
 
 namespace Origo {
-Scene::Scene(std::string_view name)
-    : m_Name(name) { }
+Scene::Scene(std::string_view name, float ar)
+    : m_Name(name) {
+	m_Camera.SetAspectResolutino(ar);
+}
 
 Ref<Entity> Scene::CreateEntity(std::string_view name) {
 	auto entity = MakeRef<Entity>(name);
@@ -23,10 +25,10 @@ void Scene::Render() {
 	}
 
 	for (const auto& renderer : m_ComponentManager.GetAllComponentsOfType<ModelRenderer>()) {
-		for (const auto& mesh : renderer->GetModel()->GetMeshes()) {
+		for (const auto& submesh : renderer->GetModel()->GetSubMeshes()) {
 			Renderer::Submit(
-			    mesh,
-			    renderer->GetMaterial(),
+			    submesh.mesh,
+			    submesh.material,
 			    m_ComponentManager.GetComponent<Transform>(renderer->AttachedTo));
 		}
 	}

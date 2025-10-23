@@ -22,7 +22,7 @@ public:
 	void Awake() override {
 		m_Camera.SetSpeed(10);
 
-		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "rowlett.jpg") };
+		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "resources/textures/rowlett.jpg") };
 
 		m_Shader = Origo::AssetManager::CreateAsset<Origo::Shader>("Normal Shader", "normal");
 		m_Material = Origo::AssetManager::CreateAsset<Origo::Material>("Normal Material", m_Shader, logoTexture);
@@ -32,7 +32,7 @@ public:
 
 	void SpawnTestGrid() {
 		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
-		auto pikachuMesh { Origo::AssetManager::CreateAsset<Origo::Model>("Pikachu Model", "pikachu.glb") };
+		auto pikachuMesh { Origo::AssetManager::CreateAsset<Origo::Model>("Pikachu Model", "rowlet.glb", m_Shader) };
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
@@ -44,9 +44,9 @@ public:
 				};
 
 				transform->SetPosition(glm::vec3 { i, 0, j });
-				transform->SetScale(glm::vec3 { .01 });
+				transform->Rotate({ -90, 0, 0 });
 
-				m_Scene.AddComponent<Origo::ModelRenderer>(entity, pikachuMesh, m_Material);
+				m_Scene.AddComponent<Origo::ModelRenderer>(entity, pikachuMesh);
 			}
 		}
 	}
@@ -89,7 +89,7 @@ Origo::Application* Origo::CreateApplication() {
 		.WorkingDirectory = "./game",
 		// i use i3. in my config apps with "ITSAFLOATER" title are floating.
 		// thats why i call it like that
-		.WindowSettings = { .Width = 1000, .Height = 1000, .Title = "ITSAFLOATER" }
+		.WindowSettings = { .Width = 1800, .Height = 1000, .Title = "ITSAFLOATER" }
 	};
 
 	return new GameApplication(settings);

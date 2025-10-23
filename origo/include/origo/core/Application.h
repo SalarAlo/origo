@@ -16,8 +16,6 @@ public:
 	Application(const ApplicationSettings& settings = {});
 	void Run();
 
-	static Application& Get();
-
 	virtual void Awake() { }
 	virtual void OnShutdown() { }
 	virtual void Update(double deltaTime) { }

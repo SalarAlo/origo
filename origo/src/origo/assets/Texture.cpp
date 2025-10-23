@@ -9,26 +9,61 @@
 
 namespace Origo {
 
-int TextureTypeToSlot(TextureType type) {
-	switch (type) {
-	case TextureType::Albedo:
-		return 0;
-	default:
-		return -1;
-	}
-}
-
 Texture::Texture(const std::string& path, TextureType type)
     : m_TextureType(type)
-    , m_Path(path) {
+    , m_Source(MakeRef<TextureSourceFile>(path)) {
 	stbi_set_flip_vertically_on_load(true);
 
 	int width, height, channels;
-	unsigned char* data = stbi_load(("resources/textures/" + path).c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
 	if (!data) {
 		ORG_ERROR("[Texture] Failed to load Texture with path {}", path.data());
 	}
+
+	InitTexture(width, height, channels, data);
+
+	stbi_image_free(data);
+}
+
+Texture::Texture(const aiTexture* embeddedTex, TextureType type)
+    : m_TextureType(type)
+    , m_Source(MakeRef<TextureSourceEmbedded>()) {
+
+	stbi_set_flip_vertically_on_load(true);
+
+	int width, height, channels;
+	unsigned char* decoded = nullptr;
+
+	if (embeddedTex->mHeight == 0) {
+		// Compressed image (PNG, JPEG, etc.)
+		decoded = stbi_load_from_memory(
+		    reinterpret_cast<const unsigned char*>(embeddedTex->pcData),
+		    embeddedTex->mWidth,
+		    &width,
+		    &height,
+		    &channels,
+		    0);
+	} else {
+		// Uncompressed RGBA data
+		width = embeddedTex->mWidth;
+		height = embeddedTex->mHeight;
+		channels = 4; // aiTexel is RGBA
+		decoded = reinterpret_cast<unsigned char*>(embeddedTex->pcData);
+	}
+
+	if (!decoded) {
+		ORG_ERROR("[Texture] Failed to load embedded texture.");
+		return;
+	}
+
+	InitTexture(width, height, channels, decoded);
+
+	if (embeddedTex->mHeight == 0)
+		stbi_image_free(decoded);
+}
+
+void Texture::InitTexture(int width, int height, int channels, unsigned char* data) {
 	GLCall(glGenTextures(1, &m_TextureId));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
@@ -50,12 +85,10 @@ Texture::Texture(const std::string& path, TextureType type)
 
 	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-
-	stbi_image_free(data);
 }
 
 void Texture::Bind(Ref<Shader> shader) const {
-	int slot { TextureTypeToSlot(m_TextureType) };
+	int slot { static_cast<int>(m_TextureType) };
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
@@ -63,10 +96,6 @@ void Texture::Bind(Ref<Shader> shader) const {
 	shader->SetUniform(
 	    "u_Texture_" + typeName,
 	    slot);
-}
-
-TextureType Texture::GetType() const {
-	return m_TextureType;
 }
 
 };

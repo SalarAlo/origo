@@ -10,7 +10,8 @@ Application::Application(const ApplicationSettings& settings)
     : m_Settings(settings)
     , m_Window(settings.WindowSettings)
     , m_Running(true)
-    , m_LastTimeStamp(Time::GetNow()) {
+    , m_LastTimeStamp(Time::GetNow())
+    , m_Scene("Origo Game Sample", m_Window.GetAspectResolution()) {
 	m_Window.SetEventCallback(std::bind(&Application::HandleEvent, this, std::placeholders::_1));
 }
 

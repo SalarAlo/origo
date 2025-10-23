@@ -18,7 +18,7 @@ class Scene {
 	friend void SceneSerialization::Serialize(std::string_view outPath, const Scene& scene);
 
 public:
-	Scene(std::string_view = "SampleScene");
+	Scene(std::string_view = "SampleScene", float ar = 1.0);
 
 	Ref<Entity> CreateEntity(std::string_view name);
 	void Render();

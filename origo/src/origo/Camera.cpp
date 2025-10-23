@@ -33,17 +33,14 @@ void Camera::Move(const glm::vec3& delta) {
 
 void Camera::MoveRight(float step) {
 	Move(m_Right * step * m_Speed);
-	UpdateView();
 }
 
 void Camera::MoveUp(float step) {
 	Move(m_Up * step * m_Speed);
-	UpdateView();
 }
 
 void Camera::MoveForward(float step) {
 	Move(m_Forward * step * m_Speed);
-	UpdateView();
 }
 
 void Camera::Rotate(float yawOffset, float pitchOffset) {
@@ -73,21 +70,27 @@ void Camera::OnEvent(Event& event) {
 	dispatcher.Dispatch<WindowResizeEvent>([&](auto& resEvent) {
 		auto size = resEvent.GetSize();
 		m_Aspect = static_cast<float>(size.x) / static_cast<float>(size.y);
+		UpdateProjection();
+
+		// Reset mouse tracking after resize
+		m_FirstMouseEvent = true;
 	});
 
 	dispatcher.Dispatch<MouseMoveEvent>([&](MouseMoveEvent& moveEvent) {
-		const auto& coords { moveEvent.GetCoordinate() };
+		const auto& coords = moveEvent.GetCoordinate();
 
-		static int x { static_cast<int>(coords.x) };
-		static int y { static_cast<int>(coords.y) };
+		if (m_FirstMouseEvent) {
+			m_LastMousePos = coords;
+			m_FirstMouseEvent = false;
+			return;
+		}
 
-		int dx { x - static_cast<int>(coords.x) };
-		int dy { y - static_cast<int>(coords.y) };
+		float dx = m_LastMousePos.x - coords.x;
+		float dy = m_LastMousePos.y - coords.y;
 
 		Rotate(-dx * m_Sensitivity, dy * m_Sensitivity);
 
-		x = coords.x;
-		y = coords.y;
+		m_LastMousePos = coords;
 	});
 }
 
@@ -116,4 +119,5 @@ void Camera::UpdateVectors() {
 	m_Right = glm::normalize(glm::cross(m_Forward, { 0.0f, 1.0f, 0.0f }));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
 }
-}
+
+} // namespace Origo

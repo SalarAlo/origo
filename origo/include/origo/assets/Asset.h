@@ -16,6 +16,9 @@ class Asset : public Identifiable {
 public:
 	virtual ~Asset() = default;
 	virtual AssetType GetAssetType() const = 0;
+	virtual bool ShouldSerialize() const {
+		return true;
+	}
 
 protected:
 	AssetType m_AssetType;

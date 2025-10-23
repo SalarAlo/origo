@@ -47,11 +47,12 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 
 	InitGlad();
 
-	GLCall(glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height));
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(1);
 
 	InitCallback();
+
+	GLCall(glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height));
 
 	s_SingleInstanceCreated = true;
 }
@@ -111,6 +112,8 @@ void ScreenWindow::InitCallback() {
 
 		windowSettings->Height = height;
 		windowSettings->Width = width;
+
+		GLCall(glViewport(0, 0, width, height));
 
 		WindowResizeEvent windowResizeEvent { glm::vec2(width, height) };
 		windowSettings->EventCallback(windowResizeEvent);

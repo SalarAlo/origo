@@ -5,6 +5,7 @@
 #include <glm/mat4x4.hpp>
 
 namespace Origo {
+
 class Camera {
 public:
 	Camera(float aspect = 1,
@@ -36,6 +37,10 @@ public:
 
 	void SetSpeed(float speed) { m_Speed = speed; }
 	void SetSensitivity(float sensitivity) { m_Sensitivity = sensitivity; }
+	void SetAspectResolutino(float ar) {
+		m_Aspect = ar;
+		UpdateProjection();
+	}
 
 	void OnEvent(Event& event);
 
@@ -63,5 +68,8 @@ private:
 
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
+
+	bool m_FirstMouseEvent { true };
+	glm::vec2 m_LastMousePos { 0.0f };
 };
 }
