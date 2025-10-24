@@ -21,6 +21,9 @@ public:
 	virtual void Update(double deltaTime) { }
 	virtual void HandleEvent(Event& event) { }
 
+private:
+	void InternalUpdate();
+
 protected:
 	ScreenWindow m_Window;
 	Scene m_Scene;

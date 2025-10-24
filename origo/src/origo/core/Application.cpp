@@ -2,9 +2,14 @@
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
 #include "origo/input/Input.h"
+#include "origo/renderer/Renderer.h"
+#include "origo/scene/ComponentSystemRegistry.h"
 #include <functional>
 
 namespace Origo {
+void Application::InternalUpdate() {
+	ComponentSystemRegistry::GetInstance().RunAll(m_Scene);
+}
 
 Application::Application(const ApplicationSettings& settings)
     : m_Settings(settings)
@@ -24,9 +29,10 @@ void Application::Run() {
 	while (m_Running) {
 		Time::Duration dt { Time::GetNow() - m_LastTimeStamp };
 
+		InternalUpdate();
 		Update(dt.count());
 
-		m_Scene.Render();
+		Renderer::Flush(m_Scene.GetCamera());
 
 		if (m_Window.ShouldClose()) {
 			m_Running = false;

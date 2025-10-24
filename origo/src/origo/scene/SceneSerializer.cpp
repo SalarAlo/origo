@@ -1,5 +1,6 @@
 #include "origo/scene/SceneSerializer.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/AssetSerializer.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 
@@ -24,7 +25,7 @@ void Serialize(std::string_view outPath, const Scene& scene) {
 	}
 
 	sceneJson["entities"] = entitiesJson;
-	sceneJson["assets"] = ::Origo::AssetManager::SaveAll();
+	sceneJson["assets"] = ::Origo::AssetSerializationSystem::SaveAll();
 
 	std::ofstream out(std::string("resources/scenes/") + std::string(outPath),
 	    std::ios::out | std::ios::trunc);

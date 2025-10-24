@@ -1,7 +1,5 @@
 #pragma once
 
-#include "nlohmann/json.hpp"
-
 namespace Origo {
 class Entity;
 

@@ -1,4 +1,3 @@
-#include "nlohmann/json_fwd.hpp"
 #include "origo/assets/Asset.h"
 #include "origo/core/Identifiable.h"
 #include <concepts>
@@ -9,6 +8,9 @@ namespace Origo {
 template <typename T>
 concept AssetConcept = std::derived_from<T, Asset>;
 class AssetManager {
+private:
+	struct Record;
+
 public:
 	template <AssetConcept T, typename... Args>
 
@@ -19,10 +21,9 @@ public:
 		return asset;
 	}
 
-	static Ref<Asset> GetAsset(UUID id);
+	static const std::unordered_map<UUID, Record>& GetRecords() { return s_Records; }
 
-	static nlohmann::json SaveAll();
-	static nlohmann::json LoadAll();
+	static Ref<Asset> GetAsset(UUID id);
 
 private:
 	struct Record {

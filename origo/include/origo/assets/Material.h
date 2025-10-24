@@ -8,7 +8,7 @@ namespace Origo {
 
 class Material : public Asset {
 public:
-	Material(const Ref<Shader>& shader, const Ref<Texture>& material = nullptr);
+	Material(const Ref<Shader>& shader, const Ref<Texture>& material = nullptr, bool shouldSerialize = true);
 
 	Ref<Shader> GetShader() { return m_Shader; }
 	Ref<UniformList> GetUniformList() { return m_UniformList; }
@@ -29,14 +29,20 @@ public:
 		return *this;
 	}
 
-	AssetType GetAssetType() const {
+	AssetType GetAssetType() const override {
 		return AssetType::Material;
+	}
+
+	bool ShouldSerialize() const override {
+		return m_ShouldSerialize;
 	}
 
 private:
 	Ref<Shader> m_Shader {};
 	Ref<UniformList> m_UniformList {};
 	Ref<Texture> m_Albedo {};
+
+	bool m_ShouldSerialize;
 };
 
 }

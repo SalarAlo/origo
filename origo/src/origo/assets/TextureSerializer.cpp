@@ -22,4 +22,6 @@ Ref<Asset> TextureSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
 
+REGISTER_SERIALIZER(Texture)
+
 }

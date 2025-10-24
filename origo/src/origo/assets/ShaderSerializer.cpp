@@ -19,4 +19,5 @@ Ref<Asset> ShaderSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
 
+REGISTER_SERIALIZER(Shader)
 }

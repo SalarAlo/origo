@@ -1,5 +1,6 @@
 #include "origo/assets/MeshSerializer.h"
 #include "nlohmann/json.hpp"
+#include "origo/assets/AssetSerializer.h"
 #include "origo/assets/Mesh.h"
 #include <memory>
 
@@ -14,4 +15,6 @@ nlohmann::json MeshSerializer::Serialize(const Ref<Asset>& asset) const {
 Ref<Asset> MeshSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
+
+REGISTER_SERIALIZER(Mesh)
 }

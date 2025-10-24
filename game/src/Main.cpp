@@ -8,6 +8,7 @@
 
 #include "origo/input/Input.h"
 
+#include "origo/scene/MeshRenderer.h"
 #include "origo/scene/ModelRenderer.h"
 #include "origo/scene/Transform.h"
 #include "origo/scene/Scene.h"
@@ -32,7 +33,6 @@ public:
 
 	void SpawnTestGrid() {
 		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
-		auto pikachuMesh { Origo::AssetManager::CreateAsset<Origo::Model>("Pikachu Model", "rowlet.glb", m_Shader) };
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
@@ -43,10 +43,9 @@ public:
 					m_Scene.AddComponent<Origo::Transform>(entity)
 				};
 
-				transform->SetPosition(glm::vec3 { i, 0, j });
-				transform->Rotate({ -90, 0, 0 });
+				transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
 
-				m_Scene.AddComponent<Origo::ModelRenderer>(entity, pikachuMesh);
+				m_Scene.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
 			}
 		}
 	}
@@ -57,6 +56,14 @@ public:
 
 	void Update(double dt) override {
 		glm::vec3 direction(0.0f);
+		constexpr float normalSpeed { 10 };
+		constexpr float fastSpeed { normalSpeed * 5 };
+
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_LEFT_SHIFT)) {
+			m_Camera.SetSpeed(fastSpeed);
+		} else {
+			m_Camera.SetSpeed(normalSpeed);
+		}
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera.GetForward();
@@ -76,7 +83,7 @@ public:
 	}
 
 private:
-	static constexpr int GRID_SIZE { 20 };
+	static constexpr int GRID_SIZE { 10 };
 
 	Origo::Camera& m_Camera;
 

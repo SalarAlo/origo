@@ -21,7 +21,6 @@ public:
 	Scene(std::string_view = "SampleScene", float ar = 1.0);
 
 	Ref<Entity> CreateEntity(std::string_view name);
-	void Render();
 
 	Camera& GetCamera() {
 		return m_Camera;
@@ -31,10 +30,22 @@ public:
 		return m_Name;
 	}
 
+#pragma region FORWARDING
 	template <ComponentConcept T, typename... Args>
 	Ref<T> AddComponent(const Ref<Entity>& entity, Args&&... args) {
 		return m_ComponentManager.AddComponent<T>(entity, std::forward<Args>(args)...);
 	}
+
+	template <ComponentConcept T, typename... Args>
+	Ref<T> GetComponent(const UUID& entity) const {
+		return m_ComponentManager.GetComponent<T>(entity);
+	}
+
+	template <ComponentConcept T>
+	std::vector<Ref<T>> GetAllComponentsOfType() const {
+		return m_ComponentManager.GetAllComponentsOfType<T>();
+	}
+#pragma endregion
 
 private:
 	ComponentManager m_ComponentManager;

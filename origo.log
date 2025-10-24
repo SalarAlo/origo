@@ -1,0 +1,6 @@
+[2025-10-24 18:22:38.073] [ORIGO] [info] Core logger initialized
+[2025-10-24 18:22:38.073] [APP] [info] Client logger initialized
+[2025-10-24 18:22:42.176] [APP] [info] Asset of type Material has a serializer
+[2025-10-24 18:22:42.176] [APP] [info] Asset of type Mesh has a serializer
+[2025-10-24 18:22:42.176] [APP] [info] Asset of type Shader has a serializer
+[2025-10-24 18:22:42.177] [APP] [info] Asset of type Texture has a serializer

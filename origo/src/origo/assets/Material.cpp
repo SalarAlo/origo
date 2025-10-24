@@ -2,10 +2,11 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
-Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo)
+Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo, bool shouldSerialize)
     : m_UniformList(MakeRef<UniformList>())
     , m_Shader(shader)
-    , m_Albedo(albedo) {
+    , m_Albedo(albedo)
+    , m_ShouldSerialize(shouldSerialize) {
 	if (!m_Albedo)
 		return;
 	if (m_Albedo->GetType() != TextureType::Albedo) {

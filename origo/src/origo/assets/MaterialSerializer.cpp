@@ -18,4 +18,6 @@ nlohmann::json MaterialSerializer::Serialize(const Ref<Asset>& asset) const {
 Ref<Asset> MaterialSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
+
+REGISTER_SERIALIZER(Material)
 }

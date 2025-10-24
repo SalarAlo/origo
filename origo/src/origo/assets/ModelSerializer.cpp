@@ -17,4 +17,6 @@ Ref<Asset> ModelSerializer::Deserialize(const nlohmann::json& j) const {
 	return nullptr;
 }
 
+REGISTER_SERIALIZER(Model)
+
 }

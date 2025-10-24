@@ -121,7 +121,7 @@ Model::Model(std::string_view path, Ref<Shader> shader)
 		Ref<Texture> texture = ExtractTexture(scene, material, absolutePath, i);
 
 		auto mesh = AssetManager::CreateAsset<Mesh>(baseName, m_Path, i, meshData);
-		auto mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture);
+		auto mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture, false);
 
 		m_SubMeshes.push_back({ mesh, mat });
 	}

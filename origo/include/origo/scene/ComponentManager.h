@@ -1,3 +1,4 @@
+#include "origo/core/Identifiable.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
 #include <concepts>
@@ -20,24 +21,26 @@ public:
 	}
 
 	template <ComponentConcept T>
-	Ref<T> GetComponent(const Ref<Entity>& entity) {
+	Ref<T> GetComponent(const UUID& entity) const {
 		auto& map = GetComponentsMap<T>();
-		return map[entity->GetId()];
+		return map[entity];
 	}
 
 	template <ComponentConcept T>
-	std::vector<Ref<T>> GetAllComponentsOfType() {
+	std::vector<Ref<T>> GetAllComponentsOfType() const {
 		auto& map = GetComponentsMap<T>();
 		std::vector<Ref<T>> result;
 		result.reserve(map.size());
+
 		for (auto& [_, component] : map)
 			result.push_back(component);
+
 		return result;
 	}
 
 private:
 	template <ComponentConcept T>
-	std::unordered_map<UUID, Ref<T>>& GetComponentsMap() {
+	std::unordered_map<UUID, Ref<T>>& GetComponentsMap() const {
 		static std::unordered_map<UUID, Ref<T>> m_Storage {};
 		return m_Storage;
 	}
