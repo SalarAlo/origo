@@ -17,22 +17,27 @@ Application::Application(const ApplicationSettings& settings)
     , m_Running(true)
     , m_LastTimeStamp(Time::GetNow())
     , m_Scene("Origo Game Sample", m_Window.GetAspectResolution()) {
-	m_Window.SetEventCallback(std::bind(&Application::HandleEvent, this, std::placeholders::_1));
+	m_Window.SetEventCallback(std::bind(&Application::OnHandleEvent, this, std::placeholders::_1));
 }
 
 void Application::Run() {
 	Origo::Logger::Init();
 	Origo::Input::SetContext(Origo::MakeRef<Origo::ScreenWindow>(m_Window));
+	m_ImGuiLayer.OnAttach(m_Window);
 
-	Awake();
+	OnAwake();
 
 	while (m_Running) {
 		Time::Duration dt { Time::GetNow() - m_LastTimeStamp };
 
 		InternalUpdate();
-		Update(dt.count());
+		OnUpdate(dt.count());
 
-		Renderer::Flush(m_Scene.GetCamera());
+		Renderer::Flush(m_Scene.GetMainCamera());
+
+		m_ImGuiLayer.Begin();
+		OnImGuiRender();
+		m_ImGuiLayer.End();
 
 		if (m_Window.ShouldClose()) {
 			m_Running = false;
@@ -43,4 +48,5 @@ void Application::Run() {
 		m_Window.OnUpdate();
 	}
 }
+
 }

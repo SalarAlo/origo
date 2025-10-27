@@ -6,7 +6,7 @@ namespace Origo {
 
 class ModelRenderer : public Component {
 public:
-	ModelRenderer(const Ref<Model>& model, const Ref<Entity>& entity)
+	ModelRenderer(const Ref<Entity>& entity, const Ref<Model>& model)
 	    : Component(entity)
 	    , m_Model(model) { };
 

@@ -1,5 +1,7 @@
 #include "origo/assets/UniformList.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "origo/core/Logger.h"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
@@ -19,30 +21,36 @@ template <>
 UniformType Uniform<glm::mat4>::GetUniformType() const { return UniformType::Mat4; }
 
 template <>
-nlohmann::json Uniform<int>::Serialize() const {
-	return { { "type", "int" }, { "value", m_Value } };
+void Uniform<int>::Serialize(ISerializer& backend) const {
+	backend.Write("type", "int");
+	backend.Write("value", m_Value);
+};
+
+template <>
+void Uniform<float>::Serialize(ISerializer& backend) const {
+	backend.Write("type", "float");
+	backend.Write("value", m_Value);
 }
 
 template <>
-nlohmann::json Uniform<float>::Serialize() const {
-	return { { "type", "float" }, { "value", m_Value } };
+void Uniform<glm::vec2>::Serialize(ISerializer& backend) const {
+	backend.Write("type", "vec2");
+	backend.Write("x", m_Value.x);
+	backend.Write("y", m_Value.y);
 }
 
 template <>
-nlohmann::json Uniform<glm::vec2>::Serialize() const {
-	return { { "type", "vec2" }, { "value", { m_Value.x, m_Value.y } } };
+void Uniform<glm::vec3>::Serialize(ISerializer& backend) const {
+	backend.Write("type", "vec3");
+	backend.Write("x", m_Value.x);
+	backend.Write("y", m_Value.y);
+	backend.Write("z", m_Value.z);
 }
 
 template <>
-nlohmann::json Uniform<glm::vec3>::Serialize() const {
-	return { { "type", "vec3" }, { "value", { m_Value.x, m_Value.y, m_Value.z } } };
-}
-
-template <>
-nlohmann::json Uniform<glm::mat4>::Serialize() const {
-	const float* ptr = glm::value_ptr(m_Value);
-	std::vector<float> values(ptr, ptr + 16);
-	return { { "type", "mat4" }, { "value", values } };
+void Uniform<glm::mat4>::Serialize(ISerializer& backend) const {
+	// TODO: implement this shit. i hate modularisation
+	ORG_ERROR("To be continued...");
 }
 
 }

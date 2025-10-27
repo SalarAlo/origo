@@ -1,10 +1,11 @@
 #pragma once
 
 #include "origo/assets/ShaderSource.h"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo::ShaderSourceSerializer {
 
-nlohmann::json Serialize(Ref<ShaderSource>);
+void Serialize(Ref<ShaderSource>, ISerializer& backend);
 Ref<ShaderSource> Deserialize(const nlohmann::json&);
 
 }

@@ -9,10 +9,10 @@ Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo, bool s
     , m_ShouldSerialize(shouldSerialize) {
 	if (!m_Albedo)
 		return;
-	if (m_Albedo->GetType() != TextureType::Albedo) {
+	if (m_Albedo->GetTextureType() != TextureType::Albedo) {
 		ORG_CORE_ERROR(
 		    "[Material] Expected a Texture Type of Albedo. Received a Texture Type of {}",
-		    magic_enum::enum_name(m_Albedo->GetType()));
+		    magic_enum::enum_name(m_Albedo->GetTextureType()));
 	}
 }
 

@@ -1,10 +1,10 @@
 #include "origo/core/ScreenWindow.h"
-#include "GLFW/glfw3.h"
 #include "origo/events/Event.h"
 #include "origo/events/EventTypes.h"
 #include "origo/events/KeyEvent.h"
 #include "origo/events/MouseEvent.h"
 #include "origo/events/WindowEvent.h"
+#include "origo/input/Input.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -47,7 +47,9 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 
 	InitGlad();
 
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	Input::SetContext(MakeRef<ScreenWindow>(*this));
+	Input::SetCursorMode(Input::CursorMode::Locked);
+
 	glfwSwapInterval(1);
 
 	InitCallback();

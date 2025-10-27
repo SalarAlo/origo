@@ -24,7 +24,7 @@ public:
 	}
 
 	template <typename T>
-	Material& SetUniformList(std::string_view name, const T& val) {
+	Material& SetUniform(std::string_view name, const T& val) {
 		m_UniformList->AddUniform<T>(name.data(), val);
 		return *this;
 	}

@@ -1,15 +1,18 @@
-project(EditorApp LANGUAGES C CXX)
+project(OrigoEditorApp LANGUAGES C CXX)
 
 file(GLOB_RECURSE EDITOR_SOURCES src/*.cpp)
 
-add_executable(Editor ${EDITOR_SOURCES})
+add_executable(OrigoEditor ${EDITOR_SOURCES})
 
-target_link_libraries(Editor PRIVATE OrigoEngine)
+target_link_libraries(OrigoEditor PRIVATE OrigoEngine)
+target_include_directories(OrigoEditor  PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-target_include_directories(Editor PRIVATE ${CMAKE_SOURCE_DIR}/origo/include)
+target_precompile_headers(OrigoEditor PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)
 
-add_custom_command(TARGET Editor POST_BUILD
+add_custom_command(TARGET OrigoEditor POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:OrigoEngine>
-        $<TARGET_FILE_DIR:Editor>
+        $<TARGET_FILE_DIR:OrigoEditor>
 )

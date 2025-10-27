@@ -10,7 +10,7 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(const Ref<Material>& material, const Ref<Mesh>& mesh, Ref<Entity> entity);
+	MeshRenderer(Ref<Entity> entity, const Ref<Material>& material, const Ref<Mesh>& mesh);
 
 	Ref<Mesh> GetMesh();
 	Ref<Material> GetMaterial();

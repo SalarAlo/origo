@@ -4,31 +4,29 @@
 #include "origo/core/Identifiable.h"
 #include "origo/scene/Entity.hpp"
 #include "origo/scene/ComponentManager.h"
+#include "origo/serialization/ISerializer.h"
 #include <unordered_map>
-#
 
 namespace Origo {
 class Scene;
 
 namespace SceneSerialization {
-	void Serialize(std::string_view outPath, const Scene& scene);
+	void Serialize(const Scene& scene, ISerializer& backend);
 }
 
 class Scene {
-	friend void SceneSerialization::Serialize(std::string_view outPath, const Scene& scene);
+	friend void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend);
 
 public:
 	Scene(std::string_view = "SampleScene", float ar = 1.0);
 
 	Ref<Entity> CreateEntity(std::string_view name);
 
-	Camera& GetCamera() {
-		return m_Camera;
-	}
-
 	const std::string& GetName() const {
 		return m_Name;
 	}
+
+	const Ref<Camera> GetMainCamera() { return m_MainCamera; }
 
 #pragma region FORWARDING
 	template <ComponentConcept T, typename... Args>
@@ -49,8 +47,8 @@ public:
 
 private:
 	ComponentManager m_ComponentManager;
+	Ref<Camera> m_MainCamera;
 	std::string m_Name;
 	std::unordered_map<UUID, Ref<Entity>> m_Entities;
-	Camera m_Camera {};
 };
 }

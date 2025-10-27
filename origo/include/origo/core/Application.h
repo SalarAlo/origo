@@ -3,6 +3,7 @@
 #include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
+#include "origo/imgui/ImGuiLayer.h"
 #include "origo/scene/Scene.h"
 
 namespace Origo {
@@ -16,10 +17,11 @@ public:
 	Application(const ApplicationSettings& settings = {});
 	void Run();
 
-	virtual void Awake() { }
+	virtual void OnAwake() { }
 	virtual void OnShutdown() { }
-	virtual void Update(double deltaTime) { }
-	virtual void HandleEvent(Event& event) { }
+	virtual void OnUpdate(double deltaTime) { }
+	virtual void OnImGuiRender() { }
+	virtual void OnHandleEvent(Event& event) { }
 
 private:
 	void InternalUpdate();
@@ -30,6 +32,7 @@ protected:
 
 private:
 	bool m_Running {};
+	ImGuiLayer m_ImGuiLayer {};
 	Time::TimePoint m_LastTimeStamp {};
 	ApplicationSettings m_Settings {};
 };

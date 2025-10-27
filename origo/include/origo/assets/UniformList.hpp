@@ -2,6 +2,7 @@
 
 #include "origo/assets/Shader.h"
 #include "nlohmann/json.hpp"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
@@ -19,7 +20,7 @@ public:
 	virtual ~UniformBase() = default;
 
 	virtual UniformType GetUniformType() const = 0;
-	virtual nlohmann::json Serialize() const = 0;
+	virtual void Serialize(ISerializer& backend) const = 0;
 };
 
 template <typename T>
@@ -35,7 +36,7 @@ public:
 	const T& GetValue() const { return m_Value; }
 
 	UniformType GetUniformType() const override;
-	nlohmann::json Serialize() const override;
+	void Serialize(ISerializer& backend) const override;
 
 private:
 	T m_Value;
@@ -54,19 +55,17 @@ public:
 		}
 	}
 
-	nlohmann::json Serialize() const {
-		nlohmann::json j = nlohmann::json::array();
+	void Serialize(ISerializer& backend) const {
+		backend.BeginArray("uniform_list");
 
 		for (const auto& [name, base] : m_Uniforms) {
-			nlohmann::json uniformJ;
+			backend.BeginArrayElement();
+			backend.Write("name", name);
+			base->Serialize(backend);
 
-			uniformJ["name"] = name;
-			uniformJ.merge_patch(base->Serialize());
-
-			j.push_back(uniformJ);
+			backend.EndArrayElement();
 		}
-
-		return j;
+		backend.EndArray();
 	}
 
 	const auto& GetUniforms() const { return m_Uniforms; }

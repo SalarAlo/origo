@@ -13,4 +13,16 @@ bool IsKeyPressed(KeyboardKey k) {
 void SetContext(Ref<ScreenWindow> ctx) {
 	S_CONTEXT = ctx;
 }
+
+void SetCursorMode(CursorMode mode) {
+	switch (mode) {
+	case CursorMode::Locked:
+		glfwSetInputMode(S_CONTEXT->GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		break;
+
+	case CursorMode::Free:
+		glfwSetInputMode(S_CONTEXT->GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		break;
+	}
+}
 }

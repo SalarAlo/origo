@@ -1,6 +1,7 @@
 #include "origo/Camera.h"
 #include "origo/events/MouseEvent.h"
 #include "origo/events/WindowEvent.h"
+#include "origo/scene/Component.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
@@ -8,8 +9,9 @@
 
 namespace Origo {
 
-Camera::Camera(float aspect, const glm::vec3& position, float yaw, float pitch, float fov, float nearPlane, float farPlane)
-    : m_Position(position)
+Camera::Camera(const Ref<Entity>& e, float aspect, const glm::vec3& position, float yaw, float pitch, float fov, float nearPlane, float farPlane)
+    : Component(e)
+    , m_Position(position)
     , m_Yaw(yaw)
     , m_Pitch(pitch)
     , m_FOV(fov)

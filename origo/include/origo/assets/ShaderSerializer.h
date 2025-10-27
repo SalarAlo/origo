@@ -1,12 +1,13 @@
 #pragma once
 
 #include "origo/assets/AssetSerializer.h"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 class ShaderSerializer : public AssetSerializer {
 public:
-	nlohmann::json Serialize(const Ref<Asset>& asset) const override;
-	Ref<Asset> Deserialize(const nlohmann::json& j) const override;
+	void Serialize(const Ref<Asset>& asset, ISerializer& backend) const override;
+	Ref<Asset> Deserialize(ISerializer& backend) const override;
 
 private:
 };

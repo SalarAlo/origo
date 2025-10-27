@@ -3,6 +3,7 @@
 #include "origo/assets/PrimitiveShape.h"
 #include "nlohmann/json_fwd.hpp"
 #include "origo/core/Logger.h"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
@@ -16,8 +17,8 @@ class MeshSource {
 public:
 	virtual MeshData GetData() const = 0;
 
-	virtual nlohmann::json Serialize() const = 0;
-	virtual Ref<MeshSource> Deserialize(const nlohmann::json&) const = 0;
+	virtual void Serialize(ISerializer& backend) const = 0;
+	virtual Ref<MeshSource> Deserialize(ISerializer& backend) const = 0;
 
 	virtual MeshSourceType GetType() const = 0;
 
@@ -40,8 +41,8 @@ public:
 		return MeshSourceType::Raw;
 	}
 
-	nlohmann::json Serialize() const override;
-	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
+	void Serialize(ISerializer& backend) const override;
+	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
 
 private:
 	std::vector<float> m_Vertices;
@@ -63,8 +64,8 @@ public:
 		return MeshSourceType::Primitive;
 	}
 
-	nlohmann::json Serialize() const override;
-	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
+	void Serialize(ISerializer& backend) const override;
+	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
 
 private:
 	PrimitiveShape m_Shape {};
@@ -85,8 +86,8 @@ public:
 		return MeshSourceType::External;
 	}
 
-	nlohmann::json Serialize() const override;
-	Ref<MeshSource> Deserialize(const nlohmann::json&) const override;
+	void Serialize(ISerializer& backend) const override;
+	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
 
 private:
 	std::string m_ModelPath {};

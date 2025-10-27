@@ -1,14 +1,16 @@
 #pragma once
 
 #include "origo/events/Event.h"
+#include "origo/scene/Component.h"
+#include "origo/scene/Entity.hpp"
 #include <glm/glm.hpp>
 #include <glm/mat4x4.hpp>
 
 namespace Origo {
 
-class Camera {
+class Camera : public Component {
 public:
-	Camera(float aspect = 1,
+	Camera(const Ref<Entity>& e, float aspect,
 	    const glm::vec3& position = { 0.0f, 0.0f, 0.0f },
 	    float yaw = 90.0f,
 	    float pitch = 0.0f,
@@ -43,6 +45,10 @@ public:
 	}
 
 	void OnEvent(Event& event);
+
+	std::string GetName() const override {
+		return "Camera";
+	}
 
 private:
 	void UpdateView();

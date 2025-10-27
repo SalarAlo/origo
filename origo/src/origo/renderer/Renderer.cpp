@@ -17,7 +17,7 @@ void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, cons
 	s_DrawQueue.emplace_back(mesh, material, transform);
 }
 
-void Renderer::Flush(const Camera& camera) {
+void Renderer::Flush(const Ref<Camera>& camera) {
 	std::sort(s_DrawQueue.begin(), s_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
 		return a.GetMaterial() < b.GetMaterial();
 	});
@@ -35,9 +35,9 @@ void Renderer::Flush(const Camera& camera) {
 			currentMaterial = cmd.GetMaterial();
 
 			currentMaterial
-			    ->SetShaderDirectly("u_ProjectionMatrix", camera.GetProjection())
-			    .SetShaderDirectly("u_ViewMatrix", camera.GetView())
-			    .SetShaderDirectly("u_ViewPos", camera.GetPosition());
+			    ->SetShaderDirectly("u_ProjectionMatrix", camera->GetProjection())
+			    .SetShaderDirectly("u_ViewMatrix", camera->GetView())
+			    .SetShaderDirectly("u_ViewPos", camera->GetPosition());
 		}
 
 		DrawMesh(cmd);

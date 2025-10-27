@@ -1,13 +1,13 @@
 #pragma once
 #include "Asset.h"
-#include "nlohmann/json_fwd.hpp"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
 class AssetSerializer {
 public:
-	virtual nlohmann::json Serialize(const Ref<Asset>& asset) const = 0;
-	virtual Ref<Asset> Deserialize(const nlohmann::json& j) const = 0;
+	virtual void Serialize(const Ref<Asset>& asset, ISerializer& backend) const = 0;
+	virtual Ref<Asset> Deserialize(ISerializer& backend) const = 0;
 };
 
 namespace AssetSerializationSystem {
@@ -16,8 +16,8 @@ namespace AssetSerializationSystem {
 
 	void RegisterAllAssetSerializers();
 
-	nlohmann::json SaveAll();
-	nlohmann::json LoadAll();
+	void SaveAll(ISerializer& serializer);
+	void LoadAll(ISerializer& backend);
 }
 
 // idk if i wanna use this because of... SIOF

@@ -7,6 +7,7 @@ file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
 add_executable(OrigoGame ${GAME_SOURCES})
 
 target_link_libraries(OrigoGame PRIVATE OrigoEngine)
+
 target_precompile_headers(OrigoGame PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)
 
 # Copy resources next to the binary
@@ -15,3 +16,4 @@ add_custom_command(TARGET OrigoGame POST_BUILD
         $<TARGET_FILE:OrigoEngine>
         $<TARGET_FILE_DIR:OrigoGame>
 )
+

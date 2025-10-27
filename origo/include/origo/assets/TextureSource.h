@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nlohmann/json_fwd.hpp"
+#include "origo/serialization/ISerializer.h"
 namespace Origo {
 
 enum class TextureSourceType {
@@ -10,8 +10,8 @@ enum class TextureSourceType {
 
 class TextureSource {
 public:
-	virtual nlohmann::json Serialize() const;
-	static Ref<TextureSource> Deserialize(const nlohmann::json&);
+	virtual void Serialize(ISerializer& backend) const;
+	static Ref<TextureSource> Deserialize(ISerializer& backend);
 	virtual TextureSourceType GetType() const = 0;
 };
 
@@ -22,7 +22,7 @@ public:
 
 	std::string GetPath() const { return m_Path; }
 
-	nlohmann::json Serialize() const override;
+	void Serialize(ISerializer& backend) const override;
 	TextureSourceType GetType() const override { return TextureSourceType::File; }
 
 private:
@@ -31,7 +31,7 @@ private:
 
 class TextureSourceEmbedded : public TextureSource {
 public:
-	nlohmann::json Serialize() const override;
+	void Serialize(ISerializer& backend) const override;
 	TextureSourceType GetType() const override { return TextureSourceType::Embedded; };
 
 private:

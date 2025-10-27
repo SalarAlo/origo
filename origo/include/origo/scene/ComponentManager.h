@@ -14,7 +14,7 @@ public:
 	template <ComponentConcept T, typename... Args>
 	Ref<T> AddComponent(const Ref<Entity>& entity, Args&&... args) {
 		auto& map = GetComponentsMap<T>();
-		auto component = MakeRef<T>(std::forward<Args>(args)..., entity);
+		auto component = MakeRef<T>(entity, std::forward<Args>(args)...);
 		map[entity->GetId()] = component;
 
 		return component;

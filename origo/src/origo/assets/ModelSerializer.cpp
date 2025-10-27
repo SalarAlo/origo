@@ -1,19 +1,18 @@
 #include "origo/assets/ModelSerializer.h"
-#include "nlohmann/json.hpp"
 #include "origo/assets/Model.h"
+#include "origo/serialization/ISerializer.h"
 #include <memory>
 
 namespace Origo {
 
-nlohmann::json ModelSerializer::Serialize(const Ref<Asset>& asset) const {
+void ModelSerializer::Serialize(const Ref<Asset>& asset, ISerializer& backend) const {
 	auto model { std::dynamic_pointer_cast<Model>(asset) };
-	nlohmann::json j;
 
-	j["path"] = model->GetPath();
-	return j;
+	backend.Write("path", model->GetPath());
 }
 
-Ref<Asset> ModelSerializer::Deserialize(const nlohmann::json& j) const {
+Ref<Asset> ModelSerializer::Deserialize(ISerializer& backend) const {
+	// TODO
 	return nullptr;
 }
 

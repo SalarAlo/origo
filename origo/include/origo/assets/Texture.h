@@ -5,6 +5,7 @@
 #include "origo/assets/TextureSource.h"
 
 namespace Origo {
+
 // Texture type enum index corrosponds to shader slot bound to
 enum class TextureType {
 	Albedo = 0,
@@ -17,7 +18,7 @@ public:
 
 	void Bind(Ref<Shader>) const;
 
-	TextureType GetType() const { return m_TextureType; }
+	TextureType GetTextureType() const { return m_TextureType; }
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
 

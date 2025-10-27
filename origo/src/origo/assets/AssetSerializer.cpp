@@ -2,8 +2,7 @@
 
 #include "origo/assets/AssetSerializer.h"
 #include "origo/assets/AssetManager.h"
-
-#include "nlohmann/json.hpp"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo::AssetSerializationSystem {
 
@@ -25,35 +24,37 @@ Ref<AssetSerializer> Get(AssetType type) {
 	return nullptr;
 }
 
-nlohmann::json SaveAll() {
-	nlohmann::json serialized = nlohmann::json::array();
+void SaveAll(ISerializer& backend) {
+	backend.BeginArray("assets");
 
 	for (const auto& [id, record] : AssetManager::GetRecords()) {
 		if (!record.AssetReference->ShouldSerialize())
 			continue;
-		const auto& asset { record.AssetReference };
-		auto serializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
-		nlohmann::json toAdd;
 
-		if (serializer == nullptr) {
-			ORG_INFO("Asset of type {} has no serializer", magic_enum::enum_name(asset->GetAssetType()));
-		} else {
+		const auto& asset { record.AssetReference };
+		auto assetSerializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
+
+		backend.BeginArrayElement();
+
+		if (assetSerializer) {
 			ORG_INFO("Asset of type {} has a serializer", magic_enum::enum_name(asset->GetAssetType()));
-			toAdd = serializer->Serialize(asset);
+			assetSerializer->Serialize(asset, backend);
+		} else {
+			ORG_INFO("Asset of type {} has no serializer", magic_enum::enum_name(asset->GetAssetType()));
 		}
 
-		toAdd["name"] = record.Name;
-		toAdd["id"] = asset->GetId().ToString();
-		toAdd["asset_type"] = magic_enum::enum_name(asset->GetAssetType());
+		backend.Write("name", record.Name);
+		backend.Write("id", asset->GetId().ToString());
+		backend.Write("asset_type", magic_enum::enum_name(asset->GetAssetType()));
 
-		serialized.push_back(toAdd);
+		backend.EndArrayElement();
 	}
 
-	return serialized;
+	backend.EndArray();
 }
 
-nlohmann::json LoadAll() {
-	return {};
+void LoadAll(ISerializer& backend) {
+	// Todo:
 }
 
 }
