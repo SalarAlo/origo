@@ -1,0 +1,27 @@
+#pragma once
+
+#include "origo/renderer/GlDebug.h"
+
+namespace Origo {
+class FrameBuffer {
+public:
+	FrameBuffer(int width, int height);
+
+	void Bind();
+	void Unbind();
+	void Resize(int width, int height);
+
+	GLuint GetColorTexHandle() { return m_ColorTexId; }
+
+	int GetWidth() { return m_Width; }
+	int GetHeight() { return m_Height; }
+
+private:
+	int m_Width;
+	int m_Height;
+
+	GLuint m_Id;
+	GLuint m_ColorTexId;
+	GLuint m_DepthId;
+};
+}

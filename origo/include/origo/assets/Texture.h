@@ -8,7 +8,7 @@ namespace Origo {
 
 // Texture type enum index corrosponds to shader slot bound to
 enum class TextureType {
-	Albedo = 0,
+	Albedo,
 };
 
 class Texture : public Asset {
@@ -24,13 +24,16 @@ public:
 
 	Ref<TextureSource> GetSource() const { return m_Source; }
 
-	bool ShouldSerialize() const override { return m_Source->GetType() != TextureSourceType::Embedded; }
+	bool ShouldSerialize() const override {
+		return m_Source->GetType() != TextureSourceType::Embedded;
+	}
 
 private:
 	void InitTexture(int width, int height, int channels, unsigned char* data);
 
 private:
 	Ref<TextureSource> m_Source;
+
 	GLuint m_TextureId;
 	TextureType m_TextureType;
 };

@@ -2,7 +2,6 @@
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
 #include "origo/input/Input.h"
-#include "origo/renderer/Renderer.h"
 #include "origo/scene/ComponentSystemRegistry.h"
 #include <functional>
 
@@ -33,7 +32,7 @@ void Application::Run() {
 		InternalUpdate();
 		OnUpdate(dt.count());
 
-		Renderer::Flush(m_Scene.GetMainCamera());
+		OnRender();
 
 		m_ImGuiLayer.Begin();
 		OnImGuiRender();

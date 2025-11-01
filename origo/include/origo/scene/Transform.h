@@ -25,7 +25,7 @@ public:
 
 	const glm::mat4& GetModelMatrix();
 
-	std::string GetName() const override { return "MeshRenderer"; }
+	std::string GetName() const override { return "Transform"; }
 
 private:
 	void RecalculateModel();

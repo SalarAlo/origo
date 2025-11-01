@@ -4,8 +4,9 @@
 namespace Origo {
 
 enum class TextureSourceType {
+	Empty = 0,
 	File,
-	Embedded
+	Embedded,
 };
 
 class TextureSource {
@@ -35,6 +36,22 @@ public:
 	TextureSourceType GetType() const override { return TextureSourceType::Embedded; };
 
 private:
+};
+
+class TextureSourceEmpty : public TextureSource {
+public:
+	TextureSourceEmpty(int width, int height)
+	    : m_Width(width)
+	    , m_Height(height) { }
+	void Serialize(ISerializer& backend) const override;
+	TextureSourceType GetType() const override { return TextureSourceType::Empty; };
+
+	int GetHeight() const { return m_Height; }
+	int GetWidth() const { return m_Width; }
+
+private:
+	int m_Width;
+	int m_Height;
 };
 
 }

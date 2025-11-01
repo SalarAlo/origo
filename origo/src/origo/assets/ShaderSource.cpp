@@ -5,10 +5,12 @@
 static std::string ReadFile(std::string_view path) {
 	constexpr std::size_t readSize { 4096 };
 	auto stream = std::ifstream(path.data());
+
 	if (!stream) {
 		ORG_CORE_ERROR("[Shader] Trying to read non existent file!");
 		throw std::ios_base::failure("file does not exist");
 	}
+
 	std::string out {};
 	std::string buf(readSize, '\0');
 	while (stream.read(&buf[0], readSize)) {

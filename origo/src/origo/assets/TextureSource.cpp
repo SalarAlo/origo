@@ -20,6 +20,13 @@ void TextureSourceEmbedded::Serialize(ISerializer& backend) const {
 	backend.EndObject();
 }
 
+void TextureSourceEmpty::Serialize(ISerializer& backend) const {
+	TextureSource::Serialize(backend);
+
+	// todo
+	backend.EndObject();
+}
+
 Ref<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 	// todo
 	return nullptr;

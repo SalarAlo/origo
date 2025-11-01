@@ -3,9 +3,9 @@
 #include "origo/assets/AssetSerializer.h"
 #include "origo/serialization/ISerializer.h"
 
-namespace Origo::SceneSerialization {
+namespace Origo {
 
-void Serialize(const Scene& scene, ISerializer& backend) {
+void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 	backend.Write("scene_name", scene.m_Name);
 
 	backend.BeginArray("entities");

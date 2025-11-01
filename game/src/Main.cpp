@@ -1,3 +1,4 @@
+
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Shader.h"
@@ -65,11 +66,10 @@ public:
 		constexpr float normalSpeed { 10 };
 		constexpr float fastSpeed { normalSpeed * 5 };
 
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_LEFT_SHIFT)) {
+		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_LEFT_SHIFT))
 			m_Camera->SetSpeed(fastSpeed);
-		} else {
+		else
 			m_Camera->SetSpeed(normalSpeed);
-		}
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera->GetForward();
