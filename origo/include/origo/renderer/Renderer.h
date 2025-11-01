@@ -11,6 +11,7 @@ namespace Origo::Renderer {
 
 void BeginFrame();
 void Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
+void Clear(int width, int height);
 void Flush(const Ref<Camera>& camera);
 void EndFrame();
 

@@ -66,36 +66,6 @@ void Camera::SetYawPitch(float yaw, float pitch) {
 	UpdateView();
 }
 
-void Camera::OnEvent(Event& event) {
-	EventDispatcher dispatcher { event };
-
-	dispatcher.Dispatch<WindowResizeEvent>([&](auto& resEvent) {
-		auto size = resEvent.GetSize();
-		m_Aspect = static_cast<float>(size.x) / static_cast<float>(size.y);
-		UpdateProjection();
-
-		// Reset mouse tracking after resize
-		m_FirstMouseEvent = true;
-	});
-
-	dispatcher.Dispatch<MouseMoveEvent>([&](MouseMoveEvent& moveEvent) {
-		const auto& coords = moveEvent.GetCoordinate();
-
-		if (m_FirstMouseEvent) {
-			m_LastMousePos = coords;
-			m_FirstMouseEvent = false;
-			return;
-		}
-
-		float dx = m_LastMousePos.x - coords.x;
-		float dy = m_LastMousePos.y - coords.y;
-
-		Rotate(-dx * m_Sensitivity, dy * m_Sensitivity);
-
-		m_LastMousePos = coords;
-	});
-}
-
 void Camera::SetFOV(float fov) {
 	m_FOV = fov;
 	UpdateProjection();

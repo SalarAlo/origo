@@ -1,4 +1,3 @@
-#include "imgui_internal.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Shader.h"
@@ -6,27 +5,42 @@
 #include "origo/core/Application.h"
 #include "origo/events/Event.h"
 #include "origo/events/KeyEvent.h"
-#include "origo/events/WindowEvent.h"
 #include "origo/input/Input.h"
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/scene/Entity.hpp"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 #include "origo/scene/Scene.h"
 #include "imgui.h"
+
+#include "panels/AssetsPanel.h"
+#include "panels/ConsolePanel.h"
+#include "panels/HierarchyPanel.h"
+#include "panels/SceneViewport.h"
+#include "panels/InspectorPanel.h"
 
 class EditorApplication : public Origo::Application {
 public:
 	EditorApplication(const Origo::ApplicationSettings& settings)
 	    : Origo::Application(settings)
 	    , m_Camera(m_Scene.GetMainCamera())
-	    , m_Buffer(Origo::MakeRef<Origo::FrameBuffer>(1600, 900)) { }
+	    , m_Buffer(1600, 900)
+	    , m_Viewport(m_Buffer, m_Camera)
+	    , m_Hierachy(m_Scene)
+	    , m_Inspector(m_Scene) {
+		m_Panels.push_back(&m_Viewport);
+		m_Panels.push_back(&m_Hierachy);
+		m_Panels.push_back(&m_Inspector);
+		m_Panels.push_back(&m_Assets);
+		m_Panels.push_back(&m_Console);
+	}
 
 	void OnAwake() override {
 		m_Camera->SetSpeed(10);
 
-		auto logoTexture = Origo::AssetManager::CreateAsset<Origo::Texture>(
-		    "Rowlett", "resources/textures/rowlett.jpg");
+		Origo::Input::SetCursorMode(Origo::Input::CursorMode::Free);
+		m_Camera->SetSensitivity(0);
+
+		auto logoTexture = Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "resources/textures/rowlett.jpg");
 		m_Shader = Origo::AssetManager::CreateAsset<Origo::Shader>("Normal Shader", "normal");
 		m_Material = Origo::AssetManager::CreateAsset<Origo::Material>("Normal Material", m_Shader, logoTexture);
 
@@ -34,7 +48,6 @@ public:
 	}
 
 	void OnHandleEvent(Origo::Event& event) override {
-		m_Camera->OnEvent(event);
 		Origo::EventDispatcher dispatcher { event };
 
 		dispatcher.Dispatch<Origo::KeyPressEvent>([&](Origo::KeyPressEvent& e) {
@@ -46,23 +59,15 @@ public:
 				m_Camera->SetSensitivity(0.1);
 			}
 		});
-
-		dispatcher.Dispatch<Origo::WindowResizeEvent>([&](Origo::WindowResizeEvent& e) {
-			const auto size = e.GetSize();
-			m_Buffer->Resize((int)size.x, (int)size.y);
-		});
 	}
 
 	void OnRender() override {
-		m_Buffer->Bind();
+		m_Buffer.Bind();
 
-		glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
-		glClearColor(0.1f, 0.1f, 0.12f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Origo::Renderer::Clear(m_Buffer.GetWidth(), m_Buffer.GetHeight());
+		Origo::Renderer::Flush(m_Camera);
 
-		Origo::Renderer::Flush(m_Scene.GetMainCamera());
-
-		m_Buffer->Unbind();
+		m_Buffer.Unbind();
 	}
 
 	void OnUpdate(double dt) override {
@@ -76,10 +81,13 @@ public:
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera->GetForward();
+
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S))
 			direction -= m_Camera->GetForward();
+
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D))
 			direction += m_Camera->GetRight();
+
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A))
 			direction -= m_Camera->GetRight();
 
@@ -89,148 +97,64 @@ public:
 
 	void OnImGuiRender() override {
 		static bool dockspaceOpen = true;
-		static bool opt_fullscreen = true;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-		static Origo::Entity* entity { nullptr };
+		static bool fullscreen = true;
+		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (opt_fullscreen) {
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (fullscreen) {
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowPos(viewport->WorkPos);
 			ImGui::SetNextWindowSize(viewport->WorkSize);
 			ImGui::SetNextWindowViewport(viewport->ID);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
 
-		ImGui::Begin("DockspaceHost", &dockspaceOpen, window_flags);
-		if (opt_fullscreen)
+		ImGui::Begin("DockspaceHost", &dockspaceOpen, windowFlags);
+
+		if (fullscreen)
 			ImGui::PopStyleVar(2);
 
-		ImGuiID dockspace_id = ImGui::GetID("MainDockspace");
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		ImGuiID dockspaceId = ImGui::GetID("MainDockspace");
+		ImGui::DockSpace(dockspaceId, ImVec2(0, 0), dockspaceFlags);
 
-		// === Scene Viewport ===
-		ImGui::Begin("Scene Viewport");
-		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (size.x > 0 && size.y > 0 && (m_Buffer->GetWidth() != (int)size.x || m_Buffer->GetHeight() != (int)size.y))
-			m_Buffer->Resize((int)size.x, (int)size.y);
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				if (ImGui::MenuItem("New Scene")) {
+				}
+				if (ImGui::MenuItem("Open Scene...")) {
+				}
+				if (ImGui::MenuItem("Save Scene")) {
+				}
 
-		ImGui::Image((ImTextureID)(uintptr_t)m_Buffer->GetColorTexHandle(), size, ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::End();
+				ImGui::Separator();
 
-		// === Hierarchy ===
-		ImGui::Begin("Hierarchy");
-		ImGui::Text("Scene Entities:");
-		for (const auto& e : m_Scene.GetAllComponentsOfType<Origo::Transform>()) {
-			bool selected = (entity && entity == e->AttachedTo.get());
-			if (ImGui::Selectable(e->AttachedTo->GetName().c_str(), selected))
-				entity = e->AttachedTo.get();
-		}
-		ImGui::End();
-
-		// === Inspector ===
-		ImGui::Begin("Inspector");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
-
-		if (!entity) {
-			ImGui::TextDisabled("No entity selected.");
-			ImGui::PopStyleVar();
-		} else {
-			ImGui::Text("Entity: %s", entity->GetName().c_str());
-			ImGui::Separator();
-
-			if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-				auto transform = m_Scene.GetComponent<Origo::Transform>(entity->GetId());
-				glm::vec3 pos = transform->GetPosition();
-				glm::vec3 rot = transform->GetRotation();
-				glm::vec3 scl = transform->GetScale();
-
-				ImGui::Spacing();
-				DrawVec3Control("Position", pos);
-				DrawVec3Control("Rotation", rot);
-				DrawVec3Control("Scale", scl, 1.0f);
-				ImGui::Spacing();
-
-				transform->SetPosition(pos);
-				transform->SetRotation(rot);
-				transform->SetScale(scl);
+				ImGui::EndMenu();
 			}
 
-			ImGui::PopStyleVar();
+			if (ImGui::BeginMenu("View")) {
+				for (const auto& panel : m_Panels) {
+					ImGui::MenuItem(panel->GetName(), nullptr, &panel->IsOpenRef());
+				}
+			}
+			ImGui::EndMenuBar();
+		}
+
+		m_Inspector.SetSelectedEntity(m_Hierachy.GetSelectedEntity());
+
+		for (const auto& panel : m_Panels) {
+			if (panel->IsOpen()) {
+				ImGui::Begin(panel->GetName());
+				panel->OnImGuiRender();
+				ImGui::End();
+			}
 		}
 
 		ImGui::End();
-
-		// === Assets ===
-		ImGui::Begin("Asset Manager");
-		ImGui::Text("Asset manager placeholder");
-		ImGui::End();
-
-		// === Console ===
-		ImGui::Begin("Console");
-		ImGui::Text("Console output placeholder");
-		ImGui::End();
-
-		ImGui::End(); // DockspaceHost
-	}
-
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f) {
-		ImGui::PushID(label.c_str());
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
-		ImGui::Text("%s", label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 0, 0 });
-
-		float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		// X
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4 { 0.8f, 0.1f, 0.15f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4 { 0.9f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4 { 0.8f, 0.1f, 0.15f, 1.0f });
-		if (ImGui::Button("X", buttonSize))
-			values.x = resetValue;
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// Y
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4 { 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4 { 0.3f, 0.8f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4 { 0.2f, 0.7f, 0.2f, 1.0f });
-		if (ImGui::Button("Y", buttonSize))
-			values.y = resetValue;
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// Z
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4 { 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4 { 0.2f, 0.35f, 0.9f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4 { 0.1f, 0.25f, 0.8f, 1.0f });
-		if (ImGui::Button("Z", buttonSize))
-			values.z = resetValue;
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-		ImGui::Columns(1);
-		ImGui::PopID();
 	}
 
 private:
-	static constexpr int GRID_SIZE { 10 };
 	void SpawnTestGrid() {
 		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
 		for (int i = 0; i < GRID_SIZE; ++i) {
@@ -243,10 +167,21 @@ private:
 		}
 	}
 
+private:
+	static constexpr int GRID_SIZE { 10 };
+
 	Origo::Ref<Origo::Camera> m_Camera;
 	Origo::Ref<Origo::Shader> m_Shader;
 	Origo::Ref<Origo::Material> m_Material;
-	Origo::Ref<Origo::FrameBuffer> m_Buffer;
+	Origo::FrameBuffer m_Buffer;
+
+	OrigoEditor::SceneViewport m_Viewport { m_Buffer, m_Camera };
+	OrigoEditor::HierarchyPanel m_Hierachy { m_Scene };
+	OrigoEditor::InspectorPanel m_Inspector { m_Scene };
+	OrigoEditor::ConsolePanel m_Console {};
+	OrigoEditor::AssetsPanel m_Assets {};
+
+	std::vector<OrigoEditor::EditorPanel*> m_Panels;
 };
 
 Origo::Application* Origo::CreateApplication() {

@@ -44,8 +44,6 @@ public:
 		UpdateProjection();
 	}
 
-	void OnEvent(Event& event);
-
 	std::string GetName() const override {
 		return "Camera";
 	}
@@ -74,8 +72,5 @@ private:
 
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
-
-	bool m_FirstMouseEvent { true };
-	glm::vec2 m_LastMousePos { 0.0f };
 };
 }
