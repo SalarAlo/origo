@@ -27,7 +27,7 @@ public:
 	void OnAwake() override {
 		m_Camera->SetSpeed(10);
 
-		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "resources/textures/rowlett.jpg") };
+		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "resources/textures/origo_logo.png") };
 
 		m_Shader = Origo::AssetManager::CreateAsset<Origo::Shader>("Normal Shader", "normal");
 		m_Material = Origo::AssetManager::CreateAsset<Origo::Material>("Normal Material", m_Shader, logoTexture);

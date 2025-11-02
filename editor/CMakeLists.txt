@@ -1,6 +1,6 @@
 project(OrigoEditorApp LANGUAGES C CXX)
 
-file(GLOB_RECURSE EDITOR_SOURCES src/*.cpp)
+file(GLOB_RECURSE  EDITOR_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(OrigoEditor ${EDITOR_SOURCES})
 
