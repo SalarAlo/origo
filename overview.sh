@@ -6,7 +6,7 @@
 set -e
 
 # Directories to scan
-DIRS=("origo" "game")
+DIRS=("origo" "game" "editor")
 
 # ANSI color codes
 BOLD="\033[1m"

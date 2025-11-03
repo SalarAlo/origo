@@ -1,6 +1,5 @@
 #pragma once
 
-#include "origo/events/Event.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
 #include <glm/glm.hpp>
