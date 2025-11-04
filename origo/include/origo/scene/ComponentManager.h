@@ -2,6 +2,7 @@
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
 #include <concepts>
+#include <typeindex>
 #include <unordered_map>
 
 namespace Origo {
@@ -23,7 +24,22 @@ public:
 	template <ComponentConcept T>
 	Ref<T> GetComponent(const UUID& entity) const {
 		auto& map = GetComponentsMap<T>();
-		return map[entity];
+		auto it = map.find(entity);
+		return (it != map.end()) ? it->second : nullptr;
+	}
+
+	std::vector<Ref<Component>> GetComponents(const UUID& entity) const {
+		std::vector<Ref<Component>> result;
+
+		for (auto& [type, storagePtr] : m_Storages) {
+			const auto& baseMap = *static_cast<const std::unordered_map<UUID, Ref<Component>>*>(storagePtr);
+
+			auto it = baseMap.find(entity);
+			if (it != baseMap.end())
+				result.push_back(it->second);
+		}
+
+		return result;
 	}
 
 	template <ComponentConcept T>
@@ -40,10 +56,17 @@ public:
 
 private:
 	template <ComponentConcept T>
-	std::unordered_map<UUID, Ref<T>>& GetComponentsMap() const {
-		static std::unordered_map<UUID, Ref<T>> m_Storage {};
+	static std::unordered_map<UUID, Ref<T>>& GetComponentsMap() {
+		static std::unordered_map<UUID, Ref<T>> m_Storage;
+		static bool registered = [] {
+			m_Storages[typeid(T)] = &m_Storage;
+			return true;
+		}();
+
 		return m_Storage;
 	}
+
+	inline static std::unordered_map<std::type_index, void*> m_Storages;
 
 private:
 };

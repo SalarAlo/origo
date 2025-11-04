@@ -9,8 +9,11 @@ namespace Origo {
 class Event {
 public:
 	virtual EventType GetEventType() const = 0;
+	void SetIsHandled() { m_Handled = true; }
+	bool IsHandled() const { return m_Handled; }
 
 private:
+	bool m_Handled {};
 };
 template <typename T>
 concept EventTypeConcept = std::derived_from<T, Event>;

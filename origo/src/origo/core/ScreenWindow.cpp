@@ -5,6 +5,7 @@
 #include "origo/events/MouseEvent.h"
 #include "origo/events/WindowEvent.h"
 #include "origo/input/Input.h"
+#include "origo/renderer/GlDebug.h"
 
 #include <cassert>
 #include <stdexcept>

@@ -7,6 +7,7 @@
 #include "origo/events/Event.h"
 #include "origo/input/Input.h"
 #include "origo/renderer/FrameBuffer.h"
+#include "origo/renderer/Renderer.h"
 #include "origo/scene/MeshRenderer.h"
 
 #include "panels/PanelManager.h"
@@ -30,7 +31,6 @@ public:
 	}
 
 	void OnAwake() override {
-		m_Camera->SetSpeed(10);
 
 		UI::ApplyEditorStyle();
 		UI::LoadEditorFont();
@@ -45,30 +45,34 @@ public:
 		SpawnTestGrid();
 	}
 
-	void OnHandleEvent(Event& event) override {
+	void OnEvent(Event& event) override {
 		m_CameraController.HandleEvent(event);
-	}
-
-	void OnRender() override {
-		m_Buffer.Bind();
-
-		Renderer::Clear(m_Buffer.GetWidth(), m_Buffer.GetHeight());
-		Renderer::Flush(m_Camera);
-
-		m_Buffer.Unbind();
 	}
 
 	void OnUpdate(double dt) override {
 		m_CameraController.Update(dt);
-	}
 
-	void OnImGuiRender() override {
+		m_Buffer.Bind();
+
+		Renderer::SetViewport(m_Buffer.GetWidth(), m_Buffer.GetHeight());
+		GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		Renderer::Flush(m_Camera);
+
+		m_Buffer.Unbind();
+
+		m_ImGuiLayer.Begin();
+
 		m_PanelController.Render();
+
+		m_ImGuiLayer.End();
 	}
 
 private:
 	void SpawnTestGrid() {
 		auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Cube);
+
 		for (int i = 0; i < GRID_SIZE; ++i) {
 			for (int j = 0; j < GRID_SIZE; ++j) {
 				auto entity = m_Scene.CreateEntity("Cube_" + std::to_string(i * GRID_SIZE + j));

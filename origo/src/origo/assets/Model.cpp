@@ -134,4 +134,4 @@ void Model::Render() const {
 	}
 }
 
-} // namespace Origo
+}

@@ -136,4 +136,4 @@ void DrawMenuBar(PanelManager& manager) {
 	}
 }
 
-} // namespace OrigoEditor::UI
+}

@@ -11,6 +11,7 @@
 #include "origo/events/WindowEvent.h"
 #include "origo/input/Input.h"
 
+#include "origo/renderer/Renderer.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 #include "origo/scene/Scene.h"
@@ -48,7 +49,7 @@ public:
 		}
 	}
 
-	void OnHandleEvent(Origo::Event& event) override {
+	void OnEvent(Origo::Event& event) override {
 		Origo::EventDispatcher dispatcher { event };
 
 		dispatcher.Dispatch<Origo::WindowResizeEvent>([&](auto& resEvent) {
@@ -103,14 +104,13 @@ public:
 
 		if (glm::length(direction) > 0.0f)
 			m_Camera->Move(glm::normalize(direction) * static_cast<float>(dt));
+
+		Origo::Renderer::Flush(m_Scene.GetMainCamera());
 	}
 
 	void OnShutdown() override {
 		Origo::JsonSerializer serializer { "./resources/scenes/some.json" };
 		Origo::SceneSerialization::Serialize(m_Scene, serializer);
-	}
-
-	void OnImGuiRender() override {
 	}
 
 private:

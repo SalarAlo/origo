@@ -17,10 +17,8 @@ void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, cons
 	s_DrawQueue.emplace_back(mesh, material, transform);
 }
 
-void Renderer::Clear(int width, int height) {
+void Renderer::SetViewport(int width, int height) {
 	glViewport(0, 0, width, height);
-	glClearColor(0.1f, 0.1f, 0.12f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::Flush(const Ref<Camera>& camera) {

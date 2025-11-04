@@ -11,15 +11,13 @@ void ImGuiLayer::OnAttach(const ScreenWindow& window) {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 
-	// Enable docking + viewports
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // useful
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // main feature
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // multiple windows
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui::StyleColorsDark();
 	ImGuiStyle& style = ImGui::GetStyle();
 
-	// Make pop-out windows consistent with main window
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 		style.WindowRounding = 0.0f;
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
@@ -46,7 +44,6 @@ void ImGuiLayer::End() {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	// Multi-viewport support: must update and render platform windows
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 		GLFWwindow* backupContext = glfwGetCurrentContext();
@@ -56,4 +53,4 @@ void ImGuiLayer::End() {
 	}
 }
 
-} // namespace Origo
+}

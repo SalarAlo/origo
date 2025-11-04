@@ -35,4 +35,4 @@ void Shutdown() {
 LoggerRef& GetCore() { return s_CoreLogger; }
 LoggerRef& GetClient() { return s_ClientLogger; }
 
-} // namespace Orig
+}

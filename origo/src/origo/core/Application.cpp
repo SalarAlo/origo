@@ -1,4 +1,5 @@
 #include "origo/core/Application.h"
+#include "origo/core/Layer.h"
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
 #include "origo/input/Input.h"
@@ -6,8 +7,12 @@
 #include <functional>
 
 namespace Origo {
-void Application::InternalUpdate() {
+void Application::InternalUpdate(double dt) {
 	ComponentSystemRegistry::GetInstance().RunAll(m_Scene);
+
+	for (Layer* layer : m_LayerStack) {
+		layer->OnUpdate(dt);
+	}
 }
 
 Application::Application(const ApplicationSettings& settings)
@@ -16,27 +21,29 @@ Application::Application(const ApplicationSettings& settings)
     , m_Running(true)
     , m_LastTimeStamp(Time::GetNow())
     , m_Scene("Origo Game Sample", m_Window.GetAspectResolution()) {
-	m_Window.SetEventCallback(std::bind(&Application::OnHandleEvent, this, std::placeholders::_1));
+	m_Window.SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+}
+void Application::OnEvent(Event& event) {
+	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+		(*--it)->OnEvent(event);
+		if (event.IsHandled())
+			break;
+	}
 }
 
 void Application::Run() {
 	Origo::Logger::Init();
 	Origo::Input::SetContext(Origo::MakeRef<Origo::ScreenWindow>(m_Window));
+
 	m_ImGuiLayer.OnAttach(m_Window);
 
 	OnAwake();
 
 	while (m_Running) {
-		Time::Duration dt { Time::GetNow() - m_LastTimeStamp };
+		double dt = Time::Duration(Time::GetNow() - m_LastTimeStamp).count();
 
-		InternalUpdate();
-		OnUpdate(dt.count());
-
-		OnRender();
-
-		m_ImGuiLayer.Begin();
-		OnImGuiRender();
-		m_ImGuiLayer.End();
+		InternalUpdate(dt);
+		OnUpdate(dt);
 
 		if (m_Window.ShouldClose()) {
 			m_Running = false;

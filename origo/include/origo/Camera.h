@@ -66,7 +66,7 @@ private:
 	float m_Near;
 	float m_Far;
 
-	float m_Speed { 0.1f };
+	float m_Speed { 0.0f };
 	float m_Sensitivity { 0.1f };
 
 	glm::mat4 m_ViewMatrix;

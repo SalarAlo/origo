@@ -8,8 +8,8 @@ namespace OrigoEditor {
 class EditorCameraController {
 
 public:
-	explicit EditorCameraController(Origo::Ref<Origo::Camera> camera)
-	    : m_Camera(std::move(camera)) { }
+	explicit EditorCameraController(const Origo::Ref<Origo::Camera>& camera)
+	    : m_Camera(camera) { }
 
 	void Update(double dt);
 

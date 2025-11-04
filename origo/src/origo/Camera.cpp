@@ -1,6 +1,4 @@
 #include "origo/Camera.h"
-#include "origo/events/MouseEvent.h"
-#include "origo/events/WindowEvent.h"
 #include "origo/scene/Component.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -49,7 +47,6 @@ void Camera::Rotate(float yawOffset, float pitchOffset) {
 	m_Yaw += yawOffset;
 	m_Pitch += pitchOffset;
 
-	// Clamp pitch to avoid gimbal flip
 	if (m_Pitch > 89.0f)
 		m_Pitch = 89.0f;
 	if (m_Pitch < -89.0f)
@@ -80,16 +77,14 @@ void Camera::UpdateProjection() {
 }
 
 void Camera::UpdateVectors() {
-	// Calculate the new forward vector from yaw/pitch
 	glm::vec3 forward;
 	forward.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 	forward.y = sin(glm::radians(m_Pitch));
 	forward.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 	m_Forward = glm::normalize(forward);
 
-	// Right and Up vectors
 	m_Right = glm::normalize(glm::cross(m_Forward, { 0.0f, 1.0f, 0.0f }));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
 }
 
-} // namespace Origo
+}

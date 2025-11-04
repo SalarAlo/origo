@@ -55,6 +55,7 @@ void InspectorPanel::OnImGuiRender() {
 
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
 		auto transform = m_Scene.GetComponent<Origo::Transform>(m_SelectedEntity->GetId());
+
 		glm::vec3 pos = transform->GetPosition();
 		glm::vec3 rot = transform->GetRotation();
 		glm::vec3 scl = transform->GetScale();

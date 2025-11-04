@@ -1,4 +1,5 @@
 #include "controllers/EditorCameraController.h"
+#include "origo/core/Logger.h"
 #include "origo/events/Event.h"
 #include "origo/input/Input.h"
 
@@ -24,6 +25,8 @@ void EditorCameraController::Update(double dt) {
 
 	if (glm::length(direction) > 0.0f)
 		m_Camera->Move(glm::normalize(direction) * static_cast<float>(dt));
+	direction = m_Camera->GetPosition();
+	ORG_INFO("Camara position: {}, {}, {}", direction.x, direction.y, direction.z);
 }
 
 void EditorCameraController::HandleEvent(Origo::Event& e) {
