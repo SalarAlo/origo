@@ -27,6 +27,9 @@ public:
 	void Rotate(float yawOffset, float pitchOffset);
 	void SetYawPitch(float yaw, float pitch);
 
+	void SetRotationEnabled(bool enabled) { m_IsRotationLocked = !enabled; };
+	void SetMovementEnabled(bool enabled) { m_IsPositionLocked = !enabled; };
+
 	void SetFOV(float fov);
 
 	const glm::mat4& GetView() const { return m_ViewMatrix; }
@@ -36,8 +39,6 @@ public:
 	glm::vec3 GetRight() const { return m_Right; }
 	glm::vec3 GetUp() const { return m_Up; }
 
-	void SetSpeed(float speed) { m_Speed = speed; }
-	void SetSensitivity(float sensitivity) { m_Sensitivity = sensitivity; }
 	void SetAspectResolutino(float ar) {
 		m_Aspect = ar;
 		UpdateProjection();
@@ -66,10 +67,10 @@ private:
 	float m_Near;
 	float m_Far;
 
-	float m_Speed { 0.0f };
-	float m_Sensitivity { 0.1f };
-
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
+
+	bool m_IsRotationLocked;
+	bool m_IsPositionLocked;
 };
 }

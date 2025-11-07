@@ -13,7 +13,7 @@ LayerStack::~LayerStack() {
 }
 
 void LayerStack::PushLayer(Layer* layer) {
-	m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+	m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer) + 1;
 }
 
 void LayerStack::PushOverlay(Layer* overlay) {
@@ -25,7 +25,8 @@ void LayerStack::PopLayer(Layer* layer) {
 
 	if (it != m_Layers.end()) {
 		m_Layers.erase(it);
-		m_LayerInsert--;
+		if (it < m_LayerInsert)
+			m_LayerInsert--;
 	}
 }
 

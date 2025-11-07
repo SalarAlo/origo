@@ -6,7 +6,7 @@
 
 namespace Origo {
 
-void ImGuiLayer::OnAttach(const ScreenWindow& window) {
+void ImGuiLayer::OnAttach(GLFWwindow* window) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -23,7 +23,7 @@ void ImGuiLayer::OnAttach(const ScreenWindow& window) {
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
-	GLFWwindow* native = window.GetNativeWindow();
+	GLFWwindow* native = window;
 	ImGui_ImplGlfw_InitForOpenGL(native, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 }

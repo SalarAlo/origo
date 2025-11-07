@@ -4,7 +4,6 @@
 #include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
-#include "origo/imgui/ImGuiLayer.h"
 #include "origo/scene/Scene.h"
 
 namespace Origo {
@@ -24,7 +23,7 @@ public:
 	virtual void OnEvent(Event& event);
 
 	void PushLayer(Layer*);
-	void PopOverlay(Layer*);
+	void PushOverlay(Layer*);
 
 private:
 	void InternalUpdate(double dt);
@@ -32,7 +31,6 @@ private:
 protected:
 	ScreenWindow m_Window;
 	Scene m_Scene;
-	ImGuiLayer m_ImGuiLayer {};
 
 private:
 	bool m_Running {};

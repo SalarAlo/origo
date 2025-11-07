@@ -11,7 +11,7 @@ public:
 
 	virtual void OnAttach() { };
 	virtual void OnDetach() { };
-	virtual void OnUpdate(float dt) { };
+	virtual void OnUpdate(double dt) { };
 	virtual void OnEvent(Event& e) { };
 
 	std::string GetName() const { return m_DebugName; }

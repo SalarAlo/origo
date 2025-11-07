@@ -15,35 +15,46 @@ Camera::Camera(const Ref<Entity>& e, float aspect, const glm::vec3& position, fl
     , m_FOV(fov)
     , m_Aspect(aspect)
     , m_Near(nearPlane)
-    , m_Far(farPlane) {
+    , m_Far(farPlane)
+    , m_IsPositionLocked(false)
+    , m_IsRotationLocked(false) {
 	UpdateVectors();
 	UpdateView();
 	UpdateProjection();
 }
 
 void Camera::SetPosition(const glm::vec3& position) {
+	if (m_IsPositionLocked)
+		return;
+
 	m_Position = position;
 	UpdateView();
 }
 
 void Camera::Move(const glm::vec3& delta) {
-	m_Position += delta * m_Speed;
+	if (m_IsPositionLocked)
+		return;
+
+	m_Position += delta;
 	UpdateView();
 }
 
 void Camera::MoveRight(float step) {
-	Move(m_Right * step * m_Speed);
+	Move(m_Right * step);
 }
 
 void Camera::MoveUp(float step) {
-	Move(m_Up * step * m_Speed);
+	Move(m_Up * step);
 }
 
 void Camera::MoveForward(float step) {
-	Move(m_Forward * step * m_Speed);
+	Move(m_Forward * step);
 }
 
 void Camera::Rotate(float yawOffset, float pitchOffset) {
+	if (m_IsRotationLocked)
+		return;
+
 	m_Yaw += yawOffset;
 	m_Pitch += pitchOffset;
 
@@ -57,6 +68,8 @@ void Camera::Rotate(float yawOffset, float pitchOffset) {
 }
 
 void Camera::SetYawPitch(float yaw, float pitch) {
+	if (m_IsRotationLocked)
+		return;
 	m_Yaw = yaw;
 	m_Pitch = pitch;
 	UpdateVectors();

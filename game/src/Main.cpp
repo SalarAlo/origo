@@ -26,8 +26,6 @@ public:
 	}
 
 	void OnAwake() override {
-		m_Camera->SetSpeed(10);
-
 		auto logoTexture { Origo::AssetManager::CreateAsset<Origo::Texture>("Rowlett", "resources/textures/origo_logo.png") };
 
 		m_Shader = Origo::AssetManager::CreateAsset<Origo::Shader>("Normal Shader", "normal");
@@ -75,10 +73,8 @@ public:
 		dispatcher.Dispatch<Origo::KeyPressEvent>([&](Origo::KeyPressEvent& e) {
 			if (e.GetKeyPressed() == Origo::KeyboardKey::KEY_ESCAPE) {
 				Origo::Input::SetCursorMode(Origo::Input::CursorMode::Free);
-				m_Camera->SetSensitivity(0);
 			} else if (e.GetKeyPressed() == Origo::KeyboardKey::KEY_BACKSPACE) {
 				Origo::Input::SetCursorMode(Origo::Input::CursorMode::Locked);
-				m_Camera->SetSensitivity(0.1);
 			}
 		});
 	}
@@ -87,11 +83,6 @@ public:
 		glm::vec3 direction(0.0f);
 		constexpr float normalSpeed { 10 };
 		constexpr float fastSpeed { normalSpeed * 5 };
-
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_LEFT_SHIFT))
-			m_Camera->SetSpeed(fastSpeed);
-		else
-			m_Camera->SetSpeed(normalSpeed);
 
 		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
 			direction += m_Camera->GetForward();

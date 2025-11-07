@@ -7,7 +7,16 @@
 #include <functional>
 
 namespace Origo {
+void Application::PushLayer(Layer* l) {
+	m_LayerStack.PushLayer(l);
+}
+
+void Application::PushOverlay(Layer* l) {
+	m_LayerStack.PushOverlay(l);
+}
+
 void Application::InternalUpdate(double dt) {
+
 	ComponentSystemRegistry::GetInstance().RunAll(m_Scene);
 
 	for (Layer* layer : m_LayerStack) {
@@ -23,6 +32,7 @@ Application::Application(const ApplicationSettings& settings)
     , m_Scene("Origo Game Sample", m_Window.GetAspectResolution()) {
 	m_Window.SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 }
+
 void Application::OnEvent(Event& event) {
 	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
 		(*--it)->OnEvent(event);
@@ -35,9 +45,11 @@ void Application::Run() {
 	Origo::Logger::Init();
 	Origo::Input::SetContext(Origo::MakeRef<Origo::ScreenWindow>(m_Window));
 
-	m_ImGuiLayer.OnAttach(m_Window);
-
 	OnAwake();
+
+	for (Layer* layer : m_LayerStack) {
+		layer->OnAttach();
+	}
 
 	while (m_Running) {
 		double dt = Time::Duration(Time::GetNow() - m_LastTimeStamp).count();
