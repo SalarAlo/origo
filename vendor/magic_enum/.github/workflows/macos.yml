@@ -1,0 +1,42 @@
+name: macos
+
+on: [push, pull_request]
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - { os: macos-13 }
+        - { os: macos-14 }
+        - { os: macos-15 }
+
+    name: "${{ matrix.config.os }}"
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Build Release
+      run: |
+        rm -rf build
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . -j 4 --config Release
+        ctest --output-on-failure -C Release
+
+    - name: Build Debug
+      run: |
+        rm -rf build
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Debug
+        cmake --build . -j 4 --config Debug
+        ctest --output-on-failure -C Debug
+
+    - name: Bazel Test
+      working-directory: test
+      run: bazelisk test //... --config=ci

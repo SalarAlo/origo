@@ -1,0 +1,6 @@
+option(
+    'hash',
+    type : 'boolean',
+    value : false,
+    description : 'Do hashing at build time - longer build times, but O(1) string lookup'
+)

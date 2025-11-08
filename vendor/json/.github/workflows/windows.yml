@@ -1,0 +1,103 @@
+name: Windows
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - release/*
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  mingw:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        architecture: [x64, x86]
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@84c781b557efd538dec66bde06988d81cd3138cf # v2.2.0
+        with:
+          platform: ${{ matrix.architecture }}
+          version: 12.2.0 # https://github.com/egor-tensin/setup-mingw/issues/14
+      - name: Run CMake
+        run: cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DJSON_BuildTests=On
+      - name: Build
+        run: cmake --build build --parallel 10
+      - name: Test
+        run: cd build ; ctest -j 10 -C Debug --output-on-failure
+
+  msvc:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        architecture: [Win32, x64]
+        std_version: [default, latest]
+
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Set extra CXX_FLAGS for latest std_version
+        id: cxxflags
+        run: |
+          if [ "${{ matrix.std_version }}" = "latest" ]; then
+            echo "flags=/permissive- /std:c++latest /utf-8 /W4 /WX" >> $GITHUB_ENV
+          else
+            echo "flags=/W4 /WX" >> $GITHUB_ENV
+          fi
+        shell: bash
+      - name: Run CMake (Release)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A ${{ matrix.architecture }} -DJSON_BuildTests=On -DCMAKE_CXX_FLAGS="$env:flags"
+        if: matrix.build_type == 'Release'
+        shell: pwsh
+      - name: Run CMake (Debug)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A ${{ matrix.architecture }} -DJSON_BuildTests=On -DJSON_FastTests=ON -DCMAKE_CXX_FLAGS="$env:flags"
+        if: matrix.build_type == 'Debug'
+        shell: pwsh
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel 10
+      - name: Test
+        run: cd build ; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+
+  clang:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        version: [11.0.1, 12.0.1, 13.0.1, 14.0.6, 15.0.7, 16.0.6, 18.1.8, 19.1.7, 20.1.8]
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Install Clang
+        run: curl -fsSL -o LLVM${{ matrix.version }}.exe https://github.com/llvm/llvm-project/releases/download/llvmorg-${{ matrix.version }}/LLVM-${{ matrix.version }}-win64.exe ; 7z x LLVM${{ matrix.version }}.exe -y -o"C:/Program Files/LLVM"
+      - name: Run CMake
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang++.exe" -DCMAKE_CXX_FLAGS="--target=x86_64-w64-mingw32 -stdlib=libstdc++ -pthread" -DCMAKE_EXE_LINKER_FLAGS="-lwinpthread" -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DJSON_BuildTests=On
+      - name: Build
+        run: cmake --build build --parallel 10
+      - name: Test
+        run: cd build ; ctest -j 10 -C Debug --exclude-regex "test-unicode" --output-on-failure
+
+  clang-cl-12:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        architecture: [Win32, x64]
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Run CMake
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A ${{ matrix.architecture }} -T ClangCL -DJSON_BuildTests=On
+      - name: Build
+        run: cmake --build build --config Debug --parallel 10
+      - name: Test
+        run: cd build ; ctest -j 10 -C Debug --exclude-regex "test-unicode" --output-on-failure
