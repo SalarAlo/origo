@@ -13,7 +13,7 @@ static void DrawMesh(const RenderCommand& renderCommand) {
 void Renderer::BeginFrame() {
 }
 
-void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform) {
+void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform* transform) {
 	s_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -21,7 +21,7 @@ void Renderer::SetViewport(int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-void Renderer::Flush(const Ref<Camera>& camera) {
+void Renderer::Flush(const Camera* camera) {
 	std::sort(s_DrawQueue.begin(), s_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
 		return a.GetMaterial() < b.GetMaterial();
 	});

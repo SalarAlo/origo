@@ -12,6 +12,7 @@ public:
 	EditorUILayer(EditorContext& ctx);
 
 	void OnAttach() override;
+	void OnDetach() override;
 	void OnUpdate(double dt) override;
 	void OnEvent(Origo::Event& e) override;
 

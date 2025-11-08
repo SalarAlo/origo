@@ -19,7 +19,7 @@ void SceneViewport::OnImGuiRender() {
 				ImVec2 delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
 				ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
 
-				m_Camera->Rotate(delta.x * m_Sensitivity, -delta.y * m_Sensitivity);
+				m_Camera.Rotate(delta.x * m_Sensitivity, -delta.y * m_Sensitivity);
 			}
 		}
 	}

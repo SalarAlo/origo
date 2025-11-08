@@ -7,7 +7,7 @@
 
 namespace Origo {
 
-Camera::Camera(const Ref<Entity>& e, float aspect, const glm::vec3& position, float yaw, float pitch, float fov, float nearPlane, float farPlane)
+Camera::Camera(Entity* e, float aspect, const glm::vec3& position, float yaw, float pitch, float fov, float nearPlane, float farPlane)
     : Component(e)
     , m_Position(position)
     , m_Yaw(yaw)

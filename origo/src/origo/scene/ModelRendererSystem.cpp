@@ -4,7 +4,7 @@
 
 namespace Origo {
 
-void ModelRendererSystem::ForEach(const Scene& scene, const std::vector<Ref<ModelRenderer>>& instances) {
+void ModelRendererSystem::ForEach(const Scene& scene, const std::vector<ModelRenderer*>& instances) {
 	for (const auto& renderer : instances) {
 		for (const auto& submesh : renderer->GetModel()->GetSubMeshes()) {
 			Renderer::Submit(

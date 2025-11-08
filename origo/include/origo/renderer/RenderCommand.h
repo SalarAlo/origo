@@ -5,15 +5,15 @@
 namespace Origo {
 class RenderCommand {
 public:
-	RenderCommand(const Ref<Mesh>& mesh, const Ref<Material>& material, const Ref<Transform>& transform);
+	RenderCommand(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform* transform);
 
 	Ref<Mesh> GetMesh() const;
 	Ref<Material> GetMaterial() const;
-	Ref<Transform> GetTransform() const;
+	Transform* GetTransform() const;
 
 private:
-	WeakRef<Mesh> m_Mesh {};
-	WeakRef<Material> m_Material;
-	WeakRef<Transform> m_Transform;
+	Ref<Mesh> m_Mesh {};
+	Ref<Material> m_Material;
+	Transform* m_Transform;
 };
 }

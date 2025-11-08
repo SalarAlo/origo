@@ -4,13 +4,13 @@
 #include "origo/events/KeyEvent.h"
 
 namespace Origo::Input {
-static Ref<ScreenWindow> S_CONTEXT;
+static ScreenWindow* S_CONTEXT;
 
 bool IsKeyPressed(KeyboardKey k) {
 	return glfwGetKey(S_CONTEXT->GetNativeWindow(), KeyboardKeyToGlfwKey(k));
 }
 
-void SetContext(Ref<ScreenWindow> ctx) {
+void SetContext(ScreenWindow* ctx) {
 	S_CONTEXT = ctx;
 }
 

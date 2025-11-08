@@ -11,30 +11,38 @@ template <typename T>
 concept ComponentConcept = std::derived_from<T, Component>;
 
 class ComponentManager {
+	using ComponentsMap = std::unordered_map<UUID, Component*>;
+
 public:
+	~ComponentManager() {
+		for (const auto& deleter : m_Deleters)
+			deleter();
+	}
+
 	template <ComponentConcept T, typename... Args>
-	Ref<T> AddComponent(const Ref<Entity>& entity, Args&&... args) {
+	T* AddComponent(Entity* entity, Args&&... args) {
 		auto& map = GetComponentsMap<T>();
-		auto component = MakeRef<T>(entity, std::forward<Args>(args)...);
+		auto component = new T(entity, std::forward<Args>(args)...);
 		map[entity->GetId()] = component;
 
 		return component;
 	}
 
 	template <ComponentConcept T>
-	Ref<T> GetComponent(const UUID& entity) const {
+	T* GetComponent(const UUID& entity) const {
 		auto& map = GetComponentsMap<T>();
 		auto it = map.find(entity);
 		return (it != map.end()) ? it->second : nullptr;
 	}
 
-	std::vector<Ref<Component>> GetComponents(const UUID& entity) const {
-		std::vector<Ref<Component>> result;
+	std::vector<Component*> GetComponents(const UUID& entity) const {
+		std::vector<Component*> result;
 
 		for (auto& [type, storagePtr] : m_Storages) {
-			const auto& baseMap = *static_cast<const std::unordered_map<UUID, Ref<Component>>*>(storagePtr);
+			const auto& baseMap = *static_cast<const ComponentsMap*>(storagePtr);
 
 			auto it = baseMap.find(entity);
+
 			if (it != baseMap.end())
 				result.push_back(it->second);
 		}
@@ -43,9 +51,9 @@ public:
 	}
 
 	template <ComponentConcept T>
-	std::vector<Ref<T>> GetAllComponentsOfType() const {
+	std::vector<T*> GetAllComponentsOfType() const {
 		auto& map = GetComponentsMap<T>();
-		std::vector<Ref<T>> result;
+		std::vector<T*> result;
 		result.reserve(map.size());
 
 		for (auto& [_, component] : map)
@@ -56,10 +64,16 @@ public:
 
 private:
 	template <ComponentConcept T>
-	static std::unordered_map<UUID, Ref<T>>& GetComponentsMap() {
-		static std::unordered_map<UUID, Ref<T>> m_Storage;
-		static bool registered = [] {
+	static std::unordered_map<UUID, T*>& GetComponentsMap() {
+		static std::unordered_map<UUID, T*> m_Storage;
+		static bool _ = [] {
 			m_Storages[typeid(T)] = &m_Storage;
+			m_Deleters.push_back([] {
+				for (const auto& [_, ptr] : m_Storage)
+					delete static_cast<T*>(ptr);
+				m_Storage.clear();
+			});
+
 			return true;
 		}();
 
@@ -67,6 +81,7 @@ private:
 	}
 
 	inline static std::unordered_map<std::type_index, void*> m_Storages;
+	inline static std::vector<std::function<void()>> m_Deleters;
 
 private:
 };

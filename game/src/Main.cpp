@@ -40,7 +40,7 @@ public:
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
 				auto entity = m_Scene.CreateEntity("Cube_" + std::to_string(i * GRID_SIZE + j));
-				auto transform = m_Scene.AddComponent<Origo::Transform>(entity);
+				Origo::Transform* transform = m_Scene.AddComponent<Origo::Transform>(entity);
 				transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
 				m_Scene.AddComponent<Origo::MeshRenderer>(entity, m_Material, cubeMesh);
 			}
@@ -107,7 +107,7 @@ public:
 private:
 	static constexpr int GRID_SIZE { 10 };
 
-	Origo::Ref<Origo::Camera> m_Camera;
+	Origo::Camera* m_Camera;
 	Origo::Ref<Origo::Shader> m_Shader {};
 	Origo::Ref<Origo::Material> m_Material {};
 };

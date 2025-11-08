@@ -9,7 +9,7 @@ namespace Origo {
 
 class Camera : public Component {
 public:
-	Camera(const Ref<Entity>& e, float aspect,
+	Camera(Entity* e, float aspect,
 	    const glm::vec3& position = { 0.0f, 0.0f, 0.0f },
 	    float yaw = 90.0f,
 	    float pitch = 0.0f,

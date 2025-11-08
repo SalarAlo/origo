@@ -16,7 +16,7 @@ public:
 	}
 
 	template <typename T>
-	static void Draw(Origo::Ref<T> component) {
+	static void Draw(T* component) {
 		auto it = m_Drawers.find(typeid(T));
 		if (it == m_Drawers.end()) {
 			if (ImGui::CollapsingHeader("To be continued...", ImGuiTreeNodeFlags_DefaultOpen)) {

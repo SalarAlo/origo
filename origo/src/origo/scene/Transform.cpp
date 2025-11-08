@@ -4,7 +4,7 @@
 
 namespace Origo {
 
-Transform::Transform(Ref<class Entity> entity)
+Transform::Transform(Entity* entity)
     : Component(entity)
     , m_Position(0.0f)
     , m_Rotation(0.0f)

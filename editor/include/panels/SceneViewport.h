@@ -8,7 +8,7 @@ namespace OrigoEditor {
 
 class SceneViewport : public EditorPanel {
 public:
-	SceneViewport(Origo::FrameBuffer& buffer, Origo::Ref<Origo::Camera> camera)
+	SceneViewport(Origo::FrameBuffer& buffer, Origo::Camera& camera)
 	    : m_FrameBuffer(buffer)
 	    , m_Camera(camera) { }
 
@@ -18,7 +18,7 @@ public:
 
 private:
 	Origo::FrameBuffer& m_FrameBuffer;
-	Origo::Ref<Origo::Camera> m_Camera;
+	Origo::Camera& m_Camera;
 };
 
 }

@@ -4,7 +4,7 @@
 #include "origo/scene/MeshRenderer.h"
 
 namespace Origo {
-void MeshRendererSystem::ForEach(const Scene& scene, const std::vector<Ref<MeshRenderer>>& instances) {
+void MeshRendererSystem::ForEach(const Scene& scene, const std::vector<MeshRenderer*>& instances) {
 	for (const auto& instance : instances) {
 		Renderer::Submit(
 		    instance->GetMesh(),

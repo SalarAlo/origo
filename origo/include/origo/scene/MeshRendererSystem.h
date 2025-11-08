@@ -6,6 +6,6 @@
 namespace Origo {
 class MeshRendererSystem : public SingleComponentSystem<MeshRenderer> {
 public:
-	void ForEach(const Scene& scene, const std::vector<Ref<MeshRenderer>>& instances) override;
+	void ForEach(const Scene& scene, const std::vector<MeshRenderer*>& instances) override;
 };
 }

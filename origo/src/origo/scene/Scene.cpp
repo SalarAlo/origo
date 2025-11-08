@@ -9,10 +9,16 @@ Scene::Scene(std::string_view name, float ar)
 	m_MainCamera = m_ComponentManager.AddComponent<Camera>(camera, ar);
 }
 
-Ref<Entity> Scene::CreateEntity(std::string_view name) {
-	auto entity = MakeRef<Entity>(name);
+Entity* Scene::CreateEntity(std::string_view name) {
+	auto entity = new Entity(name);
 	m_Entities.emplace(entity->GetId(), entity);
 	return entity;
 }
+
+Scene::~Scene() {
+	for (auto& [_, e] : m_Entities) {
+		delete e;
+	}
+};
 
 }

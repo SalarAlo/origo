@@ -8,6 +8,12 @@ namespace Origo {
 class ScreenWindow {
 public:
 	explicit ScreenWindow(const ScreenWindowSettings& screenWindowConfig);
+	~ScreenWindow();
+
+	ScreenWindow(const ScreenWindow& other) = delete;
+	ScreenWindow& operator=(const ScreenWindow& other) = delete;
+	ScreenWindow(ScreenWindow&& other) = delete;
+	ScreenWindow& operator=(ScreenWindow&& other) = delete;
 
 	bool ShouldClose() const;
 	void OnUpdate() const;

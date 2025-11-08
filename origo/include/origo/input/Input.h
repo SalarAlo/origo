@@ -11,5 +11,5 @@ enum class CursorMode {
 
 bool IsKeyPressed(KeyboardKey k);
 void SetCursorMode(CursorMode mode);
-void SetContext(Ref<ScreenWindow> win);
+void SetContext(ScreenWindow* win);
 }

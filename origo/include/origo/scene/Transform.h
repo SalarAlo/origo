@@ -8,7 +8,7 @@ namespace Origo {
 
 class Transform : public Component {
 public:
-	Transform(Ref<class Entity> entity);
+	Transform(Entity* entity);
 
 	void Translate(const glm::vec3& delta);
 	void SetPosition(const glm::vec3& position);

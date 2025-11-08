@@ -2,7 +2,7 @@
         "assets": [
                 {
                         "asset_type": "Mesh",
-                        "id": "e3e071b5bee348fe2f0980671afb210d",
+                        "id": "28a727d6f6218643dd6808ebce0f53c6",
                         "name": "Cube",
                         "source": {
                                 "shape_type": "Cube",
@@ -10,16 +10,16 @@
                         }
                 },
                 {
-                        "albedo": "b3359c990df79e30bca4a5ddebc066c8",
+                        "albedo": "de8d02c412eb3b74d1f3cc6b2470f761",
                         "asset_type": "Material",
-                        "id": "4bceb2200aeb993f458a3592440ec64a",
+                        "id": "87503f4591a3782309336d643c83aae6",
                         "name": "Normal Material",
-                        "shader": "c06f66a63e4f227f08225991077764d7",
+                        "shader": "6fc25ab3bd5de91da2474c47bdff14cb",
                         "uniform_list": []
                 },
                 {
                         "asset_type": "Shader",
-                        "id": "c06f66a63e4f227f08225991077764d7",
+                        "id": "6fc25ab3bd5de91da2474c47bdff14cb",
                         "name": "Normal Shader",
                         "source": {
                                 "path": "normal",
@@ -28,7 +28,7 @@
                 },
                 {
                         "asset_type": "Texture",
-                        "id": "b3359c990df79e30bca4a5ddebc066c8",
+                        "id": "de8d02c412eb3b74d1f3cc6b2470f761",
                         "name": "Rowlett",
                         "source": {
                                 "path": "resources/textures/origo_logo.png",
@@ -39,408 +39,408 @@
         ],
         "entities": [
                 {
-                        "id": "30bfc2325e6bd1f986ece2d13f0b5fd6",
-                        "name": "Cube_99"
-                },
-                {
-                        "id": "4be9e2724ecf805ae56fc259bdc8945a",
-                        "name": "Cube_96"
-                },
-                {
-                        "id": "c198c193d016a3478316373c79997496",
-                        "name": "Cube_93"
-                },
-                {
-                        "id": "93d30d57a50c30d982036ddd103ac0a1",
-                        "name": "Cube_92"
-                },
-                {
-                        "id": "d24b348f630af97b09ed8084fa3c9652",
-                        "name": "Cube_91"
-                },
-                {
-                        "id": "a2641bf9f4f4817461c0ca01865104c5",
-                        "name": "Cube_86"
-                },
-                {
-                        "id": "9e5a3fab2223c7d02effb3664b420fd2",
-                        "name": "Cube_80"
-                },
-                {
-                        "id": "88a992fe038f31b86c8c988072b7746b",
-                        "name": "Cube_79"
-                },
-                {
-                        "id": "365169f1f6b4496c3eacca4a78a7d643",
-                        "name": "Cube_90"
-                },
-                {
-                        "id": "db087312629175822fe1d9745bb9e003",
-                        "name": "Cube_77"
-                },
-                {
-                        "id": "9bc80bdefb1c0ea46d1af647b015ff92",
-                        "name": "Cube_75"
-                },
-                {
-                        "id": "969c294986cfe431a450e6923121e3ac",
-                        "name": "Cube_70"
-                },
-                {
-                        "id": "57dc645d6d7d221d7e810ea4582a09b7",
-                        "name": "Cube_95"
-                },
-                {
-                        "id": "08f51d8f02bd6af121d372d50392bb3f",
-                        "name": "Cube_68"
-                },
-                {
-                        "id": "3488f1783b8cddc24df8beb868c6ac54",
-                        "name": "Cube_67"
-                },
-                {
-                        "id": "16efb77fc8dbfe79f55dc8cc9f653186",
-                        "name": "Cube_65"
-                },
-                {
-                        "id": "93b9c7dfa3d5e78c114a27a8c2997f52",
-                        "name": "Cube_85"
-                },
-                {
-                        "id": "a7f097c28ae300a384f67dbf98fdd5e6",
-                        "name": "Cube_64"
-                },
-                {
-                        "id": "20cf9b0e40683ce5263d0704e5ece6fa",
-                        "name": "Cube_62"
-                },
-                {
-                        "id": "7adb5292ecd312c586b4c9d64685c53a",
-                        "name": "Cube_61"
-                },
-                {
-                        "id": "4c9ff3091c80a3083e1285478793d855",
-                        "name": "Cube_59"
-                },
-                {
-                        "id": "9835a271f6f73c72880ada2922ce623d",
-                        "name": "Cube_58"
-                },
-                {
-                        "id": "e79549cb1b83f8ae24a0e4ba42026340",
-                        "name": "Cube_27"
-                },
-                {
-                        "id": "bfb93604957f0c5db3ed588798db3a84",
-                        "name": "Cube_4"
-                },
-                {
-                        "id": "e8409a131924818bb414e97c4c86b1e0",
-                        "name": "Cube_48"
-                },
-                {
-                        "id": "025a3f61e789d6deb1fc07eba3114067",
-                        "name": "Cube_14"
-                },
-                {
-                        "id": "0d18e25468cc3b1713fc3357b4a9fb80",
-                        "name": "Cube_13"
-                },
-                {
-                        "id": "f5eb611bb109a2f02af26d408cf20c28",
-                        "name": "Cube_71"
-                },
-                {
-                        "id": "19cb4b11e00a9e7033839753fecbb902",
-                        "name": "Cube_3"
-                },
-                {
-                        "id": "bf1497357ff44f54ed493c972285e4ac",
-                        "name": "Cube_72"
-                },
-                {
-                        "id": "8da471b3b2f928c3be59491cc5e73ef7",
-                        "name": "Cube_23"
-                },
-                {
-                        "id": "e5031694f0eb6cfa6c0b7456bf2ae046",
-                        "name": "Cube_21"
-                },
-                {
-                        "id": "f1373524cc7b5f9086940b59bee99254",
-                        "name": "Cube_15"
-                },
-                {
-                        "id": "e600ad9ffb2c743ff9b960aec02d097e",
-                        "name": "Cube_0"
-                },
-                {
-                        "id": "a46a1f77108dda0fb96a11089469548d",
-                        "name": "Cube_81"
-                },
-                {
-                        "id": "352c87605cde8c9386febc668ec8c3ad",
-                        "name": "Cube_56"
-                },
-                {
-                        "id": "40c35fcd16c7deb97b23e09e47a3b82b",
-                        "name": "Cube_18"
-                },
-                {
-                        "id": "83112bc0b3279c57959a97527cd8e9b6",
-                        "name": "Cube_12"
-                },
-                {
-                        "id": "ff1eeb47b43d8278cd88a55649554f74",
-                        "name": "Cube_69"
-                },
-                {
-                        "id": "51fa2cb78b3cab6c01ab8447792791c7",
-                        "name": "Cube_37"
-                },
-                {
-                        "id": "5e77fe1328b5d5d66b91402cba60334c",
-                        "name": "Cube_8"
-                },
-                {
-                        "id": "f1b2febb77491aaf475bd45a2fe9be7b",
-                        "name": "Cube_49"
-                },
-                {
-                        "id": "a926cc8b5e68862e704734dc6cc747a2",
-                        "name": "Cube_25"
-                },
-                {
-                        "id": "b1d09a06eb0932096398228179dc8c8c",
-                        "name": "Cube_9"
-                },
-                {
-                        "id": "738e6408652948bb47c884c1b4b02027",
-                        "name": "Cube_60"
-                },
-                {
-                        "id": "82abf5e87bb376baac473ec64fe3dac5",
-                        "name": "Cube_39"
-                },
-                {
-                        "id": "7c5556741f7be95f0ff67de52ca67d14",
-                        "name": "Cube_74"
-                },
-                {
-                        "id": "49ad4556dad90a2355c560fdaf02dc46",
-                        "name": "Cube_22"
-                },
-                {
-                        "id": "6781d8fc936ffb6e435ff8c4cee82558",
-                        "name": "Cube_2"
-                },
-                {
-                        "id": "6000945922d4591f215c5dad1d6b85cd",
-                        "name": "Cube_17"
-                },
-                {
-                        "id": "f39ed6672315f9a26992cb522a506917",
-                        "name": "Cube_6"
-                },
-                {
-                        "id": "3761fe1bb4bfbd6da06e7db1cc1df641",
-                        "name": "Cube_5"
-                },
-                {
-                        "id": "822b2cfaafef82a3083357545570611d",
-                        "name": "Cube_78"
-                },
-                {
-                        "id": "64900df5d25e7c9abd4aaf011cda13e4",
-                        "name": "Cube_1"
-                },
-                {
-                        "id": "cfcd5e5f8a98659bd504051e9daa7b2e",
-                        "name": "Cube_29"
-                },
-                {
-                        "id": "cf7b27d6f39d77069c62f6174baae09f",
-                        "name": "Cube_84"
-                },
-                {
-                        "id": "3de89253e7d76defb890afcd50fdcd2c",
-                        "name": "Cube_30"
-                },
-                {
-                        "id": "04bb75605cdae4d2926796dcc9cc5de2",
-                        "name": "Cube_88"
-                },
-                {
-                        "id": "612351f61b87027b8802336a2f0a0570",
-                        "name": "Cube_7"
-                },
-                {
-                        "id": "72c04ae56d7523649242da066f6ca003",
-                        "name": "Cube_11"
-                },
-                {
-                        "id": "9dbfbef26aa10e4b8b5830892de0f336",
+                        "id": "9f1e7abd3dc37870d65b63e29ce2be14",
                         "name": "Cube_97"
                 },
                 {
-                        "id": "8d719faa9454257437ad7c3b2af580eb",
-                        "name": "Cube_82"
+                        "id": "65f361b30b43bdc2d9818038da37ad50",
+                        "name": "Cube_96"
                 },
                 {
-                        "id": "3c65fd26a38f069777e3986289802073",
-                        "name": "MainCamera"
-                },
-                {
-                        "id": "92380c5a2c8d21883cc4cb261e4eda6c",
-                        "name": "Cube_66"
-                },
-                {
-                        "id": "b16756bda180a27c04d7ca236737ab81",
-                        "name": "Cube_10"
-                },
-                {
-                        "id": "c1364c4e2fb8b1da71364e3590b0b9c0",
-                        "name": "Cube_16"
-                },
-                {
-                        "id": "0d7376389ddbe443a0ab90f3746ece53",
-                        "name": "Cube_24"
-                },
-                {
-                        "id": "25f25ad87119133a2034b6f773797cf0",
-                        "name": "Cube_34"
-                },
-                {
-                        "id": "97cf2688da507efd9cd2fd4a0e9a1ead",
-                        "name": "Cube_45"
-                },
-                {
-                        "id": "1ecb876e96c57fb163836b4604da9176",
-                        "name": "Cube_28"
-                },
-                {
-                        "id": "2e89f00126dc7a35f8ecdf0dc1d3bbbc",
-                        "name": "Cube_73"
-                },
-                {
-                        "id": "d53ecd352a78aa6992a4548b5e59cfef",
-                        "name": "Cube_32"
-                },
-                {
-                        "id": "43b273dd7ee297b5409001fef3d6023e",
-                        "name": "Cube_76"
-                },
-                {
-                        "id": "f4badc32f1ebab1ff524044c02bedbfe",
-                        "name": "Cube_63"
-                },
-                {
-                        "id": "0700e40cd55620c8d7ef88ef646bb837",
-                        "name": "Cube_26"
-                },
-                {
-                        "id": "8cd9de445748f56ed50499840bf266d1",
-                        "name": "Cube_33"
-                },
-                {
-                        "id": "74428a4a07f8f33d247fe4cca632ac1b",
-                        "name": "Cube_35"
-                },
-                {
-                        "id": "84661755c12b625e8bb7d57831ebd754",
-                        "name": "Cube_38"
-                },
-                {
-                        "id": "8f980b443e9934bf0bbcdb2a3d580df5",
-                        "name": "Cube_87"
-                },
-                {
-                        "id": "33fcac5b7bc2fec80a0e52aeefd30e18",
-                        "name": "Cube_40"
-                },
-                {
-                        "id": "adccf4cc203ea964cb0dfa79961fc379",
-                        "name": "Cube_19"
-                },
-                {
-                        "id": "66c1130a5940e19bd9999a3e573669d4",
-                        "name": "Cube_57"
-                },
-                {
-                        "id": "fe5398b226c4c3d534a23d3f4c80183d",
-                        "name": "Cube_41"
-                },
-                {
-                        "id": "2298cace4a2eb964d8b10c80c4ffe286",
-                        "name": "Cube_42"
-                },
-                {
-                        "id": "4c1998093a9c1733d12c4744a777675c",
-                        "name": "Cube_31"
-                },
-                {
-                        "id": "b71310eb3df6309616cab6c504effe55",
-                        "name": "Cube_46"
-                },
-                {
-                        "id": "bccf66103d94e1859ccf7caa0cdd7ae3",
-                        "name": "Cube_98"
-                },
-                {
-                        "id": "a2436bf875702be61c516fc3bfe026a7",
-                        "name": "Cube_43"
-                },
-                {
-                        "id": "2559d47e2a8fe08aeb35bcf6390ad537",
+                        "id": "80a2c52d63c5883464e9bcde4ba8d28c",
                         "name": "Cube_94"
                 },
                 {
-                        "id": "74ab61860d2cc7a959b87075d1a28833",
-                        "name": "Cube_44"
+                        "id": "b9a1344a8d33340094c58a4bbb9d1644",
+                        "name": "Cube_87"
                 },
                 {
-                        "id": "daed49ba71f95164a54a60ad54103066",
-                        "name": "Cube_47"
+                        "id": "4d36b2aa55dda093a698b8bb4d788386",
+                        "name": "Cube_86"
                 },
                 {
-                        "id": "b5daf850522431c5822dc0cc6005f2b8",
-                        "name": "Cube_20"
+                        "id": "a5e2adfbbaa0be96a869e83dae58056e",
+                        "name": "Cube_84"
                 },
                 {
-                        "id": "667eec82f077e560a9f5e7e5e577a3b1",
-                        "name": "Cube_50"
+                        "id": "25f347a8b45570825f2c92083b63a35e",
+                        "name": "Cube_81"
                 },
                 {
-                        "id": "ba417c76a2ec8d49f41b1d38527db77b",
-                        "name": "Cube_51"
+                        "id": "595560376281703c989aab6057192bd6",
+                        "name": "Cube_79"
                 },
                 {
-                        "id": "5bf5dee3cc47edfdc9aa777dbc426595",
+                        "id": "cce222fd6e08d1fe41282537ad974166",
+                        "name": "Cube_78"
+                },
+                {
+                        "id": "fb50c8410f7749889ea753bd93e713fe",
+                        "name": "Cube_77"
+                },
+                {
+                        "id": "1f910a1ebca79b8847dc0ecd11778f0a",
+                        "name": "Cube_76"
+                },
+                {
+                        "id": "3cb22276a465ffd35193981262ba1585",
+                        "name": "Cube_75"
+                },
+                {
+                        "id": "f42a6a6391459fb0b6fc4bff71dc0c2d",
+                        "name": "Cube_95"
+                },
+                {
+                        "id": "5671a0d04e8deb14f50e71a83ced7ea7",
+                        "name": "Cube_74"
+                },
+                {
+                        "id": "27e45b5fcc82a9d96c3543aa7761fbf8",
+                        "name": "Cube_72"
+                },
+                {
+                        "id": "f3d0c4daa740c7ee05c2e55aa623b89e",
+                        "name": "Cube_70"
+                },
+                {
+                        "id": "36a9c7c1e0f78ce962110724ca5123c5",
+                        "name": "Cube_92"
+                },
+                {
+                        "id": "cd1210cdfed0efb4a41a41d3d3f3f909",
+                        "name": "Cube_68"
+                },
+                {
+                        "id": "7df45abd48341cc201772e5168f8552d",
+                        "name": "Cube_82"
+                },
+                {
+                        "id": "11dc905f3c97986bd119ed839754b4df",
+                        "name": "Cube_67"
+                },
+                {
+                        "id": "4a45eab53b591648baa835041dc0d8a4",
+                        "name": "Cube_66"
+                },
+                {
+                        "id": "779bb32b8ae7bef7986f4b15d72e68ec",
+                        "name": "Cube_99"
+                },
+                {
+                        "id": "7a579ab94dbf9b0fb25d2f199838f2cf",
+                        "name": "Cube_65"
+                },
+                {
+                        "id": "f19feb430f504d98ce969429cee56628",
+                        "name": "Cube_73"
+                },
+                {
+                        "id": "7c81da968aee11a2c37cdb25a7f37cb3",
+                        "name": "Cube_63"
+                },
+                {
+                        "id": "828a77644cb1e052cc801ff95f45004e",
+                        "name": "Cube_62"
+                },
+                {
+                        "id": "fba4994f9021972f8dc12ae25b886af5",
+                        "name": "Cube_64"
+                },
+                {
+                        "id": "c682378295a515bed5d57040f9960ea1",
+                        "name": "Cube_61"
+                },
+                {
+                        "id": "538f924db0e115d401d005cff361a8cd",
+                        "name": "Cube_60"
+                },
+                {
+                        "id": "e1da21ed5069c083a0c22e9362ba1ef0",
+                        "name": "Cube_27"
+                },
+                {
+                        "id": "f116a2218c28b1901ed80a775ef96079",
+                        "name": "Cube_85"
+                },
+                {
+                        "id": "1c5e889de04ab2feb034dd5117932f6b",
+                        "name": "Cube_42"
+                },
+                {
+                        "id": "78b22434e689d7c8165e10a2436856e0",
+                        "name": "Cube_26"
+                },
+                {
+                        "id": "a63b6200a2fb6017f6805711219bb4ea",
+                        "name": "MainCamera"
+                },
+                {
+                        "id": "a31cc4e6a9e15040f06e0f1629f2a5b3",
+                        "name": "Cube_45"
+                },
+                {
+                        "id": "9c46474e983a3ab9f8a7e18b260a90a0",
+                        "name": "Cube_24"
+                },
+                {
+                        "id": "c357d7a688a2e70c004b034b1205d46f",
+                        "name": "Cube_23"
+                },
+                {
+                        "id": "5c57dcf0857c56babb285c9a5a092119",
+                        "name": "Cube_98"
+                },
+                {
+                        "id": "9b0648f90d01cfd14b7151ee053dd421",
+                        "name": "Cube_58"
+                },
+                {
+                        "id": "fb077b06a1c00d5e882245817fab17e5",
+                        "name": "Cube_22"
+                },
+                {
+                        "id": "97cfd598ff51f40300086568aa5a29dd",
+                        "name": "Cube_91"
+                },
+                {
+                        "id": "9b9733fe9a512055c5690675090d93bf",
+                        "name": "Cube_19"
+                },
+                {
+                        "id": "7958786c4f6839d2e6550cda3a518c4b",
+                        "name": "Cube_21"
+                },
+                {
+                        "id": "f6999985da539408f206ce342e3970db",
+                        "name": "Cube_1"
+                },
+                {
+                        "id": "2ff5d3a652ee3639350669befdb17727",
+                        "name": "Cube_88"
+                },
+                {
+                        "id": "ce4ba239ba21c5ed9ddb580b43f7efee",
                         "name": "Cube_53"
                 },
                 {
-                        "id": "a502fc6e4658ff2aeca7d45b52a6b4d2",
+                        "id": "bb1352d8adee54868d7f777cb1d7e50a",
+                        "name": "Cube_16"
+                },
+                {
+                        "id": "e681f6fe43303670773d8e0fa84f6c58",
+                        "name": "Cube_17"
+                },
+                {
+                        "id": "57ee379ba9ae55b0c2bc407f26755a30",
+                        "name": "Cube_12"
+                },
+                {
+                        "id": "7aa19dc22a392f29c8c0cdf0213a15ab",
+                        "name": "Cube_18"
+                },
+                {
+                        "id": "eab3c7a2a24cb9364a94d7f2c4824050",
+                        "name": "Cube_14"
+                },
+                {
+                        "id": "5589b1bdba6eafea2009d528da35c9bc",
+                        "name": "Cube_39"
+                },
+                {
+                        "id": "4aff4873208508c026668c77aea6b4e5",
+                        "name": "Cube_69"
+                },
+                {
+                        "id": "04fe178f55c3b771c73702b98dac3590",
+                        "name": "Cube_0"
+                },
+                {
+                        "id": "36409380ecc01d6237cd822d649c740d",
+                        "name": "Cube_3"
+                },
+                {
+                        "id": "01ceb4fcfd4fe82e5acda376992ef31b",
+                        "name": "Cube_6"
+                },
+                {
+                        "id": "c2f00d35a09de165350f815212d2dc9f",
+                        "name": "Cube_59"
+                },
+                {
+                        "id": "7d87a6b6438e65b087e943c1dc774a34",
+                        "name": "Cube_5"
+                },
+                {
+                        "id": "110d78c1a24ee173731ad3ff8f928af4",
+                        "name": "Cube_50"
+                },
+                {
+                        "id": "e37a62fce2ac41207aa8780f18426a36",
+                        "name": "Cube_2"
+                },
+                {
+                        "id": "6f7b80fe03f4734679c87765bcbb9085",
+                        "name": "Cube_9"
+                },
+                {
+                        "id": "439c8c04172bf79459cd966eb9da14bd",
+                        "name": "Cube_13"
+                },
+                {
+                        "id": "8f6eff5192d3c386cfe87e1d7a9b75fe",
                         "name": "Cube_52"
                 },
                 {
-                        "id": "3d80cc25681c7bc66c7ed3fa2b3cac67",
+                        "id": "002bb3befb5c3e4e9d310a195e88076b",
+                        "name": "Cube_7"
+                },
+                {
+                        "id": "f46c148b1ad8a63f82310a34fa2eacb2",
+                        "name": "Cube_10"
+                },
+                {
+                        "id": "4edbfb47bca3d6555744a7dfbbc7fa5a",
+                        "name": "Cube_28"
+                },
+                {
+                        "id": "91471e30046b11f1c91877b6b27d6297",
+                        "name": "Cube_4"
+                },
+                {
+                        "id": "45d74cab27a7f9ca70244fd2bedc1149",
+                        "name": "Cube_29"
+                },
+                {
+                        "id": "1c8c5c3b5504fd9fc754fa2852d8af08",
+                        "name": "Cube_37"
+                },
+                {
+                        "id": "2151dd2133f4881cf8035b9b442fd521",
+                        "name": "Cube_8"
+                },
+                {
+                        "id": "2aac86a4ed3ea2898843676539c9c737",
+                        "name": "Cube_30"
+                },
+                {
+                        "id": "48a96a7d6cb745000542534f7e6070fe",
+                        "name": "Cube_90"
+                },
+                {
+                        "id": "270a1db43930bf9dbcbba3b811561393",
+                        "name": "Cube_31"
+                },
+                {
+                        "id": "8ead8f7567452bc27ac2765ffd93e5d1",
                         "name": "Cube_89"
                 },
                 {
-                        "id": "a5427626d944af9d04ab5b1bdcef6103",
-                        "name": "Cube_36"
+                        "id": "b96d0bc149dde381189820575838e7e6",
+                        "name": "Cube_32"
                 },
                 {
-                        "id": "6e09670101d837b7182cd64df078974f",
-                        "name": "Cube_54"
+                        "id": "b42888320bb36e790f5e86a553312e2f",
+                        "name": "Cube_33"
                 },
                 {
-                        "id": "a12f92f6a2a7475c0e32f9abb7038ac3",
+                        "id": "e99cd1558af1a598855f7abc673b1f35",
+                        "name": "Cube_15"
+                },
+                {
+                        "id": "590fc94bd8a12069e8d6195e286db3ef",
+                        "name": "Cube_34"
+                },
+                {
+                        "id": "e1c946503201dad4390980300301ccfb",
                         "name": "Cube_83"
                 },
                 {
-                        "id": "b97cdd1bba2e2e2f978390c11fdd9fd0",
+                        "id": "e61991d60fe1dde13ea472a7cc90c54c",
+                        "name": "Cube_80"
+                },
+                {
+                        "id": "70a2b0eca3262fb16fcf37ff729ae4b1",
+                        "name": "Cube_36"
+                },
+                {
+                        "id": "fae79c7222c0526feb22c6ee2e5dd15c",
+                        "name": "Cube_71"
+                },
+                {
+                        "id": "999ecdfcb27a6ea9a2401c8c38baf4f5",
+                        "name": "Cube_38"
+                },
+                {
+                        "id": "cc9bb5f7bae2bb9d492bbc16b4a00126",
+                        "name": "Cube_46"
+                },
+                {
+                        "id": "4c00784ab6df28ae2369154a3419bcb0",
+                        "name": "Cube_25"
+                },
+                {
+                        "id": "1e2f1ed24158c29168e44d097c83bfba",
+                        "name": "Cube_40"
+                },
+                {
+                        "id": "0d9471a7d071748ecdfca7e18c2459ea",
+                        "name": "Cube_41"
+                },
+                {
+                        "id": "2650776b6ce2a54c2f5846ae8376e4b5",
+                        "name": "Cube_93"
+                },
+                {
+                        "id": "b8ad4c2910aec760d6d5daac9b367511",
+                        "name": "Cube_54"
+                },
+                {
+                        "id": "d4d20bf4b6d5bdbb205111846fa5bea7",
                         "name": "Cube_55"
+                },
+                {
+                        "id": "2b65fd9f0a6ec64c879ccf0e2d2336de",
+                        "name": "Cube_20"
+                },
+                {
+                        "id": "70d89012525d53e468f311bc6aa4cc59",
+                        "name": "Cube_43"
+                },
+                {
+                        "id": "d624ae77794992416899c96de7fde031",
+                        "name": "Cube_44"
+                },
+                {
+                        "id": "26e4469ae8b92b78babae29e01b6b498",
+                        "name": "Cube_47"
+                },
+                {
+                        "id": "055a85060c86a231fa009df8fa7e67cf",
+                        "name": "Cube_48"
+                },
+                {
+                        "id": "fd42f91ca6193af4b61f6e3d32997711",
+                        "name": "Cube_49"
+                },
+                {
+                        "id": "e79b05def20ad3810411fc8c5e624556",
+                        "name": "Cube_51"
+                },
+                {
+                        "id": "3d2b451f096107f5ce39ee14645c9a1f",
+                        "name": "Cube_11"
+                },
+                {
+                        "id": "7259eb76d538396ecba8e253155be770",
+                        "name": "Cube_56"
+                },
+                {
+                        "id": "1f1c8b8f45441378d07c06ca9dc8ca56",
+                        "name": "Cube_35"
+                },
+                {
+                        "id": "a629c507228422d5a9ad27574ba40760",
+                        "name": "Cube_57"
                 }
         ],
         "scene_name": "Origo Game Sample"

@@ -12,6 +12,10 @@ EditorUILayer::EditorUILayer(EditorContext& ctx)
     : m_Context(ctx) {
 }
 
+void EditorUILayer::OnDetach() {
+	m_ImGuiLayer.OnDetach();
+}
+
 void EditorUILayer::OnAttach() {
 	m_ImGuiLayer.OnAttach(m_Context.Window);
 
@@ -21,7 +25,7 @@ void EditorUILayer::OnAttach() {
 	m_HierarchyId = m_PanelManager.AddPanel<HierarchyPanel>(m_Context.Scene);
 	m_InspectorId = m_PanelManager.AddPanel<InspectorPanel>(m_Context.Scene);
 
-	m_PanelManager.AddPanel<SceneViewport>(m_Context.Buffer, m_Context.Scene.GetMainCamera());
+	m_PanelManager.AddPanel<SceneViewport>(m_Context.Buffer, *m_Context.Scene.GetMainCamera());
 	m_PanelManager.AddPanel<AssetsPanel>();
 	m_PanelManager.AddPanel<ConsolePanel>();
 }

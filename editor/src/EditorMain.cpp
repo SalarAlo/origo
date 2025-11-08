@@ -5,6 +5,7 @@
 #include "origo/renderer/FrameBuffer.h"
 
 #include "layer/EditorCameraLayer.h"
+
 #include "layer/EditorUILayer.h"
 #include "EditorContext.h"
 #include "origo/scene/Scene.h"
@@ -19,7 +20,7 @@ public:
 	    : Application(settings)
 	    , m_Buffer(1600, 900)
 	    , m_Context(m_Scene, m_Buffer, m_Window.GetNativeWindow()) {
-		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera().get()));
+		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera()));
 		PushLayer(new EditorUILayer(m_Context));
 		PushLayer(new SceneLayer(m_Context));
 	}

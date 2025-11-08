@@ -13,6 +13,11 @@
 namespace Origo {
 bool ScreenWindow::s_SingleInstanceCreated { false };
 
+ScreenWindow::~ScreenWindow() {
+	ORG_CORE_INFO("[ScreenWindow] Destroying a Screen Window");
+	glfwTerminate();
+}
+
 void ScreenWindow::InitGlfw() {
 	if (!glfwInit()) {
 		ORG_CORE_ERROR("[ScreenWindow] Failed to initialize GLFW");
@@ -24,10 +29,18 @@ void ScreenWindow::InitGlfw() {
 }
 
 void ScreenWindow::InitGlad() {
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	if (!glfwGetCurrentContext()) {
+		ORG_CORE_ERROR("[ScreenWindow] No active OpenGL context before GLAD init!");
+		throw std::runtime_error("No active context");
+	}
+
+	bool ok = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+	if (!ok) {
 		ORG_CORE_ERROR("[ScreenWindow] Failed to initialize OpenGL");
 		throw std::runtime_error("Failed to initialize OpenGL");
 	}
+
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDepthFunc(GL_LESS));
 	GLCall(glClearColor(0, 0, 0, 1));
@@ -48,7 +61,7 @@ ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
 
 	InitGlad();
 
-	Input::SetContext(MakeRef<ScreenWindow>(*this));
+	Input::SetContext(this);
 	Input::SetCursorMode(Input::CursorMode::Locked);
 
 	glfwSwapInterval(1);

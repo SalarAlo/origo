@@ -43,7 +43,7 @@ void Application::OnEvent(Event& event) {
 
 void Application::Run() {
 	Origo::Logger::Init();
-	Origo::Input::SetContext(Origo::MakeRef<Origo::ScreenWindow>(m_Window));
+	Origo::Input::SetContext(&m_Window);
 
 	OnAwake();
 
