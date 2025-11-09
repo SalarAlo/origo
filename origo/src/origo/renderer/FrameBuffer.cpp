@@ -1,7 +1,6 @@
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/core/Logger.h"
 #include "origo/renderer/GlDebug.h"
-#include <iostream>
 
 namespace Origo {
 
@@ -30,6 +29,10 @@ FrameBuffer::FrameBuffer(int width, int height)
 		ORG_ERROR("[FrameBuffer] Incomplete framebuffer!");
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+}
+
+FrameBuffer::~FrameBuffer() {
+	GLCall(glDeleteFramebuffers(1, &m_Id));
 }
 
 void FrameBuffer::Bind() {

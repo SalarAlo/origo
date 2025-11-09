@@ -59,10 +59,16 @@ void Shader::Init() {
 	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
 	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
 	m_ProgramId = LinkProgram(vertexId, fragmentId);
+
+	GLCall(glDetachShader(m_ProgramId, vertexId));
+	GLCall(glDetachShader(m_ProgramId, fragmentId));
+	GLCall(glDeleteShader(vertexId));
+	GLCall(glDeleteShader(fragmentId));
 }
 
 Shader::~Shader() {
-	GLCall(glDeleteProgram(m_ProgramId));
+	if (m_ProgramId)
+		GLCall(glDeleteProgram(m_ProgramId));
 }
 
 void Shader::UseProgram() const {

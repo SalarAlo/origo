@@ -19,16 +19,16 @@ void EditorCameraLayer::OnUpdate(double dt) {
 	    : NORMAL_SPEED;
 
 	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
-		direction += m_Camera->GetForward() * speed;
+		direction += m_Camera->GetForward();
 	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S))
-		direction -= m_Camera->GetForward() * speed;
+		direction -= m_Camera->GetForward();
 	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D))
-		direction += m_Camera->GetRight() * speed;
+		direction += m_Camera->GetRight();
 	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A))
-		direction -= m_Camera->GetRight() * speed;
+		direction -= m_Camera->GetRight();
 
 	if (glm::length(direction) > 0.0f)
-		m_Camera->Move(direction * static_cast<float>(dt));
+		m_Camera->Move(direction * static_cast<float>(dt) * speed);
 }
 
 void EditorCameraLayer::OnEvent(Origo::Event& e) {

@@ -14,7 +14,7 @@ namespace Origo {
 bool ScreenWindow::s_SingleInstanceCreated { false };
 
 ScreenWindow::~ScreenWindow() {
-	ORG_CORE_INFO("[ScreenWindow] Destroying a Screen Window");
+	glfwDestroyWindow(m_Window);
 	glfwTerminate();
 }
 

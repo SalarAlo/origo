@@ -1,11 +1,16 @@
 #pragma once
 
-#include "origo/renderer/GlDebug.h"
-
 namespace Origo {
 class FrameBuffer {
 public:
 	FrameBuffer(int width, int height);
+	~FrameBuffer();
+
+	FrameBuffer(const FrameBuffer&) = delete;
+	FrameBuffer& operator=(const FrameBuffer&) = delete;
+
+	FrameBuffer(FrameBuffer&&) = delete;
+	FrameBuffer& operator=(FrameBuffer&&) = delete;
 
 	void Bind();
 	void Unbind();

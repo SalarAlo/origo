@@ -10,8 +10,14 @@ class Shader : public Asset {
 public:
 	Shader(std::string_view path);
 	Shader(std::string_view vertexShader, std::string_view fragmentShader);
-
 	~Shader();
+
+	Shader(const Shader&) = delete;
+	Shader& operator=(const Shader&) = delete;
+
+	Shader(Shader&&) = delete;
+	Shader& operator=(Shader&&) = delete;
+
 	void UseProgram() const;
 
 	template <typename T>

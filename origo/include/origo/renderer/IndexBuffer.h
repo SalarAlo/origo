@@ -4,6 +4,13 @@ namespace Origo {
 class IndexBuffer {
 public:
 	explicit IndexBuffer(const std::vector<unsigned int>& indices);
+	~IndexBuffer();
+
+	IndexBuffer(const IndexBuffer&) = delete;
+	IndexBuffer& operator=(const IndexBuffer&) = delete;
+
+	IndexBuffer(IndexBuffer&&) = delete;
+	IndexBuffer& operator=(IndexBuffer&&) = delete;
 
 	void Bind() const;
 	void Unbind() const;

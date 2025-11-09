@@ -4,6 +4,13 @@ namespace Origo {
 class VertexBuffer {
 public:
 	explicit VertexBuffer(const std::vector<float>& data);
+	~VertexBuffer();
+
+	VertexBuffer(const VertexBuffer&) = delete;
+	VertexBuffer& operator=(const VertexBuffer&) = delete;
+
+	VertexBuffer(VertexBuffer&&) = delete;
+	VertexBuffer& operator=(VertexBuffer&&) = delete;
 
 	void Bind() const;
 	void Unbind() const;

@@ -8,6 +8,10 @@ VertexBuffer::VertexBuffer(const std::vector<float>& data)
 	SetDataOpenGL(true);
 }
 
+VertexBuffer::~VertexBuffer() {
+	GLCall(glDeleteBuffers(1, &m_BufferId));
+}
+
 void VertexBuffer::Bind() const {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_BufferId));
 	s_CurrentlyBound = m_BufferId;

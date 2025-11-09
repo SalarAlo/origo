@@ -1,4 +1,5 @@
 #include "origo/renderer/IndexBuffer.h"
+#include "origo/renderer/GlDebug.h"
 
 namespace Origo {
 IndexBuffer::IndexBuffer(const std::vector<unsigned int>& indices)
@@ -6,6 +7,10 @@ IndexBuffer::IndexBuffer(const std::vector<unsigned int>& indices)
 	GLCall(glGenBuffers(1, &m_BufferId));
 	SetDataOpenGL();
 };
+
+IndexBuffer::~IndexBuffer() {
+	GLCall(glDeleteBuffers(1, &m_BufferId));
+}
 
 void IndexBuffer::Bind() const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId));
