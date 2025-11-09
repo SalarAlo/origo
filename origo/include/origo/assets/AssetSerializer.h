@@ -6,8 +6,8 @@ namespace Origo {
 
 class AssetSerializer {
 public:
-	virtual void Serialize(const Ref<Asset>& asset, ISerializer& backend) const = 0;
-	virtual Ref<Asset> Deserialize(ISerializer& backend) const = 0;
+	virtual void Serialize(const Asset* asset, ISerializer& backend) const = 0;
+	virtual Asset* Deserialize(ISerializer& backend) const = 0;
 };
 
 namespace AssetSerializationSystem {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "origo/assets/Shader.h"
-#include "nlohmann/json.hpp"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -16,7 +15,7 @@ enum class UniformType {
 
 class UniformBase {
 public:
-	virtual void Upload(Ref<Shader> shader, std::string_view name) const = 0;
+	virtual void Upload(Shader* shader, std::string_view name) const = 0;
 	virtual ~UniformBase() = default;
 
 	virtual UniformType GetUniformType() const = 0;
@@ -29,7 +28,7 @@ public:
 	explicit Uniform(const T& value)
 	    : m_Value(value) { }
 
-	void Upload(Ref<Shader> shader, std::string_view name) const override {
+	void Upload(Shader* shader, std::string_view name) const override {
 		shader->SetUniform<T>(name, m_Value);
 	}
 
@@ -46,10 +45,10 @@ class UniformList {
 public:
 	template <typename T>
 	void AddUniform(const std::string& name, const T& value) {
-		m_Uniforms[name] = std::make_unique<Uniform<T>>(value);
+		m_Uniforms[name] = MakeScope<Uniform<T>>(value);
 	}
 
-	void UploadAll(Ref<Shader> shader) const {
+	void UploadAll(Shader* shader) const {
 		for (const auto& [name, uniform] : m_Uniforms) {
 			uniform->Upload(shader, name);
 		}

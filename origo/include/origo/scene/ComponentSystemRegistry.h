@@ -33,10 +33,10 @@ private:
 
 }
 
-#define REGISTER_SYSTEM(TYPE)                                                                                                 \
-	namespace Origo {                                                                                                     \
-		struct TYPE##AutoRegister {                                                                                   \
-			TYPE##AutoRegister() { ComponentSystemRegistry ::GetInstance().Register(std ::make_unique<TYPE>()); } \
-		};                                                                                                            \
-		static TYPE##AutoRegister s_##TYPE##AutoRegister;                                                             \
+#define REGISTER_SYSTEM(TYPE)                                                                                         \
+	namespace Origo {                                                                                             \
+		struct TYPE##AutoRegister {                                                                           \
+			TYPE##AutoRegister() { ComponentSystemRegistry ::GetInstance().Register(MakeScope<TYPE>()); } \
+		};                                                                                                    \
+		static TYPE##AutoRegister s_##TYPE##AutoRegister;                                                     \
 	}

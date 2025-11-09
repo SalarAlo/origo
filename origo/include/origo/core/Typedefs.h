@@ -14,7 +14,7 @@ using WeakRef = std::weak_ptr<T>;
 template <typename T>
 using Scope = std::unique_ptr<T>;
 template <typename T, typename... Args>
-Ref<T> MakeScope(Args&&... args) {
+Scope<T> MakeScope(Args&&... args) {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 };
 };

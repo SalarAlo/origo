@@ -50,7 +50,7 @@ static MeshData ConvertMesh(const aiMesh* aMesh) {
 	return MeshData(vertices, indices);
 }
 
-static Ref<Texture> ExtractTexture(
+static Texture* ExtractTexture(
     const aiScene* scene,
     const aiMaterial* material,
     const std::string& modelPath,
@@ -96,7 +96,7 @@ static Ref<Texture> ExtractTexture(
 	    TextureType::Albedo);
 }
 
-Model::Model(std::string_view path, Ref<Shader> shader)
+Model::Model(std::string_view path, Shader* shader)
     : m_Path(path) {
 	const std::string assetRoot = "resources/models/";
 	const std::string absolutePath = assetRoot + std::string(path);
@@ -118,10 +118,10 @@ Model::Model(std::string_view path, Ref<Shader> shader)
 		std::string baseName = std::filesystem::path(m_Path).stem().string() + "_mesh_" + std::to_string(i);
 
 		MeshData meshData = ConvertMesh(aMesh);
-		Ref<Texture> texture = ExtractTexture(scene, material, absolutePath, i);
+		Texture* texture = ExtractTexture(scene, material, absolutePath, i);
 
-		auto mesh = AssetManager::CreateAsset<Mesh>(baseName, m_Path, i, meshData);
-		auto mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture, false);
+		Mesh* mesh = AssetManager::CreateAsset<Mesh>(baseName, m_Path, i, meshData);
+		Material* mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture, false);
 
 		m_SubMeshes.push_back({ mesh, mat });
 	}

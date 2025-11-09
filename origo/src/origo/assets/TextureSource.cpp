@@ -27,7 +27,7 @@ void TextureSourceEmpty::Serialize(ISerializer& backend) const {
 	backend.EndObject();
 }
 
-Ref<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
+TextureSource* TextureSource::Deserialize(ISerializer& backend) {
 	// todo
 	return nullptr;
 }

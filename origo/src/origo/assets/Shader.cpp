@@ -1,5 +1,6 @@
 
 #include "origo/assets/Shader.h"
+#include "origo/assets/ShaderSource.h"
 #include "origo/core/Logger.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -45,12 +46,12 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 }
 
 Shader::Shader(std::string_view path)
-    : m_Source(MakeRef<ShaderSourceFile>(path)) {
+    : m_Source(new ShaderSourceFile(path)) {
 	Init();
 }
 
 Shader::Shader(std::string_view vertexShader, std::string_view fragmentShader)
-    : m_Source(MakeRef<ShaderSourceRaw>(vertexShader, fragmentShader)) {
+    : m_Source(new ShaderSourceRaw(vertexShader, fragmentShader)) {
 	Init();
 }
 
@@ -69,6 +70,7 @@ void Shader::Init() {
 Shader::~Shader() {
 	if (m_ProgramId)
 		GLCall(glDeleteProgram(m_ProgramId));
+	delete m_Source;
 }
 
 void Shader::UseProgram() const {

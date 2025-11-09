@@ -5,7 +5,7 @@
 
 namespace Origo::ShaderSourceSerializer {
 
-void Serialize(Ref<ShaderSource>, ISerializer& backend);
-Ref<ShaderSource> Deserialize(const nlohmann::json&);
+void Serialize(ShaderSource*, ISerializer& backend);
+ShaderSource* Deserialize(const nlohmann::json&);
 
 }

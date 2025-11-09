@@ -12,7 +12,7 @@ namespace Origo {
 
 Texture::Texture(const std::string& path, TextureType type)
     : m_TextureType(type)
-    , m_Source(MakeRef<TextureSourceFile>(path)) {
+    , m_Source(MakeScope<TextureSourceFile>(path)) {
 	stbi_set_flip_vertically_on_load(true);
 
 	int width, height, channels;
@@ -29,7 +29,7 @@ Texture::Texture(const std::string& path, TextureType type)
 
 Texture::Texture(const aiTexture* embeddedTex, TextureType type)
     : m_TextureType(type)
-    , m_Source(MakeRef<TextureSourceEmbedded>()) {
+    , m_Source(MakeScope<TextureSourceEmbedded>()) {
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -88,7 +88,7 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Bind(Ref<Shader> shader) const {
+void Texture::Bind(Shader* shader) const {
 	int slot { static_cast<int>(m_TextureType) };
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));

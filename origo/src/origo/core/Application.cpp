@@ -65,6 +65,10 @@ void Application::Run() {
 
 		m_Window.OnUpdate();
 	}
+
+	for (Layer* layer : m_LayerStack) {
+		layer->OnDetach();
+	}
 }
 
 }

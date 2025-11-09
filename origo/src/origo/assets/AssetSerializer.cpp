@@ -31,7 +31,7 @@ void SaveAll(ISerializer& backend) {
 		if (!record.AssetReference->ShouldSerialize())
 			continue;
 
-		const auto& asset { record.AssetReference };
+		const auto& asset { record.AssetReference.get() };
 		auto assetSerializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
 
 		backend.BeginArrayElement();

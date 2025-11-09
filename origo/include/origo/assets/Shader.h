@@ -23,7 +23,7 @@ public:
 	template <typename T>
 	void SetUniform(std::string_view name, const T& value) const;
 
-	Ref<ShaderSource> GetSource() const { return m_Source; }
+	ShaderSource* GetSource() const { return m_Source; }
 
 	AssetType GetAssetType() const override {
 		return AssetType::Shader;
@@ -33,7 +33,7 @@ private:
 	void Init();
 
 private:
-	Ref<ShaderSource> m_Source;
+	ShaderSource* m_Source;
 	unsigned int m_ProgramId {};
 };
 }

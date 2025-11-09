@@ -14,8 +14,15 @@ namespace Origo {
 bool ScreenWindow::s_SingleInstanceCreated { false };
 
 ScreenWindow::~ScreenWindow() {
-	glfwDestroyWindow(m_Window);
-	glfwTerminate();
+	if (m_Window) {
+		glfwDestroyWindow(m_Window);
+		m_Window = nullptr;
+	}
+
+	if (s_SingleInstanceCreated) {
+		glfwTerminate();
+		s_SingleInstanceCreated = false;
+	}
 }
 
 void ScreenWindow::InitGlfw() {

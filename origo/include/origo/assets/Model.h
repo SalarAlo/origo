@@ -7,13 +7,13 @@
 namespace Origo {
 
 struct SubMesh {
-	Ref<Mesh> mesh;
-	Ref<Material> material;
+	Mesh* mesh;
+	Material* material;
 };
 
 class Model : public Asset {
 public:
-	Model(std::string_view path, Ref<Shader> shader);
+	Model(std::string_view path, Shader* shader);
 
 	std::string GetPath() const { return m_Path; }
 	AssetType GetAssetType() const override { return AssetType::Model; }

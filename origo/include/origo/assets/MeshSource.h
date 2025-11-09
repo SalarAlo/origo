@@ -1,8 +1,6 @@
 #pragma once
 
 #include "origo/assets/PrimitiveShape.h"
-#include "nlohmann/json_fwd.hpp"
-#include "origo/core/Logger.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -15,10 +13,11 @@ enum class MeshSourceType {
 
 class MeshSource {
 public:
+	virtual ~MeshSource() = default;
 	virtual MeshData GetData() const = 0;
 
 	virtual void Serialize(ISerializer& backend) const = 0;
-	virtual Ref<MeshSource> Deserialize(ISerializer& backend) const = 0;
+	virtual MeshSource* Deserialize(ISerializer& backend) const = 0;
 
 	virtual MeshSourceType GetType() const = 0;
 
@@ -42,7 +41,7 @@ public:
 	}
 
 	void Serialize(ISerializer& backend) const override;
-	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
+	MeshSource* Deserialize(ISerializer& backend) const override;
 
 private:
 	std::vector<float> m_Vertices;
@@ -65,7 +64,7 @@ public:
 	}
 
 	void Serialize(ISerializer& backend) const override;
-	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
+	MeshSource* Deserialize(ISerializer& backend) const override;
 
 private:
 	PrimitiveShape m_Shape {};
@@ -87,7 +86,7 @@ public:
 	}
 
 	void Serialize(ISerializer& backend) const override;
-	Ref<MeshSource> Deserialize(ISerializer& backend) const override;
+	MeshSource* Deserialize(ISerializer& backend) const override;
 
 private:
 	std::string m_ModelPath {};

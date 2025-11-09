@@ -22,8 +22,8 @@ private:
 	static constexpr int GRID_SIZE { 4 };
 	EditorContext& m_Context;
 
-	Origo::Ref<Origo::Shader> m_Shader;
-	Origo::Ref<Origo::Material> m_Material;
+	Origo::Shader* m_Shader;
+	Origo::Material* m_Material;
 };
 
 }

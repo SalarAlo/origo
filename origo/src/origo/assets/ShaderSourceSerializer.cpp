@@ -1,11 +1,10 @@
 #include "origo/assets/ShaderSourceSerializer.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/ShaderSource.h"
-#include <memory>
 
 namespace Origo::ShaderSourceSerializer {
 
-void Serialize(Ref<ShaderSource> src, ISerializer& backend) {
+void Serialize(ShaderSource* src, ISerializer& backend) {
 	backend.BeginObject("source");
 	backend.Write("type", src->GetTypeName());
 
@@ -14,14 +13,14 @@ void Serialize(Ref<ShaderSource> src, ISerializer& backend) {
 		backend.Write("vertex_shader", data.VertexShader);
 		backend.Write("fragment_shader", data.FragmentShader);
 	} else if (src->GetTypeName() == ShaderSourceFile::GetTypeNameClass()) {
-		auto srcFile { std::dynamic_pointer_cast<ShaderSourceFile>(src) };
+		auto srcFile { dynamic_cast<ShaderSourceFile*>(src) };
 		backend.Write("path", srcFile->GetPath());
 	}
 
 	backend.EndObject();
 }
 
-Ref<ShaderSource> Deserialize(const nlohmann::json& j) {
+ShaderSource* Deserialize(const nlohmann::json& j) {
 	return nullptr;
 }
 

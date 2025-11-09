@@ -3,17 +3,17 @@
 #include "origo/scene/Entity.hpp"
 
 namespace Origo {
-MeshRenderer::MeshRenderer(Entity* entity, const Ref<Material>& material, const Ref<Mesh>& mesh)
+MeshRenderer::MeshRenderer(Entity* entity, Material* material, Mesh* mesh)
     : Component(entity)
     , m_Material(material)
     , m_Mesh(mesh) {
 }
 
-Ref<Mesh> MeshRenderer::GetMesh() {
+Mesh* MeshRenderer::GetMesh() {
 	return m_Mesh;
 }
 
-Ref<Material> MeshRenderer::GetMaterial() {
+Material* MeshRenderer::GetMaterial() {
 	return m_Material;
 }
 

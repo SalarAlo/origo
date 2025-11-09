@@ -8,11 +8,12 @@ namespace Origo {
 
 class Material : public Asset {
 public:
-	Material(const Ref<Shader>& shader, const Ref<Texture>& material = nullptr, bool shouldSerialize = true);
+	Material(Shader* shader, Texture* material = nullptr, bool shouldSerialize = true);
+	~Material();
 
-	Ref<Shader> GetShader() { return m_Shader; }
-	Ref<UniformList> GetUniformList() { return m_UniformList; }
-	Ref<Texture> GetAlbedo() { return m_Albedo; }
+	Shader* GetShader() const { return m_Shader; }
+	UniformList* GetUniformList() const { return m_UniformList; }
+	Texture* GetAlbedo() const { return m_Albedo; }
 
 	void Bind();
 	void WriteModel(const glm::mat4& model);
@@ -38,9 +39,9 @@ public:
 	}
 
 private:
-	Ref<Shader> m_Shader {};
-	Ref<UniformList> m_UniformList {};
-	Ref<Texture> m_Albedo {};
+	Shader* m_Shader {};
+	UniformList* m_UniformList {};
+	Texture* m_Albedo {};
 
 	bool m_ShouldSerialize;
 };

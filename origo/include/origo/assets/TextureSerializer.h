@@ -6,8 +6,8 @@
 namespace Origo {
 
 class TextureSerializer : public AssetSerializer {
-	void Serialize(const Ref<Asset>& asset, ISerializer& backend) const override;
-	Ref<Asset> Deserialize(ISerializer& backend) const override;
+	void Serialize(const Asset* asset, ISerializer& backend) const override;
+	Asset* Deserialize(ISerializer& backend) const override;
 };
 
 }

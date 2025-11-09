@@ -5,12 +5,12 @@
 
 namespace Origo {
 
-void ShaderSerializer::Serialize(const Ref<Asset>& asset, ISerializer& backend) const {
-	Ref<Shader> shader = std::dynamic_pointer_cast<Shader>(asset);
+void ShaderSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
+	const auto shader { dynamic_cast<const Shader*>(asset) };
 	ShaderSourceSerializer::Serialize(shader->GetSource(), backend);
 }
 
-Ref<Asset> ShaderSerializer::Deserialize(ISerializer& backend) const {
+Asset* ShaderSerializer::Deserialize(ISerializer& backend) const {
 	return nullptr;
 }
 

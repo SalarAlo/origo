@@ -20,8 +20,11 @@ void MeshSourceRaw::Serialize(ISerializer& backend) const {
 	backend.EndObject();
 }
 
-Ref<MeshSource> MeshSourceRaw::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourceRaw::Deserialize(ISerializer& backend) const {
 	// TODO:
+	// when doing these deserializers new these objs and then return em
+	// cause their owner (eg. mesh, shader, ...) will wrap them around
+	// unique causing deletes automatically
 	return nullptr;
 }
 
@@ -34,7 +37,7 @@ void MeshSourcePrimitiveShape::Serialize(ISerializer& backend) const {
 	backend.EndObject();
 }
 
-Ref<MeshSource> MeshSourcePrimitiveShape::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourcePrimitiveShape::Deserialize(ISerializer& backend) const {
 	// TODO:
 	return nullptr;
 }
@@ -49,7 +52,7 @@ void MeshSourceExternal::Serialize(ISerializer& backend) const {
 	backend.EndObject();
 }
 
-Ref<MeshSource> MeshSourceExternal::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourceExternal::Deserialize(ISerializer& backend) const {
 	// TODO:
 	return nullptr;
 }

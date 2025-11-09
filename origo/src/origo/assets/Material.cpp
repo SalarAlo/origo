@@ -1,11 +1,12 @@
 #include "origo/assets/Material.h"
+#include "origo/assets/UniformList.hpp"
 #include "origo/core/Logger.h"
 
 namespace Origo {
-Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo, bool shouldSerialize)
-    : m_UniformList(MakeRef<UniformList>())
+Material::Material(Shader* shader, Texture* material, bool shouldSerialize)
+    : m_UniformList(new UniformList())
     , m_Shader(shader)
-    , m_Albedo(albedo)
+    , m_Albedo(material)
     , m_ShouldSerialize(shouldSerialize) {
 	if (!m_Albedo)
 		return;
@@ -14,6 +15,10 @@ Material::Material(const Ref<Shader>& shader, const Ref<Texture>& albedo, bool s
 		    "[Material] Expected a Texture Type of Albedo. Received a Texture Type of {}",
 		    magic_enum::enum_name(m_Albedo->GetTextureType()));
 	}
+}
+
+Material::~Material() {
+	delete m_UniformList;
 }
 
 void Material::Bind() {

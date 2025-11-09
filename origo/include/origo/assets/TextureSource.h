@@ -11,8 +11,9 @@ enum class TextureSourceType {
 
 class TextureSource {
 public:
+	virtual ~TextureSource() = default;
 	virtual void Serialize(ISerializer& backend) const;
-	static Ref<TextureSource> Deserialize(ISerializer& backend);
+	static TextureSource* Deserialize(ISerializer& backend);
 	virtual TextureSourceType GetType() const = 0;
 };
 

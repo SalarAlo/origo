@@ -21,8 +21,8 @@ public:
 		return AssetType::Mesh;
 	}
 
-	Ref<MeshSource> GetSource() {
-		return m_Source;
+	MeshSource* GetSource() const {
+		return m_Source.get();
 	}
 
 	bool ShouldSerialize() const override {
@@ -33,7 +33,7 @@ private:
 	void Init();
 
 private:
-	Ref<MeshSource> m_Source;
+	Scope<MeshSource> m_Source;
 
 	VertexArray m_VertexArray;
 	VertexBuffer m_VertexBuffer;

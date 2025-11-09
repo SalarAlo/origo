@@ -13,22 +13,22 @@ private:
 
 public:
 	template <AssetConcept T, typename... Args>
+	static T* CreateAsset(const std::string& name, Args&&... args) {
+		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
+		T* raw = asset.get();
+		s_Records[raw->GetId()] = { name, std::move(asset) };
 
-	static Ref<T> CreateAsset(const std::string& name, Args&&... args) {
-		auto asset = MakeRef<T>(std::forward<Args>(args)...);
-		s_Records[asset->GetId()] = { name, asset };
-
-		return asset;
+		return raw;
 	}
 
 	static const std::unordered_map<UUID, Record>& GetRecords() { return s_Records; }
 
-	static Ref<Asset> GetAsset(UUID id);
+	static Asset* GetAsset(UUID id);
 
 private:
 	struct Record {
 		std::string Name {};
-		Ref<Asset> AssetReference {};
+		Scope<Asset> AssetReference {};
 	};
 
 private:

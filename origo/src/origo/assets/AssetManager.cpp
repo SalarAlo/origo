@@ -3,9 +3,9 @@
 
 namespace Origo {
 
-Ref<Asset> AssetManager::GetAsset(UUID id) {
+Asset* AssetManager::GetAsset(UUID id) {
 	auto it { s_Records.find(id) };
-	return it != s_Records.end() ? it->second.AssetReference : nullptr;
+	return it != s_Records.end() ? it->second.AssetReference.get() : nullptr;
 }
 
 }

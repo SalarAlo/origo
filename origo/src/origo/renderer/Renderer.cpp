@@ -13,7 +13,7 @@ static void DrawMesh(const RenderCommand& renderCommand) {
 void Renderer::BeginFrame() {
 }
 
-void Renderer::Submit(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform* transform) {
+void Renderer::Submit(Mesh* mesh, Material* material, Transform* transform) {
 	s_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -26,7 +26,7 @@ void Renderer::Flush(const Camera* camera) {
 		return a.GetMaterial() < b.GetMaterial();
 	});
 
-	Ref<Material> currentMaterial = nullptr;
+	Material* currentMaterial = nullptr;
 
 	for (auto& cmd : s_DrawQueue) {
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {

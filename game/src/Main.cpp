@@ -108,8 +108,8 @@ private:
 	static constexpr int GRID_SIZE { 10 };
 
 	Origo::Camera* m_Camera;
-	Origo::Ref<Origo::Shader> m_Shader {};
-	Origo::Ref<Origo::Material> m_Material {};
+	Origo::Shader* m_Shader {};
+	Origo::Material* m_Material {};
 };
 
 Origo::Application* Origo::CreateApplication() {

@@ -16,13 +16,13 @@ public:
 	Texture(const std::string& path, TextureType type = TextureType::Albedo);
 	Texture(const aiTexture* embeddedTex, TextureType type = TextureType::Albedo);
 
-	void Bind(Ref<Shader>) const;
+	void Bind(Shader*) const;
 
 	TextureType GetTextureType() const { return m_TextureType; }
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
 
-	Ref<TextureSource> GetSource() const { return m_Source; }
+	TextureSource* GetSource() const { return m_Source.get(); }
 
 	bool ShouldSerialize() const override {
 		return m_Source->GetType() != TextureSourceType::Embedded;
@@ -32,7 +32,7 @@ private:
 	void InitTexture(int width, int height, int channels, unsigned char* data);
 
 private:
-	Ref<TextureSource> m_Source;
+	Scope<TextureSource> m_Source;
 
 	GLuint m_TextureId;
 	TextureType m_TextureType;
