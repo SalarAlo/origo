@@ -9,14 +9,13 @@ static LoggerRef s_CoreLogger;
 static LoggerRef s_ClientLogger;
 
 void Init() {
+
 	spdlog::set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
 
 	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-	auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("origo.log", true);
-	std::vector<spdlog::sink_ptr> sinks { console_sink, file_sink };
 
-	s_CoreLogger = std::make_shared<spdlog::logger>("ORIGO", sinks.begin(), sinks.end());
-	s_ClientLogger = std::make_shared<spdlog::logger>("APP", sinks.begin(), sinks.end());
+	s_CoreLogger = std::make_shared<spdlog::logger>("ORIGO", spdlog::sinks_init_list { console_sink });
+	s_ClientLogger = std::make_shared<spdlog::logger>("APP", spdlog::sinks_init_list { console_sink });
 
 	spdlog::register_logger(s_CoreLogger);
 	spdlog::register_logger(s_ClientLogger);

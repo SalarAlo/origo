@@ -27,6 +27,8 @@ public:
 
 private:
 	void InternalUpdate(double dt);
+	void InternalShutdown();
+	void InternalAwake();
 
 protected:
 	ScreenWindow m_Window;

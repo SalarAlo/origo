@@ -11,7 +11,7 @@ namespace OrigoEditor {
 class ComponentDrawRegistry {
 public:
 	template <typename T>
-	static void Register(const char* name, typename ComponentDrawer<T>::DrawFn fn) {
+	static void Register(const char* name, ComponentDrawer<T>::DrawFn fn) {
 		m_Drawers[typeid(T)] = Origo::MakeScope<ComponentDrawer<T>>(name, std::move(fn));
 	}
 

@@ -9,7 +9,6 @@ template <Origo::ComponentConcept T>
 class ComponentDrawer : public IComponentDrawer {
 public:
 	using DrawFn = std::function<void(T&)>;
-
 	ComponentDrawer(std::string_view name, DrawFn drawFn)
 	    : m_Name(name.data())
 	    , m_DrawFn(std::move(drawFn)) { }

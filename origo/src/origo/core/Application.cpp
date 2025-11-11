@@ -1,4 +1,5 @@
 #include "origo/core/Application.h"
+#include "origo/assets/AssetSerializer.h"
 #include "origo/core/Layer.h"
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
@@ -16,12 +17,28 @@ void Application::PushOverlay(Layer* l) {
 }
 
 void Application::InternalUpdate(double dt) {
-
 	ComponentSystemRegistry::GetInstance().RunAll(m_Scene);
 
 	for (Layer* layer : m_LayerStack) {
 		layer->OnUpdate(dt);
 	}
+}
+
+void Application::InternalAwake() {
+	Origo::Logger::Init();
+	Origo::Input::SetContext(&m_Window);
+
+	for (Layer* layer : m_LayerStack) {
+		layer->OnAttach();
+	}
+}
+
+void Application::InternalShutdown() {
+	Logger::Shutdown();
+	for (Layer* layer : m_LayerStack) {
+		layer->OnDetach();
+	}
+	AssetSerializationSystem::Cleanup();
 }
 
 Application::Application(const ApplicationSettings& settings)
@@ -42,17 +59,11 @@ void Application::OnEvent(Event& event) {
 }
 
 void Application::Run() {
-	Origo::Logger::Init();
-	Origo::Input::SetContext(&m_Window);
-
+	InternalAwake();
 	OnAwake();
 
-	for (Layer* layer : m_LayerStack) {
-		layer->OnAttach();
-	}
-
 	while (m_Running) {
-		double dt = Time::Duration(Time::GetNow() - m_LastTimeStamp).count();
+		double dt = static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count();
 
 		InternalUpdate(dt);
 		OnUpdate(dt);
@@ -66,9 +77,7 @@ void Application::Run() {
 		m_Window.OnUpdate();
 	}
 
-	for (Layer* layer : m_LayerStack) {
-		layer->OnDetach();
-	}
+	InternalShutdown();
 }
 
 }

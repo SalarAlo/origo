@@ -6,16 +6,16 @@ namespace Origo {
 
 class ModelRenderer : public Component {
 public:
-	ModelRenderer(Entity* entity, const Ref<Model>& model)
+	ModelRenderer(Entity* entity, Model* model)
 	    : Component(entity)
 	    , m_Model(model) { };
 
-	Ref<Model> GetModel() const { return m_Model; }
+	Model* GetModel() const { return m_Model; }
 
 	std::string GetName() const override { return "ModelRenderer"; }
 
 private:
-	Ref<Model> m_Model;
+	Model* m_Model;
 };
 
 }
