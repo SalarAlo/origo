@@ -12,7 +12,7 @@ public:
 
 	ComponentDrawer(std::string_view name, DrawFn drawFn)
 	    : m_Name(name.data())
-	    , m_DrawFn(drawFn) { }
+	    , m_DrawFn(std::move(drawFn)) { }
 
 	const char* GetName() const override { return m_Name; }
 

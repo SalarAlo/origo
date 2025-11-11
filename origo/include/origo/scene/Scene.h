@@ -40,6 +40,10 @@ public:
 		return m_ComponentManager.GetComponent<T>(entity);
 	}
 
+	std::vector<Component*> GetComponents(const UUID& entity) const {
+		return m_ComponentManager.GetComponents(entity);
+	}
+
 	template <ComponentConcept T>
 	std::vector<T*> GetAllComponentsOfType() const {
 		return m_ComponentManager.GetAllComponentsOfType<T>();

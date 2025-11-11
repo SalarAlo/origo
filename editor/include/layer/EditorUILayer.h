@@ -17,7 +17,7 @@ public:
 	void OnEvent(Origo::Event& e) override;
 
 private:
-	Origo::ImGuiLayer m_ImGuiLayer {};
+	Origo::ImGuiLayer m_ImGuiController {};
 	EditorContext m_Context;
 	PanelManager m_PanelManager;
 

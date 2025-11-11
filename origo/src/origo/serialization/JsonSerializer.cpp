@@ -48,7 +48,6 @@ JsonSerializer::JsonSerializer(std::string_view name)
 nlohmann::json& JsonSerializer::top_json() {
 	auto* p = m_ObjectsStack.top().Json;
 	if (!p) {
-		// Last-ditch safety: re-anchor to root
 		ORG_ERROR("Json stack top was null; reinitializing to root");
 		m_Root = nlohmann::json::object();
 		while (!m_ObjectsStack.empty())

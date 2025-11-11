@@ -13,11 +13,11 @@ EditorUILayer::EditorUILayer(EditorContext& ctx)
 }
 
 void EditorUILayer::OnDetach() {
-	m_ImGuiLayer.OnDetach();
+	m_ImGuiController.OnDetach();
 }
 
 void EditorUILayer::OnAttach() {
-	m_ImGuiLayer.OnAttach(m_Context.Window);
+	m_ImGuiController.OnAttach(m_Context.Window);
 
 	UI::ApplyEditorStyle();
 	UI::LoadEditorFont();
@@ -31,7 +31,7 @@ void EditorUILayer::OnAttach() {
 }
 
 void EditorUILayer::OnUpdate(double dt) {
-	m_ImGuiLayer.Begin();
+	m_ImGuiController.Begin();
 
 	UI::BeginDockspace();
 	UI::DrawMenuBar(m_PanelManager);
@@ -42,9 +42,10 @@ void EditorUILayer::OnUpdate(double dt) {
 	inspector->SetSelectedEntity(hierarchy->GetSelectedEntity());
 
 	m_PanelManager.RenderPanels();
+
 	UI::EndDockspace();
 
-	m_ImGuiLayer.End();
+	m_ImGuiController.End();
 }
 void EditorUILayer::OnEvent(Origo::Event& e) {
 }
