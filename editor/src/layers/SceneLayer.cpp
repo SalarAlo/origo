@@ -12,7 +12,6 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-
 	auto logoTexture = AssetManager::CreateAsset<Texture>("Rowlett", "resources/textures/origo_logo.png");
 	m_Shader = AssetManager::CreateAsset<Shader>("Normal Shader", "normal");
 	m_Material = AssetManager::CreateAsset<Material>("Normal Material", m_Shader, logoTexture);
@@ -24,7 +23,15 @@ void SceneLayer::OnEvent(Event& e) {
 }
 
 void SceneLayer::OnUpdate(double dt) {
+	static std::hash<UUID> HashEntity {};
+
 	m_Context.Buffer.Bind();
+
+	auto selectedEntityId { -1 };
+	if (m_Context.SelectedEntity) {
+		selectedEntityId = static_cast<int>(HashEntity(m_Context.SelectedEntity->GetId()));
+	}
+	m_Shader->SetUniform("u_SelectedEntityId", selectedEntityId);
 
 	Renderer::SetViewport(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight());
 

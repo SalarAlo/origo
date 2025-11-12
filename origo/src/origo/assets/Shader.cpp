@@ -122,5 +122,6 @@ void Shader::SetUniform<int>(std::string_view name, const int& value) const {
 	}
 	GLCall(glUniform1i(loc, value));
 }
+
 #pragma endregion
 }

@@ -36,7 +36,8 @@ void Renderer::Flush(const Camera* camera) {
 
 		if (cmd.GetMaterial() != currentMaterial) {
 			cmd.GetMaterial()->Bind();
-			currentMaterial = cmd.GetMaterial();
+			currentMaterial
+			    = cmd.GetMaterial();
 
 			currentMaterial
 			    ->SetShaderDirectly("u_ProjectionMatrix", camera->GetProjection())

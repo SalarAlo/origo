@@ -22,11 +22,11 @@ void EditorUILayer::OnAttach() {
 	UI::ApplyEditorStyle();
 	UI::LoadEditorFont();
 
-	m_HierarchyId = m_PanelManager.AddPanel<HierarchyPanel>(m_Context.Scene);
-	m_InspectorId = m_PanelManager.AddPanel<InspectorPanel>(m_Context.Scene);
-
+	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
+	m_PanelManager.AddPanel<InspectorPanel>(m_Context);
 	m_PanelManager.AddPanel<SceneViewport>(m_Context.Buffer, *m_Context.Scene.GetMainCamera());
 	m_PanelManager.AddPanel<AssetsPanel>();
+
 	m_PanelManager.AddPanel<ConsolePanel>();
 }
 
@@ -38,8 +38,6 @@ void EditorUILayer::OnUpdate(double dt) {
 
 	auto inspector = static_cast<InspectorPanel*>(m_PanelManager.GetPanel(m_InspectorId));
 	auto hierarchy = static_cast<HierarchyPanel*>(m_PanelManager.GetPanel(m_HierarchyId));
-
-	inspector->SetSelectedEntity(hierarchy->GetSelectedEntity());
 
 	m_PanelManager.RenderPanels();
 

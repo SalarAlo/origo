@@ -6,22 +6,24 @@
 namespace OrigoEditor {
 
 void InspectorPanel::OnImGuiRender() {
+	auto& selectedEntity { m_Contex.SelectedEntity };
+	auto& scene { m_Contex.Scene };
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2 { 4.0f, 3.0f });
 	ImGui::SetWindowFontScale(0.9f);
 
 	ImGui::TextUnformatted("Scene Entities:");
 
-	if (!m_SelectedEntity) {
+	if (!selectedEntity) {
 		ImGui::TextDisabled("No entity selected.");
 		ImGui::PopStyleVar(2);
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
-	ImGui::SeparatorText(m_SelectedEntity->GetName().c_str());
+	ImGui::SeparatorText(selectedEntity->GetName().c_str());
 
-	for (auto* comp : m_Scene.GetComponents(m_SelectedEntity->GetId())) {
+	for (auto* comp : scene.GetComponents(selectedEntity->GetId())) {
 		ComponentDrawRegistry::Draw(comp, typeid(*comp));
 	}
 
@@ -29,4 +31,4 @@ void InspectorPanel::OnImGuiRender() {
 	ImGui::SetWindowFontScale(1.0f);
 }
 
-} // namespace OrigoEditor
+}
