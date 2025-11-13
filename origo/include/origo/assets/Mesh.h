@@ -25,10 +25,6 @@ public:
 		return m_Source.get();
 	}
 
-	bool ShouldSerialize() const override {
-		return m_Source->GetType() != MeshSourceType::External;
-	}
-
 private:
 	void Init();
 

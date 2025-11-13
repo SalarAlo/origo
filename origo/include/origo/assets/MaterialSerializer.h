@@ -7,6 +7,7 @@ namespace Origo {
 
 class MaterialSerializer : public AssetSerializer {
 public:
+	bool ShouldSerialize(const Asset* asset) const override;
 	void Serialize(const Asset* asset, ISerializer& backend) const override;
 	Asset* Deserialize(ISerializer& backend) const override;
 

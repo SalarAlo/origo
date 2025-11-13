@@ -18,7 +18,7 @@ public:
 
 private:
 	Origo::ImGuiLayer m_ImGuiController {};
-	EditorContext m_Context;
+	EditorContext& m_Context;
 	PanelManager m_PanelManager;
 
 	int m_HierarchyId {};

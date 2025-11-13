@@ -30,11 +30,9 @@ public:
 		return *this;
 	}
 
-	AssetType GetAssetType() const override {
-		return AssetType::Material;
-	}
+	AssetType GetAssetType() const override { return AssetType::Material; }
 
-	bool ShouldSerialize() const override {
+	bool ShouldSerialize() const {
 		return m_ShouldSerialize;
 	}
 

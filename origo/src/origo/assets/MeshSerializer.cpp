@@ -14,5 +14,11 @@ Asset* MeshSerializer::Deserialize(ISerializer& backend) const {
 	return nullptr;
 }
 
+bool MeshSerializer::ShouldSerialize(const Asset* asset) const {
+	auto texture { dynamic_cast<const Mesh*>(asset) };
+
+	return texture->GetSource()->GetType() != MeshSourceType::External;
+}
+
 REGISTER_SERIALIZER(Mesh)
 }

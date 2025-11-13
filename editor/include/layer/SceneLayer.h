@@ -1,7 +1,7 @@
 #pragma once
 
+#include "origo/assets/Texture.h"
 #include "origo/core/Layer.h"
-#include "origo/assets/Material.h"
 
 #include "EditorContext.h"
 
@@ -23,7 +23,7 @@ private:
 	EditorContext& m_Context;
 
 	Origo::Shader* m_Shader;
-	Origo::Material* m_Material;
+	Origo::Texture* m_Texture;
 };
 
 }

@@ -24,10 +24,6 @@ public:
 
 	TextureSource* GetSource() const { return m_Source.get(); }
 
-	bool ShouldSerialize() const override {
-		return m_Source->GetType() != TextureSourceType::Embedded;
-	}
-
 private:
 	void InitTexture(int width, int height, int channels, unsigned char* data);
 

@@ -3,6 +3,10 @@
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
+bool MaterialSerializer::ShouldSerialize(const Asset* asset) const {
+	auto mat { dynamic_cast<const Material*>(asset) };
+	return mat->ShouldSerialize();
+}
 
 void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	auto material { dynamic_cast<const Material*>(asset) };

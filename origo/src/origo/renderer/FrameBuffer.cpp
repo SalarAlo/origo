@@ -121,4 +121,4 @@ GLuint FrameBuffer::GetDepthAttachment() const {
 	return m_DepthTex;
 }
 
-} // namespace Origo
+}

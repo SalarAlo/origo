@@ -7,6 +7,7 @@ namespace Origo {
 class AssetSerializer {
 public:
 	virtual ~AssetSerializer() = default;
+	virtual bool ShouldSerialize(const Asset* asset) const { return true; };
 	virtual void Serialize(const Asset* asset, ISerializer& backend) const = 0;
 	virtual Asset* Deserialize(ISerializer& backend) const = 0;
 };

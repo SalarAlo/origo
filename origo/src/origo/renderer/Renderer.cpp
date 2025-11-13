@@ -42,6 +42,7 @@ void Renderer::Flush(const Camera* camera) {
 			currentMaterial
 			    ->SetShaderDirectly("u_ProjectionMatrix", camera->GetProjection())
 			    .SetShaderDirectly("u_ViewMatrix", camera->GetView())
+			    .SetShaderDirectly("u_CameraForward", camera->GetForward())
 			    .SetShaderDirectly("u_ViewPos", camera->GetPosition());
 		}
 
