@@ -8,8 +8,7 @@ void SceneViewport::OnImGuiRender() {
 	static float m_Sensitivity { 0.3f };
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
-	if (size.x > 0 && size.y > 0 && (m_FrameBuffer.GetWidth() != (int)size.x || m_FrameBuffer.GetHeight() != (int)size.y))
-		m_FrameBuffer.Resize((int)size.x, (int)size.y);
+	m_FrameBuffer.Resize((int)size.x, (int)size.y);
 
 	ImGui::Image((ImTextureID)(uintptr_t)m_FrameBuffer.GetColorAttachment(0), size, ImVec2(0, 1), ImVec2(1, 0));
 

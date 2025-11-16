@@ -4,6 +4,7 @@
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
 #include "origo/input/Input.h"
+#include "origo/renderer/Renderer.h"
 #include "origo/scene/ComponentSystemRegistry.h"
 #include <functional>
 
@@ -15,7 +16,6 @@ void Application::PushLayer(Layer* l) {
 void Application::PushOverlay(Layer* l) {
 	m_LayerStack.PushOverlay(l);
 }
-
 void Application::InternalUpdate(double dt) {
 	ComponentSystemRegistry::GetInstance().RunAll(m_Scene);
 
@@ -65,9 +65,13 @@ void Application::Run() {
 	while (m_Running) {
 		double dt = static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count();
 
-		InternalUpdate(dt);
-		OnUpdate(dt);
+		Renderer::BeginFrame();
 
+		InternalUpdate(dt);
+
+		Renderer::Flush(m_Scene.GetMainCamera());
+
+		Renderer::EndFrame();
 		if (m_Window.ShouldClose()) {
 			m_Running = false;
 		}

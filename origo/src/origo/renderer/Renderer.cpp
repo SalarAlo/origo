@@ -1,16 +1,23 @@
 #include "origo/renderer/Renderer.h"
 #include "origo/core/Logger.h"
+#include "origo/renderer/FrameBuffer.h"
 
 namespace Origo {
 
 static std::vector<RenderCommand> s_DrawQueue;
+static FrameBuffer* s_Buffer;
 
 static void DrawMesh(const RenderCommand& renderCommand) {
 	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
 	renderCommand.GetMesh()->Render();
 }
 
+void Renderer::SetTarget(FrameBuffer* buffer) {
+	s_Buffer = buffer;
+}
+
 void Renderer::BeginFrame() {
+	Renderer::SetViewport(s_Buffer->GetWidth(), s_Buffer->GetHeight());
 }
 
 void Renderer::Submit(Mesh* mesh, Material* material, Transform* transform) {
@@ -21,12 +28,24 @@ void Renderer::SetViewport(int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-void Renderer::Flush(const Camera* camera) {
+void Renderer::Flush(Camera* camera) {
+	if (!s_Buffer) {
+		ORG_ERROR("Cant render without FrameBuffer Target set.");
+		return;
+	}
+
+	camera->SetAspectResolution(static_cast<float>(s_Buffer->GetWidth()) / s_Buffer->GetHeight());
+
 	std::sort(s_DrawQueue.begin(), s_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
 		return a.GetMaterial() < b.GetMaterial();
 	});
 
 	Material* currentMaterial = nullptr;
+
+	s_Buffer->Bind();
+
+	GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	for (auto& cmd : s_DrawQueue) {
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
@@ -48,6 +67,8 @@ void Renderer::Flush(const Camera* camera) {
 
 		DrawMesh(cmd);
 	}
+
+	s_Buffer->Unbind();
 
 	s_DrawQueue.clear();
 }

@@ -19,20 +19,15 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetManager::CreateAsset<Shader>("Normal Shader", "normal");
 
 	SpawnTestGrid();
+	Renderer::SetTarget(&m_Context.Buffer);
 }
 
 void SceneLayer::OnEvent(Event& e) {
 }
 
 void SceneLayer::OnUpdate(double dt) {
-	m_Context.Buffer.Bind();
+	m_Shader->UseProgram();
 
-	Renderer::SetViewport(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight());
-
-	GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-	Renderer::Flush(m_Context.Scene.GetMainCamera());
 	float x = Time::GetTimeSinceStart().count();
 	m_Shader->SetUniform("u_Time", x);
 

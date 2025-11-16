@@ -39,7 +39,7 @@ public:
 	glm::vec3 GetRight() const { return m_Right; }
 	glm::vec3 GetUp() const { return m_Up; }
 
-	void SetAspectResolutino(float ar) {
+	void SetAspectResolution(float ar) {
 		m_Aspect = ar;
 		UpdateProjection();
 	}

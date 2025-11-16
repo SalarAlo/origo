@@ -19,7 +19,6 @@ public:
 
 	virtual void OnAwake() { }
 	virtual void OnShutdown() { }
-	virtual void OnUpdate(double deltaTime) { }
 	virtual void OnEvent(Event& event);
 
 	void PushLayer(Layer*);

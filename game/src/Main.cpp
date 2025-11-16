@@ -52,7 +52,7 @@ public:
 
 		dispatcher.Dispatch<Origo::WindowResizeEvent>([&](auto& resEvent) {
 			auto size = resEvent.GetSize();
-			m_Camera->SetAspectResolutino(static_cast<float>(size.x) / static_cast<float>(size.y));
+			m_Camera->SetAspectResolution(static_cast<float>(size.x) / static_cast<float>(size.y));
 		});
 
 		dispatcher.Dispatch<Origo::MouseMoveEvent>([&](Origo::MouseMoveEvent& moveEvent) {
@@ -77,26 +77,6 @@ public:
 				Origo::Input::SetCursorMode(Origo::Input::CursorMode::Locked);
 			}
 		});
-	}
-
-	void OnUpdate(double dt) override {
-		glm::vec3 direction(0.0f);
-		constexpr float normalSpeed { 10 };
-		constexpr float fastSpeed { normalSpeed * 5 };
-
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
-			direction += m_Camera->GetForward();
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S))
-			direction -= m_Camera->GetForward();
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D))
-			direction += m_Camera->GetRight();
-		if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A))
-			direction -= m_Camera->GetRight();
-
-		if (glm::length(direction) > 0.0f)
-			m_Camera->Move(glm::normalize(direction) * static_cast<float>(dt));
-
-		Origo::Renderer::Flush(m_Scene.GetMainCamera());
 	}
 
 	void OnShutdown() override {
