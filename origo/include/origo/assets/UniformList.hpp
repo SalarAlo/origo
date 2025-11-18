@@ -7,6 +7,7 @@ namespace Origo {
 
 enum class UniformType {
 	Int,
+	UnsignedInt,
 	Float,
 	Vec2,
 	Vec3,

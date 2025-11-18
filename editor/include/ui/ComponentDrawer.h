@@ -5,7 +5,7 @@
 
 namespace OrigoEditor {
 
-template <Origo::ComponentConcept T>
+template <Origo::ComponentType T>
 class ComponentDrawer : public IComponentDrawer {
 public:
 	using DrawFn = std::function<void(T&)>;

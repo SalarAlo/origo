@@ -11,7 +11,6 @@
 #include "origo/events/WindowEvent.h"
 #include "origo/input/Input.h"
 
-#include "origo/renderer/Renderer.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 #include "origo/scene/Scene.h"
@@ -35,7 +34,7 @@ public:
 	}
 
 	void SpawnTestGrid() {
-		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Cube);
+		auto cubeMesh = Origo::AssetManager::CreateAsset<Origo::Mesh>("Cube", Origo::PrimitiveShape::Sphere);
 
 		for (int i {}; i < GRID_SIZE; i++) {
 			for (int j {}; j < GRID_SIZE; j++) {
@@ -85,7 +84,7 @@ public:
 	}
 
 private:
-	static constexpr int GRID_SIZE { 10 };
+	static const constinit int GRID_SIZE { 10 };
 
 	Origo::Camera* m_Camera;
 	Origo::Shader* m_Shader {};

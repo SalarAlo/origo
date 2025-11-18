@@ -123,5 +123,14 @@ void Shader::SetUniform<int>(std::string_view name, const int& value) const {
 	GLCall(glUniform1i(loc, value));
 }
 
+template <>
+void Shader::SetUniform<unsigned int>(std::string_view name, const unsigned int& value) const {
+	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
+	if (loc == -1) {
+		return;
+	}
+	GLCall(glUniform1ui(loc, value));
+}
+
 #pragma endregion
 }

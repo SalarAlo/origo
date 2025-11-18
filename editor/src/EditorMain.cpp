@@ -24,7 +24,8 @@ public:
 		    spec.Height = 1080;
 		    spec.Attachments = {
 			    { AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
-			    { AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT }
+			    { AttachmentType::Color, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT },
+			    { AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 		    };
 		    return spec;
 	    }())
@@ -32,6 +33,8 @@ public:
 		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera()));
 		PushLayer(new SceneLayer(m_Context));
 		PushLayer(new EditorUILayer(m_Context));
+
+		m_RenderContext.SetTarget(&m_Buffer);
 	}
 
 private:

@@ -4,6 +4,8 @@
 #include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
+#include "origo/renderer/FrameBuffer.h"
+#include "origo/renderer/RenderContext.h"
 #include "origo/scene/Scene.h"
 
 namespace Origo {
@@ -26,12 +28,15 @@ public:
 
 private:
 	void InternalUpdate(double dt);
+	void OnRender();
 	void InternalShutdown();
 	void InternalAwake();
 
 protected:
 	ScreenWindow m_Window;
 	Scene m_Scene;
+	FrameBuffer* m_Buffer;
+	RenderContext m_RenderContext;
 
 private:
 	bool m_Running {};

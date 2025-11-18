@@ -4,7 +4,7 @@
 #include "origo/scene/Scene.h"
 
 namespace Origo {
-template <ComponentConcept T>
+template <ComponentType T>
 class SingleComponentSystem : public ISystem {
 public:
 	virtual void ForEach(const Scene& scene, const std::vector<T*>&) = 0;

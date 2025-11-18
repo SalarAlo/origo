@@ -17,7 +17,7 @@ public:
 
 	SERIALIZER_FWD
 private:
-	nlohmann::json& top_json(); // non-null ref
+	nlohmann::json& top_json();
 
 	nlohmann::json m_Root;
 	std::stack<JsonStackEntry> m_ObjectsStack {};

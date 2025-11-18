@@ -1,53 +1,36 @@
-#include "origo/renderer/Renderer.h"
-#include "origo/core/Logger.h"
-#include "origo/renderer/FrameBuffer.h"
+#include "origo/renderer/RenderContext.h"
 
 namespace Origo {
-
-static std::vector<RenderCommand> s_DrawQueue;
-static FrameBuffer* s_Buffer;
 
 static void DrawMesh(const RenderCommand& renderCommand) {
 	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
 	renderCommand.GetMesh()->Render();
 }
 
-void Renderer::SetTarget(FrameBuffer* buffer) {
-	s_Buffer = buffer;
+void RenderContext::BeginFrame() {
+	glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
 }
 
-void Renderer::BeginFrame() {
-	Renderer::SetViewport(s_Buffer->GetWidth(), s_Buffer->GetHeight());
+void RenderContext::Submit(Mesh* mesh, Material* material, Transform* transform) {
+	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
-void Renderer::Submit(Mesh* mesh, Material* material, Transform* transform) {
-	s_DrawQueue.emplace_back(mesh, material, transform);
-}
+void RenderContext::Flush(Camera* camera) {
 
-void Renderer::SetViewport(int width, int height) {
-	glViewport(0, 0, width, height);
-}
+	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
-void Renderer::Flush(Camera* camera) {
-	if (!s_Buffer) {
-		ORG_ERROR("Cant render without FrameBuffer Target set.");
-		return;
-	}
-
-	camera->SetAspectResolution(static_cast<float>(s_Buffer->GetWidth()) / s_Buffer->GetHeight());
-
-	std::sort(s_DrawQueue.begin(), s_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
+	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
 		return a.GetMaterial()->GetId().ToString() < b.GetMaterial()->GetId().ToString();
 	});
 
 	Material* currentMaterial = nullptr;
 
-	s_Buffer->Bind();
+	m_Buffer->Bind();
 
 	GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	for (auto& cmd : s_DrawQueue) {
+	for (auto& cmd : m_DrawQueue) {
 		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
 			ORG_CORE_ERROR("[Renderer] Null reference in RenderCommand");
 			continue;
@@ -68,12 +51,12 @@ void Renderer::Flush(Camera* camera) {
 		DrawMesh(cmd);
 	}
 
-	s_Buffer->Unbind();
+	m_Buffer->Unbind();
 
-	s_DrawQueue.clear();
+	m_DrawQueue.clear();
 }
 
-void Renderer::EndFrame() {
+void RenderContext::EndFrame() {
+	return;
 }
-
 }

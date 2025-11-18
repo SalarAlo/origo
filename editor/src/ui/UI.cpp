@@ -9,27 +9,23 @@ void ApplyEditorStyle() {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* colors = style.Colors;
 
-	// === BASE COLOR PALETTE ===
 	const ImVec4 bg = ImVec4(0.09f, 0.09f, 0.10f, 1.00f);
 	const ImVec4 bgLight = ImVec4(0.14f, 0.14f, 0.15f, 1.00f);
 	const ImVec4 bgHover = ImVec4(0.20f, 0.21f, 0.22f, 1.00f);
 	const ImVec4 bgActive = ImVec4(0.26f, 0.27f, 0.29f, 1.00f);
-	const ImVec4 accent = ImVec4(0.33f, 0.53f, 0.98f, 1.00f); // blue-accent
+	const ImVec4 accent = ImVec4(0.33f, 0.53f, 0.98f, 1.00f);
 	const ImVec4 text = ImVec4(0.95f, 0.96f, 0.97f, 1.00f);
 	const ImVec4 textDim = ImVec4(0.65f, 0.67f, 0.70f, 1.00f);
 
-	// === GENERAL BACKGROUNDS ===
 	colors[ImGuiCol_WindowBg] = bg;
 	colors[ImGuiCol_ChildBg] = bg;
 	colors[ImGuiCol_PopupBg] = bgLight;
 	colors[ImGuiCol_Border] = ImVec4(0, 0, 0, 0.25f);
 
-	// === FRAMES & INPUTS ===
 	colors[ImGuiCol_FrameBg] = bgLight;
 	colors[ImGuiCol_FrameBgHovered] = bgHover;
 	colors[ImGuiCol_FrameBgActive] = bgActive;
 
-	// === HEADERS, BUTTONS, TABS ===
 	colors[ImGuiCol_Header] = bgLight;
 	colors[ImGuiCol_HeaderHovered] = bgHover;
 	colors[ImGuiCol_HeaderActive] = bgActive;
@@ -43,26 +39,21 @@ void ApplyEditorStyle() {
 	colors[ImGuiCol_TabUnfocused] = bg;
 	colors[ImGuiCol_TabUnfocusedActive] = bgLight;
 
-	// === TITLE & MENUS ===
 	colors[ImGuiCol_TitleBg] = bg;
 	colors[ImGuiCol_TitleBgActive] = bgLight;
 	colors[ImGuiCol_MenuBarBg] = bgLight;
 
-	// === TEXT ===
 	colors[ImGuiCol_Text] = text;
 	colors[ImGuiCol_TextDisabled] = textDim;
 
-	// === SLIDERS, GRABS ===
 	colors[ImGuiCol_SliderGrab] = accent;
 	colors[ImGuiCol_SliderGrabActive] = ImVec4(accent.x * 0.9f, accent.y * 0.9f, accent.z * 0.9f, 1.0f);
 
-	// === SCROLLBAR ===
 	colors[ImGuiCol_ScrollbarBg] = bg;
 	colors[ImGuiCol_ScrollbarGrab] = bgLight;
 	colors[ImGuiCol_ScrollbarGrabHovered] = bgHover;
 	colors[ImGuiCol_ScrollbarGrabActive] = bgActive;
 
-	// === STYLE METRICS ===
 	style.WindowRounding = 6.0f;
 	style.ChildRounding = 5.0f;
 	style.FrameRounding = 5.0f;
@@ -85,7 +76,6 @@ void LoadEditorFont() {
 	ImGuiIO& io = ImGui::GetIO();
 	const std::string fontPath = "resources/fonts/Inter.ttf";
 
-	// Slightly larger font for comfort & readability
 	io.FontDefault = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 19.5f);
 	IM_ASSERT(io.FontDefault && "Failed to load Inter.ttf!");
 }

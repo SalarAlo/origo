@@ -1,3 +1,5 @@
+#pragma once
+
 #include "origo/core/Identifiable.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
@@ -8,7 +10,7 @@
 namespace Origo {
 
 template <typename T>
-concept ComponentConcept = std::derived_from<T, Component>;
+concept ComponentType = std::derived_from<T, Component>;
 
 class ComponentManager {
 	using ComponentsMap = std::unordered_map<UUID, Component*>;
@@ -19,7 +21,7 @@ public:
 			deleter();
 	}
 
-	template <ComponentConcept T, typename... Args>
+	template <ComponentType T, typename... Args>
 	T* AddComponent(Entity* entity, Args&&... args) {
 		auto& map = GetComponentsMap<T>();
 		auto component = new T(entity, std::forward<Args>(args)...);
@@ -28,7 +30,7 @@ public:
 		return component;
 	}
 
-	template <ComponentConcept T>
+	template <ComponentType T>
 	T* GetComponent(const UUID& entity) const {
 		auto& map = GetComponentsMap<T>();
 		auto it = map.find(entity);
@@ -50,7 +52,7 @@ public:
 		return result;
 	}
 
-	template <ComponentConcept T>
+	template <ComponentType T>
 	std::vector<T*> GetAllComponentsOfType() const {
 		auto& map = GetComponentsMap<T>();
 		std::vector<T*> result;
@@ -63,7 +65,7 @@ public:
 	}
 
 private:
-	template <ComponentConcept T>
+	template <ComponentType T>
 	static std::unordered_map<UUID, T*>& GetComponentsMap() {
 		static std::unordered_map<UUID, T*> m_Storage;
 		static bool _ = [] {

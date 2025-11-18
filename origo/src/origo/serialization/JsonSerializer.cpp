@@ -75,7 +75,6 @@ void JsonSerializer::LoadFile() {
 	std::ifstream in(m_Path);
 	if (!in) {
 		ORG_ERROR("Failed to open input file: {}", m_Path);
-		// Always leave a valid empty root
 		m_Root = nlohmann::json::object();
 		while (!m_ObjectsStack.empty())
 			m_ObjectsStack.pop();

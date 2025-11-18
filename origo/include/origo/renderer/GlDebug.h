@@ -7,7 +7,6 @@ inline void GL_ClearErrors() {
 	while (glGetError() != GL_NO_ERROR) { }
 }
 
-// Converts GLenum to readable text
 inline const char* GL_ErrorString(GLenum error) {
 	switch (error) {
 	case GL_INVALID_ENUM:
@@ -25,7 +24,6 @@ inline const char* GL_ErrorString(GLenum error) {
 	}
 }
 
-// Prints errors with context
 inline bool GL_LogCall(const char* function, const char* file, int line) {
 	bool success = true;
 	while (GLenum error = glGetError()) {
@@ -35,7 +33,6 @@ inline bool GL_LogCall(const char* function, const char* file, int line) {
 	return success;
 }
 
-// Macro wrapper
 #define GLCall(x)                                           \
 	do {                                                \
 		GL_ClearErrors();                           \

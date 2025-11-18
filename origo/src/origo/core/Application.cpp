@@ -4,9 +4,8 @@
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
 #include "origo/input/Input.h"
-#include "origo/renderer/Renderer.h"
+#include "origo/renderer/RenderableRegistry.h"
 #include "origo/scene/ComponentSystemRegistry.h"
-#include <functional>
 
 namespace Origo {
 void Application::PushLayer(Layer* l) {
@@ -43,6 +42,7 @@ void Application::InternalShutdown() {
 
 Application::Application(const ApplicationSettings& settings)
     : m_Settings(settings)
+    , m_RenderContext(nullptr)
     , m_Window(settings.WindowSettings)
     , m_Running(true)
     , m_LastTimeStamp(Time::GetNow())
@@ -58,6 +58,14 @@ void Application::OnEvent(Event& event) {
 	}
 }
 
+void Application::OnRender() {
+	auto renderers = RenderableRegistry::GetInstance().GetAllRenderers();
+
+	for (const auto& renderer : renderers) {
+		renderer(m_Scene, m_RenderContext);
+	}
+}
+
 void Application::Run() {
 	InternalAwake();
 	OnAwake();
@@ -65,13 +73,15 @@ void Application::Run() {
 	while (m_Running) {
 		double dt = static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count();
 
-		Renderer::BeginFrame();
+		m_RenderContext.BeginFrame();
 
 		InternalUpdate(dt);
+		OnRender();
 
-		Renderer::Flush(m_Scene.GetMainCamera());
+		m_RenderContext.Flush(m_Scene.GetMainCamera());
 
-		Renderer::EndFrame();
+		m_RenderContext.EndFrame();
+
 		if (m_Window.ShouldClose()) {
 			m_Running = false;
 		}

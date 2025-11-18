@@ -30,12 +30,12 @@ public:
 	Camera* GetMainCamera() { return m_MainCamera; }
 
 #pragma region FORWARDING
-	template <ComponentConcept T, typename... Args>
+	template <ComponentType T, typename... Args>
 	T* AddComponent(Entity* entity, Args&&... args) {
 		return m_ComponentManager.AddComponent<T>(entity, std::forward<Args>(args)...);
 	}
 
-	template <ComponentConcept T, typename... Args>
+	template <ComponentType T, typename... Args>
 	T* GetComponent(const UUID& entity) const {
 		return m_ComponentManager.GetComponent<T>(entity);
 	}
@@ -44,7 +44,7 @@ public:
 		return m_ComponentManager.GetComponents(entity);
 	}
 
-	template <ComponentConcept T>
+	template <ComponentType T>
 	std::vector<T*> GetAllComponentsOfType() const {
 		return m_ComponentManager.GetAllComponentsOfType<T>();
 	}

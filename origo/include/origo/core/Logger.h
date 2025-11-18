@@ -15,7 +15,6 @@ LoggerRef& GetClient();
 
 }
 
-// ---------- convenience macros ----------
 #define ORG_CORE_TRACE(...) ::Origo::Logger::GetCore()->trace(__VA_ARGS__)
 #define ORG_CORE_INFO(...) ::Origo::Logger::GetCore()->info(__VA_ARGS__)
 #define ORG_CORE_WARN(...) ::Origo::Logger::GetCore()->warn(__VA_ARGS__)

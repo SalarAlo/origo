@@ -36,9 +36,6 @@ void EditorUILayer::OnUpdate(double dt) {
 	UI::BeginDockspace();
 	UI::DrawMenuBar(m_PanelManager);
 
-	auto inspector = static_cast<InspectorPanel*>(m_PanelManager.GetPanel(m_InspectorId));
-	auto hierarchy = static_cast<HierarchyPanel*>(m_PanelManager.GetPanel(m_HierarchyId));
-
 	m_PanelManager.RenderPanels();
 
 	UI::EndDockspace();

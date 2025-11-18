@@ -1,5 +1,4 @@
 #include "origo/assets/UniformList.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "origo/core/Logger.h"
 #include "origo/serialization/ISerializer.h"
 
@@ -10,6 +9,8 @@ UniformType Uniform<int>::GetUniformType() const { return UniformType::Int; }
 
 template <>
 UniformType Uniform<float>::GetUniformType() const { return UniformType::Float; }
+template <>
+UniformType Uniform<unsigned int>::GetUniformType() const { return UniformType::UnsignedInt; }
 
 template <>
 UniformType Uniform<glm::vec2>::GetUniformType() const { return UniformType::Vec2; }

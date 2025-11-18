@@ -1,6 +1,5 @@
 #include "origo/scene/ModelRendererSystem.h"
 #include "origo/renderer/Renderer.h"
-#include "origo/scene/ComponentSystemRegistry.h"
 
 namespace Origo {
 
@@ -17,4 +16,4 @@ void ModelRendererSystem::ForEach(const Scene& scene, const std::vector<ModelRen
 
 }
 
-REGISTER_SYSTEM(ModelRendererSystem)
+// REGISTER_SYSTEM(ModelRendererSystem)

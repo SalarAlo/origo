@@ -37,7 +37,6 @@ Texture::Texture(const aiTexture* embeddedTex, TextureType type)
 	unsigned char* decoded = nullptr;
 
 	if (embeddedTex->mHeight == 0) {
-		// Compressed image (PNG, JPEG, etc.)
 		decoded = stbi_load_from_memory(
 		    reinterpret_cast<const unsigned char*>(embeddedTex->pcData),
 		    embeddedTex->mWidth,
@@ -46,10 +45,9 @@ Texture::Texture(const aiTexture* embeddedTex, TextureType type)
 		    &channels,
 		    0);
 	} else {
-		// Uncompressed RGBA data
 		width = embeddedTex->mWidth;
 		height = embeddedTex->mHeight;
-		channels = 4; // aiTexel is RGBA
+		channels = 4;
 		decoded = reinterpret_cast<unsigned char*>(embeddedTex->pcData);
 	}
 
@@ -70,7 +68,7 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 
 	GLCall(glTexImage2D(
 	    GL_TEXTURE_2D,
-	    0, // mipmap level
+	    0,
 	    (channels == 4 ? GL_RGBA : GL_RGB),
 	    width,
 	    height,

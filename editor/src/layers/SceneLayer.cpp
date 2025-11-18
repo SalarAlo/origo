@@ -15,7 +15,7 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetManager::CreateAsset<Texture>("Rowlett", "resources/textures/origo_logo.png");
+	m_Texture = AssetManager::CreateAsset<Texture>("Rowlett", "resources/textures/dirt.jpg");
 	m_Shader = AssetManager::CreateAsset<Shader>("Normal Shader", "normal");
 
 	SpawnTestGrid();
@@ -28,8 +28,8 @@ void SceneLayer::OnEvent(Event& e) {
 void SceneLayer::OnUpdate(double dt) {
 	m_Shader->UseProgram();
 
-	float x = Time::GetTimeSinceStart().count();
-	m_Shader->SetUniform("u_Time", x);
+	float time = Time::GetTimeSinceStart().count();
+	m_Shader->SetUniform("u_Time", time);
 
 	int selectedEntityId { -1 };
 	if (m_Context.SelectedEntity != nullptr) {
@@ -37,11 +37,12 @@ void SceneLayer::OnUpdate(double dt) {
 	}
 
 	m_Shader->SetUniform("u_SelectedEntityId", selectedEntityId);
-	m_Context.Buffer.Unbind();
+	m_Shader->SetUniform("u_EntityIdTexture", static_cast<int>(m_Context.Buffer.GetColorAttachment(1)));
+	m_Shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
 }
 
 void SceneLayer::SpawnTestGrid() {
-	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Cube);
+	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Sphere);
 
 	for (int i = 0; i < GRID_SIZE; ++i) {
 		for (int j = 0; j < GRID_SIZE; ++j) {

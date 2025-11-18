@@ -15,15 +15,13 @@ namespace Origo {
 static MeshData ConvertMesh(const aiMesh* aMesh) {
 	std::vector<float> vertices;
 	std::vector<unsigned> indices;
-	vertices.reserve(aMesh->mNumVertices * 8); // pos(3) + normal(3) + uv(2)
+	vertices.reserve(aMesh->mNumVertices * 8); // (pos) 3 + (normal) 3 + (uv) 2. 3+3+2=8 thats why *8.
 
 	for (unsigned v = 0; v < aMesh->mNumVertices; ++v) {
-		// Position
 		vertices.push_back(aMesh->mVertices[v].x);
 		vertices.push_back(aMesh->mVertices[v].y);
 		vertices.push_back(aMesh->mVertices[v].z);
 
-		// Normal
 		if (aMesh->HasNormals()) {
 			vertices.push_back(aMesh->mNormals[v].x);
 			vertices.push_back(aMesh->mNormals[v].y);
@@ -32,7 +30,6 @@ static MeshData ConvertMesh(const aiMesh* aMesh) {
 			vertices.insert(vertices.end(), { 0.0f, 0.0f, 0.0f });
 		}
 
-		// Texture Coordinates
 		if (aMesh->HasTextureCoords(0)) {
 			vertices.push_back(aMesh->mTextureCoords[0][v].x);
 			vertices.push_back(aMesh->mTextureCoords[0][v].y);
@@ -62,15 +59,12 @@ static Texture* ExtractTexture(
 	if (texPath.length == 0)
 		return nullptr;
 
-	// --- Embedded Texture ---
 	if (texPath.C_Str()[0] == '*') {
 		const unsigned index = std::atoi(texPath.C_Str() + 1);
 		const aiTexture* embeddedTex = scene->mTextures[index];
 		const std::string texName = std::filesystem::path(modelPath).stem().string() + "_embedded_" + std::to_string(index);
 
-		// Handle compressed vs raw data
 		if (embeddedTex->mHeight == 0) {
-			// Compressed (e.g. PNG)
 			return AssetManager::CreateAsset<Texture>(
 			    texName,
 			    embeddedTex,
@@ -78,10 +72,8 @@ static Texture* ExtractTexture(
 		}
 	}
 
-	// --- External Texture ---
 	std::string relPath = texPath.C_Str();
 
-	// Normalize relative to model file directory
 	std::filesystem::path modelDir = std::filesystem::path(modelPath).parent_path();
 	std::filesystem::path fullPath = modelDir / relPath;
 	fullPath = std::filesystem::weakly_canonical(fullPath);

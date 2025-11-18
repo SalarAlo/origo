@@ -10,7 +10,7 @@ public:
 		return s_Instance;
 	}
 
-	void Register(std::unique_ptr<ISystem> system) {
+	void Register(Scope<ISystem> system) {
 		m_Systems.push_back(std::move(system));
 	}
 
@@ -28,15 +28,15 @@ private:
 	ComponentSystemRegistry() = default;
 
 private:
-	std::vector<std::unique_ptr<ISystem>> m_Systems {};
+	std::vector<Scope<ISystem>> m_Systems {};
 };
 
 }
 
-#define REGISTER_SYSTEM(TYPE)                                                                                         \
-	namespace Origo {                                                                                             \
-		struct TYPE##AutoRegister {                                                                           \
-			TYPE##AutoRegister() { ComponentSystemRegistry ::GetInstance().Register(MakeScope<TYPE>()); } \
-		};                                                                                                    \
-		static TYPE##AutoRegister s_##TYPE##AutoRegister;                                                     \
+#define REGISTER_SYSTEM(TYPE)                                                                                                  \
+	namespace Origo {                                                                                                      \
+		struct TYPE##AutoComponentRegister {                                                                           \
+			TYPE##AutoComponentRegister() { ComponentSystemRegistry ::GetInstance().Register(MakeScope<TYPE>()); } \
+		};                                                                                                             \
+		static TYPE##AutoComponentRegister s_##TYPE##AutoComponentRegister;                                            \
 	}

@@ -6,7 +6,7 @@ TimePoint GetNow() {
 }
 
 Duration GetTimeSinceStart() {
-	static TimePoint start = SystemClock::now(); // captured exactly once
+	static TimePoint start = SystemClock::now();
 	return GetNow() - start;
 }
 
