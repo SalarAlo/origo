@@ -56,7 +56,6 @@ Intended for experimentation, rendering research, and low-level engine work.
       <tr><td><code>origo/</code></td><td>Engine source</td></tr>
       <tr><td><code>game/</code></td><td>Example application</td></tr>
       <tr><td><code>editor/</code></td><td>WIP editor</td></tr>
-      <tr><td><code>resources/</code></td><td>Shaders, textures, models</td></tr>
       <tr><td><code>vendor/</code></td><td>Third-party deps</td></tr>
       <tr><td><code>CMakeLists.txt</code></td><td>Root build config</td></tr>
       <tr><td><code>pch.*</code></td><td>Precompiled headers</td></tr>
