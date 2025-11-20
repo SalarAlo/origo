@@ -24,7 +24,6 @@ public:
 		    spec.Height = 1080;
 		    spec.Attachments = {
 			    { AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
-			    { AttachmentType::Color, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT },
 			    { AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 		    };
 		    return spec;
@@ -47,9 +46,10 @@ private:
 namespace Origo {
 Application* CreateApplication() {
 	ApplicationSettings settings {
-		.WorkingDirectory = "./",
+		.WorkingDirectory = "./editor/workspace",
 		.WindowSettings = { .Width = 1800, .Height = 1000, .Title = "ITSAFLOATER" }
 	};
 	return new OrigoEditor::EditorApplication(settings);
 }
+
 }

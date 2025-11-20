@@ -1,17 +1,23 @@
 #include "origo/renderer/RenderContext.h"
+#include "origo/assets/AssetManager.h"
+#include "origo/assets/Material.h"
+#include "origo/assets/Mesh.h"
 
 namespace Origo {
 
 static void DrawMesh(const RenderCommand& renderCommand) {
-	renderCommand.GetMaterial()->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
-	renderCommand.GetMesh()->Render();
+	auto material { AssetManager::GetAssetAs<Material>(renderCommand.GetMaterial()) };
+	auto mesh { AssetManager::GetAssetAs<Mesh>(renderCommand.GetMesh()) };
+
+	material->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
+	mesh->Render();
 }
 
 void RenderContext::BeginFrame() {
 	glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
 }
 
-void RenderContext::Submit(Mesh* mesh, Material* material, Transform* transform) {
+void RenderContext::Submit(const RID& mesh, const RID& material, Transform* transform) {
 	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -20,10 +26,11 @@ void RenderContext::Flush(Camera* camera) {
 	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
 	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
-		return a.GetMaterial()->GetId().ToString() < b.GetMaterial()->GetId().ToString();
+		return a.GetMaterial().GetId() < b.GetMaterial().GetId();
 	});
 
-	Material* currentMaterial = nullptr;
+	Material* currentMaterial {};
+	RID currentMaterialId {};
 
 	m_Buffer->Bind();
 
@@ -31,15 +38,12 @@ void RenderContext::Flush(Camera* camera) {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	for (auto& cmd : m_DrawQueue) {
-		if (!cmd.GetMaterial() || !cmd.GetMesh() || !cmd.GetTransform()) {
-			ORG_CORE_ERROR("[Renderer] Null reference in RenderCommand");
-			continue;
-		}
+		if (cmd.GetMaterial() != currentMaterialId) {
+			auto material { AssetManager::GetAssetAs<Material>(cmd.GetMaterial()) };
+			material->Bind();
 
-		if (cmd.GetMaterial() != currentMaterial) {
-			cmd.GetMaterial()->Bind();
-			currentMaterial
-			    = cmd.GetMaterial();
+			currentMaterial = material;
+			currentMaterialId = cmd.GetMaterial();
 
 			currentMaterial
 			    ->SetShaderDirectly("u_ProjectionMatrix", camera->GetProjection())

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "origo/core/UUID.h"
+#include "origo/core/RID.h"
 
 namespace Origo {
 class Identifiable {
 public:
-	UUID GetId() const { return m_Id; };
+	RID GetId() const { return m_Id; };
 
 protected:
-	UUID m_Id {};
+	RID m_Id { RID::New() };
 };
 }

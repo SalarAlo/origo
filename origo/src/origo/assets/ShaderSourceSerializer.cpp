@@ -1,5 +1,4 @@
 #include "origo/assets/ShaderSourceSerializer.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/ShaderSource.h"
 
 namespace Origo::ShaderSourceSerializer {

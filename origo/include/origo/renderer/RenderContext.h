@@ -1,7 +1,10 @@
 #pragma once
 
+#include "origo/Camera.h"
+#include "origo/core/RID.h"
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/renderer/Renderer.h"
+#include "origo/renderer/RenderCommand.h"
+#include "origo/scene/Transform.h"
 
 namespace Origo {
 
@@ -17,7 +20,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Submit(Mesh* mesh, Material* material, Transform* transform);
+	void Submit(const RID& mesh, const RID& material, Transform* transform);
 	void Flush(Camera* camera);
 
 private:

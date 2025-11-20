@@ -1,19 +1,16 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/Material.h"
-#include "origo/assets/Mesh.h"
-
 namespace Origo {
 
 struct SubMesh {
-	Mesh* mesh;
-	Material* material;
+	RID mesh;
+	RID material;
 };
 
 class Model : public Asset {
 public:
-	Model(std::string_view path, Shader* shader);
+	Model(std::string_view path, RID shader);
 
 	std::string GetPath() const { return m_Path; }
 	AssetType GetAssetType() const override { return AssetType::Model; }

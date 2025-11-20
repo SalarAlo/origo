@@ -1,5 +1,6 @@
+#pragma once
+
 #include "origo/assets/Asset.h"
-#include "origo/core/Identifiable.h"
 #include <concepts>
 #include <unordered_map>
 
@@ -13,17 +14,22 @@ private:
 
 public:
 	template <AssetConcept T, typename... Args>
-	static T* CreateAsset(const std::string& name, Args&&... args) {
+	static RID CreateAsset(const std::string& name, Args&&... args) {
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
-		T* raw = asset.get();
-		s_Records[raw->GetId()] = { name, std::move(asset) };
+		RID id = asset->GetId();
+		s_Records[id] = { name, std::move(asset) };
 
-		return raw;
+		return id;
 	}
 
-	static const std::unordered_map<UUID, Record>& GetRecords() { return s_Records; }
+	static const std::unordered_map<RID, Record>& GetRecords() { return s_Records; }
 
-	static Asset* GetAsset(UUID id);
+	static Asset* GetAsset(const RID& id);
+
+	template <AssetConcept T>
+	static T* GetAssetAs(RID id) {
+		return dynamic_cast<T*>(GetAsset(id));
+	}
 
 private:
 	struct Record {
@@ -32,6 +38,6 @@ private:
 	};
 
 private:
-	inline static std::unordered_map<UUID, Record> s_Records {};
+	inline static std::unordered_map<RID, Record> s_Records {};
 };
 }

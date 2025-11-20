@@ -1,7 +1,7 @@
 #include "panels/InspectorPanel.h"
 
 #include "imgui.h"
-#include "ui/ComponentDrawRegistry.h"
+#include "ui/InspectorDrawableRegistry.h"
 
 namespace OrigoEditor {
 
@@ -11,8 +11,6 @@ void InspectorPanel::OnImGuiRender() {
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2 { 4.0f, 3.0f });
 	ImGui::SetWindowFontScale(0.9f);
-
-	ImGui::TextUnformatted("Scene Entities:");
 
 	if (!selectedEntity) {
 		ImGui::TextDisabled("No entity selected.");
@@ -24,7 +22,7 @@ void InspectorPanel::OnImGuiRender() {
 	ImGui::SeparatorText(selectedEntity->GetName().c_str());
 
 	for (auto* comp : scene.GetComponents(selectedEntity->GetId())) {
-		ComponentDrawRegistry::Draw(comp, typeid(*comp));
+		InspectorDrawRegistry::Draw(comp, typeid(*comp));
 	}
 
 	ImGui::PopStyleVar(2);

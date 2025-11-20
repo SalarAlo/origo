@@ -1,6 +1,5 @@
 #pragma once
 
-#include "origo/core/Identifiable.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
 #include <concepts>
@@ -13,7 +12,7 @@ template <typename T>
 concept ComponentType = std::derived_from<T, Component>;
 
 class ComponentManager {
-	using ComponentsMap = std::unordered_map<UUID, Component*>;
+	using ComponentsMap = std::unordered_map<RID, Component*>;
 
 public:
 	~ComponentManager() {
@@ -31,13 +30,13 @@ public:
 	}
 
 	template <ComponentType T>
-	T* GetComponent(const UUID& entity) const {
+	T* GetComponent(const RID& entity) const {
 		auto& map = GetComponentsMap<T>();
 		auto it = map.find(entity);
 		return (it != map.end()) ? it->second : nullptr;
 	}
 
-	std::vector<Component*> GetComponents(const UUID& entity) const {
+	std::vector<Component*> GetComponents(const RID& entity) const {
 		std::vector<Component*> result;
 
 		for (auto& [type, storagePtr] : m_Storages) {
@@ -66,8 +65,8 @@ public:
 
 private:
 	template <ComponentType T>
-	static std::unordered_map<UUID, T*>& GetComponentsMap() {
-		static std::unordered_map<UUID, T*> m_Storage;
+	static std::unordered_map<RID, T*>& GetComponentsMap() {
+		static std::unordered_map<RID, T*> m_Storage;
 		static bool _ = [] {
 			m_Storages[typeid(T)] = &m_Storage;
 			m_Deleters.push_back([] {

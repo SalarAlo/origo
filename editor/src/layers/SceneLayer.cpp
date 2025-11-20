@@ -2,13 +2,14 @@
 
 #include "origo/assets/Material.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/Texture.h"
 #include "origo/core/Time.h"
-#include "origo/renderer/Renderer.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 
 using namespace Origo;
-static std::hash<UUID> HashEntity {};
+static std::hash<RID> HashEntity {};
 
 namespace OrigoEditor {
 SceneLayer::SceneLayer(EditorContext& ctx)
@@ -19,26 +20,25 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetManager::CreateAsset<Shader>("Normal Shader", "normal");
 
 	SpawnTestGrid();
-	Renderer::SetTarget(&m_Context.Buffer);
 }
 
 void SceneLayer::OnEvent(Event& e) {
 }
 
 void SceneLayer::OnUpdate(double dt) {
-	m_Shader->UseProgram();
+	auto shader { AssetManager::GetAssetAs<Shader>(m_Shader) };
+	shader->UseProgram();
 
 	float time = Time::GetTimeSinceStart().count();
-	m_Shader->SetUniform("u_Time", time);
+	shader->SetUniform("u_Time", time);
 
 	int selectedEntityId { -1 };
 	if (m_Context.SelectedEntity != nullptr) {
 		selectedEntityId = static_cast<int>(HashEntity(m_Context.SelectedEntity->GetId()));
 	}
 
-	m_Shader->SetUniform("u_SelectedEntityId", selectedEntityId);
-	m_Shader->SetUniform("u_EntityIdTexture", static_cast<int>(m_Context.Buffer.GetColorAttachment(1)));
-	m_Shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
+	shader->SetUniform("u_SelectedEntityId", selectedEntityId);
+	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
 }
 
 void SceneLayer::SpawnTestGrid() {
@@ -48,17 +48,22 @@ void SceneLayer::SpawnTestGrid() {
 		for (int j = 0; j < GRID_SIZE; ++j) {
 			auto entity = m_Context.Scene.CreateEntity("Cube_" + std::to_string(i * GRID_SIZE + j));
 			auto transform = m_Context.Scene.AddComponent<Transform>(entity);
+
 			transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
-			auto material {
+
+			auto materialId {
 				AssetManager::CreateAsset<Material>(
 				    "Cube_Material_" + std::to_string(i * GRID_SIZE + j),
 				    m_Shader,
 				    m_Texture)
 			};
 
-			material->GetUniformList()->AddUniform("u_CurrentEntityId", static_cast<int>(HashEntity(entity->GetId())));
+			auto material { AssetManager::GetAssetAs<Material>(materialId) };
 
-			m_Context.Scene.AddComponent<MeshRenderer>(entity, material, cubeMesh);
+			material->GetUniformList().AddUniform(
+			    "u_CurrentEntityId", static_cast<int>(HashEntity(entity->GetId())));
+
+			m_Context.Scene.AddComponent<MeshRenderer>(entity, materialId, cubeMesh);
 		}
 	}
 }

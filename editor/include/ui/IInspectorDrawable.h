@@ -2,11 +2,11 @@
 
 namespace OrigoEditor {
 
-class IComponentDrawer {
+class IInspectorDrawable {
 public:
-	virtual ~IComponentDrawer() = default;
+	virtual ~IInspectorDrawable() = default;
 	virtual const char* GetName() const = 0;
 	virtual void Draw(void* componentPtr) = 0;
 };
 
-}
+};

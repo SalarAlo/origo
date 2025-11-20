@@ -1,7 +1,6 @@
 #pragma once
 
 #include "origo/Camera.h"
-#include "origo/core/Identifiable.h"
 #include "origo/scene/Entity.hpp"
 #include "origo/scene/ComponentManager.h"
 #include "origo/serialization/ISerializer.h"
@@ -36,11 +35,11 @@ public:
 	}
 
 	template <ComponentType T, typename... Args>
-	T* GetComponent(const UUID& entity) const {
+	T* GetComponent(const RID& entity) const {
 		return m_ComponentManager.GetComponent<T>(entity);
 	}
 
-	std::vector<Component*> GetComponents(const UUID& entity) const {
+	std::vector<Component*> GetComponents(const RID& entity) const {
 		return m_ComponentManager.GetComponents(entity);
 	}
 
@@ -54,6 +53,6 @@ private:
 	ComponentManager m_ComponentManager;
 	Camera* m_MainCamera;
 	std::string m_Name;
-	std::unordered_map<UUID, Entity*> m_Entities;
+	std::unordered_map<RID, Entity*> m_Entities;
 };
 }

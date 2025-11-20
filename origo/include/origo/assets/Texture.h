@@ -1,8 +1,9 @@
 #pragma once
 
 #include "assimp/texture.h"
-#include "origo/assets/Shader.h"
+#include "origo/assets/Asset.h"
 #include "origo/assets/TextureSource.h"
+#include "origo/core/RID.h"
 
 namespace Origo {
 
@@ -16,7 +17,7 @@ public:
 	Texture(const std::string& path, TextureType type = TextureType::Albedo);
 	Texture(const aiTexture* embeddedTex, TextureType type = TextureType::Albedo);
 
-	void Bind(Shader*) const;
+	void Bind(RID shaderId) const;
 
 	TextureType GetTextureType() const { return m_TextureType; }
 

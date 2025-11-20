@@ -1,3 +1,5 @@
+#include "origo/assets/Material.h"
+#include "origo/assets/Mesh.h"
 #include "origo/assets/MeshData.h"
 #include "origo/assets/Model.h"
 #include "origo/assets/AssetManager.h"
@@ -6,8 +8,10 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include "origo/core/Logger.h"
 
 #include <filesystem>
+#include <stdexcept>
 #include <string>
 
 namespace Origo {
@@ -47,7 +51,7 @@ static MeshData ConvertMesh(const aiMesh* aMesh) {
 	return MeshData(vertices, indices);
 }
 
-static Texture* ExtractTexture(
+static RID ExtractTexture(
     const aiScene* scene,
     const aiMaterial* material,
     const std::string& modelPath,
@@ -57,7 +61,7 @@ static Texture* ExtractTexture(
 		material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath);
 
 	if (texPath.length == 0)
-		return nullptr;
+		throw std::runtime_error("Cant create Texture with the given data");
 
 	if (texPath.C_Str()[0] == '*') {
 		const unsigned index = std::atoi(texPath.C_Str() + 1);
@@ -88,7 +92,7 @@ static Texture* ExtractTexture(
 	    TextureType::Albedo);
 }
 
-Model::Model(std::string_view path, Shader* shader)
+Model::Model(std::string_view path, RID shader)
     : m_Path(path) {
 	const std::string assetRoot = "resources/models/";
 	const std::string absolutePath = assetRoot + std::string(path);
@@ -110,19 +114,24 @@ Model::Model(std::string_view path, Shader* shader)
 		std::string baseName = std::filesystem::path(m_Path).stem().string() + "_mesh_" + std::to_string(i);
 
 		MeshData meshData = ConvertMesh(aMesh);
-		Texture* texture = ExtractTexture(scene, material, absolutePath, i);
+		try {
+			RID texture = ExtractTexture(scene, material, absolutePath, i);
 
-		Mesh* mesh = AssetManager::CreateAsset<Mesh>(baseName, m_Path, i, meshData);
-		Material* mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture, false);
-
-		m_SubMeshes.push_back({ mesh, mat });
+			RID mesh = AssetManager::CreateAsset<Mesh>(baseName, m_Path, i, meshData);
+			RID mat = AssetManager::CreateAsset<Material>(baseName + "_mat", shader, texture, false);
+			m_SubMeshes.push_back({ mesh, mat });
+		} catch (std::runtime_error e) {
+			ORG_CORE_ERROR("{}", e.what());
+		}
 	}
 }
 
 void Model::Render() const {
 	for (const auto& sub : m_SubMeshes) {
-		sub.material->Bind();
-		sub.mesh->Render();
+		auto material { AssetManager::GetAssetAs<Material>(sub.material) };
+		auto mesh { AssetManager::GetAssetAs<Mesh>(sub.mesh) };
+		material->Bind();
+		mesh->Render();
 	}
 }
 

@@ -1,3 +1,5 @@
+#include "origo/assets/AssetManager.h"
+#include "origo/assets/Shader.h"
 #include "origo/assets/TextureSource.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_SIMD
@@ -86,7 +88,8 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Bind(Shader* shader) const {
+void Texture::Bind(RID shaderId) const {
+	auto shader { AssetManager::GetAssetAs<Shader>(shaderId) };
 	int slot { static_cast<int>(m_TextureType) };
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));

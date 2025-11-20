@@ -6,6 +6,7 @@
 #include "origo/input/Input.h"
 #include "origo/renderer/RenderableRegistry.h"
 #include "origo/scene/ComponentSystemRegistry.h"
+#include <filesystem>
 
 namespace Origo {
 void Application::PushLayer(Layer* l) {
@@ -24,6 +25,8 @@ void Application::InternalUpdate(double dt) {
 }
 
 void Application::InternalAwake() {
+	std::filesystem::current_path(m_Settings.WorkingDirectory);
+
 	Origo::Logger::Init();
 	Origo::Input::SetContext(&m_Window);
 

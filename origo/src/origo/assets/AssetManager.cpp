@@ -3,7 +3,7 @@
 
 namespace Origo {
 
-Asset* AssetManager::GetAsset(UUID id) {
+Asset* AssetManager::GetAsset(const RID& id) {
 	auto it { s_Records.find(id) };
 	return it != s_Records.end() ? it->second.AssetReference.get() : nullptr;
 }

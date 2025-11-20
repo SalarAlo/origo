@@ -1,12 +1,12 @@
-#include "ui/ComponentDrawRegistry.h"
 #include "ui/ComponentUI.h"
 #include "origo/scene/Transform.h"
+#include "ui/InspectorDrawableRegistry.h"
 #include <glm/vec3.hpp>
 
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	ComponentDrawRegistry::Register<Origo::Transform>("Transform", [](Origo::Transform& t) {
+	InspectorDrawRegistry::Register<Origo::Transform>("Transform", [](Origo::Transform& t) {
 		glm::vec3 pos = t.GetPosition();
 		glm::vec3 rot = t.GetRotation();
 		glm::vec3 scl = t.GetScale();

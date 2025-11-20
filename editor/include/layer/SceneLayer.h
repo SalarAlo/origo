@@ -1,6 +1,5 @@
 #pragma once
 
-#include "origo/assets/Texture.h"
 #include "origo/core/Layer.h"
 
 #include "EditorContext.h"
@@ -22,8 +21,8 @@ private:
 	static constexpr int GRID_SIZE { 4 };
 	EditorContext& m_Context;
 
-	Origo::Shader* m_Shader;
-	Origo::Texture* m_Texture;
+	Origo::RID m_Shader;
+	Origo::RID m_Texture;
 };
 
 }
