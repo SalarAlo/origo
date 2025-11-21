@@ -6,7 +6,7 @@ Focused on clarity, control, and correctness.
 </p>
 
 <p align="center">
-  <img src="resources/textures/origo_logo.png" alt="Origo Logo" width="400"/>
+  <img src="editor/workspace/resources/textures/origo_logo.png" alt="Origo Logo" width="400"/>
 </p>
 
 ---
