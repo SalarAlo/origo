@@ -15,19 +15,20 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	void BindTemp() const;
-	void UnbindTemp() const;
-
-	void AddData(const std::vector<float>& data);
-	void ReplaceData(const std::vector<float>& data);
+	void AddData(const void* data, size_t size);
 
 private:
 	void SetDataOpenGL(bool initialUpload);
+	void Resize(size_t newSize);
 
 private:
 	inline static GLuint s_CurrentlyBound { 0 };
-	std::vector<float> m_Data {};
-	GLuint m_BufferId {};
+
+	void* m_Data {};
+	size_t m_Size {};
 	size_t m_Capacity {};
+	size_t m_SizeBeforeLastAppend = 0;
+
+	GLuint m_BufferId {};
 };
 }

@@ -2,7 +2,6 @@
 
 #include "panels/EditorPanel.h"
 #include <concepts>
-#include <vector>
 
 namespace OrigoEditor {
 

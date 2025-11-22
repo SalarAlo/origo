@@ -1,4 +1,3 @@
-
 #include "origo/assets/Shader.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/core/Logger.h"

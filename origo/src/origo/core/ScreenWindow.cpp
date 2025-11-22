@@ -49,6 +49,9 @@ void ScreenWindow::InitGlad() {
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glEnable(GL_CULL_FACE));
+	GLCall(glFrontFace(GL_CW));
+	GLCall(glCullFace(GL_FRONT));
 	GLCall(glDepthFunc(GL_LESS));
 	GLCall(glClearColor(0, 0, 0, 1));
 }
@@ -135,8 +138,6 @@ void ScreenWindow::InitCallback() {
 
 		windowSettings->Height = height;
 		windowSettings->Width = width;
-
-		GLCall(glViewport(0, 0, width, height));
 
 		WindowResizeEvent windowResizeEvent { glm::vec2(width, height) };
 		windowSettings->EventCallback(windowResizeEvent);

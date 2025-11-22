@@ -43,4 +43,5 @@ void Mesh::Render() const {
 
 	GLCall(glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetElementCount(), GL_UNSIGNED_INT, nullptr));
 }
+
 }

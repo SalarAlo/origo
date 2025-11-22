@@ -39,10 +39,28 @@ void SceneLayer::OnUpdate(double dt) {
 
 	shader->SetUniform("u_SelectedEntityId", selectedEntityId);
 	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
+
+	static int counter { 0 };
+	if (counter++ % 100 == 0) {
+		ORG_INFO("{} FPS", 1.0 / dt);
+	}
+
+	for (auto t : m_Context.Scene.GetAllComponentsOfType<Transform>()) {
+		auto normalized { glm::normalize(t->GetPosition()) };
+		auto off = glm::vec3 { t->GetPosition().x, glm::sin(time + t->GetPosition().x + t->GetPosition().z), t->GetPosition().z };
+
+		t->SetPosition(off);
+	}
 }
 
 void SceneLayer::SpawnTestGrid() {
-	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Sphere);
+	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Cube);
+
+	auto materialId {
+		AssetManager::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
+	};
+
+	auto material { AssetManager::GetAssetAs<Material>(materialId) };
 
 	for (int i = 0; i < GRID_SIZE; ++i) {
 		for (int j = 0; j < GRID_SIZE; ++j) {
@@ -50,18 +68,7 @@ void SceneLayer::SpawnTestGrid() {
 			auto transform = m_Context.Scene.AddComponent<Transform>(entity);
 
 			transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
-
-			auto materialId {
-				AssetManager::CreateAsset<Material>(
-				    "Cube_Material_" + std::to_string(i * GRID_SIZE + j),
-				    m_Shader,
-				    m_Texture)
-			};
-
-			auto material { AssetManager::GetAssetAs<Material>(materialId) };
-
-			material->GetUniformList().AddUniform(
-			    "u_CurrentEntityId", static_cast<int>(HashEntity(entity->GetId())));
+			transform->SetScale(glm::vec3 { 0.7f });
 
 			m_Context.Scene.AddComponent<MeshRenderer>(entity, materialId, cubeMesh);
 		}

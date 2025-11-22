@@ -25,10 +25,17 @@ void VertexArray::ConnectBuffer(const VertexBuffer& buffer) const {
 	Bind();
 	buffer.Bind();
 
-	const auto& attribs { STANDARD_LAYOUT.GetAttributes() };
+	VertexLayout layout;
+
+	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Position);
+	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
+	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
+
+	auto& attribs { layout.GetAttributes() };
 	int stride {};
+
 	for (int i {}; i < attribs.size(); i++) {
-		const auto& attrib { attribs[i] };
+		auto& attrib { attribs[i] };
 		const auto size { Glsizeof(attrib.Type) * attrib.Amount };
 		stride += size;
 	}

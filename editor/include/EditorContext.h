@@ -15,6 +15,7 @@ struct EditorContext {
 	Origo::Scene& Scene;
 	Origo::FrameBuffer& Buffer;
 	GLFWwindow* Window;
+
 	Origo::Entity* SelectedEntity { nullptr };
 
 	EditorContext(const EditorContext&) = delete;

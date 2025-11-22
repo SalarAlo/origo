@@ -73,8 +73,10 @@ void Application::Run() {
 	InternalAwake();
 	OnAwake();
 
+	m_LastTimeStamp = Time::GetNow();
+
 	while (m_Running) {
-		double dt = static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count();
+		double dt { static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count() };
 
 		m_RenderContext.BeginFrame();
 
@@ -96,5 +98,4 @@ void Application::Run() {
 
 	InternalShutdown();
 }
-
 }

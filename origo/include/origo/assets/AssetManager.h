@@ -2,6 +2,7 @@
 
 #include "origo/assets/Asset.h"
 #include <concepts>
+#include <string>
 #include <unordered_map>
 
 namespace Origo {
@@ -24,11 +25,18 @@ public:
 
 	static const std::unordered_map<RID, Record>& GetRecords() { return s_Records; }
 
-	static Asset* GetAsset(const RID& id);
+	static Asset* GetAssetChecked(const RID& id);
 
 	template <AssetConcept T>
 	static T* GetAssetAs(RID id) {
-		return dynamic_cast<T*>(GetAsset(id));
+		auto it { s_Records.find(id) };
+
+		if (it == s_Records.end()) {
+			ORG_INFO("Could not find {} Asset with runtime ID", id.ToString());
+			return nullptr;
+		}
+
+		return static_cast<T*>(it->second.AssetReference.get());
 	}
 
 private:

@@ -1,5 +1,4 @@
 #include "layer/SceneLayer.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 #include "origo/renderer/FrameBuffer.h"

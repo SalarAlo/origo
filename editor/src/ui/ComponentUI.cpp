@@ -50,4 +50,70 @@ void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
+
+void DrawFloatControl(std::string_view label, float& value, float speed) {
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 100.0f;
+
+	ImGui::BeginGroup();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
+	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
+		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+
+	ImGui::SameLine(nextX);
+
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+	ImGui::SetNextItemWidth(fieldWidth);
+	ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, "%.3f");
+
+	ImGui::PopStyleColor(4);
+
+	ImGui::EndGroup();
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
+
+void DrawIntControl(std::string_view label, int& value, float speed) {
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 90.0f;
+
+	ImGui::BeginGroup();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
+	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
+		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+
+	ImGui::SameLine(nextX);
+
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+	ImGui::SetNextItemWidth(fieldWidth);
+	ImGui::DragInt("##int", &value, speed);
+
+	ImGui::PopStyleColor(4);
+
+	ImGui::EndGroup();
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
 }

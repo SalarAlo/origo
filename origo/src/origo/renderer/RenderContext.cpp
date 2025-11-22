@@ -4,10 +4,14 @@
 #include "origo/assets/Mesh.h"
 
 namespace Origo {
+static std::hash<RID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& renderCommand) {
 	auto material { AssetManager::GetAssetAs<Material>(renderCommand.GetMaterial()) };
 	auto mesh { AssetManager::GetAssetAs<Mesh>(renderCommand.GetMesh()) };
+
+	auto shader { AssetManager::GetAssetAs<Shader>(material->GetShader()) };
+	shader->SetUniform("u_CurrentEntityId", renderCommand.GetTransform()->AttachedTo->GetId().GetId());
 
 	material->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
 	mesh->Render();
@@ -22,7 +26,6 @@ void RenderContext::Submit(const RID& mesh, const RID& material, Transform* tran
 }
 
 void RenderContext::Flush(Camera* camera) {
-
 	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
 	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
@@ -61,6 +64,7 @@ void RenderContext::Flush(Camera* camera) {
 }
 
 void RenderContext::EndFrame() {
+
 	return;
 }
 }

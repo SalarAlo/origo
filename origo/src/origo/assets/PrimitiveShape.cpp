@@ -41,13 +41,31 @@ static const std::vector<float> CUBE_VERTICES {
     -0.5f, -0.5f, -0.5f,  0,-1, 0,  1.0f, 1.0f,
 };
 
+
 static const std::vector<unsigned int> CUBE_INDICES = {
-	0, 1, 2, 2, 3, 0, // Front
-	4, 5, 6, 6, 7, 4, // Back
-	8, 9, 10, 10, 11, 8, // Right
-	12, 13, 14, 14, 15, 12, // Left
-	16, 17, 18, 18, 19, 16, // Top
-        20, 21, 22, 22, 23, 20 // Bottom
+    // Front face (CCW from outside)
+    0, 1, 2, 
+    2, 3, 0,
+    
+    // Back face (CCW from outside)
+    6, 5, 4, 
+    4, 7, 6,
+    
+    // Right face (CCW from outside)
+    8, 9, 10, 
+    10, 11, 8,
+    
+    // Left face (CCW from outside)
+    14, 13, 12, 
+    12, 15, 14,
+    
+    // Top face (CCW from outside)
+    16, 17, 18, 
+    18, 19, 16,
+    
+    // Bottom face (CCW from outside)
+    22, 21, 20, 
+    20, 23, 22
 };
 
 static const std::vector<float> TRIANGLE_VERTICES {

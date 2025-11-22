@@ -14,7 +14,7 @@ public:
 	    float yaw = 90.0f,
 	    float pitch = 0.0f,
 	    float fov = 90.0f,
-	    float nearPlane = 0.1f,
+	    float nearPlane = 0.01f,
 	    float farPlane = 400.0f);
 
 	void SetPosition(const glm::vec3& position);

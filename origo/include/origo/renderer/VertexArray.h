@@ -16,6 +16,7 @@ public:
 
 	void Bind() const;
 	void Unbind() const;
+
 	void ConnectBuffer(const VertexBuffer& buffer) const;
 
 private:

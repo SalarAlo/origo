@@ -71,7 +71,7 @@ public:
 	const auto& GetUniforms() const { return m_Uniforms; }
 
 private:
-	std::unordered_map<std::string, std::unique_ptr<UniformBase>> m_Uniforms {};
+	std::unordered_map<std::string, Scope<UniformBase>> m_Uniforms {};
 };
 
 }
