@@ -9,9 +9,11 @@ public:
 	template <typename>
 	void AddAttribute(unsigned int amount, bool normalized = false, VertexAttributeSemantic semantic = VertexAttributeSemantic::None);
 	std::vector<VertexAttribute>& GetAttributes();
+	size_t GetStride() { return m_Stride; }
 
 private:
-	std::vector<VertexAttribute> m_Attributes;
+	std::vector<VertexAttribute> m_Attributes {};
+	size_t m_Stride {};
 };
 
 template <>

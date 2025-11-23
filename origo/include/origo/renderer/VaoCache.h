@@ -13,12 +13,12 @@ public:
 public:
 	VaoCache() = default;
 	~VaoCache();
-	const Entry& CreateOrGet(int layoutId, int heapId);
+	static const Entry& CreateOrGet(int layoutId, int heapId);
 
 private:
-	std::vector<Entry> m_Entries;
+	inline static std::vector<Entry> s_Entries {};
 
-	Entry& Create(int layout, int heap);
+	static Entry& Create(int layout, int heap);
 };
 
 }
