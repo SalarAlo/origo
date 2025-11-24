@@ -18,7 +18,7 @@ private:
 	void SpawnTestGrid();
 
 private:
-	static constexpr int GRID_SIZE { 20 };
+	static constexpr int GRID_SIZE { 50 };
 	EditorContext& m_Context;
 
 	Origo::RID m_Shader;

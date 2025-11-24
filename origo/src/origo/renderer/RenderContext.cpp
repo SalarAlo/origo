@@ -1,20 +1,42 @@
 #include "origo/renderer/RenderContext.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Material.h"
-#include "origo/assets/Mesh.h"
+#include "origo/renderer/GeometryHeap.h"
+#include "origo/renderer/GeometryHeapRegistry.h"
+#include "origo/renderer/GlDebug.h"
+#include "origo/renderer/MeshAlternative.h"
+#include "origo/renderer/VaoCache.h"
 
 namespace Origo {
 static std::hash<RID> HashEntity {};
 
-static void DrawMesh(const RenderCommand& renderCommand) {
-	auto material { AssetManager::GetAssetAs<Material>(renderCommand.GetMaterial()) };
-	auto mesh { AssetManager::GetAssetAs<Mesh>(renderCommand.GetMesh()) };
+static void DrawMesh(const RenderCommand& cmd) {
+	auto material = AssetManager::GetAssetAs<Material>(cmd.GetMaterial());
+	auto mesh = AssetManager::GetAssetAs<MeshAlternative>(cmd.GetMesh());
+	auto shader = AssetManager::GetAssetAs<Shader>(material->GetShader());
 
-	auto shader { AssetManager::GetAssetAs<Shader>(material->GetShader()) };
-	shader->SetUniform("u_CurrentEntityId", renderCommand.GetTransform()->AttachedTo->GetId().GetId());
+	shader->SetUniform("u_CurrentEntityId", cmd.GetTransform()->AttachedTo->GetId().GetId());
+	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
 
-	material->WriteModel(renderCommand.GetTransform()->GetModelMatrix());
-	mesh->Render();
+	GeometryHeap* heap = GeometryHeapRegistry::GetHeap(mesh->HeapId);
+
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, heap->GetIbo()));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, heap->GetVbo()));
+
+	const VaoCache::Entry& vaoEntry = VaoCache::CreateOrGet(mesh->LayoutId, mesh->HeapId);
+
+	GLCall(glBindVertexArray(vaoEntry.VAO));
+
+	const MeshRange& r = mesh->Range;
+
+	GLCall(glDrawElementsBaseVertex(
+	    GL_TRIANGLES,
+	    r.IndexCount,
+	    GL_UNSIGNED_INT,
+	    reinterpret_cast<void*>(r.FirstIndex * sizeof(unsigned int)),
+	    r.FirstVertex));
+
+	GLCall(glBindVertexArray(0));
 }
 
 void RenderContext::BeginFrame() {

@@ -2,9 +2,13 @@
 
 #include "origo/assets/Material.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Mesh.h"
 #include "origo/assets/Texture.h"
+#include "origo/assets/PrimitiveShape.h"
 #include "origo/core/Time.h"
+#include "origo/renderer/GeometryHeapRegistry.h"
+#include "origo/renderer/MeshAlternative.h"
+#include "origo/renderer/VertexAttribute.h"
+#include "origo/renderer/VertexLayoutRegistry.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 
@@ -54,7 +58,24 @@ void SceneLayer::OnUpdate(double dt) {
 }
 
 void SceneLayer::SpawnTestGrid() {
-	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", PrimitiveShape::Cube);
+	VertexLayout layout {};
+	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Position);
+	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
+	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
+
+	int layoutId = VertexLayoutRegistry::Register(layout);
+	int heapId { GeometryHeapRegistry::CreateHeap(layoutId, GL_STATIC_DRAW, 100'000, 100'000) };
+	auto heap { GeometryHeapRegistry::GetHeap(heapId) };
+
+	MeshData data = GetDataFromShape(PrimitiveShape::Cube);
+	auto range = heap->Allocate(
+	    data.Vertices.data(),
+	    data.Vertices.size() * sizeof(float),
+	    3 * 3 * 2 * sizeof(float),
+	    data.Indices.data(),
+	    data.Indices.size());
+
+	auto cubeMesh = AssetManager::CreateAsset<MeshAlternative>("Cube", layoutId, heapId, range);
 
 	auto materialId {
 		AssetManager::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
