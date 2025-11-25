@@ -15,7 +15,6 @@ static void DrawMesh(const RenderCommand& cmd) {
 	auto mesh = AssetManager::GetAssetAs<MeshAlternative>(cmd.GetMesh());
 	auto shader = AssetManager::GetAssetAs<Shader>(material->GetShader());
 
-	shader->SetUniform("u_CurrentEntityId", cmd.GetTransform()->AttachedTo->GetId().GetId());
 	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
 
 	GeometryHeap* heap = GeometryHeapRegistry::GetHeap(mesh->HeapId);

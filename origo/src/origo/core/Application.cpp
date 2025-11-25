@@ -28,6 +28,8 @@ void Application::InternalAwake() {
 	std::filesystem::current_path(m_Settings.WorkingDirectory);
 
 	Origo::Logger::Init();
+	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
+
 	Origo::Input::SetContext(&m_Window);
 
 	for (Layer* layer : m_LayerStack) {

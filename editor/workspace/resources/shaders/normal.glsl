@@ -1,6 +1,6 @@
 #VERTEX
 
-#version 330 core
+#version 430 core
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNorm;
@@ -26,7 +26,7 @@ void main() {
 
 #FRAGMENT
 
-#version 330 core
+#version 430 core
 
 in vec3 vNormal;
 in vec3 vFragPos;
@@ -36,8 +36,6 @@ out vec4 FragColor;
 
 uniform vec3 u_ViewPos;
 uniform sampler2D u_Texture_Albedo;
-uniform int u_SelectedEntityId;
-uniform int u_CurrentEntityId;
 uniform float u_Time;
 
 void main() {
@@ -59,15 +57,6 @@ void main() {
     vec3 specular = 0.5 * spec * lightColor;
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
-
-    if (u_SelectedEntityId == u_CurrentEntityId) {
-
-        float pulse = 0.2 + 0.1 * sin(u_Time * 3.0);
-    
-    
-        vec3 selColor = vec3(0.05, 0.25, .40);
-        result += selColor * pulse;
-    }
 
     FragColor = vec4(result, 1.0);
 }
