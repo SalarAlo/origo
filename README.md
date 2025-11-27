@@ -31,7 +31,7 @@ Intended for experimentation, rendering research, and low-level engine work.
       </tr>
     </thead>
     <tbody>
-      <tr><td>Linux</td><td>Developed and tested on Fedora</td></tr>
+      <tr><td>Linux</td><td>Developed and tested on Arch</td></tr>
       <tr><td>C++ Compiler</td><td>C++20 or newer</td></tr>
       <tr><td>OpenGL</td><td>Proper driver support required</td></tr>
       <tr><td>CMake</td><td>Build system</td></tr>
@@ -72,8 +72,8 @@ Intended for experimentation, rendering research, and low-level engine work.
 <h2 align="center">Building</h2>
 
 <div align="">
-  <pre><code>git clone https://github.com/&lt;user&gt;/Origo.git
-cd Origo
+  <pre><code>git clone https://github.com/salar/origo.git
+cd origo
 mkdir build
 ./generate.sh</code></pre>
 </div>
