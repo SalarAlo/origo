@@ -6,7 +6,7 @@
 namespace Origo {
 void MeshSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	const auto mesh { dynamic_cast<const Mesh*>(asset) };
-	mesh->GetSource()->Serialize(backend);
+	// TODO
 }
 
 Asset* MeshSerializer::Deserialize(ISerializer& backend) const {
@@ -15,9 +15,10 @@ Asset* MeshSerializer::Deserialize(ISerializer& backend) const {
 }
 
 bool MeshSerializer::ShouldSerialize(const Asset* asset) const {
-	auto texture { dynamic_cast<const Mesh*>(asset) };
+	auto mesh { dynamic_cast<const Mesh*>(asset) };
 
-	return texture->GetSource()->GetType() != MeshSourceType::External;
+	// TODO
+	return true;
 }
 
 REGISTER_SERIALIZER(Mesh)

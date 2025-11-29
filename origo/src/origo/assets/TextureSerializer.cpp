@@ -1,5 +1,4 @@
 #include "origo/assets/TextureSerializer.h"
-#include "origo/assets/AssetManager.h"
 #include "magic_enum/magic_enum.hpp"
 #include "origo/assets/Texture.h"
 #include "origo/serialization/ISerializer.h"

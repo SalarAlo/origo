@@ -32,6 +32,8 @@ target_link_libraries(OrigoEngine PUBLIC
     spdlog_header_only
     nlohmann_json::nlohmann_json
 
+    ZLIB::ZLIB
+
     X11
     Xrandr
     Xi

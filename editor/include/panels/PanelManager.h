@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EditorContext.h"
 #include "panels/EditorPanel.h"
 #include <concepts>
 
@@ -10,6 +11,8 @@ concept EditorPanelDerived = std::derived_from<T, EditorPanel>;
 
 class PanelManager {
 public:
+	PanelManager(EditorContext& ctx);
+
 	template <EditorPanelDerived T, typename... Args>
 	int AddPanel(Args&&... args) {
 		m_Panels.push_back(
@@ -29,6 +32,7 @@ public:
 	void RenderMenuItems();
 
 private:
+	EditorContext& m_Context;
 	std::vector<Origo::Scope<EditorPanel>> m_Panels;
 };
 

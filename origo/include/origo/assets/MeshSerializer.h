@@ -2,6 +2,7 @@
 
 #include "origo/assets/AssetSerializer.h"
 #include "origo/serialization/ISerializer.h"
+
 namespace Origo {
 class MeshSerializer : public AssetSerializer {
 public:

@@ -4,15 +4,15 @@
 #include "origo/renderer/GeometryHeap.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/GlDebug.h"
-#include "origo/renderer/MeshAlternative.h"
+#include "origo/assets/Mesh.h"
 #include "origo/renderer/VaoCache.h"
 
 namespace Origo {
 static std::hash<RID> HashEntity {};
 
-static void DrawMesh(const RenderCommand& cmd) {
+static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto material = AssetManager::GetAssetAs<Material>(cmd.GetMaterial());
-	auto mesh = AssetManager::GetAssetAs<MeshAlternative>(cmd.GetMesh());
+	auto mesh = AssetManager::GetAssetAs<Mesh>(cmd.GetMesh());
 	auto shader = AssetManager::GetAssetAs<Shader>(material->GetShader());
 
 	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
@@ -29,7 +29,7 @@ static void DrawMesh(const RenderCommand& cmd) {
 	const MeshRange& r = mesh->Range;
 
 	GLCall(glDrawElementsBaseVertex(
-	    GL_TRIANGLES,
+	    drawMethod,
 	    r.IndexCount,
 	    GL_UNSIGNED_INT,
 	    reinterpret_cast<void*>(r.FirstIndex * sizeof(unsigned int)),
@@ -76,7 +76,7 @@ void RenderContext::Flush(Camera* camera) {
 			    .SetShaderDirectly("u_ViewPos", camera->GetPosition());
 		}
 
-		DrawMesh(cmd);
+		DrawMesh(cmd, m_DrawMethod);
 	}
 
 	m_Buffer->Unbind();
@@ -88,4 +88,5 @@ void RenderContext::EndFrame() {
 
 	return;
 }
+
 }

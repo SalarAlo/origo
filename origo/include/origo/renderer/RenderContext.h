@@ -23,9 +23,12 @@ public:
 	void Submit(const RID& mesh, const RID& material, Transform* transform);
 	void Flush(Camera* camera);
 
+	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }
+
 private:
-	FrameBuffer* m_Buffer;
+	FrameBuffer* m_Buffer {};
 	std::vector<RenderCommand> m_DrawQueue {};
+	GLenum m_DrawMethod { GL_TRIANGLES };
 };
 
 }

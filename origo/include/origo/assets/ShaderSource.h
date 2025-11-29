@@ -1,6 +1,5 @@
 #pragma once
 
-#include "nlohmann/json.hpp"
 #include "origo/assets/ShaderData.h"
 
 namespace Origo {

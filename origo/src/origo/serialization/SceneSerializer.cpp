@@ -1,5 +1,4 @@
 #include "origo/scene/SceneSerialization.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetSerializer.h"
 #include "origo/serialization/ISerializer.h"
 
@@ -9,6 +8,7 @@ void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 	backend.Write("scene_name", scene.m_Name);
 
 	backend.BeginArray("entities");
+
 	for (const auto& [id, entity] : scene.m_Entities) {
 		backend.BeginArrayElement();
 
@@ -17,6 +17,7 @@ void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 
 		backend.EndArrayElement();
 	}
+
 	backend.EndArray();
 
 	AssetSerializationSystem::SaveAll(backend);

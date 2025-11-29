@@ -9,7 +9,8 @@
 namespace OrigoEditor {
 
 EditorUILayer::EditorUILayer(EditorContext& ctx)
-    : m_Context(ctx) {
+    : m_Context(ctx)
+    , m_PanelManager(ctx) {
 }
 
 void EditorUILayer::OnDetach() {

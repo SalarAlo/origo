@@ -9,6 +9,7 @@
 #include "origo/scene/Scene.h"
 
 namespace Origo {
+// TODO: Split WorkingDir and AssetDir
 struct ApplicationSettings {
 	std::string WorkingDirectory {};
 	ScreenWindowSettings WindowSettings {};

@@ -19,7 +19,7 @@ void Serialize(ShaderSource* src, ISerializer& backend) {
 	backend.EndObject();
 }
 
-ShaderSource* Deserialize(const nlohmann::json& j) {
+ShaderSource* Deserialize(const ISerializer& backend) {
 	return nullptr;
 }
 

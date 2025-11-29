@@ -6,7 +6,7 @@
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/core/Time.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
-#include "origo/renderer/MeshAlternative.h"
+#include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
 #include "origo/renderer/VertexLayoutRegistry.h"
 #include "origo/scene/MeshRenderer.h"
@@ -48,13 +48,6 @@ void SceneLayer::OnUpdate(double dt) {
 	if (counter++ % 100 == 0) {
 		ORG_INFO("{} FPS", 1.0 / dt);
 	}
-
-	for (auto t : m_Context.Scene.GetAllComponentsOfType<Transform>()) {
-		auto normalized { glm::normalize(t->GetPosition()) };
-		auto off = glm::vec3 { t->GetPosition().x, glm::sin(time + t->GetPosition().x + t->GetPosition().z), t->GetPosition().z };
-
-		t->SetPosition(off);
-	}
 }
 
 void SceneLayer::SpawnTestGrid() {
@@ -75,7 +68,7 @@ void SceneLayer::SpawnTestGrid() {
 	    data.Indices.data(),
 	    data.Indices.size());
 
-	auto cubeMesh = AssetManager::CreateAsset<MeshAlternative>("Cube", layoutId, heapId, range);
+	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
 
 	auto materialId {
 		AssetManager::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
@@ -95,4 +88,5 @@ void SceneLayer::SpawnTestGrid() {
 		}
 	}
 }
+
 }

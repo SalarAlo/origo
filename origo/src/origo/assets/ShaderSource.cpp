@@ -1,5 +1,4 @@
 #include "origo/assets/ShaderSource.h"
-#include "nlohmann/json_fwd.hpp"
 
 #pragma region IO_RELATED
 static std::string ReadFile(std::string_view path) {

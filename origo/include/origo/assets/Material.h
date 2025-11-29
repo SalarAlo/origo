@@ -8,7 +8,7 @@ namespace Origo {
 
 class Material : public Asset {
 public:
-	Material(RID shader, RID material, bool shouldSerialize = true);
+	Material(RID shader, RID material);
 
 	RID GetShader() const { return m_Shader; }
 	UniformList& GetUniformList() { return m_UniformList; }
@@ -32,16 +32,10 @@ public:
 
 	AssetType GetAssetType() const override { return AssetType::Material; }
 
-	bool ShouldSerialize() const {
-		return m_ShouldSerialize;
-	}
-
 private:
 	RID m_Shader {};
 	RID m_Albedo {};
 	UniformList m_UniformList {};
-
-	bool m_ShouldSerialize;
 };
 
 }

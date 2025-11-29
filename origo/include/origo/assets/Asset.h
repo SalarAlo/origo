@@ -9,7 +9,6 @@ enum class AssetType {
 	Texture,
 	Material,
 	Mesh,
-	MeshAlternative,
 	Model
 };
 

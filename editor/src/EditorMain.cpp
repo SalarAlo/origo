@@ -46,7 +46,7 @@ namespace Origo {
 Application* CreateApplication() {
 	ApplicationSettings settings {
 		.WorkingDirectory = "./editor/workspace",
-		.WindowSettings = { .Width = 1800, .Height = 1000, .Title = "ITSAFLOATER" }
+		.WindowSettings = { .Width = 1900, .Height = 900, .Title = "Origo Editor" }
 	};
 	return new OrigoEditor::EditorApplication(settings);
 }

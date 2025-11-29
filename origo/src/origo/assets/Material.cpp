@@ -5,11 +5,10 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
-Material::Material(RID shader, RID material, bool shouldSerialize)
+Material::Material(RID shader, RID material)
     : m_UniformList()
     , m_Shader(shader)
-    , m_Albedo(material)
-    , m_ShouldSerialize(shouldSerialize) {
+    , m_Albedo(material) {
 	if (m_Albedo.IsNull())
 		return;
 	auto albedo { AssetManager::GetAssetAs<Texture>(m_Albedo) };

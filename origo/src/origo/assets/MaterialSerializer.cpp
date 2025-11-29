@@ -7,7 +7,7 @@
 namespace Origo {
 bool MaterialSerializer::ShouldSerialize(const Asset* asset) const {
 	auto mat { dynamic_cast<const Material*>(asset) };
-	return mat->ShouldSerialize();
+	return true;
 }
 
 void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) const {

@@ -11,13 +11,26 @@ void AssetsPanel::OnImGuiRender() {
 
 	if (ImGui::BeginTable("asset_table", COLS)) {
 		for (const auto& [id, record] : Origo::AssetManager::GetRecords()) {
-			std::string name { magic_enum::enum_name(record.AssetReference->GetAssetType()).data() };
+			std::string name = std::string { magic_enum::enum_name(record.AssetReference->GetAssetType()) };
+
 			ImGui::TableNextColumn();
-			if (ImGui::Button((name + "###" + id.ToString()).data(), ImVec2 { -FLT_MIN, height })) {
+			if (ImGui::Button((name + "###" + id.ToString()).c_str(), { -FLT_MIN, height })) {
 			}
 		}
-
 		ImGui::EndTable();
+	}
+
+	if (ImGui::BeginPopupContextWindow("AssetsPanelContext", ImGuiPopupFlags_MouseButtonRight)) {
+		if (ImGui::MenuItem("Create Folder"))
+			/* your logic */;
+
+		if (ImGui::MenuItem("Import Asset"))
+			/* your logic */;
+
+		if (ImGui::MenuItem("Delete"))
+			/* your logic */;
+
+		ImGui::EndPopup();
 	}
 }
 }
