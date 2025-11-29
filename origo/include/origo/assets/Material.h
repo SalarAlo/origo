@@ -31,6 +31,7 @@ public:
 	}
 
 	AssetType GetAssetType() const override { return AssetType::Material; }
+	static AssetType GetClassAssetType() { return AssetType::Material; }
 
 private:
 	RID m_Shader {};

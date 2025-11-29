@@ -20,8 +20,6 @@ void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 
 	backend.EndArray();
 
-	AssetSerializationSystem::SaveAll(backend);
-
 	backend.WriteFile();
 }
 

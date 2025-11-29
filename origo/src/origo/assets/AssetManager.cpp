@@ -1,4 +1,5 @@
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Asset.h"
 #include <unordered_map>
 
 namespace Origo {

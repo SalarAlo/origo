@@ -22,6 +22,7 @@ public:
 	TextureType GetTextureType() const { return m_TextureType; }
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
+	static AssetType GetClassAssetType() { return AssetType::Texture; }
 
 	TextureSource* GetSource() const { return m_Source.get(); }
 

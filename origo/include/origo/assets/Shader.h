@@ -25,9 +25,8 @@ public:
 
 	ShaderSource* GetSource() const { return m_Source; }
 
-	AssetType GetAssetType() const override {
-		return AssetType::Shader;
-	};
+	AssetType GetAssetType() const override { return AssetType::Shader; };
+	static AssetType GetClassAssetType() { return AssetType::Shader; }
 
 private:
 	void Init();

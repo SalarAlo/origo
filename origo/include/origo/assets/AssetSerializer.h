@@ -19,8 +19,6 @@ namespace AssetSerializationSystem {
 	void RegisterAllAssetSerializers();
 	void Cleanup();
 
-	void SaveAll(ISerializer& serializer);
-	void LoadAll(ISerializer& backend);
 }
 
 // idk if i wanna use this because of... SIOF

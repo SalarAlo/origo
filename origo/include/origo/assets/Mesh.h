@@ -17,6 +17,8 @@ struct Mesh : public Asset {
 	AssetType GetAssetType() const override {
 		return AssetType::Mesh;
 	}
+
+	static AssetType GetClassAssetType() { return AssetType::Mesh; }
 };
 
 }

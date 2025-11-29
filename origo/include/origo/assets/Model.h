@@ -12,12 +12,13 @@ class Model : public Asset {
 public:
 	Model(std::string_view path, RID shader);
 
-	std::string GetPath() const { return m_Path; }
-	AssetType GetAssetType() const override { return AssetType::Model; }
+	void Render() const;
 
+	std::string GetPath() const { return m_Path; }
 	const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
 
-	void Render() const;
+	AssetType GetAssetType() const override { return AssetType::Model; }
+	static AssetType GetClassAssetType() { return AssetType::Mesh; }
 
 private:
 	std::vector<SubMesh> m_SubMeshes;

@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
 #include <functional>
 
 #include <exception>

@@ -12,7 +12,7 @@ template <typename TOut = void, typename... Args>
 class Action {
 public:
 	using Callback = std::function<TOut(Args...)>;
-	void AddListener(const Callback& cb) {
+	void AddListener(Callback cb) {
 		m_Callbacks.push_back(cb);
 	}
 
@@ -34,7 +34,7 @@ class Action<void, Args...> {
 public:
 	using Callback = std::function<void(Args...)>;
 
-	void AddListener(const Callback& cb) {
+	void AddListener(Callback cb) {
 		m_Callbacks.push_back(cb);
 	}
 
