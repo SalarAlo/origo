@@ -8,7 +8,7 @@ public:
 	static void WriteMetadata(const AssetMetadata& meta);
 
 private:
-	static std::filesystem::path GetMetadataPath(const UUID& id);
+	static std::filesystem::path GetMetadataPath(const AssetMetadata& id);
 
 private:
 	inline static std::filesystem::path s_Root { "./assets" };

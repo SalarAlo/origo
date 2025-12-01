@@ -12,6 +12,9 @@ concept AssetConcept = std::derived_from<T, Asset> && requires(T t) {
 	{ t.GetClassAssetType() } -> std::same_as<AssetType>;
 };
 
+// note that i kepp a lot of systems that are basically singletons
+// as classes and not namespaces because i wanna switch to instance
+// based when the time arrives
 class AssetManager {
 private:
 	struct Record;
@@ -32,7 +35,7 @@ public:
 			return nullptr;
 		}
 
-		return static_cast<T*>(it->second.get());
+		return dynamic_cast<T*>(it->second.get());
 	}
 
 	static const std::unordered_map<RID, Scope<Asset>>& GetRecords() { return s_Records; }

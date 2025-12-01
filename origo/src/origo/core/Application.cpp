@@ -6,7 +6,7 @@
 #include "origo/input/Input.h"
 #include "origo/renderer/RenderableRegistry.h"
 #include "origo/scene/ComponentSystemRegistry.h"
-#include <filesystem>
+#include "origo/core/Init.h"
 
 namespace Origo {
 void Application::PushLayer(Layer* l) {
@@ -27,8 +27,9 @@ void Application::InternalUpdate(double dt) {
 void Application::InternalAwake() {
 	std::filesystem::current_path(m_Settings.WorkingDirectory);
 
+	Origo::Init();
+
 	Origo::Logger::Init();
-	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
 
 	Origo::Input::SetContext(&m_Window);
 

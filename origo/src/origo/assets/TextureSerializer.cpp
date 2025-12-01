@@ -17,12 +17,6 @@ Asset* TextureSerializer::Deserialize(ISerializer& backend) const {
 	return nullptr;
 }
 
-bool TextureSerializer::ShouldSerialize(const Asset* asset) const {
-	auto texture { dynamic_cast<const Texture*>(asset) };
-
-	return texture->GetSource()->GetType() != TextureSourceType::Embedded;
-}
-
 REGISTER_SERIALIZER(Texture)
 
 }

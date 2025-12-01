@@ -6,7 +6,7 @@ control flow of creating an asset:
 		-> (this shall be changed to use a selection menu and/or drag and drop)
 	
 details to keep in mind when implementing:
-	------------------------------------- GENERAL -------------------------------------
+	------------------------------------- GENERAL ---------------------------------------
 
 	1. Each Asset shall have a (json) file associated to it containing all of its data
 		-> Changing the attributes of an asset changes these values in the json file as well
@@ -16,6 +16,12 @@ details to keep in mind when implementing:
 	3. Each static POD Asset uses an UUID. The runtime Asset Objects have a RID. when assets
 	   refer to each other (eg. a Material refers to a shader), than the runtime objects use
 	   the RID while the POD Objects use that UUID created once
+	
+	------------------------------------- Generated vs. Imported ------------------------
+
+	1. Generated Assets are assets which are  actually manually created by the user of the engine
+	2. Imported Assets are automatically created as soon as a sourceable file is detected (.png, .jpg, ...)
+	3. 
 
 	------------------------------------- Importing -------------------------------------
 

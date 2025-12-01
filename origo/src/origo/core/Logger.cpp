@@ -25,6 +25,8 @@ void Init() {
 
 	s_CoreLogger->info("Core logger initialized");
 	s_ClientLogger->info("Client logger initialized");
+
+	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
 }
 
 void Shutdown() {

@@ -11,4 +11,12 @@ int Glsizeof(GLuint type) {
 		return -1;
 	}
 }
+
+void ToLowerInPlace(std::string& s) {
+
+	std::ranges::transform(
+	    s, s.begin(),
+	    [](unsigned char c) { return std::tolower(c); });
+}
+
 }
