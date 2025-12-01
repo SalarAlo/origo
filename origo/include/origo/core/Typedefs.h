@@ -17,4 +17,5 @@ template <typename T, typename... Args>
 Scope<T> MakeScope(Args&&... args) {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 };
+
 };

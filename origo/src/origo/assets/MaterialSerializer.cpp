@@ -5,12 +5,14 @@
 // TODO: Implement Serialization
 
 namespace Origo {
-bool MaterialSerializer::ShouldSerialize(const Asset* asset) const {
-	auto mat { dynamic_cast<const Material*>(asset) };
-	return true;
-}
 
 void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
+	auto material {
+		static_cast<const Material*>(asset)
+	};
+
+	backend.Write("albedo", material->GetAlbedo().GetId());
+	backend.Write("shader", material->GetShader().GetId());
 }
 
 Asset* MaterialSerializer::Deserialize(ISerializer& backend) const {

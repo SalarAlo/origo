@@ -1,5 +1,6 @@
 #include "origo/serialization/JsonSerializer.h"
 #include "origo/core/Logger.h"
+#include <filesystem>
 #include <string_view>
 
 #define JSON_DEF_WRITE_SERIALIZATION_FN(TYPE)                                                  \
@@ -63,6 +64,8 @@ void JsonSerializer::WriteFile() {
 		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_Path);
 		return;
 	}
+
+	std::filesystem::create_directories(std::filesystem::path(m_Path).parent_path());
 	std::ofstream out(m_Path, std::ios::out | std::ios::trunc);
 	if (!out) {
 		ORG_ERROR("Failed to open output file: {}", m_Path);

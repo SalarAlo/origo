@@ -1,19 +1,17 @@
 #pragma once
 
-#include "origo/core/RID.h"
 #include "origo/assets/AssetMetadata.h"
 
 namespace Origo {
 class AssetDatabase {
 public:
-	AssetDatabase(const std::filesystem::path& root);
-	static void Initialise();
+	static void WriteMetadata(const AssetMetadata& meta);
 
 private:
-	void WriteMetadata(RID id, const AssetMetadata& meta);
+	static std::filesystem::path GetMetadataPath(const UUID& id);
 
 private:
-	inline static std::filesystem::path m_Root {};
-	inline static std::unordered_map<RID, AssetMetadata> m_Metadata {};
+	inline static std::filesystem::path s_Root { "./assets" };
+	inline static std::unordered_map<UUID, AssetMetadata> s_Metadata {};
 };
 }

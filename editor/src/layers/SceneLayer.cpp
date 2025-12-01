@@ -1,5 +1,6 @@
 #include "layer/SceneLayer.h"
 
+#include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Texture.h"
@@ -20,8 +21,8 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetManager::CreateAsset<Texture>("Rowlett", "resources/textures/dirt.jpg");
-	m_Shader = AssetManager::CreateAsset<Shader>("Normal Shader", "normal");
+	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett", "resources/textures/dirt.jpg");
+	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader", "normal");
 
 	SpawnTestGrid();
 }
@@ -68,10 +69,10 @@ void SceneLayer::SpawnTestGrid() {
 	    data.Indices.data(),
 	    data.Indices.size());
 
-	auto cubeMesh = AssetManager::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
+	auto cubeMesh = AssetFactory::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
 
 	auto materialId {
-		AssetManager::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
+		AssetFactory::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
 	};
 
 	auto material { AssetManager::GetAssetAs<Material>(materialId) };
