@@ -19,15 +19,4 @@ namespace AssetSerializationSystem {
 	void Cleanup();
 
 }
-
-// idk if i wanna use this because of... SIOF
-#define REGISTER_SERIALIZER(NAME)                                                   \
-	namespace {                                                                 \
-		const bool s_##NAME##_serializer_registered = [] {                  \
-			Origo::AssetSerializationSystem::Register(                  \
-			    Origo::AssetType::NAME, new Origo::NAME##Serializer()); \
-			return true;                                                \
-		}();                                                                \
-	}
-
 }

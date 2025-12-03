@@ -33,6 +33,15 @@ struct UUID {
 	}
 
 	static UUID FromString(const std::string& str) {
+		if (str.size() != 32) {
+			throw std::invalid_argument("UUID length must be exactly 32 hex characters: " + str);
+		}
+		for (char c : str) {
+			if (!std::isxdigit(static_cast<unsigned char>(c))) {
+				throw std::invalid_argument("UUID contains non-hex characters");
+			}
+		}
+
 		uint64_t high = std::stoull(str.substr(0, 16), nullptr, 16);
 		uint64_t low = std::stoull(str.substr(16, 16), nullptr, 16);
 		return UUID(high, low);

@@ -8,15 +8,26 @@ namespace Origo {
 void TextureSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	auto texture { dynamic_cast<const Texture*>(asset) };
 
-	texture->GetSource()->Serialize(backend);
 	backend.Write("texture_type", magic_enum::enum_name(texture->GetTextureType()));
+	texture->GetSource()->Serialize(backend);
+	ORG_INFO("Seriliazing an asset of type texture");
 }
 
 Asset* TextureSerializer::Deserialize(ISerializer& backend) const {
 	// TODO
-	return nullptr;
-}
+	std::string typeStr {};
+	backend.TryRead("texture_type", typeStr);
+	auto optionalType { magic_enum::enum_cast<TextureType>(typeStr) };
+	if (!optionalType.has_value()) {
+		ORG_ERROR("TextureSerializer: Unknown texture type '{}'", typeStr);
+		return {};
+	}
+	auto type { optionalType.value() };
+	auto source { TextureSource::Deserialize(backend) };
+	Texture* t { new Texture(type) };
+	t->SetSource(std::move(source));
 
-REGISTER_SERIALIZER(Texture)
+	return t;
+}
 
 }

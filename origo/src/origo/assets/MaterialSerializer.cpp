@@ -1,6 +1,7 @@
 #include "origo/assets/MaterialSerializer.h"
 #include "origo/assets/Material.h"
 #include "origo/serialization/ISerializer.h"
+#include <stdexcept>
 
 // TODO: Implement Serialization
 
@@ -13,11 +14,11 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 
 	backend.Write("albedo", material->GetAlbedo().GetId());
 	backend.Write("shader", material->GetShader().GetId());
+	ORG_INFO("Serializing an asset of type material");
 }
 
 Asset* MaterialSerializer::Deserialize(ISerializer& backend) const {
-	return nullptr;
+	throw std::logic_error("Not implemented");
 }
 
-REGISTER_SERIALIZER(Material)
 }

@@ -5,6 +5,7 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Texture.h"
 #include "origo/assets/PrimitiveShape.h"
+#include "origo/assets/TextureSource.h"
 #include "origo/core/Time.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/assets/Mesh.h"
@@ -21,7 +22,9 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett", "resources/textures/dirt.jpg");
+	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett");
+	AssetManager::GetAssetAs<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
+
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader", "normal");
 
 	SpawnTestGrid();

@@ -6,12 +6,11 @@
 namespace Origo {
 
 void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
+	ORG_INFO("Seriliazing an asset of type model");
 }
 
 Asset* ModelSerializer::Deserialize(ISerializer& backend) const {
-	return nullptr;
+	throw std::logic_error("Not implemented");
 }
-
-REGISTER_SERIALIZER(Model)
 
 }

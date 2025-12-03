@@ -9,7 +9,6 @@ static LoggerRef s_CoreLogger;
 static LoggerRef s_ClientLogger;
 
 void Init() {
-
 	spdlog::set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
 
 	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -25,8 +24,6 @@ void Init() {
 
 	s_CoreLogger->info("Core logger initialized");
 	s_ClientLogger->info("Client logger initialized");
-
-	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
 }
 
 void Shutdown() {

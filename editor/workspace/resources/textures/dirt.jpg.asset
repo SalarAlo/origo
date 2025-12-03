@@ -1,0 +1,7 @@
+{
+        "source": {
+                "path": "./resources/textures/dirt.jpg",
+                "type": "File"
+        },
+        "texture_type": "Albedo"
+}

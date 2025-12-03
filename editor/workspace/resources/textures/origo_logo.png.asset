@@ -1,0 +1,7 @@
+{
+        "source": {
+                "path": "./resources/textures/origo_logo.png",
+                "type": "File"
+        },
+        "texture_type": "Albedo"
+}

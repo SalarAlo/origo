@@ -1,0 +1,7 @@
+{
+        "source": {
+                "path": "./resources/textures/rowlett.jpg",
+                "type": "File"
+        },
+        "texture_type": "Albedo"
+}

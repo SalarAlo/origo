@@ -6,7 +6,7 @@
 namespace Origo {
 
 enum class AssetOrigin {
-	Sourceable, // Has a source file (png, fbx, blablabla...)
+	Imported, // Has a source file (png, fbx, blablabla...)
 	Generated, // Created by the editor or at runtime (materials, prefabs, ...)
 	Internal // Engine built asset (default shaders, fallback textures)
 };

@@ -1,81 +1,74 @@
+#include "origo/assets/Texture.h"
+#include "origo/assets/TextureSource.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Shader.h"
-#include "origo/assets/TextureSource.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_SIMD
 #include "stb_image.h"
 
-#include "origo/assets/Texture.h"
 #include "origo/renderer/GlDebug.h"
-
 #include "origo/core/Logger.h"
 
 namespace Origo {
 
-Texture::Texture(const std::string& path, TextureType type)
+Texture::Texture(TextureType type)
     : m_TextureType(type)
-    , m_Source(MakeScope<TextureSourceFile>(path)) {
-	stbi_set_flip_vertically_on_load(true);
-
-	int width, height, channels;
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-
-	if (!data) {
-		ORG_ERROR("[Texture] Failed to load Texture with path {}", path.data());
-	}
-
-	InitTexture(width, height, channels, data);
-
-	stbi_image_free(data);
+    , m_TextureId(0) {
 }
 
-Texture::Texture(const aiTexture* embeddedTex, TextureType type)
-    : m_TextureType(type)
-    , m_Source(MakeScope<TextureSourceEmbedded>()) {
+void Texture::SetSource(Scope<TextureSource> src) {
+	m_Source = std::move(src);
+}
 
-	stbi_set_flip_vertically_on_load(true);
-
-	int width, height, channels;
-	unsigned char* decoded = nullptr;
-
-	if (embeddedTex->mHeight == 0) {
-		decoded = stbi_load_from_memory(
-		    reinterpret_cast<const unsigned char*>(embeddedTex->pcData),
-		    embeddedTex->mWidth,
-		    &width,
-		    &height,
-		    &channels,
-		    0);
-	} else {
-		width = embeddedTex->mWidth;
-		height = embeddedTex->mHeight;
-		channels = 4;
-		decoded = reinterpret_cast<unsigned char*>(embeddedTex->pcData);
-	}
-
-	if (!decoded) {
-		ORG_ERROR("[Texture] Failed to load embedded texture.");
+void Texture::LoadCPU() {
+	if (!m_Source) {
+		ORG_ERROR("[Texture] LoadCPU failed: No TextureSource assigned");
 		return;
 	}
 
-	InitTexture(width, height, channels, decoded);
+	if (auto* file = dynamic_cast<TextureSourceFile*>(m_Source.get())) {
 
-	if (embeddedTex->mHeight == 0)
-		stbi_image_free(decoded);
+		const std::string& path = file->GetPath();
+		stbi_set_flip_vertically_on_load(true);
+
+		int width = 0, height = 0, channels = 0;
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		if (!data) {
+			ORG_ERROR("[Texture] Failed to load image: {}", path);
+			return;
+		}
+
+		InitTexture(width, height, channels, data);
+
+		stbi_image_free(data);
+		return;
+	}
+
+	ORG_ERROR("[Texture] LoadCPU failed: Unsupported TextureSource type");
+}
+
+void Texture::LoadGPU() {
+	if (m_TextureId != 0)
+		return;
+
+	LoadCPU();
 }
 
 void Texture::InitTexture(int width, int height, int channels, unsigned char* data) {
 	GLCall(glGenTextures(1, &m_TextureId));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
+	GLenum format = (channels == 4 ? GL_RGBA : GL_RGB);
+
 	GLCall(glTexImage2D(
 	    GL_TEXTURE_2D,
 	    0,
-	    (channels == 4 ? GL_RGBA : GL_RGB),
+	    format,
 	    width,
 	    height,
 	    0,
-	    (channels == 4 ? GL_RGBA : GL_RGB),
+	    format,
 	    GL_UNSIGNED_BYTE,
 	    data));
 
@@ -89,15 +82,23 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 }
 
 void Texture::Bind(RID shaderId) const {
-	auto shader { AssetManager::GetAssetAs<Shader>(shaderId) };
-	int slot { static_cast<int>(m_TextureType) };
+	const_cast<Texture*>(this)->LoadGPU();
+
+	if (m_TextureId == 0) {
+		ORG_ERROR("[Texture] Bind failed: GPU texture not initialized");
+		return;
+	}
+
+	auto shader = AssetManager::GetAssetAs<Shader>(shaderId);
+	int slot = static_cast<int>(m_TextureType);
+
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
-	std::string typeName { magic_enum::enum_name(m_TextureType) };
-	shader->SetUniform(
-	    "u_Texture_" + typeName,
-	    slot);
+	std::string uniformName = "u_Texture_";
+	uniformName += std::string(magic_enum::enum_name(m_TextureType));
+
+	shader->SetUniform(uniformName, slot);
 }
 
-};
+}

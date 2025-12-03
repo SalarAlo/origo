@@ -18,7 +18,7 @@ public:
 		UUID uuid {};
 		AssetType type = T::GetClassAssetType();
 
-		AssetMetadata meta;
+		AssetMetadata meta {};
 		meta.Name = name;
 		meta.Id = uuid;
 		meta.Type = type;
@@ -27,6 +27,7 @@ public:
 		AssetEvents::OnAssetCreated.Invoke(meta);
 
 		AssetDatabase::WriteMetadata(meta);
+		AssetDatabase::RegisterMetadata(meta);
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
 		RID id = asset->GetId();

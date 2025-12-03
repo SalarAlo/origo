@@ -67,6 +67,9 @@ static void DrawDirectoryTree(const std::filesystem::path& path) {
 		if (!IsInsideProject(p))
 			continue;
 
+		if (p.extension() == ".asset" || p.extension() == ".meta")
+			continue;
+
 		const auto& name = p.filename().string();
 
 		ImGuiTreeNodeFlags flags = baseFlags;

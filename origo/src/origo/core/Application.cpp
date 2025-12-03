@@ -29,8 +29,6 @@ void Application::InternalAwake() {
 
 	Origo::Init();
 
-	Origo::Logger::Init();
-
 	Origo::Input::SetContext(&m_Window);
 
 	for (Layer* layer : m_LayerStack) {

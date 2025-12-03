@@ -1,4 +1,5 @@
 #include "origo/assets/TextureSource.h"
+#include "origo/core/Logger.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -6,30 +7,44 @@ namespace Origo {
 void TextureSource::Serialize(ISerializer& backend) const {
 	backend.BeginObject("source");
 	backend.Write("type", magic_enum::enum_name(GetType()));
+	SerializeBody(backend);
+	backend.EndObject();
 }
 
-void TextureSourceFile::Serialize(ISerializer& backend) const {
-	TextureSource::Serialize(backend);
+void TextureSourceFile::SerializeBody(ISerializer& backend) const {
 	backend.Write("path", m_Path);
-	backend.EndObject();
 }
 
-void TextureSourceEmbedded::Serialize(ISerializer& backend) const {
-	TextureSource::Serialize(backend);
-	// todo
-	backend.EndObject();
-}
+Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
+	TextureSourceType type {};
+	backend.BeginObject("source");
 
-void TextureSourceEmpty::Serialize(ISerializer& backend) const {
-	TextureSource::Serialize(backend);
+	std::string typeStr {};
+	backend.TryRead("type", typeStr);
+	auto optionalType { magic_enum::enum_cast<TextureSourceType>(typeStr) };
 
-	// todo
-	backend.EndObject();
-}
+	if (!optionalType.has_value()) {
+		backend.EndObject();
+		ORG_INFO("Texture Source type {} is unidentifiable", typeStr);
+		return nullptr;
+	}
 
-TextureSource* TextureSource::Deserialize(ISerializer& backend) {
-	// todo
-	return nullptr;
+	type = optionalType.value();
+
+	switch (type) {
+	case TextureSourceType::File: {
+		std::string path {};
+		backend.TryRead("path", path);
+		backend.EndObject();
+
+		return MakeScope<TextureSourceFile>(path);
+	}
+	default: {
+		backend.EndObject();
+		ORG_ERROR("TextureSource::Deserialize: Unsupported type {}", typeStr);
+		return nullptr;
+	}
+	}
 }
 
 }
