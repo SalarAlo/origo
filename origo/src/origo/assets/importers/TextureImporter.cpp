@@ -19,8 +19,6 @@ AssetType TextureImporter::GetAssetType() {
 }
 
 void TextureImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	ORG_INFO("Importing texture: {}", path.string());
-
 	std::filesystem::path assetPath = path.string() + ".asset";
 
 	JsonSerializer backend(assetPath.string());
@@ -34,9 +32,7 @@ void TextureImporter::Import(const std::filesystem::path& path, const AssetMetad
 	}
 
 	serializer->Serialize(&tempTexture, backend);
-	backend.WriteFile();
-
-	ORG_INFO("Wrote texture asset: {}", assetPath.string());
+	backend.SaveToFile();
 }
 
 }

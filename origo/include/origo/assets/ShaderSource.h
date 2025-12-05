@@ -1,14 +1,26 @@
 #pragma once
 
 #include "origo/assets/ShaderData.h"
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
+
+enum class ShaderSourceType {
+	File,
+	Raw,
+};
 
 class ShaderSource {
 public:
 	virtual ~ShaderSource() = default;
 	virtual ShaderData GetShaderData() const = 0;
-	virtual std::string GetTypeName() const = 0;
+	virtual ShaderSourceType GetSourceType() const = 0;
+
+	void Serialize(ISerializer& backend) const;
+	static Scope<ShaderSource> Deserialize(ISerializer& backend);
+
+protected:
+	virtual void SerializeBody(ISerializer& backend) const = 0;
 };
 
 class ShaderSourceRaw : public ShaderSource {
@@ -21,11 +33,13 @@ public:
 		return m_ShaderData;
 	}
 
-	std::string GetTypeName() const override {
-		return GetTypeNameClass();
+	ShaderSourceType GetSourceType() const override {
+		return ShaderSourceType::Raw;
 	}
-	static std::string GetTypeNameClass() {
-		return "ShaderSourceRaw";
+
+	void SerializeBody(ISerializer& backend) const override {
+		backend.Write("vertex_shader", m_ShaderData.VertexShader);
+		backend.Write("fragment_shader", m_ShaderData.FragmentShader);
 	}
 
 private:
@@ -40,11 +54,12 @@ public:
 	ShaderData GetShaderData() const override;
 	std::string GetPath() const { return m_Path; }
 
-	std::string GetTypeName() const override {
-		return GetTypeNameClass();
+	ShaderSourceType GetSourceType() const override {
+		return ShaderSourceType::File;
 	}
-	static std::string GetTypeNameClass() {
-		return "ShaderSourceFile";
+
+	void SerializeBody(ISerializer& backend) const override {
+		backend.Write("shader_path", m_Path);
 	}
 
 private:

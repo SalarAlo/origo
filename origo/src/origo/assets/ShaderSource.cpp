@@ -1,4 +1,5 @@
 #include "origo/assets/ShaderSource.h"
+#include "origo/core/Logger.h"
 
 #pragma region IO_RELATED
 static std::string ReadFile(std::string_view path) {
@@ -6,7 +7,7 @@ static std::string ReadFile(std::string_view path) {
 	auto stream = std::ifstream(path.data());
 
 	if (!stream) {
-		ORG_CORE_ERROR("[Shader] Trying to read non existent file!");
+		ORG_CORE_ERROR("[Shader] Trying to read non existent file! ({})", path);
 		throw std::ios_base::failure("file does not exist");
 	}
 
@@ -19,9 +20,9 @@ static std::string ReadFile(std::string_view path) {
 	return out;
 }
 
-static Origo::ShaderData GetData(std::string_view name) {
+static Origo::ShaderData GetData(std::string_view path) {
 	Origo::ShaderData data {};
-	std::string fileContent { ReadFile("./resources/shaders/" + std::string(name) + ".glsl") };
+	std::string fileContent { ReadFile(path) };
 
 	auto vertPos { fileContent.find("#VERTEX") };
 	auto fragPos { fileContent.find("#FRAGMENT") };
@@ -49,6 +50,49 @@ namespace Origo {
 
 ShaderData ShaderSourceFile::GetShaderData() const {
 	return GetData(m_Path);
+}
+
+void ShaderSource::Serialize(ISerializer& backend) const {
+	backend.BeginObject("source");
+	backend.Write("type", magic_enum::enum_name(GetSourceType()));
+	SerializeBody(backend);
+	backend.EndObject();
+}
+
+Scope<ShaderSource> ShaderSource::Deserialize(ISerializer& backend) {
+	backend.BeginObject("source");
+
+	std::string typeStr {};
+	backend.TryRead("type", typeStr);
+	auto typeOptional { magic_enum::enum_cast<ShaderSourceType>(typeStr) };
+	if (!typeOptional.has_value()) {
+		ORG_ERROR("ShaderSource::Deserialize: Unidentifiable type {}", typeStr);
+		return nullptr;
+	}
+	auto type { typeOptional.value() };
+
+	switch (type) {
+	case ShaderSourceType::File: {
+		std::string path {};
+		backend.TryRead("shader_path", path);
+		backend.EndObject();
+		return MakeScope<ShaderSourceFile>(path);
+	}
+
+	case ShaderSourceType::Raw: {
+		std::string vert {};
+		std::string frag {};
+		backend.TryRead("vertex_shader", vert);
+		backend.TryRead("fragment_shader", frag);
+		backend.EndObject();
+		return MakeScope<ShaderSourceRaw>(vert, frag);
+	}
+	default: {
+		backend.EndObject();
+		ORG_ERROR("ShaderSource::Deserialize: Unsupported type {}", typeStr);
+		return nullptr;
+	}
+	}
 }
 
 }

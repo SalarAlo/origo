@@ -1,7 +1,8 @@
 #include "origo/assets/AssetDatabase.h"
 #include "magic_enum/magic_enum.hpp"
+#include "origo/assets/AssetManager.h"
+#include "origo/assets/AssetSerializer.h"
 #include "origo/core/Logger.h"
-#include "origo/serialization/ISerializer.h"
 #include "origo/serialization/JsonSerializer.h"
 #include "origo/assets/AssetMetadata.h"
 #include <filesystem>
@@ -25,7 +26,22 @@ void AssetDatabase::WriteMetadata(const AssetMetadata& meta) {
 	}
 	serializer.EndArray();
 
-	serializer.WriteFile();
+	serializer.SaveToFile();
+}
+
+void AssetDatabase::WriteAssetdata(const RID& rid) {
+	auto asset = AssetManager::GetAsset(rid);
+	if (asset == nullptr) {
+		ORG_INFO("AssetDatabase::WriteAssetdata: Non existent rid {}", rid.ToString());
+		return;
+	}
+
+	auto serializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
+	auto path { GetAssetPath(s_Metadata[AssetManager::GetUUID(rid)]) };
+	JsonSerializer backend { path.string() };
+	serializer->Serialize(asset, backend);
+
+	backend.SaveToFile();
 }
 
 void AssetDatabase::RegisterMetadata(const AssetMetadata& meta) {
@@ -79,12 +95,40 @@ AssetMetadata AssetDatabase::LoadMetadata(const std::filesystem::path& path) {
 	return meta;
 }
 
+Asset* AssetDatabase::LoadAsset(const UUID& uuid) {
+	auto it { s_Metadata.find(uuid) };
+	if (it == s_Metadata.end()) {
+		ORG_ERROR("AssetDatabase::LoadAsset: No metadata found with uuid {}", uuid.ToString());
+		return nullptr;
+	}
+
+	const auto& meta { it->second };
+	auto assetPath { GetAssetPath(meta) };
+
+	JsonSerializer backend { assetPath.string() };
+	backend.LoadFile();
+	auto ser = AssetSerializationSystem::Get(meta.Type);
+	Scope<Asset> asset { ser->Deserialize(backend) };
+	auto id { asset->GetId() };
+
+	AssetManager::Register(std::move(asset), &meta.Id);
+
+	return AssetManager::GetAsset(id);
+}
+
 std::filesystem::path AssetDatabase::GetMetadataPath(const AssetMetadata& meta) {
 	if (!meta.SourcePath.empty()) {
 		return meta.SourcePath.string() + ".meta";
 	}
 
 	return ROOT / "generated" / (meta.Id.ToString() + ".meta");
+}
+std::filesystem::path AssetDatabase::GetAssetPath(const AssetMetadata& meta) {
+	if (!meta.SourcePath.empty()) {
+		return meta.SourcePath.string() + ".asset";
+	}
+
+	return ROOT / "generated" / (meta.Id.ToString() + ".asset");
 }
 
 }

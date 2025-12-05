@@ -26,13 +26,12 @@ public:
 
 		AssetEvents::OnAssetCreated.Invoke(meta);
 
-		AssetDatabase::WriteMetadata(meta);
 		AssetDatabase::RegisterMetadata(meta);
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
 		RID id = asset->GetId();
 
-		AssetManager::Register(std::move(asset));
+		AssetManager::Register(std::move(asset), &uuid);
 
 		return id;
 	}

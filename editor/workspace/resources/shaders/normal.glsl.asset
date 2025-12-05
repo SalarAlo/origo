@@ -1,0 +1,6 @@
+{
+        "source": {
+                "shader_path": "./resources/shaders/normal.glsl",
+                "type": "File"
+        }
+}

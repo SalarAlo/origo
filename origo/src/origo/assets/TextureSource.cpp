@@ -16,7 +16,6 @@ void TextureSourceFile::SerializeBody(ISerializer& backend) const {
 }
 
 Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
-	TextureSourceType type {};
 	backend.BeginObject("source");
 
 	std::string typeStr {};
@@ -29,7 +28,7 @@ Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 		return nullptr;
 	}
 
-	type = optionalType.value();
+	auto type = optionalType.value();
 
 	switch (type) {
 	case TextureSourceType::File: {

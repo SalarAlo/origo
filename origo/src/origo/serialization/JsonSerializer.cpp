@@ -59,7 +59,7 @@ nlohmann::json& JsonSerializer::top_json() {
 	return *p;
 }
 
-void JsonSerializer::WriteFile() {
+void JsonSerializer::SaveToFile() {
 	if (m_ObjectsStack.size() > 1) {
 		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_Path);
 		return;

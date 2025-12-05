@@ -8,31 +8,30 @@ namespace Origo {
 
 class Shader : public Asset {
 public:
-	Shader(std::string_view path);
-	Shader(std::string_view vertexShader, std::string_view fragmentShader);
+	Shader() = default;
 	~Shader();
-
-	Shader(const Shader&) = delete;
-	Shader& operator=(const Shader&) = delete;
-
-	Shader(Shader&&) = delete;
-	Shader& operator=(Shader&&) = delete;
 
 	void UseProgram() const;
 
 	template <typename T>
 	void SetUniform(std::string_view name, const T& value) const;
 
-	ShaderSource* GetSource() const { return m_Source; }
+	void SetSource(Scope<ShaderSource> source);
+	ShaderSource* GetSource() const { return m_Source.get(); }
 
 	AssetType GetAssetType() const override { return AssetType::Shader; };
 	static AssetType GetClassAssetType() { return AssetType::Shader; }
+
+	Shader(const Shader&) = delete;
+	Shader& operator=(const Shader&) = delete;
+	Shader(Shader&&) = delete;
+	Shader& operator=(Shader&&) = delete;
 
 private:
 	void Init();
 
 private:
-	ShaderSource* m_Source;
+	Scope<ShaderSource> m_Source {};
 	unsigned int m_ProgramId {};
 };
 }

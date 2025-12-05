@@ -5,7 +5,7 @@
 
 namespace Origo {
 
-Asset* MeshSerializer::Deserialize(ISerializer& backend) const {
+Scope<Asset> MeshSerializer::Deserialize(ISerializer& backend) const {
 	// TODO
 	throw std::logic_error("Not implemented");
 }

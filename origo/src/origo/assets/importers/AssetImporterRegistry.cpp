@@ -1,5 +1,6 @@
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/IAssetImporter.h"
+#include "origo/assets/importers/ShaderImporter.h"
 #include "origo/assets/importers/TextureImporter.h"
 
 namespace Origo {
@@ -17,8 +18,9 @@ IAssetImporter* AssetImporterRegistry::GetImporter(const std::filesystem::path& 
 }
 
 void AssetImporterRegistry::InitialiseDefaultImporters() {
-	ORG_INFO("Initialising all default asset importers");
+	ORG_INFO("Registering all default asset importers");
 	Register(MakeScope<TextureImporter>());
+	Register(MakeScope<ShaderImporter>());
 }
 
 }

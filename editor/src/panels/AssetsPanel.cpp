@@ -67,9 +67,6 @@ static void DrawDirectoryTree(const std::filesystem::path& path) {
 		if (!IsInsideProject(p))
 			continue;
 
-		if (p.extension() == ".asset" || p.extension() == ".meta")
-			continue;
-
 		const auto& name = p.filename().string();
 
 		ImGuiTreeNodeFlags flags = baseFlags;
@@ -111,11 +108,16 @@ static void DrawFileGrid(const std::filesystem::path& folder) {
 
 	int index = 0;
 	for (auto& entry : std::filesystem::directory_iterator(folder)) {
-		if (entry.is_directory())
-			continue;
-
 		const auto& p = entry.path();
 		if (!IsInsideProject(p))
+			continue;
+
+		if (entry.is_directory()) {
+
+			continue;
+		}
+
+		if (p.extension() == ".asset" || p.extension() == ".meta")
 			continue;
 
 		const auto filename = p.filename().string();

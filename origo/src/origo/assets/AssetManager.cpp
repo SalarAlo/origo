@@ -4,7 +4,7 @@
 
 namespace Origo {
 
-Asset* AssetManager::GetAssetChecked(const RID& id) {
+Asset* AssetManager::GetAsset(const RID& id) {
 	auto it { s_Records.find(id) };
 	return it != s_Records.end() ? it->second.get() : nullptr;
 }

@@ -17,7 +17,7 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 	ORG_INFO("Serializing an asset of type material");
 }
 
-Asset* MaterialSerializer::Deserialize(ISerializer& backend) const {
+Scope<Asset> MaterialSerializer::Deserialize(ISerializer& backend) const {
 	throw std::logic_error("Not implemented");
 }
 

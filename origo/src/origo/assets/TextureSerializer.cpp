@@ -13,8 +13,7 @@ void TextureSerializer::Serialize(const Asset* asset, ISerializer& backend) cons
 	ORG_INFO("Seriliazing an asset of type texture");
 }
 
-Asset* TextureSerializer::Deserialize(ISerializer& backend) const {
-	// TODO
+Scope<Asset> TextureSerializer::Deserialize(ISerializer& backend) const {
 	std::string typeStr {};
 	backend.TryRead("texture_type", typeStr);
 	auto optionalType { magic_enum::enum_cast<TextureType>(typeStr) };
@@ -24,10 +23,10 @@ Asset* TextureSerializer::Deserialize(ISerializer& backend) const {
 	}
 	auto type { optionalType.value() };
 	auto source { TextureSource::Deserialize(backend) };
-	Texture* t { new Texture(type) };
+	Scope<Texture> t { MakeScope<Texture>(type) };
 	t->SetSource(std::move(source));
 
-	return t;
+	return std::move(t);
 }
 
 }

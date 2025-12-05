@@ -9,7 +9,7 @@ public:
 	    : m_Path(path) { }
 	virtual ~ISerializer() = default;
 
-	virtual void WriteFile() = 0;
+	virtual void SaveToFile() = 0;
 	virtual void LoadFile() = 0;
 
 	virtual void BeginObject(std::string_view key) = 0;
@@ -38,7 +38,7 @@ protected:
 };
 
 #define SERIALIZER_FWD                                                     \
-	void WriteFile() override;                                         \
+	void SaveToFile() override;                                        \
 	void LoadFile() override;                                          \
                                                                            \
 	void BeginObject(std::string_view key) override;                   \

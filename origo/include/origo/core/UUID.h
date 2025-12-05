@@ -17,7 +17,7 @@ struct UUID {
 		Low = gen();
 	}
 
-	explicit UUID(uint64_t high_, uint64_t low_)
+	UUID(uint64_t high_, uint64_t low_)
 	    : High(high_)
 	    , Low(low_) { }
 

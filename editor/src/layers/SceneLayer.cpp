@@ -3,6 +3,7 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/ShaderSource.h"
 #include "origo/assets/Texture.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/TextureSource.h"
@@ -25,7 +26,8 @@ void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett");
 	AssetManager::GetAssetAs<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
 
-	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader", "normal");
+	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
+	AssetManager::GetAssetAs<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
 	SpawnTestGrid();
 }
@@ -47,11 +49,6 @@ void SceneLayer::OnUpdate(double dt) {
 
 	shader->SetUniform("u_SelectedEntityId", selectedEntityId);
 	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
-
-	static int counter { 0 };
-	if (counter++ % 100 == 0) {
-		ORG_INFO("{} FPS", 1.0 / dt);
-	}
 }
 
 void SceneLayer::SpawnTestGrid() {

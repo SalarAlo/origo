@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
+#include "origo/assets/AssetMetadata.h"
 #include "origo/core/RID.h"
 #include <concepts>
 #include <unordered_map>
@@ -20,10 +21,13 @@ private:
 	struct Record;
 
 public:
-	static Asset* GetAssetChecked(const RID& id);
-	template <AssetConcept T>
-	static void Register(Scope<T>&& asset) {
-		s_Records[asset->GetId()] = std::move(asset);
+	static Asset* GetAsset(const RID& id);
+	static void Register(Scope<Asset>&& asset, const UUID* uuid = nullptr) {
+		auto rid { asset->GetId() };
+		s_Records[rid] = std::move(asset);
+
+		if (uuid)
+			s_RIDToUUID[rid] = *uuid;
 	}
 
 	template <AssetConcept T>
@@ -39,8 +43,16 @@ public:
 	}
 
 	static const std::unordered_map<RID, Scope<Asset>>& GetRecords() { return s_Records; }
+	static bool HasUUID(RID rid) {
+		return s_RIDToUUID.contains(rid);
+	}
+
+	static UUID GetUUID(RID rid) {
+		return s_RIDToUUID.at(rid);
+	}
 
 private:
 	inline static std::unordered_map<RID, Scope<Asset>> s_Records {};
+	inline static std::unordered_map<RID, UUID> s_RIDToUUID {};
 };
 }

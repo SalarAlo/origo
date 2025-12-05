@@ -8,7 +8,7 @@ class AssetSerializer {
 public:
 	virtual ~AssetSerializer() = default;
 	virtual void Serialize(const Asset* asset, ISerializer& backend) const = 0;
-	virtual Asset* Deserialize(ISerializer& backend) const = 0;
+	virtual Scope<Asset> Deserialize(ISerializer& backend) const = 0;
 };
 
 namespace AssetSerializationSystem {

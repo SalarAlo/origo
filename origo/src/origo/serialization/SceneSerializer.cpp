@@ -1,5 +1,4 @@
 #include "origo/scene/SceneSerialization.h"
-#include "origo/assets/AssetSerializer.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -20,7 +19,7 @@ void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 
 	backend.EndArray();
 
-	backend.WriteFile();
+	backend.SaveToFile();
 }
 
 }
