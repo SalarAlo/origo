@@ -6,7 +6,7 @@ namespace Origo {
 class AssetDatabase {
 public:
 	static void WriteMetadata(const AssetMetadata& meta);
-	static void WriteAssetdata(const RID& rid);
+	static void WriteAssetdata(const UUID& uuid);
 	static void RegisterMetadata(const AssetMetadata& meta);
 	static AssetMetadata LoadMetadata(const std::filesystem::path& path);
 	static Asset* LoadAsset(const UUID& id);

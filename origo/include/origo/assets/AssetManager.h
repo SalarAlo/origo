@@ -1,10 +1,7 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetMetadata.h"
-#include "origo/core/RID.h"
-#include <concepts>
-#include <unordered_map>
+#include "origo/core/UUID.h"
 
 namespace Origo {
 
@@ -18,41 +15,43 @@ concept AssetConcept = std::derived_from<T, Asset> && requires(T t) {
 // based when the time arrives
 class AssetManager {
 private:
-	struct Record;
+	struct Record {
+		Scope<Asset> AssetPtr {};
+		UUID Uuid {};
+	};
 
 public:
-	static Asset* GetAsset(const RID& id);
-	static void Register(Scope<Asset>&& asset, const UUID* uuid = nullptr) {
-		auto rid { asset->GetId() };
-		s_Records[rid] = std::move(asset);
+	static Asset* GetAsset(const UUID& id);
+	static UUID Register(Scope<Asset>&& asset, const UUID* uuid = nullptr) {
+		UUID id { (uuid ? *uuid : UUID {}) };
+		Record rec { .AssetPtr = std::move(asset), .Uuid = id };
 
-		if (uuid)
-			s_RIDToUUID[rid] = *uuid;
+		s_Records[rec.Uuid] = std::move(rec);
+		return id;
 	}
 
 	template <AssetConcept T>
-	static T* GetAssetAs(RID id) {
+	static T* GetAssetAs(const UUID& id) {
 		auto it { s_Records.find(id) };
 
 		if (it == s_Records.end()) {
-			ORG_INFO("Could not find {} Asset with runtime ID", id.ToString());
+			ORG_INFO("AssetManager::GetAssetAs: Could not find {} Asset with  UUID", id.ToString());
 			return nullptr;
 		}
 
-		return dynamic_cast<T*>(it->second.get());
+		Asset* base = it->second.AssetPtr.get();
+		if (base->GetAssetType() != T::GetClassAssetType()) {
+			auto assetTypeName { magic_enum::enum_name<AssetType>(T::GetClassAssetType()) };
+			ORG_INFO("AssetManager::GetAssetAs: requested rid as type {} is invalid", assetTypeName);
+			return nullptr;
+		}
+
+		return static_cast<T*>(base);
 	}
 
-	static const std::unordered_map<RID, Scope<Asset>>& GetRecords() { return s_Records; }
-	static bool HasUUID(RID rid) {
-		return s_RIDToUUID.contains(rid);
-	}
-
-	static UUID GetUUID(RID rid) {
-		return s_RIDToUUID.at(rid);
-	}
+	static const std::unordered_map<UUID, Record>& GetRecords() { return s_Records; }
 
 private:
-	inline static std::unordered_map<RID, Scope<Asset>> s_Records {};
-	inline static std::unordered_map<RID, UUID> s_RIDToUUID {};
+	inline static std::unordered_map<UUID, Record> s_Records {};
 };
 }

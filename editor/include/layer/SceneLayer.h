@@ -3,6 +3,7 @@
 #include "origo/core/Layer.h"
 
 #include "EditorContext.h"
+#include "origo/core/UUID.h"
 
 namespace OrigoEditor {
 
@@ -21,8 +22,8 @@ private:
 	static constexpr int GRID_SIZE { 20 };
 	EditorContext& m_Context;
 
-	Origo::RID m_Shader;
-	Origo::RID m_Texture;
+	Origo::UUID m_Shader;
+	Origo::UUID m_Texture;
 };
 
 }

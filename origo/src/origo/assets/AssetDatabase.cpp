@@ -29,15 +29,15 @@ void AssetDatabase::WriteMetadata(const AssetMetadata& meta) {
 	serializer.SaveToFile();
 }
 
-void AssetDatabase::WriteAssetdata(const RID& rid) {
-	auto asset = AssetManager::GetAsset(rid);
+void AssetDatabase::WriteAssetdata(const UUID& uuid) {
+	auto asset = AssetManager::GetAsset(uuid);
 	if (asset == nullptr) {
-		ORG_INFO("AssetDatabase::WriteAssetdata: Non existent rid {}", rid.ToString());
+		ORG_INFO("AssetDatabase::WriteAssetdata: Non existent uuid {}", uuid.ToString());
 		return;
 	}
 
 	auto serializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
-	auto path { GetAssetPath(s_Metadata[AssetManager::GetUUID(rid)]) };
+	auto path { GetAssetPath(s_Metadata[uuid]) };
 	JsonSerializer backend { path.string() };
 	serializer->Serialize(asset, backend);
 
@@ -109,9 +109,8 @@ Asset* AssetDatabase::LoadAsset(const UUID& uuid) {
 	backend.LoadFile();
 	auto ser = AssetSerializationSystem::Get(meta.Type);
 	Scope<Asset> asset { ser->Deserialize(backend) };
-	auto id { asset->GetId() };
 
-	AssetManager::Register(std::move(asset), &meta.Id);
+	auto id { AssetManager::Register(std::move(asset)) };
 
 	return AssetManager::GetAsset(id);
 }

@@ -116,4 +116,51 @@ void DrawIntControl(std::string_view label, int& value, float speed) {
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
+
+void DrawStringControl(std::string_view label, std::string& value) {
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 180.0f;
+
+	ImGui::BeginGroup();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
+	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
+		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+
+	ImGui::SameLine(nextX);
+
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+	ImGui::SetNextItemWidth(fieldWidth);
+
+	ImGui::InputText(
+	    "##string",
+	    value.data(),
+	    value.capacity() + 1,
+	    ImGuiInputTextFlags_CallbackResize,
+	    [](ImGuiInputTextCallbackData* data) {
+		    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
+			    auto* str = static_cast<std::string*>(data->UserData);
+			    str->resize(data->BufTextLen);
+			    data->Buf = str->data();
+		    }
+		    return 0;
+	    },
+	    &value);
+
+	ImGui::PopStyleColor(4);
+
+	ImGui::EndGroup();
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
 }

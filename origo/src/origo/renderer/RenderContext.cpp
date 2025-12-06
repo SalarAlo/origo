@@ -8,7 +8,7 @@
 #include "origo/renderer/VaoCache.h"
 
 namespace Origo {
-static std::hash<RID> HashEntity {};
+static std::hash<UUID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto material = AssetManager::GetAssetAs<Material>(cmd.GetMaterial());
@@ -42,7 +42,7 @@ void RenderContext::BeginFrame() {
 	glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
 }
 
-void RenderContext::Submit(const RID& mesh, const RID& material, Transform* transform) {
+void RenderContext::Submit(const UUID& mesh, const UUID& material, Transform* transform) {
 	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -50,11 +50,11 @@ void RenderContext::Flush(Camera* camera) {
 	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
 	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
-		return a.GetMaterial().GetId() < b.GetMaterial().GetId();
+		return a.GetMaterial().ToString() < b.GetMaterial().ToString();
 	});
 
 	Material* currentMaterial {};
-	RID currentMaterialId {};
+	UUID currentMaterialId {};
 
 	m_Buffer->Bind();
 

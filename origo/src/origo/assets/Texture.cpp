@@ -81,7 +81,7 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Bind(RID shaderId) const {
+void Texture::Bind(UUID shaderId) const {
 	const_cast<Texture*>(this)->LoadGPU();
 
 	if (m_TextureId == 0) {

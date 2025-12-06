@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/core/UUID.h"
 #include "origo/scene/Component.h"
 
 #include "origo/scene/Entity.hpp"
@@ -8,16 +9,16 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(Entity* entity, RID material, RID mesh);
+	MeshRenderer(Entity* entity, UUID material, UUID mesh);
 
-	RID GetMesh();
-	RID GetMaterial();
+	UUID GetMesh();
+	UUID GetMaterial();
 
 	std::string GetName() const override { return "MeshRenderer"; }
 
 private:
-	RID m_Material {};
-	RID m_Mesh {};
+	UUID m_Material {};
+	UUID m_Mesh {};
 };
 
 }

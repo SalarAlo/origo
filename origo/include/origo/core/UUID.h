@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 #include <random>
 #include <string>
@@ -7,28 +9,32 @@
 namespace Origo {
 
 struct UUID {
-	uint64_t High;
-	uint64_t Low;
-
-	UUID() {
+	UUID(bool isBadUuid = false)
+	    : m_IsBadUuid(isBadUuid) {
 		static std::random_device rd;
 		static std::mt19937_64 gen(rd());
-		High = gen();
-		Low = gen();
+		if (!isBadUuid) {
+			m_High = gen();
+			m_Low = gen();
+		} else {
+			m_High = 0;
+			m_Low = 0;
+		}
 	}
 
-	UUID(uint64_t high_, uint64_t low_)
-	    : High(high_)
-	    , Low(low_) { }
+	UUID(uint64_t high, uint64_t low)
+	    : m_High(high)
+	    , m_Low(low)
+	    , m_IsBadUuid(false) { }
 
 	bool operator==(const UUID& other) const noexcept {
-		return High == other.High && Low == other.Low;
+		return m_High == other.m_High && m_Low == other.m_Low;
 	}
 
 	std::string ToString() const {
 		std::ostringstream ss;
 		ss << std::hex << std::setfill('0')
-		   << std::setw(16) << High << std::setw(16) << Low;
+		   << std::setw(16) << m_High << std::setw(16) << m_Low;
 		return ss.str();
 	}
 
@@ -46,6 +52,15 @@ struct UUID {
 		uint64_t low = std::stoull(str.substr(16, 16), nullptr, 16);
 		return UUID(high, low);
 	}
+
+	uint64_t GetHigh() const { return m_High; }
+	uint64_t GetLow() const { return m_Low; }
+	bool IsBad() { return m_IsBadUuid; }
+
+private:
+	uint64_t m_High;
+	uint64_t m_Low;
+	bool m_IsBadUuid;
 };
 }
 
@@ -53,7 +68,7 @@ namespace std {
 template <>
 struct hash<Origo::UUID> {
 	size_t operator()(const Origo::UUID& id) const noexcept {
-		return std::hash<uint64_t>()(id.High ^ (id.Low << 1));
+		return std::hash<uint64_t>()(id.GetHigh() ^ (id.GetLow() << 1));
 	}
 };
 }

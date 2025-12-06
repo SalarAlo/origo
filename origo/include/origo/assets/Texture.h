@@ -2,7 +2,7 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/TextureSource.h"
-#include "origo/core/RID.h"
+#include "origo/core/UUID.h"
 
 namespace Origo {
 
@@ -17,7 +17,7 @@ public:
 	void SetSource(Scope<TextureSource> src);
 	TextureSource* GetSource() const { return m_Source.get(); }
 
-	void Bind(RID shaderId) const;
+	void Bind(UUID shaderId) const;
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
 	static AssetType GetClassAssetType() { return AssetType::Texture; }

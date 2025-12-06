@@ -5,11 +5,11 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
-Material::Material(RID shader, RID material)
+Material::Material(UUID shader, UUID material)
     : m_UniformList()
     , m_Shader(shader)
     , m_Albedo(material) {
-	if (m_Albedo.IsNull())
+	if (m_Albedo.IsBad())
 		return;
 	auto albedo { AssetManager::GetAssetAs<Texture>(m_Albedo) };
 	if (albedo->GetTextureType() != TextureType::Albedo) {
@@ -24,7 +24,7 @@ void Material::Bind() {
 	shader->UseProgram();
 	m_UniformList.UploadAll(shader);
 
-	if (m_Albedo.IsValid()) {
+	if (!m_Albedo.IsBad()) {
 		auto albedo { AssetManager::GetAssetAs<Texture>(m_Albedo) };
 		albedo->Bind(m_Shader);
 	}

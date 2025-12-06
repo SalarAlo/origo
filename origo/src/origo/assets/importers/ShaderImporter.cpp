@@ -26,8 +26,8 @@ void ShaderImporter::Import(const std::filesystem::path& path, const AssetMetada
 
 	auto serializer = AssetSerializationSystem::Get(GetAssetType());
 	if (!serializer) {
-		ORG_ERROR("ShaderImporter: No serializer registered for Texture assets.");
-		return;
+		ORG_ERROR("ShaderImporter: No serializer registered for Shader assets.");
+		throw std::runtime_error("ShaderImporter: No serializer registered for Shader assets.");
 	}
 
 	serializer->Serialize(&tempShader, backend);

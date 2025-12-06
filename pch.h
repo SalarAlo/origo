@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <functional>
+#include <stdexcept>
 
 #include <exception>
 #include <stdexcept>

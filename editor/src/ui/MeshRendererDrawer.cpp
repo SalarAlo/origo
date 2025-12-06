@@ -11,15 +11,15 @@ static bool s_Registered = []() {
 	InspectorDrawRegistry::Register<Origo::MeshRenderer>("Mesh Renderer", [](Origo::MeshRenderer& t) {
 		auto material { Origo::AssetManager::GetAssetAs<Origo::Material>(t.GetMaterial()) };
 
-		int shaderId { material->GetShader().GetId() };
-		int materialId { material->GetId().GetId() };
-		int albedoId { material->GetAlbedo().GetId() };
-		int meshId { t.GetMesh().GetId() };
+		auto shaderId { material->GetShader().ToString() };
+		auto materialId { t.GetMaterial().ToString() };
+		auto albedoId { material->GetAlbedo().ToString() };
+		auto meshId { t.GetMesh().ToString() };
 
-		ComponentUI::DrawIntControl("Material", materialId);
-		ComponentUI::DrawIntControl("Shader", shaderId);
-		ComponentUI::DrawIntControl("Albedo", albedoId);
-		ComponentUI::DrawIntControl("Mesh", meshId);
+		ComponentUI::DrawStringControl("Material", materialId);
+		ComponentUI::DrawStringControl("Shader", shaderId);
+		ComponentUI::DrawStringControl("Albedo", albedoId);
+		ComponentUI::DrawStringControl("Mesh", meshId);
 	});
 
 	return true;

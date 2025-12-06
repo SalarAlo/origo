@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Component.h"
-#include "origo/core/Identifiable.h"
+#include "origo/core/RID.h"
 
 namespace Origo {
 
-class Entity : public Identifiable {
+class Entity {
 public:
 	Entity(std::string_view name)
 	    : m_Name(name) {
@@ -15,8 +15,11 @@ public:
 		return m_Name;
 	}
 
+	RID GetId() { return m_Id; }
+
 private:
 	std::string m_Name {};
+	RID m_Id { RID::New() };
 };
 
 }

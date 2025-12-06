@@ -4,23 +4,23 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetMetadata.h"
 #include "origo/assets/AssetEvents.h"
-#include "origo/core/RID.h"
+#include "origo/core/UUID.h"
 
 namespace Origo {
 
 class AssetFactory {
 public:
-	using AssetCreatedCallback = std::function<void(RID, AssetType)>;
+	using AssetCreatedCallback = std::function<void(UUID, AssetType)>;
 
 public:
 	template <AssetConcept T, typename... Args>
-	static RID CreateAsset(const std::string& name, Args&&... args) {
-		UUID uuid {};
+	static UUID CreateAsset(const std::string& name, Args&&... args) {
+		UUID id {};
 		AssetType type = T::GetClassAssetType();
 
 		AssetMetadata meta {};
 		meta.Name = name;
-		meta.Id = uuid;
+		meta.Id = id;
 		meta.Type = type;
 		meta.Origin = AssetOrigin::Generated;
 
@@ -29,9 +29,8 @@ public:
 		AssetDatabase::RegisterMetadata(meta);
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
-		RID id = asset->GetId();
 
-		AssetManager::Register(std::move(asset), &uuid);
+		AssetManager::Register(std::move(asset), &id);
 
 		return id;
 	}

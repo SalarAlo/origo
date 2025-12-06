@@ -1,7 +1,5 @@
 #pragma once
 
-#include "origo/core/Identifiable.h"
-
 namespace Origo {
 
 enum class AssetType {
@@ -12,7 +10,7 @@ enum class AssetType {
 	Model
 };
 
-class Asset : public Identifiable {
+class Asset {
 public:
 	virtual ~Asset() = default;
 	virtual AssetType GetAssetType() const = 0;

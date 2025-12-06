@@ -8,11 +8,11 @@ namespace Origo {
 
 class Material : public Asset {
 public:
-	Material(RID shader, RID material);
+	Material(UUID shader, UUID material);
 
-	RID GetShader() const { return m_Shader; }
+	UUID GetShader() const { return m_Shader; }
 	UniformList& GetUniformList() { return m_UniformList; }
-	RID GetAlbedo() const { return m_Albedo; }
+	UUID GetAlbedo() const { return m_Albedo; }
 
 	void Bind();
 	void WriteModel(const glm::mat4& model);
@@ -34,8 +34,8 @@ public:
 	static AssetType GetClassAssetType() { return AssetType::Material; }
 
 private:
-	RID m_Shader {};
-	RID m_Albedo {};
+	UUID m_Shader {};
+	UUID m_Albedo {};
 	UniformList m_UniformList {};
 };
 

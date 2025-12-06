@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/core/RID.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
 #include <concepts>
