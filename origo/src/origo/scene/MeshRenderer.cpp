@@ -9,12 +9,4 @@ MeshRenderer::MeshRenderer(Entity* entity, UUID material, UUID mesh)
     , m_Mesh(mesh) {
 }
 
-UUID MeshRenderer::GetMesh() {
-	return m_Mesh;
-}
-
-UUID MeshRenderer::GetMaterial() {
-	return m_Material;
-}
-
 }

@@ -9,23 +9,21 @@
 namespace Origo {
 
 struct UUID {
-	UUID(bool isBadUuid = false)
-	    : m_IsBadUuid(isBadUuid) {
+	UUID() = delete;
+
+	static UUID Generate() {
 		static std::random_device rd;
 		static std::mt19937_64 gen(rd());
-		if (!isBadUuid) {
-			m_High = gen();
-			m_Low = gen();
-		} else {
-			m_High = 0;
-			m_Low = 0;
-		}
+
+		auto high = gen();
+		auto low = gen();
+
+		return UUID(low, high);
 	}
 
-	UUID(uint64_t high, uint64_t low)
-	    : m_High(high)
-	    , m_Low(low)
-	    , m_IsBadUuid(false) { }
+	static UUID Bad() {
+		return UUID(0, 0, true);
+	}
 
 	bool operator==(const UUID& other) const noexcept {
 		return m_High == other.m_High && m_Low == other.m_Low;
@@ -55,12 +53,18 @@ struct UUID {
 
 	uint64_t GetHigh() const { return m_High; }
 	uint64_t GetLow() const { return m_Low; }
-	bool IsBad() { return m_IsBadUuid; }
+	bool IsBad() { return m_IsBad; }
+
+private:
+	UUID(uint64_t high, uint64_t low, bool isBad = false)
+	    : m_High(high)
+	    , m_Low(low)
+	    , m_IsBad(isBad) { }
 
 private:
 	uint64_t m_High;
 	uint64_t m_Low;
-	bool m_IsBadUuid;
+	bool m_IsBad;
 };
 }
 

@@ -54,7 +54,7 @@ void RenderContext::Flush(Camera* camera) {
 	});
 
 	Material* currentMaterial {};
-	UUID currentMaterialId {};
+	UUID currentMaterialId { UUID::Bad() };
 
 	m_Buffer->Bind();
 

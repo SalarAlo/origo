@@ -1,18 +1,18 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetMetadata.h"
+#include "origo/assets/AssetDescriptor.h"
+#include <filesystem>
+
 namespace Origo {
 
 class IAssetImporter {
 public:
 	virtual ~IAssetImporter() = default;
 
-	virtual bool CanImport(const std::filesystem::path& path) = 0;
-	virtual AssetType GetAssetType() = 0;
-	virtual void Import(const std::filesystem::path& path, const AssetMetadata& meta) = 0;
-
-private:
+	virtual bool CanImport(const std::filesystem::path& path) const = 0;
+	virtual AssetType GetAssetType() const = 0;
+	virtual Scope<Asset> Import(const std::filesystem::path& path, const AssetDescriptor& meta) = 0;
 };
 
 }

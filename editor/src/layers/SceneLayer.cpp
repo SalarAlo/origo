@@ -24,7 +24,7 @@ SceneLayer::SceneLayer(EditorContext& ctx)
 
 void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett");
-	AssetManager::GetAssetAs<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
+	AssetManager::GetAssetAs<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManager::GetAssetAs<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));

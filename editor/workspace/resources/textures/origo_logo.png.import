@@ -1,0 +1,17 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "origo_logo",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/origo_logo.png",
+                "Type": "Texture",
+                "UUID": "6cc9fe78a1ae58dab56fd0631e44d56b"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/origo_logo.png",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

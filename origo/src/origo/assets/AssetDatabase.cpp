@@ -1,19 +1,35 @@
 #include "origo/assets/AssetDatabase.h"
-#include "magic_enum/magic_enum.hpp"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetSerializer.h"
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
-#include "origo/assets/AssetMetadata.h"
-#include <filesystem>
+#include "magic_enum/magic_enum.hpp"
 
 namespace Origo {
 
-void AssetDatabase::WriteMetadata(const AssetMetadata& meta) {
-	auto path { GetMetadataPath(meta) };
+void AssetDatabase::RegisterMetadata(const AssetDescriptor& meta) {
+	s_Metadata[meta.Id] = meta;
+}
+
+void AssetDatabase::WriteImport(const UUID& id) {
+	auto metaIt = s_Metadata.find(id);
+	if (metaIt == s_Metadata.end()) {
+		ORG_ERROR("AssetDatabase::WriteImport: No metadata for uuid {}", id.ToString());
+		return;
+	}
+
+	Asset* asset = AssetManager::GetAsset(id);
+	if (!asset) {
+		ORG_WARN("Skipping import write: asset '{}' not loaded", id.ToString());
+		return;
+	}
+
+	const AssetDescriptor& meta = metaIt->second;
+	auto path = GetImportPath(meta);
 
 	JsonSerializer serializer { path.string() };
 
+	serializer.BeginObject("Header");
 	serializer.Write("UUID", meta.Id.ToString());
 	serializer.Write("Name", meta.Name);
 	serializer.Write("Type", magic_enum::enum_name(meta.Type));
@@ -21,43 +37,32 @@ void AssetDatabase::WriteMetadata(const AssetMetadata& meta) {
 	serializer.Write("SourcePath", meta.SourcePath.string());
 
 	serializer.BeginArray("Dependencies");
-	for (const auto& dependency : meta.Dependencies) {
-		serializer.Write(dependency.ToString());
+	for (const auto& dep : meta.Dependencies) {
+		serializer.Write(dep.ToString());
 	}
 	serializer.EndArray();
+	serializer.EndObject();
+
+	serializer.BeginObject("Payload");
+	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
+	assetSerializer->Serialize(asset, serializer);
+	serializer.EndObject();
 
 	serializer.SaveToFile();
 }
 
-void AssetDatabase::WriteAssetdata(const UUID& uuid) {
-	auto asset = AssetManager::GetAsset(uuid);
-	if (asset == nullptr) {
-		ORG_INFO("AssetDatabase::WriteAssetdata: Non existent uuid {}", uuid.ToString());
-		return;
-	}
-
-	auto serializer { AssetSerializationSystem::Get(asset->GetAssetType()) };
-	auto path { GetAssetPath(s_Metadata[uuid]) };
-	JsonSerializer backend { path.string() };
-	serializer->Serialize(asset, backend);
-
-	backend.SaveToFile();
-}
-
-void AssetDatabase::RegisterMetadata(const AssetMetadata& meta) {
-	s_Metadata[meta.Id] = meta;
-}
-
-AssetMetadata AssetDatabase::LoadMetadata(const std::filesystem::path& path) {
+AssetDescriptor AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
 	if (!std::filesystem::exists(path)) {
-		ORG_INFO("Provided file {} doesnt exist", path.string());
+		ORG_ERROR("Import file '{}' does not exist", path.string());
 		return {};
 	}
 
 	JsonSerializer backend { path.string() };
 	backend.LoadFile();
 
-	AssetMetadata meta;
+	AssetDescriptor meta;
+
+	backend.BeginObject("Header");
 
 	std::string uuidStr;
 	backend.TryRead("UUID", uuidStr);
@@ -67,67 +72,67 @@ AssetMetadata AssetDatabase::LoadMetadata(const std::filesystem::path& path) {
 
 	std::string typeStr;
 	backend.TryRead("Type", typeStr);
-	if (auto typeOpt = magic_enum::enum_cast<AssetType>(typeStr)) {
-		meta.Type = *typeOpt;
-	} else {
-		ORG_ERROR("Invalid asset type '{}' in metadata '{}'", typeStr, path.string());
-	}
+	if (auto t = magic_enum::enum_cast<AssetType>(typeStr))
+		meta.Type = *t;
 
 	std::string originStr;
 	backend.TryRead("Origin", originStr);
-	if (auto originOpt = magic_enum::enum_cast<AssetOrigin>(originStr)) {
-		meta.Origin = *originOpt;
-	} else {
-		ORG_ERROR("Invalid asset origin '{}' in metadata '{}'", originStr, path.string());
-	}
+	if (auto o = magic_enum::enum_cast<AssetOrigin>(originStr))
+		meta.Origin = *o;
 
-	std::string sourcePath;
-	backend.TryRead("SourcePath", sourcePath);
-	meta.SourcePath = sourcePath;
+	std::string source;
+	backend.TryRead("SourcePath", source);
+	meta.SourcePath = source;
 
 	backend.BeginArray("Dependencies");
-	std::string depStr;
-	while (backend.TryRead("", depStr)) {
-		meta.Dependencies.push_back(UUID::FromString(depStr));
+	std::string dep;
+	while (backend.TryReadArrayElement(dep)) {
+		meta.Dependencies.push_back(UUID::FromString(dep));
 	}
 	backend.EndArray();
+
+	backend.EndObject();
 
 	return meta;
 }
 
-Asset* AssetDatabase::LoadAsset(const UUID& uuid) {
-	auto it { s_Metadata.find(uuid) };
-	if (it == s_Metadata.end()) {
-		ORG_ERROR("AssetDatabase::LoadAsset: No metadata found with uuid {}", uuid.ToString());
+Asset* AssetDatabase::LoadAsset(const UUID& id) {
+	auto metaIt = s_Metadata.find(id);
+	if (metaIt == s_Metadata.end()) {
+		ORG_ERROR("AssetDatabase::LoadAsset: No metadata for uuid {}", id.ToString());
 		return nullptr;
 	}
 
-	const auto& meta { it->second };
-	auto assetPath { GetAssetPath(meta) };
+	const AssetDescriptor& meta = metaIt->second;
+	auto path = GetImportPath(meta);
 
-	JsonSerializer backend { assetPath.string() };
+	JsonSerializer backend { path.string() };
 	backend.LoadFile();
-	auto ser = AssetSerializationSystem::Get(meta.Type);
-	Scope<Asset> asset { ser->Deserialize(backend) };
 
-	auto id { AssetManager::Register(std::move(asset)) };
+	backend.BeginObject("Header");
+	backend.EndObject();
 
-	return AssetManager::GetAsset(id);
+	backend.BeginObject("Payload");
+	auto serializer = AssetSerializationSystem::Get(meta.Type);
+	Scope<Asset> asset = serializer->Deserialize(backend);
+	backend.EndObject();
+
+	auto newId = AssetManager::Register(std::move(asset));
+	return AssetManager::GetAsset(newId);
 }
 
-std::filesystem::path AssetDatabase::GetMetadataPath(const AssetMetadata& meta) {
-	if (!meta.SourcePath.empty()) {
-		return meta.SourcePath.string() + ".meta";
+void AssetDatabase::SaveAll() {
+	for (const auto& [id, _] : s_Metadata) {
+		WriteImport(id);
 	}
-
-	return ROOT / "generated" / (meta.Id.ToString() + ".meta");
 }
-std::filesystem::path AssetDatabase::GetAssetPath(const AssetMetadata& meta) {
+
+std::filesystem::path AssetDatabase::GetImportPath(const AssetDescriptor& meta) {
 	if (!meta.SourcePath.empty()) {
-		return meta.SourcePath.string() + ".asset";
+		return meta.SourcePath.string() + ".import";
 	}
 
-	return ROOT / "generated" / (meta.Id.ToString() + ".asset");
+	return ROOT / "generated" / (meta.Id.ToString() + ".import");
 }
 
 }

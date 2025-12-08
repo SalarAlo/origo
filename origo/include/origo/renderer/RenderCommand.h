@@ -11,7 +11,7 @@ public:
 	Transform* GetTransform() const;
 
 private:
-	UUID m_Mesh {};
+	UUID m_Mesh;
 	UUID m_Material;
 	Transform* m_Transform;
 };

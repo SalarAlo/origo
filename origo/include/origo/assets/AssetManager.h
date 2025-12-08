@@ -17,13 +17,13 @@ class AssetManager {
 private:
 	struct Record {
 		Scope<Asset> AssetPtr {};
-		UUID Uuid {};
+		UUID Uuid { UUID::Bad() };
 	};
 
 public:
 	static Asset* GetAsset(const UUID& id);
 	static UUID Register(Scope<Asset>&& asset, const UUID* uuid = nullptr) {
-		UUID id { (uuid ? *uuid : UUID {}) };
+		UUID id { (uuid ? *uuid : UUID::Generate()) };
 		Record rec { .AssetPtr = std::move(asset), .Uuid = id };
 
 		s_Records[rec.Uuid] = std::move(rec);

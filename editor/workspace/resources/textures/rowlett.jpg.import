@@ -1,0 +1,17 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "rowlett",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/rowlett.jpg",
+                "Type": "Texture",
+                "UUID": "ff23ac1a2e137fb2426d4e666cdd9c40"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/rowlett.jpg",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

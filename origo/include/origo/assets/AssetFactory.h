@@ -2,7 +2,7 @@
 
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/AssetMetadata.h"
+#include "origo/assets/AssetDescriptor.h"
 #include "origo/assets/AssetEvents.h"
 #include "origo/core/UUID.h"
 
@@ -15,10 +15,10 @@ public:
 public:
 	template <AssetConcept T, typename... Args>
 	static UUID CreateAsset(const std::string& name, Args&&... args) {
-		UUID id {};
+		UUID id { UUID::Generate() };
 		AssetType type = T::GetClassAssetType();
 
-		AssetMetadata meta {};
+		AssetDescriptor meta {};
 		meta.Name = name;
 		meta.Id = id;
 		meta.Type = type;

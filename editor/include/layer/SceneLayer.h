@@ -22,8 +22,8 @@ private:
 	static constexpr int GRID_SIZE { 20 };
 	EditorContext& m_Context;
 
-	Origo::UUID m_Shader;
-	Origo::UUID m_Texture;
+	Origo::UUID m_Shader { Origo::UUID::Bad() };
+	Origo::UUID m_Texture { Origo::UUID::Bad() };
 };
 
 }

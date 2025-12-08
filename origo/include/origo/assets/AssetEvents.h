@@ -1,20 +1,20 @@
 #pragma once
 
 #include "origo/core/Action.h"
-#include "origo/assets/AssetMetadata.h"
+#include "origo/assets/AssetDescriptor.h"
 
 namespace Origo {
 
 class AssetEvents {
 public:
 	// When a new asset entry is created (metadata exists)
-	inline static Action<void, const AssetMetadata&> OnAssetCreated {};
+	inline static Action<void, const AssetDescriptor&> OnAssetCreated {};
 
 	// When an asset's serialized data changes (.asset updated)
-	inline static Action<void, const AssetMetadata&> OnAssetModified {};
+	inline static Action<void, const AssetDescriptor&> OnAssetModified {};
 
 	// When an asset is removed (metadata + .asset deleted)
-	inline static Action<void, const AssetMetadata&> OnAssetDeleted {};
+	inline static Action<void, const AssetDescriptor&> OnAssetDeleted {};
 
 public:
 	AssetEvents() = default;

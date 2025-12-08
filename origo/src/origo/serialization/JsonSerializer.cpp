@@ -38,6 +38,29 @@
 
 namespace Origo {
 
+template <typename T>
+static bool TryReadArrayElementImpl(std::stack<JsonStackEntry>& stack, T& value) {
+	if (stack.empty())
+		return false;
+
+	JsonStackEntry& entry = stack.top();
+	nlohmann::json* j = entry.Json;
+
+	if (!j || !j->is_array())
+		return false;
+
+	if (entry.Index >= j->size())
+		return false;
+
+	try {
+		value = (*j)[entry.Index].get<T>();
+		++entry.Index;
+		return true;
+	} catch (...) {
+		return false;
+	}
+}
+
 JsonSerializer::JsonSerializer(std::string_view name)
     : ISerializer(name) {
 	m_Root = nlohmann::json::object();
@@ -126,7 +149,7 @@ void JsonSerializer::BeginArray(std::string_view key) {
 	if (!newArr.is_array())
 		newArr = nlohmann::json::array();
 
-	m_ObjectsStack.push({ &newArr });
+	m_ObjectsStack.push({ &newArr, false, 0 });
 }
 
 void JsonSerializer::BeginArrayElement() {
@@ -172,6 +195,18 @@ void JsonSerializer::EndArrayElement() {
 			m_ObjectsStack.pop();
 		m_ObjectsStack.push({ &m_Root });
 	}
+}
+
+bool JsonSerializer::TryReadArrayElement(int& value) {
+	return TryReadArrayElementImpl(m_ObjectsStack, value);
+}
+
+bool JsonSerializer::TryReadArrayElement(float& value) {
+	return TryReadArrayElementImpl(m_ObjectsStack, value);
+}
+
+bool JsonSerializer::TryReadArrayElement(std::string& value) {
+	return TryReadArrayElementImpl(m_ObjectsStack, value);
 }
 
 JSON_DEF_WRITE_SERIALIZATION_FN(std::string_view)

@@ -33,6 +33,10 @@ public:
 	virtual bool TryRead(std::string_view key, float& value) = 0;
 	virtual bool TryRead(std::string_view key, std::string& value) = 0;
 
+	virtual bool TryReadArrayElement(int& value) = 0;
+	virtual bool TryReadArrayElement(float& value) = 0;
+	virtual bool TryReadArrayElement(std::string& value) = 0;
+
 protected:
 	std::string m_Path;
 };
@@ -60,6 +64,10 @@ protected:
                                                                            \
 	bool TryRead(std::string_view key, int& value) override;           \
 	bool TryRead(std::string_view key, float& value) override;         \
-	bool TryRead(std::string_view key, std::string& value) override;
+	bool TryRead(std::string_view key, std::string& value) override;   \
+                                                                           \
+	bool TryReadArrayElement(int& value) override;                     \
+	bool TryReadArrayElement(float& value) override;                   \
+	bool TryReadArrayElement(std::string& value) override;
 
 }

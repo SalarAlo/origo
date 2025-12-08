@@ -1,8 +1,0 @@
-{
-        "Dependencies": [],
-        "Name": "normal",
-        "Origin": "Imported",
-        "SourcePath": "./resources/shaders/normal.glsl",
-        "Type": "Shader",
-        "UUID": "1253d037e35717de50101a668b5575db"
-}

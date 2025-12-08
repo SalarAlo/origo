@@ -17,11 +17,16 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 }
 
 Scope<Asset> MaterialSerializer::Deserialize(ISerializer& backend) const {
-	std::string albedoUuid {};
-	std::string shaderUuid {};
+	std::string albedoUuidStr {};
+	std::string shaderUuidStr {};
 
-	backend.TryRead("albedo", albedoUuid);
-	backend.Write("shader", shaderUuid);
+	backend.TryRead("albedo", albedoUuidStr);
+	backend.TryRead("shader", shaderUuidStr);
+
+	auto albedoUuid { UUID::FromString(albedoUuidStr) };
+	auto shaderUuid { UUID::FromString(shaderUuidStr) };
+
+	return MakeScope<Material>(albedoUuid, shaderUuid);
 }
 
 }

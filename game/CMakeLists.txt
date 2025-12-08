@@ -17,3 +17,7 @@ add_custom_command(TARGET OrigoGame POST_BUILD
         $<TARGET_FILE_DIR:OrigoGame>
 )
 
+target_include_directories(OrigoGame
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)

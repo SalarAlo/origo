@@ -1,0 +1,17 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "Rowlett",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Texture",
+                "UUID": "c86f6778baa1727c2c7c9905ed27dcdf"
+        },
+        "Payload": {
+                "source": {
+                        "path": "resources/textures/dirt.jpg",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

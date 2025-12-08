@@ -8,6 +8,7 @@ namespace Origo {
 
 class Material : public Asset {
 public:
+	Material() = default;
 	Material(UUID shader, UUID material);
 
 	UUID GetShader() const { return m_Shader; }
@@ -34,8 +35,8 @@ public:
 	static AssetType GetClassAssetType() { return AssetType::Material; }
 
 private:
-	UUID m_Shader {};
-	UUID m_Albedo {};
+	UUID m_Shader { UUID::Bad() };
+	UUID m_Albedo { UUID::Bad() };
 	UniformList m_UniformList {};
 };
 

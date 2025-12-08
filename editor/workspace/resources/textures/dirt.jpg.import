@@ -1,0 +1,17 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "dirt",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/dirt.jpg",
+                "Type": "Texture",
+                "UUID": "67f1780dc2dc421c6fccd5b4cc04c672"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/dirt.jpg",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

@@ -9,16 +9,20 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
+	MeshRenderer(Entity* entity);
 	MeshRenderer(Entity* entity, UUID material, UUID mesh);
-
-	UUID GetMesh();
-	UUID GetMaterial();
 
 	std::string GetName() const override { return "MeshRenderer"; }
 
+	UUID GetMesh() const { return m_Mesh; }
+	UUID GetMaterial() const { return m_Material; }
+
+	void SetMesh(const UUID& uuid) { m_Mesh = uuid; }
+	void SetMaterial(const UUID& uuid) { m_Mesh = uuid; }
+
 private:
-	UUID m_Material {};
-	UUID m_Mesh {};
+	UUID m_Material { UUID::Bad() };
+	UUID m_Mesh { UUID::Bad() };
 };
 
 }
