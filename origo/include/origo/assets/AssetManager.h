@@ -2,6 +2,7 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/core/UUID.h"
+#include <string_view>
 
 namespace Origo {
 
@@ -10,28 +11,17 @@ concept AssetConcept = std::derived_from<T, Asset> && requires(T t) {
 	{ t.GetClassAssetType() } -> std::same_as<AssetType>;
 };
 
-// note that i kepp a lot of systems that are basically singletons
-// as classes and not namespaces because i wanna switch to instance
-// based when the time arrives
 class AssetManager {
 private:
 	struct Record {
 		Scope<Asset> AssetPtr {};
 		UUID Uuid { UUID::Bad() };
+		std::string Path { "" };
 	};
 
 public:
-	static Asset* GetAsset(const UUID& id);
-	static UUID Register(Scope<Asset>&& asset, const UUID* uuid = nullptr) {
-		UUID id { (uuid ? *uuid : UUID::Generate()) };
-		Record rec { .AssetPtr = std::move(asset), .Uuid = id };
-
-		s_Records[rec.Uuid] = std::move(rec);
-		return id;
-	}
-
 	template <AssetConcept T>
-	static T* GetAssetAs(const UUID& id) {
+	static T* Get(const UUID& id) {
 		auto it { s_Records.find(id) };
 
 		if (it == s_Records.end()) {
@@ -49,9 +39,16 @@ public:
 		return static_cast<T*>(base);
 	}
 
+	static UUID Register(Scope<Asset>&& asset, const UUID* uuid = nullptr, const std::string& path = "");
+
+	static Asset* Get(const UUID& id);
+	static UUID GetAssetByPath(const std::string& view);
+	static bool HasAssetWithPath(const std::string& view);
+
 	static const std::unordered_map<UUID, Record>& GetRecords() { return s_Records; }
 
 private:
 	inline static std::unordered_map<UUID, Record> s_Records {};
+	inline static std::unordered_map<std::string, UUID> s_PathToAsset {};
 };
 }

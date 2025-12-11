@@ -18,7 +18,7 @@ void AssetDatabase::WriteImport(const UUID& id) {
 		return;
 	}
 
-	Asset* asset = AssetManager::GetAsset(id);
+	Asset* asset = AssetManager::Get(id);
 	if (!asset) {
 		ORG_WARN("Skipping import write: asset '{}' not loaded", id.ToString());
 		return;
@@ -118,7 +118,7 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 	backend.EndObject();
 
 	auto newId = AssetManager::Register(std::move(asset));
-	return AssetManager::GetAsset(newId);
+	return AssetManager::Get(newId);
 }
 
 void AssetDatabase::SaveAll() {

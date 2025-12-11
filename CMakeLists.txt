@@ -11,6 +11,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Ensure all targets (even static libs) are compiled with -fPIC
 # This is essential when linking static libs into shared libs (.so)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG")
 
 # Output directories
 set(output_dir ${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME})
@@ -51,6 +55,9 @@ add_subdirectory(vendor/assimp)
 # GLAD (static but PIC-safe)
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)
+
+# nanosvg
+include_directories(vendor/nanosvg/src)
 
 # Ensure glad uses -fPIC if ever linked into shared libs
 set_target_properties(glad PROPERTIES POSITION_INDEPENDENT_CODE ON)

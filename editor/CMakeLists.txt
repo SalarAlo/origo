@@ -7,6 +7,7 @@ add_executable(OrigoEditor ${EDITOR_SOURCES})
 target_link_libraries(OrigoEditor PRIVATE OrigoEngine)
 target_include_directories(OrigoEditor  PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/vendor/nanosvg/src
 )
 
 target_precompile_headers(OrigoEditor PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)

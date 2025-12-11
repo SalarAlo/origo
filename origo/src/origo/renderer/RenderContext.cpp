@@ -11,9 +11,9 @@ namespace Origo {
 static std::hash<UUID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-	auto material = AssetManager::GetAssetAs<Material>(cmd.GetMaterial());
-	auto mesh = AssetManager::GetAssetAs<Mesh>(cmd.GetMesh());
-	auto shader = AssetManager::GetAssetAs<Shader>(material->GetShader());
+	auto material = AssetManager::Get<Material>(cmd.GetMaterial());
+	auto mesh = AssetManager::Get<Mesh>(cmd.GetMesh());
+	auto shader = AssetManager::Get<Shader>(material->GetShader());
 
 	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
 
@@ -49,9 +49,10 @@ void RenderContext::Submit(const UUID& mesh, const UUID& material, Transform* tr
 void RenderContext::Flush(Camera* camera) {
 	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
-	std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
-		return a.GetMaterial().ToString() < b.GetMaterial().ToString();
-	});
+	// CRAZY |
+	// std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
+	//	return a.GetMaterial().ToString() < b.GetMaterial().ToString();
+	// });
 
 	Material* currentMaterial {};
 	UUID currentMaterialId { UUID::Bad() };
@@ -63,7 +64,7 @@ void RenderContext::Flush(Camera* camera) {
 
 	for (auto& cmd : m_DrawQueue) {
 		if (cmd.GetMaterial() != currentMaterialId) {
-			auto material { AssetManager::GetAssetAs<Material>(cmd.GetMaterial()) };
+			auto material { AssetManager::Get<Material>(cmd.GetMaterial()) };
 			material->Bind();
 
 			currentMaterial = material;

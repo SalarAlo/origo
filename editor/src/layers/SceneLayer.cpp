@@ -24,10 +24,10 @@ SceneLayer::SceneLayer(EditorContext& ctx)
 
 void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett");
-	AssetManager::GetAssetAs<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
+	AssetManager::Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
-	AssetManager::GetAssetAs<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
+	AssetManager::Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
 	SpawnTestGrid();
 }
@@ -36,7 +36,7 @@ void SceneLayer::OnEvent(Event& e) {
 }
 
 void SceneLayer::OnUpdate(double dt) {
-	auto shader { AssetManager::GetAssetAs<Shader>(m_Shader) };
+	auto shader { AssetManager::Get<Shader>(m_Shader) };
 	shader->UseProgram();
 
 	float time = Time::GetTimeSinceStart().count();
@@ -75,7 +75,7 @@ void SceneLayer::SpawnTestGrid() {
 		AssetFactory::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
 	};
 
-	auto material { AssetManager::GetAssetAs<Material>(materialId) };
+	auto material { AssetManager::Get<Material>(materialId) };
 
 	for (int i = 0; i < GRID_SIZE; ++i) {
 		for (int j = 0; j < GRID_SIZE; ++j) {

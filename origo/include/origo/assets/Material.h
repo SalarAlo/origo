@@ -20,7 +20,7 @@ public:
 
 	template <typename T>
 	Material& SetShaderDirectly(std::string_view name, const T& val) {
-		auto shader { AssetManager::GetAssetAs<Shader>(m_Shader) };
+		auto shader { AssetManager::Get<Shader>(m_Shader) };
 		shader->SetUniform(name, val);
 		return *this;
 	}

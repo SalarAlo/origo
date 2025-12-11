@@ -23,7 +23,7 @@ void Texture::SetSource(Scope<TextureSource> src) {
 
 void Texture::LoadCPU() {
 	if (!m_Source) {
-		ORG_ERROR("[Texture] LoadCPU failed: No TextureSource assigned");
+		ORG_ERROR("Texture::LoadCPU: No TextureSource assigned");
 		return;
 	}
 
@@ -35,7 +35,7 @@ void Texture::LoadCPU() {
 		int width = 0, height = 0, channels = 0;
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		if (!data) {
-			ORG_ERROR("[Texture] Failed to load image: {}", path);
+			ORG_ERROR("Texture::LoadCPU: failed to load image {}", path);
 			return;
 		}
 
@@ -45,7 +45,7 @@ void Texture::LoadCPU() {
 		return;
 	}
 
-	ORG_ERROR("[Texture] LoadCPU failed: Unsupported TextureSource type");
+	ORG_ERROR("Texture::LoadCPU: Unsupported TextureSource type");
 }
 
 void Texture::LoadGPU() {
@@ -85,11 +85,11 @@ void Texture::Bind(UUID shaderId) const {
 	const_cast<Texture*>(this)->LoadGPU();
 
 	if (m_TextureId == 0) {
-		ORG_ERROR("[Texture] Bind failed: GPU texture not initialized");
+		ORG_ERROR("Texture::Bind: GPU texture not initialized");
 		return;
 	}
 
-	auto shader = AssetManager::GetAssetAs<Shader>(shaderId);
+	auto shader = AssetManager::Get<Shader>(shaderId);
 	int slot = static_cast<int>(m_TextureType);
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));

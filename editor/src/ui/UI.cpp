@@ -6,18 +6,24 @@
 namespace OrigoEditor::UI {
 
 struct EditorPalette {
-	ImVec4 bg { 0.11f, 0.11f, 0.11f, 1.00f };
-	ImVec4 bgWindow { 0.14f, 0.14f, 0.14f, 1.00f };
-	ImVec4 bgFrame { 0.18f, 0.18f, 0.18f, 1.00f };
-	ImVec4 bgHover { 0.24f, 0.24f, 0.24f, 1.00f };
-	ImVec4 bgActive { 0.30f, 0.30f, 0.30f, 1.00f };
+	ImVec4 bg { 0.090f, 0.090f, 0.090f, 1.00f };
+	ImVec4 bgWindow { 0.115f, 0.115f, 0.115f, 1.00f };
+	ImVec4 bgFrame { 0.145f, 0.145f, 0.145f, 1.00f };
+	ImVec4 bgHover { 0.195f, 0.195f, 0.195f, 1.00f };
+	ImVec4 bgActive { 0.250f, 0.250f, 0.250f, 1.00f };
 
-	ImVec4 accent { 0.45f, 0.55f, 0.65f, 1.00f };
+	ImVec4 dockBg { 0.090f, 0.090f, 0.090f, 1.00f };
 
-	ImVec4 text { 0.92f, 0.92f, 0.92f, 1.00f };
-	ImVec4 textDim { 0.60f, 0.60f, 0.60f, 1.00f };
+	ImVec4 accent { 0.22f, 0.45f, 0.78f, 1.00f };
+	ImVec4 accentSoft { 0.18f, 0.34f, 0.55f, 1.00f };
+	ImVec4 accentError { 0.82f, 0.25f, 0.25f, 1.00f };
+	ImVec4 selection { 0.18f, 0.34f, 0.55f, 0.35f };
 
-	ImVec4 border { 0.05f, 0.05f, 0.05f, 1.00f };
+	ImVec4 text { 0.88f, 0.88f, 0.88f, 1.00f };
+	ImVec4 textDim { 0.50f, 0.50f, 0.50f, 1.00f };
+
+	ImVec4 border { 0.06f, 0.06f, 0.06f, 1.00f };
+	ImVec4 borderStrong { 0.12f, 0.12f, 0.12f, 1.00f };
 };
 
 void ApplyEditorStyle() {
@@ -26,8 +32,8 @@ void ApplyEditorStyle() {
 
 	static const EditorPalette p;
 
-	c[ImGuiCol_WindowBg] = p.bg;
-	c[ImGuiCol_ChildBg] = p.bgWindow;
+	c[ImGuiCol_WindowBg] = p.bgWindow;
+	c[ImGuiCol_ChildBg] = p.bg;
 	c[ImGuiCol_PopupBg] = p.bgWindow;
 
 	c[ImGuiCol_Border] = p.border;
@@ -39,6 +45,7 @@ void ApplyEditorStyle() {
 
 	c[ImGuiCol_TitleBg] = p.bgFrame;
 	c[ImGuiCol_TitleBgActive] = p.bgFrame;
+	c[ImGuiCol_TitleBgCollapsed] = p.bg;
 	c[ImGuiCol_MenuBarBg] = p.bgFrame;
 
 	c[ImGuiCol_Header] = p.bgFrame;
@@ -58,7 +65,7 @@ void ApplyEditorStyle() {
 	c[ImGuiCol_Text] = p.text;
 	c[ImGuiCol_TextDisabled] = p.textDim;
 
-	c[ImGuiCol_Separator] = p.border;
+	c[ImGuiCol_Separator] = p.borderStrong;
 	c[ImGuiCol_SeparatorHovered] = p.bgHover;
 	c[ImGuiCol_SeparatorActive] = p.bgActive;
 
@@ -67,13 +74,28 @@ void ApplyEditorStyle() {
 	c[ImGuiCol_ScrollbarGrabHovered] = p.bgHover;
 	c[ImGuiCol_ScrollbarGrabActive] = p.bgActive;
 
-	c[ImGuiCol_SliderGrab] = p.bgActive;
-	c[ImGuiCol_SliderGrabActive] = p.bgHover;
+	c[ImGuiCol_SliderGrab] = p.accentSoft;
+	c[ImGuiCol_SliderGrabActive] = p.accent;
 
 	c[ImGuiCol_CheckMark] = p.accent;
 	c[ImGuiCol_ResizeGrip] = p.bgFrame;
 	c[ImGuiCol_ResizeGripHovered] = p.bgHover;
 	c[ImGuiCol_ResizeGripActive] = p.bgActive;
+
+	c[ImGuiCol_TextSelectedBg] = p.selection;
+	c[ImGuiCol_DockingPreview] = p.accentSoft;
+	c[ImGuiCol_DockingEmptyBg] = p.dockBg;
+
+	c[ImGuiCol_TableHeaderBg] = p.bgFrame;
+	c[ImGuiCol_TableBorderStrong] = p.borderStrong;
+	c[ImGuiCol_TableBorderLight] = p.border;
+	c[ImGuiCol_TableRowBg] = ImVec4(p.bgWindow.x, p.bgWindow.y, p.bgWindow.z, 1.00f);
+	c[ImGuiCol_TableRowBgAlt] = ImVec4(p.bgFrame.x, p.bgFrame.y, p.bgFrame.z, 1.00f);
+
+	c[ImGuiCol_NavHighlight] = p.accentSoft;
+	c[ImGuiCol_NavWindowingHighlight] = ImVec4(p.accent.x, p.accent.y, p.accent.z, 0.40f);
+	c[ImGuiCol_NavWindowingDimBg] = ImVec4(0, 0, 0, 0.35f);
+	c[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.50f);
 
 	style.WindowRounding = 0.0f;
 	style.ChildRounding = 0.0f;
@@ -97,10 +119,8 @@ void ApplyEditorStyle() {
 
 void LoadEditorFont() {
 	ImGuiIO& io = ImGui::GetIO();
-
 	io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/Inter.ttf", 16.0f);
 	io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 15.0f);
-
 	IM_ASSERT(io.FontDefault);
 }
 
@@ -146,10 +166,8 @@ void DrawMenuBar(PanelManager& manager) {
 		ImGui::MenuItem("New Scene");
 		ImGui::MenuItem("Open Scene...");
 		ImGui::MenuItem("Save Scene");
-		if (ImGui::MenuItem("Save Generated Assets")) {
+		if (ImGui::MenuItem("Save Generated Assets"))
 			Origo::AssetDatabase::SaveAll();
-		}
-
 		ImGui::Separator();
 		ImGui::EndMenu();
 	}

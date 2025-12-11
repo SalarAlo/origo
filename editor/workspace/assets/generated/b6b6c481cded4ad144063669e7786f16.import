@@ -1,0 +1,14 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "Cube_Material",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Material",
+                "UUID": "b6b6c481cded4ad144063669e7786f16"
+        },
+        "Payload": {
+                "albedo": "7b1c97caa68b10293c770d8818755ebb",
+                "shader": "6a394e785b69e4f4ea9ed5c3c8e494f9"
+        }
+}

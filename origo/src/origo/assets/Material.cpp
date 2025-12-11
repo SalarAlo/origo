@@ -11,7 +11,7 @@ Material::Material(UUID shader, UUID material)
     , m_Albedo(material) {
 	if (m_Albedo.IsBad())
 		return;
-	auto albedo { AssetManager::GetAssetAs<Texture>(m_Albedo) };
+	auto albedo { AssetManager::Get<Texture>(m_Albedo) };
 	if (albedo->GetTextureType() != TextureType::Albedo) {
 		ORG_CORE_ERROR(
 		    "[Material] Expected a Texture Type of Albedo. Received a Texture Type of {}",
@@ -20,18 +20,18 @@ Material::Material(UUID shader, UUID material)
 }
 
 void Material::Bind() {
-	auto shader { AssetManager::GetAssetAs<Shader>(m_Shader) };
+	auto shader { AssetManager::Get<Shader>(m_Shader) };
 	shader->UseProgram();
 	m_UniformList.UploadAll(shader);
 
 	if (!m_Albedo.IsBad()) {
-		auto albedo { AssetManager::GetAssetAs<Texture>(m_Albedo) };
+		auto albedo { AssetManager::Get<Texture>(m_Albedo) };
 		albedo->Bind(m_Shader);
 	}
 }
 
 void Material::WriteModel(const glm::mat4& modelMatrix) {
-	auto shader { AssetManager::GetAssetAs<Shader>(m_Shader) };
+	auto shader { AssetManager::Get<Shader>(m_Shader) };
 	shader->SetUniform("u_ModelMatrix", modelMatrix);
 }
 }

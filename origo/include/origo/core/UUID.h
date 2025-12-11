@@ -9,7 +9,10 @@
 namespace Origo {
 
 struct UUID {
-	UUID() = delete;
+	UUID()
+	    : m_Low(0)
+	    , m_High(0)
+	    , m_IsBad(true) { };
 
 	static UUID Generate() {
 		static std::random_device rd;
