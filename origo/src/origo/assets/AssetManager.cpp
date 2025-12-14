@@ -8,8 +8,8 @@ Asset* AssetManager::Get(const UUID& id) {
 	return it != s_Records.end() ? it->second.AssetPtr.get() : nullptr;
 }
 
-UUID AssetManager::Register(Scope<Asset>&& asset, const UUID* uuid, const std::string& path) {
-	UUID id { (uuid ? *uuid : UUID::Generate()) };
+UUID AssetManager::Register(Scope<Asset>&& asset, std::optional<UUID> uuid, const std::string& path) {
+	UUID id { (uuid.has_value() ? uuid.value() : UUID::Generate()) };
 	Record rec { .AssetPtr = std::move(asset), .Uuid = id };
 	if (!path.empty()) {
 		rec.Path = path;

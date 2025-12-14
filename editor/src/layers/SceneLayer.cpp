@@ -27,7 +27,7 @@ void SceneLayer::OnAttach() {
 	AssetManager::Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
-	AssetManager::Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
+	AssetManager::Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/gradient.glsl"));
 
 	SpawnTestGrid();
 }
@@ -69,14 +69,15 @@ void SceneLayer::SpawnTestGrid() {
 	    data.Indices.data(),
 	    data.Indices.size());
 
-	auto cubeMesh = AssetFactory::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
+	auto cubeMeshHandle = AssetFactory::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
 
-	auto materialId {
+	auto materialHandle {
 		AssetFactory::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
 	};
 
-	auto material { AssetManager::Get<Material>(materialId) };
+	auto material { AssetManager::Get<Material>(materialHandle) };
 
+	constexpr int GRID_SIZE { 50 };
 	for (int i = 0; i < GRID_SIZE; ++i) {
 		for (int j = 0; j < GRID_SIZE; ++j) {
 			auto entity = m_Context.Scene.CreateEntity("Cube_" + std::to_string(i * GRID_SIZE + j));
@@ -85,7 +86,7 @@ void SceneLayer::SpawnTestGrid() {
 			transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
 			transform->SetScale(glm::vec3 { 0.7f });
 
-			m_Context.Scene.AddComponent<MeshRenderer>(entity, materialId, cubeMesh);
+			m_Context.Scene.AddComponent<MeshRenderer>(entity, materialHandle, cubeMeshHandle);
 		}
 	}
 }

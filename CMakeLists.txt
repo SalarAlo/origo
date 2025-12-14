@@ -56,11 +56,17 @@ add_subdirectory(vendor/assimp)
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)
 
-# nanosvg
+# NANOSVG
 include_directories(vendor/nanosvg/src)
 
 # Ensure glad uses -fPIC if ever linked into shared libs
 set_target_properties(glad PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+# ANKERL / unordered_dense (header-only)
+add_library(ankerl_unordered_dense INTERFACE)
+target_include_directories(ankerl_unordered_dense INTERFACE
+    ${CMAKE_SOURCE_DIR}/vendor/ankerl/include
+)
 
 # MAGIC_ENUM
 include_directories(vendor/magic_enum/include)

@@ -14,18 +14,12 @@ FrameBuffer::~FrameBuffer() {
 }
 
 void FrameBuffer::Destroy() {
-	if (!m_ColorTex.empty()) {
-		glDeleteTextures((GLsizei)m_ColorTex.size(), m_ColorTex.data());
-		m_ColorTex.clear();
-	}
-	if (m_DepthTex) {
-		glDeleteTextures(1, &m_DepthTex);
-		m_DepthTex = 0;
-	}
-	if (m_FBO) {
-		glDeleteFramebuffers(1, &m_FBO);
-		m_FBO = 0;
-	}
+	glDeleteTextures((GLsizei)m_ColorTex.size(), m_ColorTex.data());
+	glDeleteTextures(1, &m_DepthTex);
+	glDeleteFramebuffers(1, &m_FBO);
+
+	m_DepthTex = m_FBO = 0;
+	m_ColorTex.clear();
 }
 
 void FrameBuffer::Invalidate() {

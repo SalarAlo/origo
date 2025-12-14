@@ -15,6 +15,7 @@ public:
 private:
 	bool m_Handled {};
 };
+
 template <typename T>
 concept EventTypeConcept = std::derived_from<T, Event>;
 

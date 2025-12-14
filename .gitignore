@@ -1,5 +1,6 @@
 # Ignore the entire build directory
 /build/
+/notes/
 
 # Common CMake-generated files
 CMakeCache.txt

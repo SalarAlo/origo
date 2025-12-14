@@ -30,7 +30,7 @@ public:
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
 
-		AssetManager::Register(std::move(asset), &id);
+		AssetManager::Register(std::move(asset), id);
 
 		return id;
 	}

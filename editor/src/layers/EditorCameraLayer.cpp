@@ -28,7 +28,7 @@ void EditorCameraLayer::OnUpdate(double dt) {
 		direction -= m_Camera->GetRight();
 
 	if (glm::length(direction) > 0.0f)
-		m_Camera->Move(direction * static_cast<float>(dt) * speed);
+		m_Camera->Move(direction * speed);
 }
 
 void EditorCameraLayer::OnEvent(Origo::Event& e) {

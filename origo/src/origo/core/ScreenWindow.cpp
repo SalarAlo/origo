@@ -7,6 +7,7 @@
 #include "origo/input/Input.h"
 #include "origo/renderer/GlDebug.h"
 
+#include <GL/gl.h>
 #include <cassert>
 #include <stdexcept>
 
@@ -33,6 +34,9 @@ void ScreenWindow::InitGlfw() {
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	glfwWindowHint(GLFW_SAMPLES, 4);
 }
 
 void ScreenWindow::InitGlad() {
@@ -49,10 +53,12 @@ void ScreenWindow::InitGlad() {
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
-	GLCall(glEnable(GL_CULL_FACE));
-	GLCall(glFrontFace(GL_CW));
-	GLCall(glCullFace(GL_FRONT));
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
 	GLCall(glDepthFunc(GL_LESS));
+
+	GLCall(glEnable(GL_MULTISAMPLE));
 	GLCall(glClearColor(0, 0, 0, 1));
 }
 

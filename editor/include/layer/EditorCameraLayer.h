@@ -16,7 +16,7 @@ public:
 private:
 	Origo::Camera* m_Camera;
 
-	static constexpr float NORMAL_SPEED = 10.0f;
+	static constexpr float NORMAL_SPEED = .2f;
 	static constexpr float FAST_SPEED = NORMAL_SPEED * 5.0f;
 };
 }

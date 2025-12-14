@@ -5,6 +5,7 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
+
 Material::Material(UUID shader, UUID material)
     : m_UniformList()
     , m_Shader(shader)
@@ -34,4 +35,5 @@ void Material::WriteModel(const glm::mat4& modelMatrix) {
 	auto shader { AssetManager::Get<Shader>(m_Shader) };
 	shader->SetUniform("u_ModelMatrix", modelMatrix);
 }
+
 }

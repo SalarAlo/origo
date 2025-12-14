@@ -1,8 +1,10 @@
 #pragma once
 
+#include <ankerl/unordered_dense.h>
+#include <optional>
+
 #include "origo/assets/Asset.h"
 #include "origo/core/UUID.h"
-#include <string_view>
 
 namespace Origo {
 
@@ -39,7 +41,7 @@ public:
 		return static_cast<T*>(base);
 	}
 
-	static UUID Register(Scope<Asset>&& asset, const UUID* uuid = nullptr, const std::string& path = "");
+	static UUID Register(Scope<Asset>&& asset, std::optional<UUID> uuid = std::nullopt, const std::string& path = "");
 
 	static Asset* Get(const UUID& id);
 	static UUID GetAssetByPath(const std::string& view);

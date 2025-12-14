@@ -31,6 +31,7 @@ target_link_libraries(OrigoEngine PUBLIC
     Threads::Threads
     spdlog_header_only
     nlohmann_json::nlohmann_json
+    ankerl_unordered_dense
 
     ZLIB::ZLIB
 

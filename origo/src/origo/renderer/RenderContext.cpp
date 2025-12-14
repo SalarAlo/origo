@@ -59,7 +59,7 @@ void RenderContext::Flush(Camera* camera) {
 
 	m_Buffer->Bind();
 
-	GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
+	// GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	for (auto& cmd : m_DrawQueue) {

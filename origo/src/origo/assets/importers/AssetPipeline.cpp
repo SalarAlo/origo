@@ -40,7 +40,7 @@ void AssetPipeline::RunInitialImport() {
 			if (!asset)
 				continue;
 
-			AssetManager::Register(std::move(asset), &meta->Id);
+			AssetManager::Register(std::move(asset), meta->Id);
 			AssetDatabase::RegisterMetadata(*meta);
 			AssetDatabase::WriteImport(meta->Id);
 

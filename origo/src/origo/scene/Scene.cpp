@@ -3,10 +3,10 @@
 #include "origo/scene/Entity.hpp"
 
 namespace Origo {
-Scene::Scene(std::string_view name, float ar)
+Scene::Scene(std::string_view name)
     : m_Name(name) {
 	auto camera { CreateEntity("MainCamera") };
-	m_MainCamera = m_ComponentManager.AddComponent<Camera>(camera, ar);
+	m_MainCamera = m_ComponentManager.AddComponent<Camera>(camera);
 }
 
 Entity* Scene::CreateEntity(std::string_view name) {

@@ -1,0 +1,11 @@
+{
+        "Header": {
+                "Dependencies": [],
+                "Name": "Cube",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Mesh",
+                "UUID": "0e61d55a99141c21a1689fdb39173cad"
+        },
+        "Payload": {}
+}

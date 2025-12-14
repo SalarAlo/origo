@@ -17,7 +17,7 @@ class Scene {
 	friend void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend);
 
 public:
-	Scene(std::string_view = "SampleScene", float ar = 1.0);
+	Scene(std::string_view = "SampleScene");
 	~Scene();
 
 	Entity* CreateEntity(std::string_view name);
