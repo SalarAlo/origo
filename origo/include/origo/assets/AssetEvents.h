@@ -8,13 +8,13 @@ namespace Origo {
 class AssetEvents {
 public:
 	// When a new asset entry is created (metadata exists)
-	inline static Action<void, const AssetDescriptor&> OnAssetCreated {};
+	inline static Action<void, const Metadata&> OnAssetCreated {};
 
 	// When an asset's serialized data changes (.asset updated)
-	inline static Action<void, const AssetDescriptor&> OnAssetModified {};
+	inline static Action<void, const Metadata&> OnAssetModified {};
 
 	// When an asset is removed (metadata + .asset deleted)
-	inline static Action<void, const AssetDescriptor&> OnAssetDeleted {};
+	inline static Action<void, const Metadata&> OnAssetDeleted {};
 
 public:
 	AssetEvents() = default;

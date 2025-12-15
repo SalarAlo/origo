@@ -8,7 +8,7 @@ namespace Origo {
 class MaterialSerializer : public AssetSerializer {
 public:
 	void Serialize(const Asset* asset, ISerializer& backend) const override;
-	Scope<Asset> Deserialize(ISerializer& backend) const override;
+	void Deserialize(ISerializer& backend, Asset& asset) const override;
 
 private:
 };

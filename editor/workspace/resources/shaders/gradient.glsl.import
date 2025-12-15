@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "gradient",
                 "Origin": "Imported",
                 "SourcePath": "./resources/shaders/gradient.glsl",
                 "Type": "Shader",
-                "UUID": "143671e336be7429a31e52cd6af77e24"
+                "UUID": "1b7d04be81d80ddfe273237217253ba2"
         },
         "Payload": {
                 "source": {

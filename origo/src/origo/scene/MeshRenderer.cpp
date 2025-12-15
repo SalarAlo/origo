@@ -3,7 +3,7 @@
 #include "origo/scene/Entity.hpp"
 
 namespace Origo {
-MeshRenderer::MeshRenderer(Entity* entity, UUID material, UUID mesh)
+MeshRenderer::MeshRenderer(Entity* entity, AssetHandle material, AssetHandle mesh)
     : Component(entity)
     , m_Material(material)
     , m_Mesh(mesh) {

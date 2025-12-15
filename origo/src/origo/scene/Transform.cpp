@@ -48,6 +48,7 @@ const glm::vec3& Transform::GetScale() const { return m_Scale; }
 const glm::mat4& Transform::GetModelMatrix() {
 	if (m_Dirty)
 		RecalculateModel();
+
 	return m_ModelMatrix;
 }
 

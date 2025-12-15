@@ -1,9 +1,9 @@
 #pragma once
 
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Layer.h"
 
 #include "EditorContext.h"
-#include "origo/core/UUID.h"
 
 namespace OrigoEditor {
 
@@ -21,8 +21,8 @@ private:
 private:
 	EditorContext& m_Context;
 
-	Origo::UUID m_Shader { Origo::UUID::Bad() };
-	Origo::UUID m_Texture { Origo::UUID::Bad() };
+	Origo::AssetHandle m_Shader {};
+	Origo::AssetHandle m_Texture {};
 };
 
 }

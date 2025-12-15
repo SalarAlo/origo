@@ -1,8 +1,8 @@
 #pragma once
 
 #include "origo/assets/ShaderSource.h"
-#include <glm/glm.hpp>
 #include "origo/assets/Asset.h"
+#include <glm/glm.hpp>
 
 namespace Origo {
 

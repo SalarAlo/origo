@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "deform",
                 "Origin": "Imported",
                 "SourcePath": "./resources/shaders/deform.glsl",
                 "Type": "Shader",
-                "UUID": "b574906baa8adabf8abe7d9c0460deaa"
+                "UUID": "d98a169091aade4f7cd687eaae00b537"
         },
         "Payload": {
                 "source": {

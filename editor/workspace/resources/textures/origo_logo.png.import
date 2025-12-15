@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "origo_logo",
                 "Origin": "Imported",
                 "SourcePath": "./resources/textures/origo_logo.png",
                 "Type": "Texture",
-                "UUID": "6cc9fe78a1ae58dab56fd0631e44d56b"
+                "UUID": "a0de15328d19ac0541b29015a5840605"
         },
         "Payload": {
                 "source": {

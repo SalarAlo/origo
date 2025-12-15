@@ -2,7 +2,6 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/assets/Texture.h"
 #include "origo/assets/PrimitiveShape.h"
@@ -24,10 +23,10 @@ SceneLayer::SceneLayer(EditorContext& ctx)
 
 void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture>("Rowlett");
-	AssetManager::Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
+	AssetManagerFast::GetInstance().Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
-	AssetManager::Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/gradient.glsl"));
+	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/gradient.glsl"));
 
 	SpawnTestGrid();
 }
@@ -36,7 +35,7 @@ void SceneLayer::OnEvent(Event& e) {
 }
 
 void SceneLayer::OnUpdate(double dt) {
-	auto shader { AssetManager::Get<Shader>(m_Shader) };
+	auto shader { AssetManagerFast::GetInstance().Get<Shader>(m_Shader) };
 	shader->UseProgram();
 
 	float time = Time::GetTimeSinceStart().count();
@@ -75,7 +74,7 @@ void SceneLayer::SpawnTestGrid() {
 		AssetFactory::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
 	};
 
-	auto material { AssetManager::Get<Material>(materialHandle) };
+	auto material { AssetManagerFast::GetInstance().Get<Material>(materialHandle) };
 
 	constexpr int GRID_SIZE { 50 };
 	for (int i = 0; i < GRID_SIZE; ++i) {

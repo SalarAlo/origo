@@ -21,6 +21,8 @@ auto AssetManagerFast::Register(Scope<Asset>&& assetPtr, UUID uuid, OptionalPath
 	m_Entries[handle.Index].Uuid = uuid;
 	m_Entries[handle.Index].Path = path;
 
+	m_UuidToHandle[uuid] = handle;
+
 	return handle;
 }
 
@@ -42,6 +44,7 @@ void AssetManagerFast::Destroy(const AssetHandle& handle) {
 };
 
 bool AssetManagerFast::IsValid(const AssetHandle& handle) const {
+
 	bool isInBounds { m_Entries.size() > handle.Index };
 	if (!isInBounds)
 		return false;
@@ -49,4 +52,38 @@ bool AssetManagerFast::IsValid(const AssetHandle& handle) const {
 	bool isGenerationsMatch { m_Entries[handle.Index].Generation == handle.Generation };
 	return isGenerationsMatch;
 }
+
+UUID AssetManagerFast::GetUUID(const AssetHandle& handle) const {
+	if (!IsValid(handle))
+		return UUID::Bad();
+	return m_Entries[handle.Index].Uuid;
+}
+
+AssetHandle AssetManagerFast::Resolve(const UUID& id) const {
+	if (id == UUID::Bad())
+		return {};
+
+	auto it = m_UuidToHandle.find(id);
+	if (it == m_UuidToHandle.end()) {
+		ORG_ERROR("AssetManager::Resolve: unknown UUID {}", id.ToString());
+		return {};
+	}
+
+	const AssetHandle& handle = it->second;
+
+	if (!IsValid(handle)) {
+		ORG_ERROR("AssetManager::Resolve: stale handle for UUID {}", id.ToString());
+		return {};
+	}
+
+	return handle;
+}
+
+void AssetManagerFast::ResolveAll() {
+	for (const auto& entry : m_Entries) {
+		if (entry.AssetPtr)
+			entry.AssetPtr->Resolve();
+	}
+}
+
 }

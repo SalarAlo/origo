@@ -1,7 +1,6 @@
 #pragma once
 
 #include "origo/Camera.h"
-#include "origo/core/UUID.h"
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/scene/Transform.h"
@@ -20,7 +19,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Submit(const UUID& mesh, const UUID& material, Transform* transform);
+	void Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform);
 	void Flush(Camera* camera);
 
 	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }

@@ -12,7 +12,7 @@ public:
 
 	virtual bool CanImport(const std::filesystem::path& path) const = 0;
 	virtual AssetType GetAssetType() const = 0;
-	virtual Scope<Asset> Import(const std::filesystem::path& path, const AssetDescriptor& meta) = 0;
+	virtual Scope<Asset> Import(const std::filesystem::path& path, const Metadata& meta) = 0;
 };
 
 }

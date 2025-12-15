@@ -1,5 +1,5 @@
 #include "origo/renderer/RenderContext.h"
-#include "origo/assets/AssetManager.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/renderer/GeometryHeap.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
@@ -11,9 +11,10 @@ namespace Origo {
 static std::hash<UUID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-	auto material = AssetManager::Get<Material>(cmd.GetMaterial());
-	auto mesh = AssetManager::Get<Mesh>(cmd.GetMesh());
-	auto shader = AssetManager::Get<Shader>(material->GetShader());
+	auto& am { AssetManagerFast::GetInstance() };
+	auto material = am.Get<Material>(cmd.GetMaterial());
+	auto mesh = am.Get<Mesh>(cmd.GetMesh());
+	auto shader = am.Get<Shader>(material->GetShader());
 
 	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
 
@@ -42,7 +43,7 @@ void RenderContext::BeginFrame() {
 	glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
 }
 
-void RenderContext::Submit(const UUID& mesh, const UUID& material, Transform* transform) {
+void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform) {
 	m_DrawQueue.emplace_back(mesh, material, transform);
 }
 
@@ -55,7 +56,7 @@ void RenderContext::Flush(Camera* camera) {
 	// });
 
 	Material* currentMaterial {};
-	UUID currentMaterialId { UUID::Bad() };
+	AssetHandle currentMaterialId {};
 
 	m_Buffer->Bind();
 
@@ -64,7 +65,7 @@ void RenderContext::Flush(Camera* camera) {
 
 	for (auto& cmd : m_DrawQueue) {
 		if (cmd.GetMaterial() != currentMaterialId) {
-			auto material { AssetManager::Get<Material>(cmd.GetMaterial()) };
+			auto material { AssetManagerFast::GetInstance().Get<Material>(cmd.GetMaterial()) };
 			material->Bind();
 
 			currentMaterial = material;

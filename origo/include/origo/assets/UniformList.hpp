@@ -44,6 +44,14 @@ private:
 
 class UniformList {
 public:
+	UniformList() = default;
+
+	UniformList(const UniformList&) = delete;
+	UniformList& operator=(const UniformList&) = delete;
+
+	UniformList(UniformList&&) = default;
+	UniformList& operator=(UniformList&&) = default;
+
 	template <typename T>
 	void AddUniform(const std::string& name, const T& value) {
 		m_Uniforms[name] = MakeScope<Uniform<T>>(value);

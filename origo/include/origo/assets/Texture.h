@@ -1,8 +1,8 @@
 #pragma once
 
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Asset.h"
 #include "origo/assets/TextureSource.h"
-#include "origo/core/UUID.h"
 
 namespace Origo {
 
@@ -17,11 +17,12 @@ public:
 	void SetSource(Scope<TextureSource> src);
 	TextureSource* GetSource() const { return m_Source.get(); }
 
-	void Bind(UUID shaderId) const;
+	void Bind(AssetHandle shaderId) const;
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
 	static AssetType GetClassAssetType() { return AssetType::Texture; }
 	TextureType GetTextureType() const { return m_TextureType; }
+	void SetTextureType(TextureType type) { m_TextureType = type; }
 
 private:
 	void InitTexture(int width, int height, int channels, unsigned char* data);

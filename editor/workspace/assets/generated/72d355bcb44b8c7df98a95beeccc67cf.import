@@ -1,0 +1,15 @@
+{
+        "Header": {
+                "Name": "Normal Shader",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Shader",
+                "UUID": "72d355bcb44b8c7df98a95beeccc67cf"
+        },
+        "Payload": {
+                "source": {
+                        "shader_path": "resources/shaders/gradient.glsl",
+                        "type": "File"
+                }
+        }
+}

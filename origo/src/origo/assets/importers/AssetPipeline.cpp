@@ -1,8 +1,8 @@
 #include "origo/assets/importers/AssetPipeline.h"
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/IAssetImporter.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Logger.h"
 
 namespace Origo {
@@ -40,9 +40,9 @@ void AssetPipeline::RunInitialImport() {
 			if (!asset)
 				continue;
 
-			AssetManager::Register(std::move(asset), meta->Id);
+			AssetManagerFast::GetInstance().Register(std::move(asset), meta->Id);
 			AssetDatabase::RegisterMetadata(*meta);
-			AssetDatabase::WriteImport(meta->Id);
+			AssetDatabase::WriteImportFile(meta->Id);
 
 			importCount++;
 		} else {
@@ -53,18 +53,18 @@ void AssetPipeline::RunInitialImport() {
 	ORG_INFO("Initial import complete. {} assets imported.", importCount);
 }
 
-Scope<AssetDescriptor> AssetPipeline::LoadOrCreateMetadata(
+Scope<Metadata> AssetPipeline::LoadOrCreateMetadata(
     const std::filesystem::path& sourcePath,
     IAssetImporter* importer) {
 	const std::filesystem::path importPath { sourcePath.string() + ".import" };
 
-	Scope<AssetDescriptor> meta;
+	Scope<Metadata> meta;
 
 	if (std::filesystem::exists(importPath)) {
-		meta = MakeScope<AssetDescriptor>(
+		meta = MakeScope<Metadata>(
 		    AssetDatabase::LoadImportHeader(importPath));
 	} else {
-		meta = MakeScope<AssetDescriptor>();
+		meta = MakeScope<Metadata>();
 		meta->Id = UUID::Generate();
 		meta->Name = sourcePath.stem().string();
 		meta->Type = importer->GetAssetType();

@@ -9,8 +9,7 @@ void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const 
 	ORG_INFO("Seriliazing an asset of type model");
 }
 
-Scope<Asset> ModelSerializer::Deserialize(ISerializer& backend) const {
+void ModelSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	throw std::logic_error("Not implemented");
 }
-
 }

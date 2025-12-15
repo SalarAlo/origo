@@ -11,7 +11,7 @@ enum class AssetOrigin {
 	Internal // Engine built asset (default shaders, fallback textures)
 };
 
-struct AssetDescriptor {
+struct Metadata {
 	std::string Name {};
 	UUID Id { UUID::Bad() };
 	AssetType Type {};

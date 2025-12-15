@@ -10,8 +10,8 @@ public:
 	static void RunInitialImport();
 
 private:
-	static Scope<AssetDescriptor> LoadOrCreateMetadata(const std::filesystem::path& path, IAssetImporter* importer);
-	static bool CreateAssetFileIfMissing(const std::filesystem::path& path, IAssetImporter* importer, const AssetDescriptor& metaData);
+	static Scope<Metadata> LoadOrCreateMetadata(const std::filesystem::path& path, IAssetImporter* importer);
+	static bool CreateAssetFileIfMissing(const std::filesystem::path& path, IAssetImporter* importer, const Metadata& metaData);
 };
 
 }

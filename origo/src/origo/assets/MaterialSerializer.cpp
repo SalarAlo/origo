@@ -1,8 +1,7 @@
 #include "origo/assets/MaterialSerializer.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/serialization/ISerializer.h"
-
-// TODO: Implement Serialization
 
 namespace Origo {
 
@@ -11,12 +10,16 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 		static_cast<const Material*>(asset)
 	};
 
-	backend.Write("albedo", material->GetAlbedo().ToString());
-	backend.Write("shader", material->GetShader().ToString());
+	auto& am { AssetManagerFast::GetInstance() };
+	backend.Write("albedo", am.GetUUID(material->GetAlbedo()).ToString());
+	backend.Write("shader", am.GetUUID(material->GetShader()).ToString());
+
 	ORG_INFO("Serializing an asset of type material");
 }
 
-Scope<Asset> MaterialSerializer::Deserialize(ISerializer& backend) const {
+void MaterialSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
+	auto& material { static_cast<Material&>(asset) };
+
 	std::string albedoUuidStr {};
 	std::string shaderUuidStr {};
 
@@ -25,8 +28,6 @@ Scope<Asset> MaterialSerializer::Deserialize(ISerializer& backend) const {
 
 	auto albedoUuid { UUID::FromString(albedoUuidStr) };
 	auto shaderUuid { UUID::FromString(shaderUuidStr) };
-
-	return MakeScope<Material>(albedoUuid, shaderUuid);
 }
 
 }

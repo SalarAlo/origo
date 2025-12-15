@@ -1,18 +1,18 @@
-#include "origo/core/UUID.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/scene/Transform.h"
 
 namespace Origo {
 class RenderCommand {
 public:
-	RenderCommand(const UUID& mesh, const UUID& material, Transform* transform);
+	RenderCommand(const AssetHandle& mesh, const AssetHandle& material, Transform* transform);
 
-	UUID GetMesh() const;
-	UUID GetMaterial() const;
+	AssetHandle GetMesh() const;
+	AssetHandle GetMaterial() const;
 	Transform* GetTransform() const;
 
 private:
-	UUID m_Mesh;
-	UUID m_Material;
+	AssetHandle m_Mesh;
+	AssetHandle m_Material;
 	Transform* m_Transform;
 };
 }

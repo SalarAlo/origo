@@ -1,4 +1,4 @@
-#include "origo/assets/AssetManager.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/scene/MeshRenderer.h"
 #include "ui/ComponentUI.h"
@@ -8,13 +8,14 @@
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	InspectorDrawRegistry::Register<Origo::MeshRenderer>("Mesh Renderer", [](Origo::MeshRenderer& t) {
-		auto material { Origo::AssetManager::Get<Origo::Material>(t.GetMaterial()) };
+	InspectorDrawRegistry::Register<Origo::MeshRenderer>("Mesh Renderer", [](Origo::MeshRenderer& renderer) {
+		auto& am { Origo::AssetManagerFast::GetInstance() };
+		auto material { am.Get<Origo::Material>(renderer.GetMaterial()) };
 
-		auto shaderId { material->GetShader().ToString() };
-		auto materialId { t.GetMaterial().ToString() };
-		auto albedoId { material->GetAlbedo().ToString() };
-		auto meshId { t.GetMesh().ToString() };
+		auto shaderId { am.GetUUID(material->GetShader()).ToString() };
+		auto materialId { am.GetUUID(renderer.GetMaterial()).ToString() };
+		auto albedoId { am.GetUUID(material->GetAlbedo()).ToString() };
+		auto meshId { am.GetUUID(renderer.GetMesh()).ToString() };
 
 		ComponentUI::DrawStringControl("Material", materialId);
 		ComponentUI::DrawStringControl("Shader", shaderId);

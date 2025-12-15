@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "rowlett",
                 "Origin": "Imported",
                 "SourcePath": "./resources/textures/rowlett.jpg",
                 "Type": "Texture",
-                "UUID": "ff23ac1a2e137fb2426d4e666cdd9c40"
+                "UUID": "c1a6c47064b958f636d24d21fcc09228"
         },
         "Payload": {
                 "source": {

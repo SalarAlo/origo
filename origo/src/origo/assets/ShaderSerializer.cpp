@@ -2,8 +2,6 @@
 #include "origo/assets/ShaderSerializer.h"
 #include "origo/assets/Shader.h"
 
-// TODO
-
 namespace Origo {
 
 void ShaderSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
@@ -13,11 +11,10 @@ void ShaderSerializer::Serialize(const Asset* asset, ISerializer& backend) const
 	source->Serialize(backend);
 }
 
-Scope<Asset> ShaderSerializer::Deserialize(ISerializer& backend) const {
+void ShaderSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	auto source { ShaderSource::Deserialize(backend) };
-	auto shader { MakeScope<Shader>() };
-	shader->SetSource(std::move(source));
-	return std::move(shader);
+	auto& shader { static_cast<Shader&>(asset) };
+	shader.SetSource(std::move(source));
 }
 
 }

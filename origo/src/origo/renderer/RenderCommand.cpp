@@ -1,17 +1,17 @@
 #include "origo/renderer/RenderCommand.h"
 
 namespace Origo {
-RenderCommand::RenderCommand(const UUID& mesh, const UUID& material, Transform* transform)
+RenderCommand::RenderCommand(const AssetHandle& mesh, const AssetHandle& material, Transform* transform)
     : m_Mesh(mesh)
     , m_Material(material)
     , m_Transform(transform) {
 }
 
-UUID RenderCommand::GetMaterial() const {
+AssetHandle RenderCommand::GetMaterial() const {
 	return m_Material;
 }
 
-UUID RenderCommand::GetMesh() const {
+AssetHandle RenderCommand::GetMesh() const {
 	return m_Mesh;
 }
 

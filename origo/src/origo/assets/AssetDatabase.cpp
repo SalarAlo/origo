@@ -1,5 +1,6 @@
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/AssetManager.h"
+#include "origo/assets/AssetFactory.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/AssetSerializer.h"
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
@@ -7,26 +8,34 @@
 
 namespace Origo {
 
-void AssetDatabase::RegisterMetadata(const AssetDescriptor& meta) {
+void AssetDatabase::RegisterMetadata(const Metadata& meta) {
 	s_Metadata[meta.Id] = meta;
 }
 
-void AssetDatabase::WriteImport(const UUID& id) {
+void AssetDatabase::WriteImportFile(const UUID& id) {
 	auto metaIt = s_Metadata.find(id);
 	if (metaIt == s_Metadata.end()) {
-		ORG_ERROR("AssetDatabase::WriteImport: No metadata for uuid {}", id.ToString());
+		ORG_ERROR("AssetDatabase::WriteImportFile: No metadata for UUID {}", id.ToString());
 		return;
 	}
 
-	Asset* asset = AssetManager::Get(id);
+	const Metadata& meta = metaIt->second;
+
+	auto& am = AssetManagerFast::GetInstance();
+	AssetHandle handle = am.Resolve(id);
+
+	if (!am.IsValid(handle)) {
+		ORG_WARN("Skipping save: asset {} not loaded", id.ToString());
+		return;
+	}
+
+	Asset* asset = am.Get(handle);
 	if (!asset) {
-		ORG_WARN("Skipping import write: asset '{}' not loaded", id.ToString());
+		ORG_WARN("Skipping save: asset {} invalid", id.ToString());
 		return;
 	}
 
-	const AssetDescriptor& meta = metaIt->second;
 	auto path = GetImportPath(meta);
-
 	JsonSerializer serializer { path.string() };
 
 	serializer.BeginObject("Header");
@@ -35,12 +44,6 @@ void AssetDatabase::WriteImport(const UUID& id) {
 	serializer.Write("Type", magic_enum::enum_name(meta.Type));
 	serializer.Write("Origin", magic_enum::enum_name(meta.Origin));
 	serializer.Write("SourcePath", meta.SourcePath.string());
-
-	serializer.BeginArray("Dependencies");
-	for (const auto& dep : meta.Dependencies) {
-		serializer.Write(dep.ToString());
-	}
-	serializer.EndArray();
 	serializer.EndObject();
 
 	serializer.BeginObject("Payload");
@@ -51,7 +54,7 @@ void AssetDatabase::WriteImport(const UUID& id) {
 	serializer.SaveToFile();
 }
 
-AssetDescriptor AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
+Metadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
 	if (!std::filesystem::exists(path)) {
 		ORG_ERROR("Import file '{}' does not exist", path.string());
 		return {};
@@ -60,7 +63,7 @@ AssetDescriptor AssetDatabase::LoadImportHeader(const std::filesystem::path& pat
 	JsonSerializer backend { path.string() };
 	backend.LoadFile();
 
-	AssetDescriptor meta;
+	Metadata meta;
 
 	backend.BeginObject("Header");
 
@@ -97,13 +100,15 @@ AssetDescriptor AssetDatabase::LoadImportHeader(const std::filesystem::path& pat
 }
 
 Asset* AssetDatabase::LoadAsset(const UUID& id) {
+	auto& am { AssetManagerFast::GetInstance() };
+
 	auto metaIt = s_Metadata.find(id);
 	if (metaIt == s_Metadata.end()) {
 		ORG_ERROR("AssetDatabase::LoadAsset: No metadata for uuid {}", id.ToString());
 		return nullptr;
 	}
 
-	const AssetDescriptor& meta = metaIt->second;
+	const Metadata& meta = metaIt->second;
 	auto path = GetImportPath(meta);
 
 	JsonSerializer backend { path.string() };
@@ -113,21 +118,30 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 	backend.EndObject();
 
 	backend.BeginObject("Payload");
+
 	auto serializer = AssetSerializationSystem::Get(meta.Type);
-	Scope<Asset> asset = serializer->Deserialize(backend);
+	auto asset { AssetFactory::Create(meta.Type) };
+	serializer->Deserialize(backend, *asset);
+
 	backend.EndObject();
 
-	auto newId = AssetManager::Register(std::move(asset));
-	return AssetManager::Get(newId);
+	auto handle = am.Register(std::move(asset), meta.Id);
+
+	am.ResolveAll();
+
+	return am.Get(handle);
 }
 
 void AssetDatabase::SaveAll() {
-	for (const auto& [id, _] : s_Metadata) {
-		WriteImport(id);
+	auto& am = AssetManagerFast::GetInstance();
+
+	for (const auto& [uuid, handle] : am.GetUuidMap()) {
+		if (am.IsValid(handle))
+			WriteImportFile(uuid);
 	}
 }
 
-std::filesystem::path AssetDatabase::GetImportPath(const AssetDescriptor& meta) {
+std::filesystem::path AssetDatabase::GetImportPath(const Metadata& meta) {
 	if (!meta.SourcePath.empty()) {
 		return meta.SourcePath.string() + ".import";
 	}

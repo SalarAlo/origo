@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "normal",
                 "Origin": "Imported",
                 "SourcePath": "./resources/shaders/normal.glsl",
                 "Type": "Shader",
-                "UUID": "798e38b5f8c5f21cfc773591f52dfd2e"
+                "UUID": "38fb04c0cda0115bdbcfa8198185d13e"
         },
         "Payload": {
                 "source": {

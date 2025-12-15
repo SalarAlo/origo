@@ -1,6 +1,5 @@
 #include "origo/assets/Texture.h"
 #include "origo/assets/TextureSource.h"
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/Shader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -81,7 +80,7 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Bind(UUID shaderId) const {
+void Texture::Bind(AssetHandle shaderId) const {
 	const_cast<Texture*>(this)->LoadGPU();
 
 	if (m_TextureId == 0) {
@@ -89,7 +88,7 @@ void Texture::Bind(UUID shaderId) const {
 		return;
 	}
 
-	auto shader = AssetManager::Get<Shader>(shaderId);
+	auto shader = AssetManagerFast::GetInstance().Get<Shader>(shaderId);
 	int slot = static_cast<int>(m_TextureType);
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));

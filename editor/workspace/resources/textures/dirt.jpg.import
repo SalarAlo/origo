@@ -1,11 +1,10 @@
 {
         "Header": {
-                "Dependencies": [],
                 "Name": "dirt",
                 "Origin": "Imported",
                 "SourcePath": "./resources/textures/dirt.jpg",
                 "Type": "Texture",
-                "UUID": "67f1780dc2dc421c6fccd5b4cc04c672"
+                "UUID": "0885e0101a60b7a0031ea6e40e62b537"
         },
         "Payload": {
                 "source": {

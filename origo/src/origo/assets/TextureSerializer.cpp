@@ -13,20 +13,19 @@ void TextureSerializer::Serialize(const Asset* asset, ISerializer& backend) cons
 	ORG_INFO("Seriliazing an asset of type texture");
 }
 
-Scope<Asset> TextureSerializer::Deserialize(ISerializer& backend) const {
+void TextureSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	std::string typeStr {};
 	backend.TryRead("texture_type", typeStr);
 	auto optionalType { magic_enum::enum_cast<TextureType>(typeStr) };
 	if (!optionalType.has_value()) {
 		ORG_ERROR("TextureSerializer: Unknown texture type '{}'", typeStr);
-		return {};
 	}
 	auto type { optionalType.value() };
 	auto source { TextureSource::Deserialize(backend) };
-	Scope<Texture> t { MakeScope<Texture>(type) };
-	t->SetSource(std::move(source));
+	auto& texture { static_cast<Texture&>(asset) };
 
-	return std::move(t);
+	texture.SetTextureType(type);
+	texture.SetSource(std::move(source));
 }
 
 }
