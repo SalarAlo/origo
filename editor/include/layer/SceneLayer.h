@@ -16,7 +16,7 @@ public:
 	void OnEvent(Origo::Event& e) override;
 
 private:
-	void SpawnTestGrid();
+	void SpawnRing();
 
 private:
 	EditorContext& m_Context;

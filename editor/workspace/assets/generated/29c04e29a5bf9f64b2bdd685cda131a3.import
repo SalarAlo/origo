@@ -1,10 +1,10 @@
 {
         "Header": {
-                "Name": "Cube",
+                "Name": "Sphere",
                 "Origin": "Generated",
                 "SourcePath": "",
                 "Type": "Mesh",
-                "UUID": "84404a7a573d73d79175ec185ca6256f"
+                "UUID": "29c04e29a5bf9f64b2bdd685cda131a3"
         },
         "Payload": {}
 }

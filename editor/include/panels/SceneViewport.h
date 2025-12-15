@@ -1,23 +1,31 @@
 #pragma once
 
-#include "EditorPanel.h"
-#include "origo/Camera.h"
 #include "origo/renderer/FrameBuffer.h"
+#include "origo/Camera.h"
+#include "panels/EditorPanel.h"
 
 namespace OrigoEditor {
 
 class SceneViewport : public EditorPanel {
 public:
-	SceneViewport(Origo::FrameBuffer& buffer, Origo::Camera& camera)
-	    : m_FrameBuffer(buffer)
-	    , m_Camera(camera) { }
+	SceneViewport(Origo::FrameBuffer* renderTarget, Origo::FrameBuffer* resolveTarget, Origo::Camera& camera)
+	    : m_RenderTarget(renderTarget)
+	    , m_ResolveTarget(resolveTarget)
+	    , m_Camera(camera) {
+	}
 
-	const char* GetName() const override { return "Scene Viewport"; }
+	void SetTargets(Origo::FrameBuffer* renderTarget, Origo::FrameBuffer* resolveTarget) {
+		m_RenderTarget = renderTarget;
+		m_ResolveTarget = resolveTarget;
+	}
 
-	void OnImGuiRender() override;
+	void OnImGuiRender();
+
+	const char* GetName() const { return "Viewport"; }
 
 private:
-	Origo::FrameBuffer& m_FrameBuffer;
+	Origo::FrameBuffer* m_RenderTarget {};
+	Origo::FrameBuffer* m_ResolveTarget {};
 	Origo::Camera& m_Camera;
 };
 

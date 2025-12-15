@@ -7,13 +7,15 @@
 namespace OrigoEditor {
 
 struct EditorContext {
-	EditorContext(Origo::Scene& scene, Origo::FrameBuffer& buffer, GLFWwindow* window)
+	EditorContext(Origo::Scene& scene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, GLFWwindow* window)
 	    : Scene(scene)
-	    , Buffer(buffer)
+	    , RenderBuffer(renderBuffer)
+	    , ResolveBuffer(resolveBuffer)
 	    , Window(window) { }
 
 	Origo::Scene& Scene;
-	Origo::FrameBuffer& Buffer;
+	Origo::FrameBuffer& RenderBuffer;
+	Origo::FrameBuffer& ResolveBuffer;
 	GLFWwindow* Window;
 	Origo::Entity* SelectedEntity { nullptr };
 

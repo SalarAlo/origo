@@ -40,7 +40,10 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 }
 
 void RenderContext::BeginFrame() {
-	glViewport(0, 0, m_Buffer->GetWidth(), m_Buffer->GetHeight());
+	FrameBuffer* fb = m_Target;
+	if (!fb)
+		return;
+	glViewport(0, 0, fb->GetWidth(), fb->GetHeight());
 }
 
 void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform) {
@@ -48,19 +51,18 @@ void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material,
 }
 
 void RenderContext::Flush(Camera* camera) {
-	camera->SetAspectResolution(static_cast<float>(m_Buffer->GetWidth()) / m_Buffer->GetHeight());
 
-	// CRAZY |
-	// std::sort(m_DrawQueue.begin(), m_DrawQueue.end(), [](const RenderCommand& a, const RenderCommand& b) {
-	//	return a.GetMaterial().ToString() < b.GetMaterial().ToString();
-	// });
+	FrameBuffer* fb = m_Target;
+	if (!fb)
+		return;
+
+	camera->SetAspectResolution(static_cast<float>(fb->GetWidth()) / fb->GetHeight());
 
 	Material* currentMaterial {};
 	AssetHandle currentMaterialId {};
 
-	m_Buffer->Bind();
+	fb->Bind();
 
-	// GLCall(glClearColor(0.1f, 0.1f, 0.12f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	for (auto& cmd : m_DrawQueue) {
@@ -81,14 +83,18 @@ void RenderContext::Flush(Camera* camera) {
 		DrawMesh(cmd, m_DrawMethod);
 	}
 
-	m_Buffer->Unbind();
+	fb->Unbind();
+
+	if (fb->GetSamples() > 1) {
+		if (!m_ResolveTarget)
+			throw std::runtime_error("MSAA target requires a resolve target");
+		fb->ResolveTo(*m_ResolveTarget);
+	}
 
 	m_DrawQueue.clear();
 }
 
 void RenderContext::EndFrame() {
-
-	return;
 }
 
 }

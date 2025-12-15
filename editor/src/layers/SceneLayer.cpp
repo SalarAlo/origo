@@ -26,9 +26,9 @@ void SceneLayer::OnAttach() {
 	AssetManagerFast::GetInstance().Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/rowlett.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
-	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/gradient.glsl"));
+	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
-	SpawnTestGrid();
+	SpawnRing();
 }
 
 void SceneLayer::OnEvent(Event& e) {
@@ -47,18 +47,23 @@ void SceneLayer::OnUpdate(double dt) {
 	}
 
 	shader->SetUniform("u_SelectedEntityId", selectedEntityId);
-	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.Buffer.GetWidth(), m_Context.Buffer.GetHeight()));
+	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.RenderBuffer.GetWidth(), m_Context.RenderBuffer.GetHeight()));
 }
 
-void SceneLayer::SpawnTestGrid() {
+void SceneLayer::SpawnRing() {
 	VertexLayout layout {};
 	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Position);
 	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
 	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
 
 	int layoutId = VertexLayoutRegistry::Register(layout);
-	int heapId { GeometryHeapRegistry::CreateHeap(layoutId, GL_STATIC_DRAW, 100'000, 100'000) };
-	auto heap { GeometryHeapRegistry::GetHeap(heapId) };
+	int heapId = GeometryHeapRegistry::CreateHeap(
+	    layoutId,
+	    GL_STATIC_DRAW,
+	    120'000,
+	    120'000);
+
+	auto heap = GeometryHeapRegistry::GetHeap(heapId);
 
 	MeshData data = GetDataFromShape(PrimitiveShape::Cube);
 	auto range = heap->Allocate(
@@ -68,26 +73,54 @@ void SceneLayer::SpawnTestGrid() {
 	    data.Indices.data(),
 	    data.Indices.size());
 
-	auto cubeMeshHandle = AssetFactory::CreateAsset<Mesh>("Cube", layoutId, heapId, range);
+	auto cubeMesh = AssetFactory::CreateAsset<Mesh>(
+	    "RingCube",
+	    layoutId,
+	    heapId,
+	    range);
 
-	auto materialHandle {
-		AssetFactory::CreateAsset<Material>("Cube_Material", m_Shader, m_Texture)
-	};
+	auto material = AssetFactory::CreateAsset<Material>(
+	    "RingMaterial",
+	    m_Shader,
+	    m_Texture);
 
-	auto material { AssetManagerFast::GetInstance().Get<Material>(materialHandle) };
+	constexpr int RING_COUNT { 9 };
+	constexpr int SEGMENTS { 64 };
+	constexpr float BASE_RADIUS { 6.0f };
+	constexpr float PI { 3.1416 };
 
-	constexpr int GRID_SIZE { 50 };
-	for (int i = 0; i < GRID_SIZE; ++i) {
-		for (int j = 0; j < GRID_SIZE; ++j) {
-			auto entity = m_Context.Scene.CreateEntity("Cube_" + std::to_string(i * GRID_SIZE + j));
+	int id {};
+
+	for (int r = 0; r < RING_COUNT; ++r) {
+		float radius = BASE_RADIUS + r * 1.2f;
+		float height = (r - RING_COUNT * 0.5f) * 0.8f;
+		float tilt = r * 0.25f;
+
+		for (int i = 0; i < SEGMENTS; ++i) {
+			float a = (float)i / (float)SEGMENTS * 2.0f * PI;
+
+			glm::vec3 pos {
+				std::cos(a) * radius,
+				height,
+				std::sin(a) * radius
+			};
+
+			// Helical distortion for visual interest
+			pos.y += std::sin(a * 3.0f + r) * 0.4f;
+
+			auto entity = m_Context.Scene.CreateEntity(
+			    "Ring_" + std::to_string(id++));
+
 			auto transform = m_Context.Scene.AddComponent<Transform>(entity);
+			transform->SetPosition(pos);
+			transform->SetScale(glm::vec3 { 0.6f, 1.8f, 0.6f });
+			transform->SetRotation(glm::vec3 { tilt, a, 0.0f });
 
-			transform->SetPosition(glm::vec3 { i * 2, 0, j * 2 });
-			transform->SetScale(glm::vec3 { 0.7f });
-
-			m_Context.Scene.AddComponent<MeshRenderer>(entity, materialHandle, cubeMeshHandle);
+			m_Context.Scene.AddComponent<MeshRenderer>(
+			    entity,
+			    material,
+			    cubeMesh);
 		}
 	}
 }
-
 }

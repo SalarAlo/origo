@@ -26,6 +26,7 @@ struct AttachmentSpec {
 struct FrameBufferSpec {
 	int Width = 1;
 	int Height = 1;
+	int Samples = 1;
 	std::vector<AttachmentSpec> Attachments;
 };
 
@@ -43,12 +44,17 @@ public:
 	void Unbind() const;
 
 	void Resize(int width, int height);
+
 	int GetWidth() const { return m_Spec.Width; }
 	int GetHeight() const { return m_Spec.Height; }
+	int GetSamples() const { return m_Spec.Samples; }
 
 	GLuint GetColorAttachment(size_t index = 0) const;
 	GLuint GetDepthAttachment() const;
+
 	const FrameBufferSpec& GetSpecification() const { return m_Spec; }
+
+	void ResolveTo(FrameBuffer& target) const;
 
 private:
 	void Invalidate();

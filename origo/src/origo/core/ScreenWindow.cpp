@@ -59,7 +59,7 @@ void ScreenWindow::InitGlad() {
 	GLCall(glDepthFunc(GL_LESS));
 
 	GLCall(glEnable(GL_MULTISAMPLE));
-	GLCall(glClearColor(0, 0, 0, 1));
+	GLCall(glClearColor(.04, .04, .067, 1));
 }
 
 ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)

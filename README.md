@@ -32,7 +32,7 @@ Intended for experimentation, rendering research, and low-level engine work.
     </thead>
     <tbody>
       <tr><td>Linux</td><td>Developed and tested on Arch</td></tr>
-      <tr><td>C++ Compiler</td><td>C++20 or newer</td></tr>
+      <tr><td>C++ GCC Compiler</td><td>C++23</td></tr>
       <tr><td>OpenGL</td><td>Proper driver support required</td></tr>
       <tr><td>CMake</td><td>Build system</td></tr>
       <tr><td>Optional</td><td>stb_image, glm, etc.</td></tr>
