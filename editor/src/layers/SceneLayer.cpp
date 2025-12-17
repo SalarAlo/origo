@@ -11,7 +11,7 @@
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
 #include "origo/renderer/VertexLayoutRegistry.h"
-#include "origo/scene/MeshRenderer.h"
+#include "components/EditorMeshRenderer.h"
 #include "origo/scene/Transform.h"
 
 using namespace Origo;
@@ -28,7 +28,7 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
-	SpawnRing();
+	SpawnGrid();
 }
 
 void SceneLayer::OnEvent(Event& e) {
@@ -36,21 +36,16 @@ void SceneLayer::OnEvent(Event& e) {
 
 void SceneLayer::OnUpdate(double dt) {
 	auto shader { AssetManagerFast::GetInstance().Get<Shader>(m_Shader) };
+
 	shader->UseProgram();
 
 	float time = Time::GetTimeSinceStart().count();
 	shader->SetUniform("u_Time", time);
 
-	int selectedEntityId { -1 };
-	if (m_Context.SelectedEntity != nullptr) {
-		selectedEntityId = static_cast<int>(HashEntity(m_Context.SelectedEntity->GetId()));
-	}
-
-	shader->SetUniform("u_SelectedEntityId", selectedEntityId);
 	shader->SetUniform("u_ScreenSize", glm::vec2(m_Context.RenderBuffer.GetWidth(), m_Context.RenderBuffer.GetHeight()));
 }
 
-void SceneLayer::SpawnRing() {
+void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	VertexLayout layout {};
 	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Position);
 	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
@@ -74,49 +69,35 @@ void SceneLayer::SpawnRing() {
 	    data.Indices.size());
 
 	auto cubeMesh = AssetFactory::CreateAsset<Mesh>(
-	    "RingCube",
+	    "GridCube",
 	    layoutId,
 	    heapId,
 	    range);
 
 	auto material = AssetFactory::CreateAsset<Material>(
-	    "RingMaterial",
+	    "GridMaterial",
 	    m_Shader,
 	    m_Texture);
 
-	constexpr int RING_COUNT { 9 };
-	constexpr int SEGMENTS { 64 };
-	constexpr float BASE_RADIUS { 6.0f };
-	constexpr float PI { 3.1416 };
+	const float half = (gridSize - 1) * spacing * 0.5f;
 
-	int id {};
+	int id = 0;
 
-	for (int r = 0; r < RING_COUNT; ++r) {
-		float radius = BASE_RADIUS + r * 1.2f;
-		float height = (r - RING_COUNT * 0.5f) * 0.8f;
-		float tilt = r * 0.25f;
-
-		for (int i = 0; i < SEGMENTS; ++i) {
-			float a = (float)i / (float)SEGMENTS * 2.0f * PI;
-
+	for (int x = 0; x < gridSize; ++x) {
+		for (int z = 0; z < gridSize; ++z) {
 			glm::vec3 pos {
-				std::cos(a) * radius,
-				height,
-				std::sin(a) * radius
+				x * spacing - half,
+				0.0f,
+				z * spacing - half
 			};
 
-			// Helical distortion for visual interest
-			pos.y += std::sin(a * 3.0f + r) * 0.4f;
-
 			auto entity = m_Context.Scene.CreateEntity(
-			    "Ring_" + std::to_string(id++));
+			    "GridCube_" + std::to_string(id++));
 
 			auto transform = m_Context.Scene.AddComponent<Transform>(entity);
 			transform->SetPosition(pos);
-			transform->SetScale(glm::vec3 { 0.6f, 1.8f, 0.6f });
-			transform->SetRotation(glm::vec3 { tilt, a, 0.0f });
 
-			m_Context.Scene.AddComponent<MeshRenderer>(
+			m_Context.Scene.AddComponent<EditorMeshRenderer>(
 			    entity,
 			    material,
 			    cubeMesh);

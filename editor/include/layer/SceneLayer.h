@@ -16,12 +16,13 @@ public:
 	void OnEvent(Origo::Event& e) override;
 
 private:
-	void SpawnRing();
+	void SpawnGrid(int gridSize = 10, float spacing = 1.5f);
 
 private:
 	EditorContext& m_Context;
 
 	Origo::AssetHandle m_Shader {};
+	Origo::AssetHandle m_OutlineShader {};
 	Origo::AssetHandle m_Texture {};
 };
 

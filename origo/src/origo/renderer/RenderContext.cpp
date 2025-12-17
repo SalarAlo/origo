@@ -5,7 +5,10 @@
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/GlDebug.h"
 #include "origo/assets/Mesh.h"
+#include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/VaoCache.h"
+
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace Origo {
 static std::hash<UUID> HashEntity {};
@@ -16,12 +19,16 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto mesh = am.Get<Mesh>(cmd.GetMesh());
 	auto shader = am.Get<Shader>(material->GetShader());
 
-	material->WriteModel(cmd.GetTransform()->GetModelMatrix());
+	constexpr float outlineThickness { .04f };
+	glm::mat4 model = cmd.GetTransform()->GetModelMatrix();
+	if (cmd.GetRenderPass() == RenderPass::Outline)
+		model = glm::scale(model, glm::vec3(1 + outlineThickness));
+	material->WriteModel(model);
 
 	GeometryHeap* heap = GeometryHeapRegistry::GetHeap(mesh->HeapId);
 
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, heap->GetIbo()));
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, heap->GetVbo()));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, heap->GetVbo()));
 
 	const VaoCache::Entry& vaoEntry = VaoCache::CreateOrGet(mesh->LayoutId, mesh->HeapId);
 
@@ -46,26 +53,47 @@ void RenderContext::BeginFrame() {
 	glViewport(0, 0, fb->GetWidth(), fb->GetHeight());
 }
 
-void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform) {
-	m_DrawQueue.emplace_back(mesh, material, transform);
+void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform, RenderPass pass) {
+	m_DrawQueue.emplace_back(mesh, material, transform, pass);
 }
 
 void RenderContext::Flush(Camera* camera) {
+	BindFB();
+	Clear();
 
+	camera->SetAspectResolution(static_cast<float>(m_Target->GetWidth()) / m_Target->GetHeight());
+
+	ExecutePass(RenderPass::Geometry, camera);
+	ExecutePass(RenderPass::SelectedMask, camera);
+	ExecutePass(RenderPass::Outline, camera);
+
+	Resolve();
+}
+
+void RenderContext::EndFrame() {
+}
+
+void RenderContext::Clear() {
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+}
+void RenderContext::BindFB() {
 	FrameBuffer* fb = m_Target;
 	if (!fb)
 		return;
 
-	camera->SetAspectResolution(static_cast<float>(fb->GetWidth()) / fb->GetHeight());
+	fb->Bind();
+}
+
+void RenderContext::ExecutePass(RenderPass pass, Camera* camera) {
+	ConfigureState(pass);
 
 	Material* currentMaterial {};
 	AssetHandle currentMaterialId {};
 
-	fb->Bind();
-
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 	for (auto& cmd : m_DrawQueue) {
+		if (cmd.GetRenderPass() != pass)
+			continue;
+
 		if (cmd.GetMaterial() != currentMaterialId) {
 			auto material { AssetManagerFast::GetInstance().Get<Material>(cmd.GetMaterial()) };
 			material->Bind();
@@ -82,19 +110,73 @@ void RenderContext::Flush(Camera* camera) {
 
 		DrawMesh(cmd, m_DrawMethod);
 	}
+}
 
-	fb->Unbind();
+void RenderContext::ConfigureState(RenderPass pass) {
+	switch (pass) {
+	case RenderPass::Geometry: {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 
-	if (fb->GetSamples() > 1) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
+		glEnable(GL_STENCIL_TEST);
+
+		// Default: do NOT touch stencil
+		glStencilMask(0x00);
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		break;
+	}
+
+	case RenderPass::SelectedMask: {
+		// This pass should ONLY be used if you insist on keeping it.
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
+		glEnable(GL_STENCIL_TEST);
+
+		glStencilMask(0xFF);
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+		break;
+	}
+
+	case RenderPass::Outline: {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		glEnable(GL_STENCIL_TEST);
+
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+
+		break;
+	}
+	}
+}
+
+void RenderContext::Resolve() {
+	m_Target->Unbind();
+
+	if (m_Target->IsMSAA()) {
 		if (!m_ResolveTarget)
 			throw std::runtime_error("MSAA target requires a resolve target");
-		fb->ResolveTo(*m_ResolveTarget);
+
+		m_Target->ResolveTo(*m_ResolveTarget);
 	}
 
 	m_DrawQueue.clear();
-}
-
-void RenderContext::EndFrame() {
 }
 
 }

@@ -2,8 +2,8 @@
 
 #include "origo/Camera.h"
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/renderer/RenderCommand.h"
 #include "origo/scene/Transform.h"
+#include "origo/renderer/RenderCommand.h"
 
 namespace Origo {
 
@@ -23,10 +23,17 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform);
+	void Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform, RenderPass pass = RenderPass::Geometry);
 	void Flush(Camera* camera);
 
 	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }
+
+private:
+	void Clear();
+	void BindFB();
+	void ExecutePass(RenderPass pass, Camera* camera);
+	void ConfigureState(RenderPass pass);
+	void Resolve();
 
 private:
 	FrameBuffer* m_Target {};

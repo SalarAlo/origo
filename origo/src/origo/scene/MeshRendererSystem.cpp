@@ -13,7 +13,8 @@ static void RenderMeshRenderers(const Scene& scene, RenderContext& context) {
 		context.Submit(
 		    mr->GetMesh(),
 		    mr->GetMaterial(),
-		    transform);
+		    transform,
+		    RenderPass::Geometry);
 	}
 }
 

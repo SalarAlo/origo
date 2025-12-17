@@ -48,6 +48,7 @@ public:
 	int GetWidth() const { return m_Spec.Width; }
 	int GetHeight() const { return m_Spec.Height; }
 	int GetSamples() const { return m_Spec.Samples; }
+	bool IsMSAA() const { return m_Spec.Samples > 1; }
 
 	GLuint GetColorAttachment(size_t index = 0) const;
 	GLuint GetDepthAttachment() const;

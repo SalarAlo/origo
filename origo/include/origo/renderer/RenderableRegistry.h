@@ -25,10 +25,10 @@ private:
 };
 }
 
-#define REGISTER_RENDERABLE(FN)                                         \
-	struct AutoRenderableRegister_##FN {                            \
-		AutoRenderableRegister_##FN() {                         \
-			RenderableRegistry::GetInstance().Register(FN); \
-		}                                                       \
-	};                                                              \
+#define REGISTER_RENDERABLE(FN)                                                \
+	struct AutoRenderableRegister_##FN {                                   \
+		AutoRenderableRegister_##FN() {                                \
+			Origo::RenderableRegistry::GetInstance().Register(FN); \
+		}                                                              \
+	};                                                                     \
 	static AutoRenderableRegister_##FN s_AutoRenderableRegister_##FN;

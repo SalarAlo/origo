@@ -9,8 +9,7 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(Entity* entity);
-	MeshRenderer(Entity* entity, AssetHandle material, AssetHandle mesh);
+	MeshRenderer(Entity* entity, AssetHandle material = {}, AssetHandle mesh = {});
 
 	std::string GetName() const override { return "MeshRenderer"; }
 

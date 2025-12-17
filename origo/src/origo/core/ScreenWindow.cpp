@@ -53,10 +53,17 @@ void ScreenWindow::InitGlad() {
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glDepthFunc(GL_LESS));
+
+	GLCall(glEnable(GL_STENCIL_TEST));
+	// only replace stencil buffer entry if depth and stencil tests are passed
+	GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+	GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
+	GLCall(glStencilMask(0xFF));
+
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
-	GLCall(glDepthFunc(GL_LESS));
 
 	GLCall(glEnable(GL_MULTISAMPLE));
 	GLCall(glClearColor(.04, .04, .067, 1));
@@ -178,7 +185,6 @@ bool ScreenWindow::ShouldClose() const {
 void ScreenWindow::OnUpdate() const {
 	glfwSwapBuffers(m_Window);
 	glfwPollEvents();
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
 void ScreenWindow::SetHeight(int height) {
