@@ -32,6 +32,5 @@ void EditorCameraLayer::OnUpdate(double dt) {
 }
 
 void EditorCameraLayer::OnEvent(Origo::Event& e) {
-	Origo::EventDispatcher dispatcher { e };
 }
 }

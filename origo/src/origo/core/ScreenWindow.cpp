@@ -165,10 +165,13 @@ void ScreenWindow::InitCallback() {
 		switch (action) {
 		case GLFW_PRESS:
 			pressType = KeyPressType::KeyPressStart;
+			break;
 		case GLFW_RELEASE:
 			pressType = KeyPressType::KeyPressStop;
+			break;
 		case GLFW_REPEAT:
 			pressType = KeyPressType::KeyPressRepeat;
+			break;
 		}
 		KeyPressEvent keyPress { key, pressType };
 		windowSettings->EventCallback(keyPress);

@@ -7,6 +7,9 @@
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/core/Time.h"
+#include "origo/events/Event.h"
+#include "origo/events/EventTypes.h"
+#include "origo/events/KeyEvent.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
@@ -15,7 +18,6 @@
 #include "origo/scene/Transform.h"
 
 using namespace Origo;
-static std::hash<RID> HashEntity {};
 
 namespace OrigoEditor {
 SceneLayer::SceneLayer(EditorContext& ctx)
@@ -32,6 +34,26 @@ void SceneLayer::OnAttach() {
 }
 
 void SceneLayer::OnEvent(Event& e) {
+	EventDispatcher dispatcher { e };
+	dispatcher.Dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
+		if (pressEvent.GetKeyPressed() == KeyboardKey::KEY_F && pressEvent.GetKeyPressType() == KeyPressType::KeyPressStart) {
+			if (!m_Context.SelectedEntity)
+				return;
+
+			constexpr float BASE_DISTANCE = 2.0f;
+
+			auto camera = m_Context.Scene.GetMainCamera();
+
+			auto selectedEntity = m_Context.SelectedEntity.value();
+			auto transform = m_Context.Scene.GetComponent<Transform>(selectedEntity.GetId());
+
+			auto targetPos { transform->GetPosition() };
+			auto forward { glm::normalize(camera->GetForward()) };
+
+			camera->SetPosition(targetPos - forward * BASE_DISTANCE);
+			camera->LookAt(targetPos);
+		}
+	});
 }
 
 void SceneLayer::OnUpdate(double dt) {

@@ -51,6 +51,25 @@ void Camera::MoveForward(float step) {
 	Move(m_Forward * step);
 }
 
+void Camera::LookAt(const glm::vec3& target) {
+	if (m_IsRotationLocked)
+		return;
+
+	glm::vec3 direction = glm::normalize(target - m_Position);
+
+	m_Pitch = glm::degrees(std::asin(direction.y));
+
+	m_Yaw = glm::degrees(std::atan2(direction.z, direction.x));
+
+	if (m_Pitch > 89.0f)
+		m_Pitch = 89.0f;
+	if (m_Pitch < -89.0f)
+		m_Pitch = -89.0f;
+
+	UpdateVectors();
+	UpdateView();
+}
+
 void Camera::Rotate(float yawOffset, float pitchOffset) {
 	if (m_IsRotationLocked)
 		return;

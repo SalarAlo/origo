@@ -19,7 +19,7 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto mesh = am.Get<Mesh>(cmd.GetMesh());
 	auto shader = am.Get<Shader>(material->GetShader());
 
-	constexpr float outlineThickness { .04f };
+	constexpr float outlineThickness { .1f };
 	glm::mat4 model = cmd.GetTransform()->GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
 		model = glm::scale(model, glm::vec3(1 + outlineThickness));
@@ -64,7 +64,6 @@ void RenderContext::Flush(Camera* camera) {
 	camera->SetAspectResolution(static_cast<float>(m_Target->GetWidth()) / m_Target->GetHeight());
 
 	ExecutePass(RenderPass::Geometry, camera);
-	ExecutePass(RenderPass::SelectedMask, camera);
 	ExecutePass(RenderPass::Outline, camera);
 
 	Resolve();
@@ -123,28 +122,9 @@ void RenderContext::ConfigureState(RenderPass pass) {
 
 		glEnable(GL_STENCIL_TEST);
 
-		// Default: do NOT touch stencil
 		glStencilMask(0x00);
 		glStencilFunc(GL_ALWAYS, 0, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-		break;
-	}
-
-	case RenderPass::SelectedMask: {
-		// This pass should ONLY be used if you insist on keeping it.
-
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-
-		glEnable(GL_STENCIL_TEST);
-
-		glStencilMask(0xFF);
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 		break;
 	}

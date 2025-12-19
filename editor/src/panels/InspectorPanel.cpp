@@ -12,16 +12,16 @@ void InspectorPanel::OnImGuiRender() {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2 { 4.0f, 3.0f });
 	ImGui::SetWindowFontScale(0.9f);
 
-	if (!selectedEntity) {
+	if (!selectedEntity.has_value()) {
 		ImGui::TextDisabled("No entity selected.");
 		ImGui::PopStyleVar(2);
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
-	ImGui::SeparatorText(selectedEntity->GetName().c_str());
+	ImGui::SeparatorText(selectedEntity.value().GetName().c_str());
 
-	for (auto* comp : scene.GetComponents(selectedEntity->GetId())) {
+	for (auto* comp : scene.GetComponents(selectedEntity.value().GetId())) {
 		InspectorDrawRegistry::Draw(comp, typeid(*comp));
 	}
 

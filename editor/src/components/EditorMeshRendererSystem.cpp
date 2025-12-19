@@ -21,12 +21,6 @@ static void RenderEditorMeshRenderers(const Origo::Scene& scene, Origo::RenderCo
 		if (emr->IsSelected) {
 			context.Submit(
 			    emr->GetMesh(),
-			    emr->GetMaterial(),
-			    transform,
-			    Origo::RenderPass::SelectedMask);
-
-			context.Submit(
-			    emr->GetMesh(),
 			    EditorMeshRenderer::GetOutlineMaterial(),
 			    transform,
 			    Origo::RenderPass::Outline);

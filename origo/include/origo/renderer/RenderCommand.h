@@ -7,7 +7,6 @@ namespace Origo {
 
 enum class RenderPass {
 	Geometry,
-	SelectedMask,
 	Outline,
 };
 

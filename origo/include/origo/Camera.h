@@ -16,9 +16,10 @@ public:
 	    float pitch = 0.0f,
 	    float fov = 90.0f,
 	    float nearPlane = 0.01f,
-	    float farPlane = 100.0f);
+	    float farPlane = 400.0f);
 
 	void SetPosition(const glm::vec3& position);
+	void LookAt(const glm::vec3& rotation);
 
 	void Move(const glm::vec3& delta);
 	void MoveRight(float step);
