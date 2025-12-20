@@ -1,16 +1,46 @@
 project(OrigoEditorApp LANGUAGES C CXX)
 
-file(GLOB_RECURSE  EDITOR_SOURCES CONFIGURE_DEPENDS src/*.cpp)
+# ----------------------------------------------------------------------
+# Sources
+# ----------------------------------------------------------------------
 
-add_executable(OrigoEditor ${EDITOR_SOURCES})
+file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
-target_link_libraries(OrigoEditor PRIVATE OrigoEngine)
-target_include_directories(OrigoEditor  PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/vendor/nanosvg/src
+add_executable(OrigoEditor
+    ${EDITOR_SOURCES}
+    ${CMAKE_SOURCE_DIR}/vendor/imguizmo/ImGuizmo.cpp
 )
 
-target_precompile_headers(OrigoEditor PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)
+# ----------------------------------------------------------------------
+# Includes
+# ----------------------------------------------------------------------
+
+target_include_directories(OrigoEditor PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/vendor/nanosvg/src
+    ${CMAKE_SOURCE_DIR}/vendor/imguizmo
+)
+
+# ----------------------------------------------------------------------
+# Linkage
+# ----------------------------------------------------------------------
+
+target_link_libraries(OrigoEditor PRIVATE
+    OrigoEngine
+    imgui
+)
+
+# ----------------------------------------------------------------------
+# PCH
+# ----------------------------------------------------------------------
+
+target_precompile_headers(OrigoEditor PRIVATE
+    ${CMAKE_SOURCE_DIR}/pch.h
+)
+
+# ----------------------------------------------------------------------
+# Runtime copy of engine .so
+# ----------------------------------------------------------------------
 
 add_custom_command(TARGET OrigoEditor POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy

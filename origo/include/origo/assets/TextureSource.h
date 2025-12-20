@@ -5,6 +5,8 @@ namespace Origo {
 
 enum class TextureSourceType {
 	File = 0,
+	Raw,
+	Svg
 };
 
 class TextureSource {
@@ -21,15 +23,45 @@ protected:
 class TextureSourceFile : public TextureSource {
 public:
 	TextureSourceFile(std::string_view path)
-	    : m_Path(path) { }
-
-	std::string GetPath() const { return m_Path; }
+	    : Path(path) { }
 
 	void SerializeBody(ISerializer& backend) const override;
 	TextureSourceType GetType() const override { return TextureSourceType::File; }
 
-private:
-	std::string m_Path;
+	std::string Path;
+};
+
+class TextureSourceRaw : public TextureSource {
+public:
+	TextureSourceRaw(int w, int h, int c, std::vector<unsigned char>&& d)
+	    : Width(w)
+	    , Height(h)
+	    , Channels(c)
+	    , Data(std::move(d)) { }
+
+	void SerializeBody(ISerializer& backend) const override;
+	TextureSourceType GetType() const override { return TextureSourceType::Raw; }
+
+	int Width;
+	int Height;
+	int Channels;
+	std::vector<unsigned char> Data;
+};
+
+class TextureSourceSVG : public TextureSource {
+public:
+	TextureSourceSVG(std::string_view path, int w, int h)
+	    : Width(w)
+	    , Height(h)
+	    , Path(path) {
+	}
+
+	void SerializeBody(ISerializer& backend) const override;
+	TextureSourceType GetType() const override { return TextureSourceType::Svg; }
+
+	std::string Path;
+	int Width;
+	int Height;
 };
 
 }

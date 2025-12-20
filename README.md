@@ -91,3 +91,12 @@ mkdir build
 <p align="center">
 Under active development. APIs and layout may change.
 </p>
+
+--- 
+
+<h3 align="center">Credits</h3>
+
+<p align="center">
+This project includes third-party assets.
+See CREDITS.md for full attributions.
+</p>

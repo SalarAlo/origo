@@ -1,5 +1,4 @@
 #include "ui/UI.h"
-#include "imgui.h"
 #include "origo/assets/AssetDatabase.h"
 #include "panels/PanelManager.h"
 
@@ -30,7 +29,7 @@ void ApplyEditorStyle() {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* c = style.Colors;
 
-	static const EditorPalette p;
+	static const EditorPalette p {};
 
 	c[ImGuiCol_WindowBg] = p.bgWindow;
 	c[ImGuiCol_ChildBg] = p.bg;

@@ -1,0 +1,15 @@
+{
+        "Header": {
+                "Name": "Outline Shader",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Shader",
+                "UUID": "f399e07ddfd97266984aded56a1ed054"
+        },
+        "Payload": {
+                "source": {
+                        "shader_path": "resources/shaders/outline.glsl",
+                        "type": "File"
+                }
+        }
+}

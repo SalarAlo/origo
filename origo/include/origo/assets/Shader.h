@@ -2,7 +2,6 @@
 
 #include "origo/assets/ShaderSource.h"
 #include "origo/assets/Asset.h"
-#include <glm/glm.hpp>
 
 namespace Origo {
 

@@ -1,6 +1,5 @@
 #include "panels/PanelManager.h"
 #include "EditorContext.h"
-#include "imgui.h"
 #include "origo/scene/Transform.h"
 
 namespace OrigoEditor {

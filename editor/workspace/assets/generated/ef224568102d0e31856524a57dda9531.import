@@ -1,0 +1,13 @@
+{
+        "Header": {
+                "Name": "Outline Shader",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Material",
+                "UUID": "ef224568102d0e31856524a57dda9531"
+        },
+        "Payload": {
+                "albedo": "00000000000000000000000000000000",
+                "shader": "f399e07ddfd97266984aded56a1ed054"
+        }
+}

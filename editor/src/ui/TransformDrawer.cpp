@@ -6,7 +6,7 @@
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	InspectorDrawRegistry::Register<Origo::Transform>("Transform", [](Origo::Transform& t) {
+	InspectorDrawRegistry::Register<Origo::Transform>("Transform", "./icons/TransformComponent.svg", [](Origo::Transform& t) {
 		glm::vec3 pos = t.GetPosition();
 		glm::vec3 rot = t.GetRotation();
 		glm::vec3 scl = t.GetScale();

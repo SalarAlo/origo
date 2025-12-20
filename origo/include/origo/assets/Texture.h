@@ -8,6 +8,7 @@ namespace Origo {
 
 enum class TextureType {
 	Albedo,
+	UI
 };
 
 class Texture : public Asset {
@@ -21,13 +22,16 @@ public:
 
 	AssetType GetAssetType() const override { return AssetType::Texture; }
 	static AssetType GetClassAssetType() { return AssetType::Texture; }
+
 	TextureType GetTextureType() const { return m_TextureType; }
 	void SetTextureType(TextureType type) { m_TextureType = type; }
+	GLuint GetRendererID() { return m_TextureId; }
+
+	void LoadCPU();
+	void LoadCpuIfTextureNotExistent();
 
 private:
 	void InitTexture(int width, int height, int channels, unsigned char* data);
-	void LoadCPU();
-	void LoadGPU();
 
 private:
 	Scope<TextureSource> m_Source;

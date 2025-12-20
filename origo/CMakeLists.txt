@@ -16,6 +16,7 @@ target_include_directories(OrigoEngine PUBLIC
     ${CMAKE_SOURCE_DIR}/vendor/glad/include
     ${CMAKE_SOURCE_DIR}/vendor/glm
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include
+    ${CMAKE_SOURCE_DIR}/vendor/nanosvg/src
     ${CMAKE_SOURCE_DIR}/vendor/stb
     ${CMAKE_SOURCE_DIR}/vendor/imgui
     ${CMAKE_SOURCE_DIR}/vendor/imgui/backends

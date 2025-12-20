@@ -2,7 +2,6 @@
 
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
-#include <glm/glm.hpp>
 #include <glm/mat4x4.hpp>
 
 namespace Origo {
@@ -16,7 +15,7 @@ public:
 	    float pitch = 0.0f,
 	    float fov = 90.0f,
 	    float nearPlane = 0.01f,
-	    float farPlane = 400.0f);
+	    float farPlane = 200.0f);
 
 	void SetPosition(const glm::vec3& position);
 	void LookAt(const glm::vec3& rotation);

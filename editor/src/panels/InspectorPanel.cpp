@@ -1,6 +1,5 @@
 #include "panels/InspectorPanel.h"
 
-#include "imgui.h"
 #include "ui/InspectorDrawableRegistry.h"
 
 namespace OrigoEditor {

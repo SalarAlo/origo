@@ -1,4 +1,5 @@
 #include "origo/scene/Transform.h"
+#include "glm/gtc/quaternion.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 
@@ -44,6 +45,32 @@ void Transform::SetRotation(const glm::vec3& eulerDegrees) {
 const glm::vec3& Transform::GetPosition() const { return m_Position; }
 const glm::vec3& Transform::GetRotation() const { return m_Rotation; }
 const glm::vec3& Transform::GetScale() const { return m_Scale; }
+void Transform::SetFromMatrix(const glm::mat4& m) {
+	m_Position = glm::vec3(m[3]);
+
+	glm::vec3 col0 = glm::vec3(m[0]);
+	glm::vec3 col1 = glm::vec3(m[1]);
+	glm::vec3 col2 = glm::vec3(m[2]);
+
+	m_Scale.x = glm::length(col0);
+	m_Scale.y = glm::length(col1);
+	m_Scale.z = glm::length(col2);
+
+	if (m_Scale.x != 0.0f)
+		col0 /= m_Scale.x;
+	if (m_Scale.y != 0.0f)
+		col1 /= m_Scale.y;
+	if (m_Scale.z != 0.0f)
+		col2 /= m_Scale.z;
+
+	glm::mat3 rotMat(col0, col1, col2);
+	glm::quat q = glm::quat_cast(rotMat);
+
+	m_Rotation = glm::degrees(glm::eulerAngles(q));
+
+	m_ModelMatrix = m;
+	m_Dirty = false;
+}
 
 const glm::mat4& Transform::GetModelMatrix() {
 	if (m_Dirty)
@@ -65,5 +92,4 @@ void Transform::RecalculateModel() {
 	m_ModelMatrix = translation * rotation * scale;
 	m_Dirty = false;
 }
-
 }

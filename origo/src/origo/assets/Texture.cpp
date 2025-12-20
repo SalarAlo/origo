@@ -1,4 +1,9 @@
 #include "origo/assets/Texture.h"
+
+#define NANOSVG_IMPLEMENTATION
+#define NANOSVGRAST_IMPLEMENTATION
+#include "nanosvg.h"
+#include "nanosvgrast.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/assets/Shader.h"
 
@@ -27,8 +32,7 @@ void Texture::LoadCPU() {
 	}
 
 	if (auto* file = dynamic_cast<TextureSourceFile*>(m_Source.get())) {
-
-		const std::string& path = file->GetPath();
+		const std::string& path = file->Path;
 		stbi_set_flip_vertically_on_load(true);
 
 		int width = 0, height = 0, channels = 0;
@@ -44,10 +48,42 @@ void Texture::LoadCPU() {
 		return;
 	}
 
+	if (auto* mem = dynamic_cast<TextureSourceRaw*>(m_Source.get())) {
+		InitTexture(mem->Width, mem->Height, mem->Channels, mem->Data.data());
+		return;
+	}
+
+	if (auto* svgTex = dynamic_cast<TextureSourceSVG*>(m_Source.get())) {
+		ORG_INFO("Loading SVG Texture");
+
+		NSVGimage* svg = nsvgParseFromFile(svgTex->Path.c_str(), "px", 96.0f);
+		if (!svg)
+			return;
+
+		NSVGrasterizer* rast = nsvgCreateRasterizer();
+		if (!rast) {
+			nsvgDelete(svg);
+			return;
+		}
+
+		int w = svgTex->Width;
+		int h = svgTex->Height;
+		float scale = w / (svg->width > 0.0f ? svg->width : (float)w);
+
+		std::vector<unsigned char> pixels(w * h * 4);
+		nsvgRasterize(rast, svg, 0.0f, 0.0f, scale, pixels.data(), w, h, w * 4);
+
+		nsvgDeleteRasterizer(rast);
+		nsvgDelete(svg);
+
+		InitTexture(w, h, 4, pixels.data());
+		return;
+	}
+
 	ORG_ERROR("Texture::LoadCPU: Unsupported TextureSource type");
 }
 
-void Texture::LoadGPU() {
+void Texture::LoadCpuIfTextureNotExistent() {
 	if (m_TextureId != 0)
 		return;
 
@@ -73,15 +109,14 @@ void Texture::InitTexture(int width, int height, int channels, unsigned char* da
 
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
 	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 void Texture::Bind(AssetHandle shaderId) const {
-	const_cast<Texture*>(this)->LoadGPU();
+	const_cast<Texture*>(this)->LoadCpuIfTextureNotExistent();
 
 	if (m_TextureId == 0) {
 		ORG_ERROR("Texture::Bind: GPU texture not initialized");

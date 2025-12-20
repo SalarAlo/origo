@@ -2,7 +2,6 @@
 
 #include "origo/scene/Entity.hpp"
 #include "origo/scene/Component.h"
-#include <glm/glm.hpp>
 
 namespace Origo {
 
@@ -18,6 +17,8 @@ public:
 
 	void Rotate(const glm::vec3& eulerDegrees);
 	void SetRotation(const glm::vec3& eulerDegrees);
+
+	void SetFromMatrix(const glm::mat4&);
 
 	const glm::vec3& GetPosition() const;
 	const glm::vec3& GetRotation() const;

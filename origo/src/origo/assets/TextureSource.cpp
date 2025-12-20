@@ -12,7 +12,7 @@ void TextureSource::Serialize(ISerializer& backend) const {
 }
 
 void TextureSourceFile::SerializeBody(ISerializer& backend) const {
-	backend.Write("path", m_Path);
+	backend.Write("path", Path);
 }
 
 Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
@@ -46,4 +46,21 @@ Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 	}
 }
 
+void TextureSourceRaw::SerializeBody(ISerializer& backend) const {
+	backend.Write("width", Width);
+	backend.Write("height", Height);
+	backend.Write("channels", Channels);
+
+	backend.BeginArray("Data");
+	for (const auto& entry : Data) {
+		backend.Write(entry);
+	}
+	backend.EndArray();
+}
+
+void TextureSourceSVG::SerializeBody(ISerializer& backend) const {
+	backend.Write("width", Width);
+	backend.Write("height", Height);
+	backend.Write("path", Path);
+}
 }

@@ -1,8 +1,5 @@
 #include "ui/ComponentUI.h"
 
-#include "imgui.h"
-#include "glm/glm.hpp"
-
 namespace ComponentUI {
 void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
 	ImGui::PushID(label.data());

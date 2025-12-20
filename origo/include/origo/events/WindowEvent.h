@@ -3,8 +3,6 @@
 #include "origo/events/Event.h"
 #include "origo/events/EventTypes.h"
 
-#include "glm/glm.hpp"
-
 namespace Origo {
 
 class WindowFocusChangeEvent : public Event {

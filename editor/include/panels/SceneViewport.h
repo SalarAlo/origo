@@ -1,32 +1,35 @@
 #pragma once
 
-#include "origo/renderer/FrameBuffer.h"
+#include "EditorContext.h"
+#include <ImGuizmo.h>
+
 #include "origo/Camera.h"
+#include "origo/assets/Texture.h"
 #include "panels/EditorPanel.h"
 
 namespace OrigoEditor {
 
 class SceneViewport : public EditorPanel {
 public:
-	SceneViewport(Origo::FrameBuffer* renderTarget, Origo::FrameBuffer* resolveTarget, Origo::Camera& camera)
-	    : m_RenderTarget(renderTarget)
-	    , m_ResolveTarget(resolveTarget)
-	    , m_Camera(camera) {
-	}
-
-	void SetTargets(Origo::FrameBuffer* renderTarget, Origo::FrameBuffer* resolveTarget) {
-		m_RenderTarget = renderTarget;
-		m_ResolveTarget = resolveTarget;
-	}
+	SceneViewport(EditorContext& ctx)
+	    : m_Context(ctx)
+	    , m_Camera(ctx.Scene.GetMainCamera()) { }
 
 	void OnImGuiRender();
-
 	const char* GetName() const { return "Viewport"; }
 
 private:
-	Origo::FrameBuffer* m_RenderTarget {};
-	Origo::FrameBuffer* m_ResolveTarget {};
-	Origo::Camera& m_Camera;
+	EditorContext& m_Context;
+	Origo::Camera* m_Camera;
+
+	ImGuizmo::OPERATION m_GizmoOperation = ImGuizmo::TRANSLATE;
+	ImGuizmo::MODE m_GizmoMode = ImGuizmo::LOCAL;
+
+	Origo::Ref<Origo::Texture> m_MoveIcon;
+	Origo::Ref<Origo::Texture> m_RotateIcon;
+	Origo::Ref<Origo::Texture> m_ScaleIcon;
+
+	bool m_IconsLoaded = false;
 };
 
 }

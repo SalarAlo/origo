@@ -25,7 +25,7 @@ void EditorUILayer::OnAttach() {
 
 	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
 	m_PanelManager.AddPanel<InspectorPanel>(m_Context);
-	m_PanelManager.AddPanel<SceneViewport>(&m_Context.RenderBuffer, &m_Context.ResolveBuffer, *m_Context.Scene.GetMainCamera());
+	m_PanelManager.AddPanel<SceneViewport>(m_Context);
 	m_PanelManager.AddPanel<AssetsPanel>();
 
 	m_PanelManager.AddPanel<ConsolePanel>();

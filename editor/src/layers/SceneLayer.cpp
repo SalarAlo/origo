@@ -30,7 +30,7 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
-	SpawnGrid();
+	SpawnGrid(100);
 }
 
 void SceneLayer::OnEvent(Event& e) {
@@ -45,7 +45,7 @@ void SceneLayer::OnEvent(Event& e) {
 			auto camera = m_Context.Scene.GetMainCamera();
 
 			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform = m_Context.Scene.GetComponent<Transform>(selectedEntity.GetId());
+			auto transform { m_Context.Scene.GetComponent<Transform>(selectedEntity.GetId()) };
 
 			auto targetPos { transform->GetPosition() };
 			auto forward { glm::normalize(camera->GetForward()) };

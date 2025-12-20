@@ -1,82 +1,28 @@
 #include "panels/AssetsPanel.h"
 
-#include "imgui.h"
-#include <filesystem>
-#include <string>
-#include <vector>
-
-#include <glad/glad.h>
-
-#include "nanosvg.h"
-#include "nanosvgrast.h"
+#include "origo/assets/Texture.h"
+#include "origo/assets/TextureSource.h"
 
 namespace OrigoEditor {
 
-static void DestroyIcon(Icon& icon) {
-	if (icon.TextureID) {
-		glDeleteTextures(1, &icon.TextureID);
-		icon.TextureID = 0;
-	}
-	icon.Width = icon.Height = 0;
+static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture>& tex) {
+	return (ImTextureID)(intptr_t)tex->GetRendererID();
 }
 
-static GLuint CreateGLTextureRGBA(const unsigned char* pixels, int width, int height) {
-	GLuint texId = 0;
-	glGenTextures(1, &texId);
-	glBindTexture(GL_TEXTURE_2D, texId);
+static Origo::Ref<Origo::Texture> LoadSVGTexture(const std::string& path, int size = 18) {
+	auto texture = Origo::MakeRef<Origo::Texture>(Origo::TextureType::UI);
+	texture->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
+	texture->LoadCpuIfTextureNotExistent();
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texId;
-}
-
-static Icon LoadSVG(const std::string& path, int size = 18) {
-	Icon icon {};
-
-	NSVGimage* svg = nsvgParseFromFile(path.c_str(), "px", 96.0f);
-	if (!svg)
-		return icon;
-
-	NSVGrasterizer* rast = nsvgCreateRasterizer();
-	if (!rast) {
-		nsvgDelete(svg);
-		return icon;
-	}
-
-	int w = size;
-	int h = size;
-
-	float baseWidth = (svg->width > 0.0f ? svg->width : (float)size);
-	float scale = (float)size / baseWidth;
-
-	std::vector<unsigned char> pixels(w * h * 4);
-	nsvgRasterize(rast, svg, 0.0f, 0.0f, scale, pixels.data(), w, h, w * 4);
-
-	icon.TextureID = CreateGLTextureRGBA(pixels.data(), w, h);
-	icon.Width = w;
-	icon.Height = h;
-
-	nsvgDeleteRasterizer(rast);
-	nsvgDelete(svg);
-
-	return icon;
-}
-
-static inline ImTextureID ToImTextureID(GLuint tex) {
-	return (ImTextureID)(intptr_t)tex;
+	return texture;
 }
 
 static bool TreeNodeWithIcon(const char* label, ImTextureID icon, ImGuiTreeNodeFlags flags) {
 	ImGui::PushID(label);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 1.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
+	    ImVec2(ImGui::GetStyle().FramePadding.x, 1.0f));
 
 	bool open = ImGui::TreeNodeEx("##node", flags);
-
 	ImGui::PopStyleVar();
 
 	ImGui::SameLine();
@@ -91,8 +37,7 @@ static bool TreeNodeWithIcon(const char* label, ImTextureID icon, ImGuiTreeNodeF
 static void TreeLeafWithIcon(const char* label, ImTextureID icon) {
 	ImGui::PushID(label);
 
-	ImGui::TreeNodeEx(
-	    "##leaf",
+	ImGui::TreeNodeEx("##leaf",
 	    ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 
 	ImGui::SameLine();
@@ -107,12 +52,12 @@ ImTextureID AssetsPanel::GetIconForFile(const std::filesystem::path& p) {
 	const auto ext = p.extension();
 
 	if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga")
-		return ToImTextureID(m_State.ImageIcon.TextureID);
+		return ToImTextureID(m_State.ImageIcon);
 
 	if (ext == ".cs" || ext == ".cpp" || ext == ".c" || ext == ".h" || ext == ".hpp" || ext == ".gd" || ext == ".glsl")
-		return ToImTextureID(m_State.ScriptIcon.TextureID);
+		return ToImTextureID(m_State.ScriptIcon);
 
-	return ToImTextureID(m_State.FileIcon.TextureID);
+	return ToImTextureID(m_State.FileIcon);
 }
 
 bool AssetsPanel::IsInsideProject(const std::filesystem::path& p) {
@@ -122,10 +67,7 @@ bool AssetsPanel::IsInsideProject(const std::filesystem::path& p) {
 	auto absStr = abs.generic_string();
 	auto rootStr = root.generic_string();
 
-	if (absStr.size() < rootStr.size())
-		return false;
-
-	return absStr == rootStr || (absStr.size() > rootStr.size() && absStr.compare(0, rootStr.size(), rootStr) == 0 && absStr[rootStr.size()] == '/');
+	return absStr == rootStr || (absStr.starts_with(rootStr) && absStr[rootStr.size()] == '/');
 }
 
 void AssetsPanel::DrawFileSystemRecursive(const std::filesystem::path& path) {
@@ -133,16 +75,16 @@ void AssetsPanel::DrawFileSystemRecursive(const std::filesystem::path& path) {
 		return;
 
 	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+
+		const auto p = entry.path();
+		const auto name = p.filename().string();
+
 		if (entry.is_directory()) {
-
-			const auto p = entry.path();
-			const auto name = p.filename().string();
-
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
 
 			bool open = TreeNodeWithIcon(
 			    name.c_str(),
-			    ToImTextureID(m_State.DirectoryIcon.TextureID),
+			    ToImTextureID(m_State.DirectoryIcon),
 			    flags);
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
@@ -157,14 +99,10 @@ void AssetsPanel::DrawFileSystemRecursive(const std::filesystem::path& path) {
 				ImGui::TreePop();
 			}
 		} else if (entry.is_regular_file()) {
-			const auto p = entry.path();
-			const auto name = p.filename().string();
-
 			if (p.extension() == ".asset" || p.extension() == ".meta")
 				continue;
 
-			ImTextureID icon = GetIconForFile(p);
-			TreeLeafWithIcon(name.c_str(), icon);
+			TreeLeafWithIcon(name.c_str(), GetIconForFile(p));
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 				std::string s = p.string();
@@ -186,19 +124,12 @@ void AssetsPanel::OnImGuiRender() {
 
 	bool open = TreeNodeWithIcon(
 	    m_State.ProjectRoot.filename().string().c_str(),
-	    ToImTextureID(m_State.DirectoryIcon.TextureID),
+	    ToImTextureID(m_State.DirectoryIcon),
 	    rootFlags);
 
 	if (open) {
 		DrawFileSystemRecursive(m_State.ProjectRoot);
 		ImGui::TreePop();
-	}
-
-	if (ImGui::BeginPopupContextWindow("AssetsPanelContext", ImGuiPopupFlags_MouseButtonRight)) {
-		ImGui::MenuItem("Create Folder");
-		ImGui::MenuItem("Import Asset");
-		ImGui::MenuItem("Delete");
-		ImGui::EndPopup();
 	}
 
 	ImGui::EndChild();
@@ -207,19 +138,12 @@ void AssetsPanel::OnImGuiRender() {
 void AssetsPanel::InitAssetsPanel() {
 	m_State.ProjectRoot = std::filesystem::current_path();
 
-	m_State.DirectoryIcon = LoadSVG("icons/Folder.svg");
-	m_State.FileIcon = LoadSVG("icons/File.svg");
-	m_State.ImageIcon = LoadSVG("icons/Image.svg");
-	m_State.ScriptIcon = LoadSVG("icons/Script.svg");
+	m_State.DirectoryIcon = LoadSVGTexture("icons/Folder.svg");
+	m_State.FileIcon = LoadSVGTexture("icons/File.svg");
+	m_State.ImageIcon = LoadSVGTexture("icons/Image.svg");
+	m_State.ScriptIcon = LoadSVGTexture("icons/Script.svg");
 
 	m_State.Initialized = true;
-}
-
-AssetsPanel::~AssetsPanel() {
-	DestroyIcon(m_State.DirectoryIcon);
-	DestroyIcon(m_State.FileIcon);
-	DestroyIcon(m_State.ImageIcon);
-	DestroyIcon(m_State.ScriptIcon);
 }
 
 }
