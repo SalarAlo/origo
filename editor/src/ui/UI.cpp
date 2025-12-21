@@ -4,97 +4,72 @@
 
 namespace OrigoEditor::UI {
 
-struct EditorPalette {
-	ImVec4 bg { 0.090f, 0.090f, 0.090f, 1.00f };
-	ImVec4 bgWindow { 0.115f, 0.115f, 0.115f, 1.00f };
-	ImVec4 bgFrame { 0.145f, 0.145f, 0.145f, 1.00f };
-	ImVec4 bgHover { 0.195f, 0.195f, 0.195f, 1.00f };
-	ImVec4 bgActive { 0.250f, 0.250f, 0.250f, 1.00f };
-
-	ImVec4 dockBg { 0.090f, 0.090f, 0.090f, 1.00f };
-
-	ImVec4 accent { 0.22f, 0.45f, 0.78f, 1.00f };
-	ImVec4 accentSoft { 0.18f, 0.34f, 0.55f, 1.00f };
-	ImVec4 accentError { 0.82f, 0.25f, 0.25f, 1.00f };
-	ImVec4 selection { 0.18f, 0.34f, 0.55f, 0.35f };
-
-	ImVec4 text { 0.88f, 0.88f, 0.88f, 1.00f };
-	ImVec4 textDim { 0.50f, 0.50f, 0.50f, 1.00f };
-
-	ImVec4 border { 0.06f, 0.06f, 0.06f, 1.00f };
-	ImVec4 borderStrong { 0.12f, 0.12f, 0.12f, 1.00f };
-};
-
-void ApplyEditorStyle() {
+void ApplyEditorStyle(const EditorPalette& p) {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* c = style.Colors;
 
-	static const EditorPalette p {};
+	c[ImGuiCol_WindowBg] = p.Surface1;
+	c[ImGuiCol_ChildBg] = p.Surface0;
+	c[ImGuiCol_PopupBg] = p.Surface1;
 
-	c[ImGuiCol_WindowBg] = p.bgWindow;
-	c[ImGuiCol_ChildBg] = p.bg;
-	c[ImGuiCol_PopupBg] = p.bgWindow;
+	c[ImGuiCol_Text] = p.Text;
+	c[ImGuiCol_TextDisabled] = p.TextDim;
 
-	c[ImGuiCol_Border] = p.border;
-	c[ImGuiCol_BorderShadow] = ImVec4(0, 0, 0, 0);
+	c[ImGuiCol_Border] = p.Border;
+	c[ImGuiCol_BorderShadow] = { 0, 0, 0, 0 };
 
-	c[ImGuiCol_FrameBg] = p.bgFrame;
-	c[ImGuiCol_FrameBgHovered] = p.bgHover;
-	c[ImGuiCol_FrameBgActive] = p.bgActive;
+	c[ImGuiCol_FrameBg] = p.Surface2;
+	c[ImGuiCol_FrameBgHovered] = p.Hover;
+	c[ImGuiCol_FrameBgActive] = p.Active;
 
-	c[ImGuiCol_TitleBg] = p.bgFrame;
-	c[ImGuiCol_TitleBgActive] = p.bgFrame;
-	c[ImGuiCol_TitleBgCollapsed] = p.bg;
-	c[ImGuiCol_MenuBarBg] = p.bgFrame;
+	c[ImGuiCol_TitleBg] = p.Surface0;
+	c[ImGuiCol_TitleBgActive] = p.Surface1;
+	c[ImGuiCol_TitleBgCollapsed] = p.Surface0;
 
-	c[ImGuiCol_Header] = p.bgFrame;
-	c[ImGuiCol_HeaderHovered] = p.bgHover;
-	c[ImGuiCol_HeaderActive] = p.bgActive;
+	c[ImGuiCol_MenuBarBg] = p.Surface1;
 
-	c[ImGuiCol_Button] = p.bgFrame;
-	c[ImGuiCol_ButtonHovered] = p.bgHover;
-	c[ImGuiCol_ButtonActive] = p.bgActive;
+	c[ImGuiCol_Header] = p.Surface2;
+	c[ImGuiCol_HeaderHovered] = p.Hover;
+	c[ImGuiCol_HeaderActive] = p.Active;
 
-	c[ImGuiCol_Tab] = p.bgFrame;
-	c[ImGuiCol_TabHovered] = p.bgHover;
-	c[ImGuiCol_TabActive] = p.bgActive;
-	c[ImGuiCol_TabUnfocused] = p.bg;
-	c[ImGuiCol_TabUnfocusedActive] = p.bgFrame;
+	c[ImGuiCol_Button] = p.Surface2;
+	c[ImGuiCol_ButtonHovered] = p.Hover;
+	c[ImGuiCol_ButtonActive] = p.Active;
 
-	c[ImGuiCol_Text] = p.text;
-	c[ImGuiCol_TextDisabled] = p.textDim;
+	c[ImGuiCol_Tab] = p.Surface0;
+	c[ImGuiCol_TabHovered] = p.Hover;
+	c[ImGuiCol_TabActive] = p.Surface2;
+	c[ImGuiCol_TabUnfocused] = p.Surface0;
+	c[ImGuiCol_TabUnfocusedActive] = p.Surface1;
 
-	c[ImGuiCol_Separator] = p.borderStrong;
-	c[ImGuiCol_SeparatorHovered] = p.bgHover;
-	c[ImGuiCol_SeparatorActive] = p.bgActive;
+	c[ImGuiCol_Separator] = p.BorderStrong;
+	c[ImGuiCol_SeparatorHovered] = p.AccentSoft;
+	c[ImGuiCol_SeparatorActive] = p.Accent;
 
-	c[ImGuiCol_ScrollbarBg] = p.bg;
-	c[ImGuiCol_ScrollbarGrab] = p.bgFrame;
-	c[ImGuiCol_ScrollbarGrabHovered] = p.bgHover;
-	c[ImGuiCol_ScrollbarGrabActive] = p.bgActive;
+	c[ImGuiCol_ScrollbarBg] = p.Surface0;
+	c[ImGuiCol_ScrollbarGrab] = p.Surface2;
+	c[ImGuiCol_ScrollbarGrabHovered] = p.Hover;
+	c[ImGuiCol_ScrollbarGrabActive] = p.Active;
 
-	c[ImGuiCol_SliderGrab] = p.accentSoft;
-	c[ImGuiCol_SliderGrabActive] = p.accent;
+	c[ImGuiCol_CheckMark] = p.Accent;
+	c[ImGuiCol_SliderGrab] = p.AccentSoft;
+	c[ImGuiCol_SliderGrabActive] = p.Accent;
 
-	c[ImGuiCol_CheckMark] = p.accent;
-	c[ImGuiCol_ResizeGrip] = p.bgFrame;
-	c[ImGuiCol_ResizeGripHovered] = p.bgHover;
-	c[ImGuiCol_ResizeGripActive] = p.bgActive;
+	c[ImGuiCol_TextSelectedBg] = p.Selection;
 
-	c[ImGuiCol_TextSelectedBg] = p.selection;
-	c[ImGuiCol_DockingPreview] = p.accentSoft;
-	c[ImGuiCol_DockingEmptyBg] = p.dockBg;
+	c[ImGuiCol_DockingPreview] = { p.Accent.x, p.Accent.y, p.Accent.z, 0.60f };
+	c[ImGuiCol_DockingEmptyBg] = p.Surface0;
 
-	c[ImGuiCol_TableHeaderBg] = p.bgFrame;
-	c[ImGuiCol_TableBorderStrong] = p.borderStrong;
-	c[ImGuiCol_TableBorderLight] = p.border;
-	c[ImGuiCol_TableRowBg] = ImVec4(p.bgWindow.x, p.bgWindow.y, p.bgWindow.z, 1.00f);
-	c[ImGuiCol_TableRowBgAlt] = ImVec4(p.bgFrame.x, p.bgFrame.y, p.bgFrame.z, 1.00f);
+	c[ImGuiCol_TableHeaderBg] = p.Surface2;
+	c[ImGuiCol_TableRowBg] = p.Surface1;
+	c[ImGuiCol_TableRowBgAlt] = p.Surface0;
+	c[ImGuiCol_TableBorderStrong] = p.BorderStrong;
+	c[ImGuiCol_TableBorderLight] = p.Border;
 
-	c[ImGuiCol_NavHighlight] = p.accentSoft;
-	c[ImGuiCol_NavWindowingHighlight] = ImVec4(p.accent.x, p.accent.y, p.accent.z, 0.40f);
-	c[ImGuiCol_NavWindowingDimBg] = ImVec4(0, 0, 0, 0.35f);
-	c[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.50f);
+	c[ImGuiCol_NavHighlight] = p.AccentSoft;
+	c[ImGuiCol_NavWindowingHighlight] = { p.Accent.x, p.Accent.y, p.Accent.z, 0.40f };
+	c[ImGuiCol_NavWindowingDimBg] = { 0, 0, 0, 0.35f };
+	c[ImGuiCol_ModalWindowDimBg] = { 0, 0, 0, 0.50f };
 
 	style.WindowRounding = 0.0f;
 	style.ChildRounding = 0.0f;
@@ -118,8 +93,8 @@ void ApplyEditorStyle() {
 
 void LoadEditorFont() {
 	ImGuiIO& io = ImGui::GetIO();
-	io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/Inter.ttf", 16.0f);
-	io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 15.0f);
+	io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/Inter.ttf", 17.0f);
+	io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 17.0f);
 	IM_ASSERT(io.FontDefault);
 }
 
@@ -172,6 +147,7 @@ void DrawMenuBar(PanelManager& manager) {
 	}
 
 	manager.RenderMenuItems();
+
 	ImGui::EndMenuBar();
 }
 

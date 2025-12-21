@@ -1,9 +1,10 @@
 #pragma once
 
 #include "InspectorDrawable.h"
+#include "ui/IInspectorDrawable.h"
+
 #include "imgui.h"
 #include "origo/assets/Texture.h"
-#include "ui/IInspectorDrawable.h"
 
 #include <typeindex>
 #include <unordered_map>
@@ -14,8 +15,8 @@ namespace OrigoEditor {
 class InspectorDrawRegistry {
 private:
 	struct InspectorEntry {
-		const char* Name;
-		const char* IconPath;
+		const char* Name = nullptr;
+		const char* IconPath = nullptr;
 		Origo::Ref<Origo::Texture> Icon;
 		Origo::Scope<IInspectorDrawable> Drawer;
 	};
@@ -28,73 +29,35 @@ public:
 	    InspectorDrawable<T>::DrawFn fn) {
 		InspectorEntry entry;
 		entry.Name = name;
-		entry.Drawer = Origo::MakeScope<InspectorDrawable<T>>(name, std::move(fn));
 		entry.IconPath = iconPath;
+		entry.Drawer = Origo::MakeScope<InspectorDrawable<T>>(name, std::move(fn));
 
 		m_Drawers[typeid(T)] = std::move(entry);
 	}
 
 	static void Draw(void* drawablePtr, std::type_index type) {
-		if (!m_UnkownIcon) {
-			m_UnkownIcon = LoadIcon("./icons/Entity.svg");
-		}
+		EnsureUnknownIcon();
+
 		auto it = m_Drawers.find(type);
-
 		if (it == m_Drawers.end()) {
-			ImGui::PushID(drawablePtr);
-
-			const float iconSize = 18.0f;
-			const float iconCellW = 22.0f;
-
-			std::string headerLabel = "Unknown Component##" + std::to_string(reinterpret_cast<uintptr_t>(drawablePtr));
-
-			if (ImGui::BeginTable("##inspector_row", 2,
-			        ImGuiTableFlags_SizingFixedFit)) {
-				ImGui::TableSetupColumn("##icon", ImGuiTableColumnFlags_WidthFixed, iconCellW);
-				ImGui::TableSetupColumn("##header", ImGuiTableColumnFlags_WidthStretch);
-
-				ImGui::TableNextRow();
-
-				ImGui::TableSetColumnIndex(0);
-				{
-					float yOff = (ImGui::GetFrameHeight() - iconSize) * 0.5f;
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOff);
-
-					ImGui::Image(
-					    (ImTextureID)(intptr_t)m_UnkownIcon->GetRendererID(),
-					    ImVec2(iconSize, iconSize));
-				}
-
-				ImGui::TableSetColumnIndex(1);
-				bool open = ImGui::CollapsingHeader(
-				    headerLabel.c_str(),
-				    ImGuiTreeNodeFlags_DefaultOpen);
-
-				ImGui::EndTable();
-
-				if (open) {
-					ImGui::TextDisabled("(No inspector drawer registered)");
-				}
-			}
-
-			ImGui::PopID();
+			DrawUnknown(drawablePtr);
 			return;
 		}
 
-		InspectorEntry& entry = it->second;
-		if (!entry.Icon) {
-			entry.Icon = std::move(LoadIcon(entry.IconPath));
-		}
+		DrawKnown(drawablePtr, it->second);
+	}
 
-		ImGui::PushID(drawablePtr);
+private:
+	static bool DrawInspectorHeaderRow(
+	    void* idPtr,
+	    ImTextureID icon,
+	    const char* label,
+	    float iconSize = 18.0f,
+	    float iconCellW = 22.0f) {
+		ImGui::PushID(idPtr);
+		bool open = false;
 
-		const float iconSize = 18.0f;
-		const float iconCellW = 22.0f;
-
-		std::string headerLabel = std::string(entry.Name) + "##" + std::to_string(reinterpret_cast<uintptr_t>(drawablePtr));
-
-		if (ImGui::BeginTable("##inspector_row", 2,
-		        ImGuiTableFlags_SizingFixedFit)) {
+		if (ImGui::BeginTable("##inspector_row", 2, ImGuiTableFlags_SizingFixedFit)) {
 			ImGui::TableSetupColumn("##icon", ImGuiTableColumnFlags_WidthFixed, iconCellW);
 			ImGui::TableSetupColumn("##header", ImGuiTableColumnFlags_WidthStretch);
 
@@ -104,28 +67,59 @@ public:
 			{
 				float yOff = (ImGui::GetFrameHeight() - iconSize) * 0.5f;
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOff);
-
-				ImGui::Image(
-				    (ImTextureID)(intptr_t)entry.Icon->GetRendererID(),
-				    ImVec2(iconSize, iconSize));
+				ImGui::Image(icon, ImVec2(iconSize, iconSize));
 			}
 
 			ImGui::TableSetColumnIndex(1);
-			bool open = ImGui::CollapsingHeader(
-			    headerLabel.c_str(),
-			    ImGuiTreeNodeFlags_DefaultOpen);
+			open = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_DefaultOpen);
 
 			ImGui::EndTable();
-
-			if (open) {
-				entry.Drawer->Draw(drawablePtr);
-			}
 		}
 
 		ImGui::PopID();
+		return open;
 	}
 
-private:
+	static void DrawUnknown(void* drawablePtr) {
+		std::string label = "Unknown Component##" + std::to_string(reinterpret_cast<uintptr_t>(drawablePtr));
+
+		bool open = DrawInspectorHeaderRow(
+		    drawablePtr,
+		    (ImTextureID)(intptr_t)m_UnknownIcon->GetRendererID(),
+		    label.c_str());
+
+		if (open) {
+			ImGui::TextDisabled("(No inspector drawer registered)");
+		}
+	}
+
+	static void DrawKnown(void* drawablePtr, InspectorEntry& entry) {
+		EnsureEntryIcon(entry);
+
+		std::string label = std::string(entry.Name) + "##" + std::to_string(reinterpret_cast<uintptr_t>(drawablePtr));
+
+		bool open = DrawInspectorHeaderRow(
+		    drawablePtr,
+		    (ImTextureID)(intptr_t)entry.Icon->GetRendererID(),
+		    label.c_str());
+
+		if (open) {
+			entry.Drawer->Draw(drawablePtr);
+		}
+	}
+
+	static void EnsureUnknownIcon() {
+		if (!m_UnknownIcon) {
+			m_UnknownIcon = LoadIcon("./icons/Entity.svg");
+		}
+	}
+
+	static void EnsureEntryIcon(InspectorEntry& entry) {
+		if (!entry.Icon && entry.IconPath) {
+			entry.Icon = LoadIcon(entry.IconPath);
+		}
+	}
+
 	static Origo::Ref<Origo::Texture> LoadIcon(const std::string& path) {
 		auto tex = Origo::MakeRef<Origo::Texture>(Origo::TextureType::UI);
 		tex->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, 14, 14));
@@ -135,7 +129,7 @@ private:
 
 private:
 	inline static std::unordered_map<std::type_index, InspectorEntry> m_Drawers;
-	inline static Origo::Ref<Origo::Texture> m_UnkownIcon;
+	inline static Origo::Ref<Origo::Texture> m_UnknownIcon;
 };
 
 }

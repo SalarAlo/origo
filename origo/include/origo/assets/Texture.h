@@ -31,7 +31,7 @@ public:
 	void LoadCpuIfTextureNotExistent();
 
 private:
-	void InitTexture(int width, int height, int channels, unsigned char* data);
+	void InitTexture(const TextureInitialisationData& data);
 
 private:
 	Scope<TextureSource> m_Source;

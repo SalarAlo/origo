@@ -1,6 +1,8 @@
 #include "panels/PanelManager.h"
 #include "EditorContext.h"
+#include "imgui.h"
 #include "origo/scene/Transform.h"
+#include "ui/UI.h"
 
 namespace OrigoEditor {
 
@@ -10,9 +12,24 @@ PanelManager::PanelManager(EditorContext& context)
 
 void PanelManager::RenderMenuItems() {
 	if (ImGui::BeginMenu("View")) {
-		for (const auto& panel : m_Panels) {
-			ImGui::MenuItem(panel->GetName(), nullptr, &panel->IsOpenRef());
+		if (ImGui::BeginMenu("Panels")) {
+			for (const auto& panel : m_Panels) {
+				ImGui::MenuItem(panel->GetName(), nullptr, &panel->IsOpenRef());
+			}
+			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Palette")) {
+			for (const auto& palette : OrigoEditor::GetAllEditorPalettes()) {
+				bool selected = (palette.Name == m_Context.ColorPalette.Name);
+				if (ImGui::MenuItem(palette.Name.c_str(), nullptr, selected)) {
+					m_Context.ColorPalette = palette;
+					UI::ApplyEditorStyle(m_Context.ColorPalette);
+				}
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMenu();
 	}
 

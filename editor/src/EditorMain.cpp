@@ -7,6 +7,7 @@
 #include "layer/EditorUILayer.h"
 #include "EditorContext.h"
 #include "origo/scene/Scene.h"
+#include "ui/EditorPalette.h"
 
 using namespace Origo;
 
@@ -38,7 +39,7 @@ public:
 		    };
 		    return spec;
 	    }())
-	    , m_Context(m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow()) {
+	    , m_Context(m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette()) {
 
 		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera()));
 		PushLayer(new SceneLayer(m_Context));

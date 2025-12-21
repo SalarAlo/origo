@@ -20,7 +20,7 @@ void EditorUILayer::OnDetach() {
 void EditorUILayer::OnAttach() {
 	m_ImGuiController.OnAttach(m_Context.Window);
 
-	UI::ApplyEditorStyle();
+	UI::ApplyEditorStyle(m_Context.ColorPalette);
 	UI::LoadEditorFont();
 
 	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
