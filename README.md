@@ -14,9 +14,8 @@ Focused on clarity, control, and correctness.
 <h2 align="center">Overview</h2>
 
 <p align="center">
-Origo is a small, self-contained 3D engine built for Linux.  
-No portability layers or cross-platform abstractions.  
-Intended for experimentation, rendering research, and low-level engine work.
+Origo is a self-contained 3D engine built for Linux.  
+This game engine is being developed for submission to the CV-Tag 2026 competition.
 </p>
 
 ---
