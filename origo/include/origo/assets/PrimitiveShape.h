@@ -6,7 +6,8 @@ namespace Origo {
 enum class PrimitiveShape {
 	Cube,
 	Sphere,
-	Triangle
+	Triangle,
+	Quad,
 };
 
 MeshData GetDataFromShape(PrimitiveShape shape);

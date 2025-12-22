@@ -1,5 +1,5 @@
-#include "EditorContext.h"
-#include "components/EditorMeshRenderer.h"
+#include "state/EditorContext.h"
+#include "components/EditorSelection.h"
 #include "panels/HierarchyPanel.h"
 
 #include "origo/scene/Transform.h"
@@ -23,7 +23,7 @@ void HierarchyPanel::OnImGuiRender() {
 
 	ImGui::Text("Scene Entities:");
 
-	for (const auto& transform : m_Context.Scene.GetAllComponentsOfType<Origo::Transform>()) {
+	for (const auto& transform : m_Context.EditorScene.GetAllComponentsOfType<Origo::Transform>()) {
 		auto& entity = *transform->AttachedTo;
 
 		bool selected = m_Context.SelectedEntity.has_value() && m_Context.SelectedEntity->GetId() == entity.GetId();
@@ -44,12 +44,12 @@ void HierarchyPanel::OnImGuiRender() {
 }
 void HierarchyPanel::ChangeActiveSelectedEntity(Origo::Entity& e) {
 	if (m_Context.SelectedEntity.has_value()) {
-		auto emr = m_Context.Scene.GetComponent<EditorMeshRenderer>(m_Context.SelectedEntity.value().GetId());
+		auto emr = m_Context.EditorScene.GetComponent<EditorSelection>(m_Context.SelectedEntity.value().GetId());
 		emr->IsSelected = false;
 	}
 
 	m_Context.SelectedEntity = e;
-	auto newEmr = m_Context.Scene.GetComponent<EditorMeshRenderer>(m_Context.SelectedEntity->GetId());
+	auto newEmr = m_Context.EditorScene.GetComponent<EditorSelection>(m_Context.SelectedEntity->GetId());
 	newEmr->IsSelected = true;
 }
 

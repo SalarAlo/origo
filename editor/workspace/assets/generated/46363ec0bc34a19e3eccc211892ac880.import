@@ -4,10 +4,10 @@
                 "Origin": "Generated",
                 "SourcePath": "",
                 "Type": "Material",
-                "UUID": "44a9c51ad614f1d0b062dd0779fb688f"
+                "UUID": "46363ec0bc34a19e3eccc211892ac880"
         },
         "Payload": {
-                "albedo": "9b747baf14a86eb1894b5aee92ef6127",
-                "shader": "635d11944bbdfc3ee7194b0c74d6ff63"
+                "albedo": "f950d47b719737f6fb9bc4bd48b3c0d5",
+                "shader": "c80498da374722726883edf86535e297"
         }
 }

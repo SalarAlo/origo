@@ -74,4 +74,5 @@ private:
 	bool m_IsRotationLocked;
 	bool m_IsPositionLocked;
 };
+
 }

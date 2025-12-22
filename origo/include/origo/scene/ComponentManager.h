@@ -3,9 +3,6 @@
 #include "origo/core/RID.h"
 #include "origo/scene/Component.h"
 #include "origo/scene/Entity.hpp"
-#include <concepts>
-#include <typeindex>
-#include <unordered_map>
 
 namespace Origo {
 

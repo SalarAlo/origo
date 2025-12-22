@@ -1,10 +1,10 @@
 {
         "Header": {
-                "Name": "Sphere",
+                "Name": "GridCube",
                 "Origin": "Generated",
                 "SourcePath": "",
                 "Type": "Mesh",
-                "UUID": "29c04e29a5bf9f64b2bdd685cda131a3"
+                "UUID": "9c6f4d059ca54533d829724964582732"
         },
         "Payload": {}
 }

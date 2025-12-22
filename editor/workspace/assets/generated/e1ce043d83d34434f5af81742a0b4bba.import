@@ -1,14 +1,14 @@
 {
         "Header": {
-                "Name": "Rowlett",
+                "Name": "Origo",
                 "Origin": "Generated",
                 "SourcePath": "",
                 "Type": "Texture",
-                "UUID": "417b2176ffdd07e4222b0e90c1babad7"
+                "UUID": "e1ce043d83d34434f5af81742a0b4bba"
         },
         "Payload": {
                 "source": {
-                        "path": "resources/textures/rowlett.jpg",
+                        "path": "resources/textures/origo_logo.png",
                         "type": "File"
                 },
                 "texture_type": "Albedo"

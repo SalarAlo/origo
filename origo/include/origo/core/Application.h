@@ -36,7 +36,6 @@ private:
 protected:
 	ScreenWindow m_Window;
 	Scene m_Scene;
-	FrameBuffer* m_Buffer;
 	RenderContext m_RenderContext;
 
 private:

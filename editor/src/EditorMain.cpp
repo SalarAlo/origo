@@ -1,12 +1,11 @@
+#include "layer/EditorCameraLayer.h"
 #include "layer/SceneLayer.h"
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 #include "origo/renderer/FrameBuffer.h"
 
-#include "layer/EditorCameraLayer.h"
 #include "layer/EditorUILayer.h"
-#include "EditorContext.h"
-#include "origo/scene/Scene.h"
+#include "state/EditorContext.h"
 #include "ui/EditorPalette.h"
 
 using namespace Origo;
@@ -41,7 +40,7 @@ public:
 	    }())
 	    , m_Context(m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette()) {
 
-		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera()));
+		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera(), m_Context));
 		PushLayer(new SceneLayer(m_Context));
 		PushLayer(new EditorUILayer(m_Context));
 
@@ -65,4 +64,5 @@ Application* CreateApplication() {
 	};
 	return new OrigoEditor::EditorApplication(settings);
 }
+
 }

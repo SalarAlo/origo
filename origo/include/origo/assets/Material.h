@@ -9,7 +9,7 @@ namespace Origo {
 class Material : public Asset {
 public:
 	Material() = default;
-	Material(AssetHandle shader, AssetHandle material = {});
+	Material(AssetHandle shader, AssetHandle texture = {});
 	Material(UUID shader, UUID material);
 
 	void Resolve() override {

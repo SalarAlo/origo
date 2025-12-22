@@ -9,6 +9,11 @@ public:
 	GeometryHeap(int vertexLayoutId, GLenum usage, size_t maxVertexBytes, size_t maxIndexBytes);
 	~GeometryHeap();
 
+	GeometryHeap(const GeometryHeap&) = delete;
+	GeometryHeap& operator=(const GeometryHeap&) = delete;
+	GeometryHeap(GeometryHeap&&) = delete;
+	GeometryHeap& operator=(GeometryHeap&&) = delete;
+
 	MeshRange Allocate(
 	    const void* vertexData,
 	    size_t vertexBytes,

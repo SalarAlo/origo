@@ -3,6 +3,7 @@
 #include "panels/ConsolePanel.h"
 #include "panels/HierarchyPanel.h"
 #include "panels/InspectorPanel.h"
+#include "panels/RuntimeStatePanel.h"
 #include "panels/SceneViewport.h"
 #include "ui/UI.h"
 
@@ -26,9 +27,9 @@ void EditorUILayer::OnAttach() {
 	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
 	m_PanelManager.AddPanel<InspectorPanel>(m_Context);
 	m_PanelManager.AddPanel<SceneViewport>(m_Context);
-	m_PanelManager.AddPanel<AssetsPanel>();
-
 	m_PanelManager.AddPanel<ConsolePanel>();
+	m_PanelManager.AddPanel<RuntimeStatePanel>();
+	m_PanelManager.AddPanel<AssetsPanel>();
 }
 
 void EditorUILayer::OnUpdate(double dt) {

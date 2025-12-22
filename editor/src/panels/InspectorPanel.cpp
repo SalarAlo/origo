@@ -6,7 +6,7 @@ namespace OrigoEditor {
 
 void InspectorPanel::OnImGuiRender() {
 	auto& selectedEntity { m_Contex.SelectedEntity };
-	auto& scene { m_Contex.Scene };
+	auto& scene { m_Contex.EditorScene };
 	ImGui::SetWindowFontScale(1.1f);
 
 	if (!selectedEntity.has_value()) {

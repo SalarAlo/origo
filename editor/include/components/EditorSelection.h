@@ -7,26 +7,16 @@
 
 namespace OrigoEditor {
 
-class EditorMeshRenderer : public Origo::Component {
-
+class EditorSelection : public Origo::Component {
 public:
-	EditorMeshRenderer(Origo::Entity* entity)
-	    : Component(entity) { }
-
-	EditorMeshRenderer(Origo::Entity* entity, Origo::AssetHandle material, Origo::AssetHandle mesh)
-	    : Component(entity)
-	    , m_Material(material)
-	    , m_Mesh(mesh) { }
-
-	std::string GetName() const override { return "EditorMeshRenderer"; }
-
-	Origo::AssetHandle GetMesh() const { return m_Mesh; }
-	Origo::AssetHandle GetMaterial() const { return m_Material; }
-
 	bool IsSelected = false;
 
-	void SetMesh(const Origo::AssetHandle& mesh) { m_Mesh = mesh; }
-	void SetMaterial(const Origo::AssetHandle& material) { m_Material = material; }
+public:
+	EditorSelection(Origo::Entity* entity)
+	    : Component(entity) { }
+
+	std::string GetName() const override { return "EditorSelection"; }
+
 	static Origo::AssetHandle GetOutlineMaterial() {
 		using namespace Origo;
 
@@ -45,8 +35,6 @@ public:
 
 private:
 	inline static Origo::AssetHandle m_OutlineMaterial {};
-	Origo::AssetHandle m_Material {};
-	Origo::AssetHandle m_Mesh {};
 };
 
 }

@@ -1,14 +1,16 @@
-#include "origo/renderer/RenderContext.h"
-#include "origo/renderer/RenderableRegistry.h"
+#include "origo/scene/MeshRenderSystem.h"
 #include "origo/scene/MeshRenderer.h"
-#include "origo/scene/Scene.h"
+#include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
-static void RenderMeshRenderers(const Scene& scene, RenderContext& context) {
+
+void MeshRenderSystem::Render(const Scene& scene, RenderContext& context) {
 	auto meshRenderers = scene.GetAllComponentsOfType<MeshRenderer>();
 
 	for (auto* mr : meshRenderers) {
 		auto* transform = scene.GetComponent<Transform>(mr->AttachedTo->GetId());
+		if (!transform)
+			continue;
 
 		context.Submit(
 		    mr->GetMesh(),
@@ -18,6 +20,8 @@ static void RenderMeshRenderers(const Scene& scene, RenderContext& context) {
 	}
 }
 
-REGISTER_RENDERABLE(RenderMeshRenderers)
-
 }
+
+REGISTER_RENDER_SYSTEM(
+    Origo::GamePhase::RenderGeometry,
+    Origo::MeshRenderSystem)

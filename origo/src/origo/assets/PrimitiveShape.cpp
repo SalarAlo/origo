@@ -146,6 +146,19 @@ static const std::vector<unsigned int> SPHERE_INDICES = [] {
     return idx;
 }();
 
+static const std::vector<float> QUAD_VERTICES {
+    // X,     Y,    Z,     NX, NY, NZ,   U,    V
+    -0.5f,  0.0f, -0.5f,  0,  1,  0,    0.0f, 0.0f, // bottom-left
+     0.5f,  0.0f, -0.5f,  0,  1,  0,    1.0f, 0.0f, // bottom-right
+     0.5f,  0.0f,  0.5f,  0,  1,  0,    1.0f, 1.0f, // top-right
+    -0.5f,  0.0f,  0.5f,  0,  1,  0,    0.0f, 1.0f  // top-left
+};
+
+static const std::vector<unsigned int> QUAD_INDICES {
+    0, 1, 2,
+    2, 3, 0
+};
+
 // clang-format on
 
 #pragma endregion
@@ -159,6 +172,8 @@ MeshData GetDataFromShape(PrimitiveShape shape) {
 		return { TRIANGLE_VERTICES, TRIANGLE_INDICES };
 	case PrimitiveShape::Sphere:
 		return { SPHERE_VERTICES, SPHERE_INDICES };
+	case PrimitiveShape::Quad:
+		return { QUAD_VERTICES, QUAD_INDICES };
 	default:
 		return { {}, {} };
 	}

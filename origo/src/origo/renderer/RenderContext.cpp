@@ -1,41 +1,32 @@
 #include "origo/renderer/RenderContext.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
-#include "origo/renderer/GeometryHeap.h"
-#include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/GlDebug.h"
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/VaoCache.h"
 
-#include "glm/gtc/matrix_transform.hpp"
-
 namespace Origo {
 static std::hash<UUID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-	auto& am { AssetManagerFast::GetInstance() };
+
+	auto& am = AssetManagerFast::GetInstance();
 	auto material = am.Get<Material>(cmd.GetMaterial());
 	auto mesh = am.Get<Mesh>(cmd.GetMesh());
-	auto shader = am.Get<Shader>(material->GetShader());
 
-	constexpr float outlineThickness { .1f };
+	constexpr float outlineThickness { 0.1f };
 	glm::mat4 model = cmd.GetTransform()->GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
-		model = glm::scale(model, glm::vec3(1 + outlineThickness));
+		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
+
 	material->WriteModel(model);
-
-	GeometryHeap* heap = GeometryHeapRegistry::GetHeap(mesh->HeapId);
-
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, heap->GetIbo()));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, heap->GetVbo()));
 
 	const VaoCache::Entry& vaoEntry = VaoCache::CreateOrGet(mesh->LayoutId, mesh->HeapId);
 
 	GLCall(glBindVertexArray(vaoEntry.VAO));
 
 	const MeshRange& r = mesh->Range;
-
 	GLCall(glDrawElementsBaseVertex(
 	    drawMethod,
 	    r.IndexCount,
@@ -61,10 +52,9 @@ void RenderContext::Flush(Camera* camera) {
 	BindFB();
 	Clear();
 
-	camera->SetAspectResolution(static_cast<float>(m_Target->GetWidth()) / m_Target->GetHeight());
-
 	ExecutePass(RenderPass::Geometry, camera);
 	ExecutePass(RenderPass::Outline, camera);
+	ExecutePass(RenderPass::Editor, camera);
 
 	Resolve();
 }
@@ -125,6 +115,7 @@ void RenderContext::ConfigureState(RenderPass pass) {
 		glStencilMask(0x00);
 		glStencilFunc(GL_ALWAYS, 0, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+		glDepthMask(GL_TRUE);
 
 		break;
 	}
@@ -140,6 +131,19 @@ void RenderContext::ConfigureState(RenderPass pass) {
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
+		glDepthMask(GL_TRUE);
+
+		break;
+	}
+	case RenderPass::Editor: {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		glDisable(GL_CULL_FACE);
+		glDepthMask(GL_TRUE);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		break;
 	}

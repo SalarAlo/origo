@@ -1,6 +1,5 @@
 #pragma once
 #include "origo/events/Event.h"
-#include <string>
 
 namespace Origo {
 struct ScreenWindowSettings {

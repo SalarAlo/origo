@@ -29,6 +29,8 @@ void EditorCameraLayer::OnUpdate(double dt) {
 
 	if (glm::length(direction) > 0.0f)
 		m_Camera->Move(direction * speed);
+
+	m_Camera->SetAspectResolution(static_cast<float>(m_Context.RenderBuffer.GetWidth()) / m_Context.RenderBuffer.GetHeight());
 }
 
 void EditorCameraLayer::OnEvent(Origo::Event& e) {

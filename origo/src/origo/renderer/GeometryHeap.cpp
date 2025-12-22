@@ -14,9 +14,6 @@ GeometryHeap::GeometryHeap(int vertexLayoutId, GLenum usage, size_t maxVertexByt
 	glGenBuffers(1, &m_Ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, maxIndexBytes, nullptr, usage);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 GeometryHeap::~GeometryHeap() {

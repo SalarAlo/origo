@@ -1,5 +1,5 @@
 #include "panels/PanelManager.h"
-#include "EditorContext.h"
+#include "state/EditorContext.h"
 #include "imgui.h"
 #include "origo/scene/Transform.h"
 #include "ui/UI.h"
@@ -36,8 +36,8 @@ void PanelManager::RenderMenuItems() {
 	if (ImGui::BeginMenu("Entities")) {
 		static int i {};
 		if (ImGui::MenuItem("Create Entity")) {
-			auto e = m_Context.Scene.CreateEntity("entity_" + std::to_string(i++));
-			m_Context.Scene.AddComponent<Origo::Transform>(e);
+			auto e = m_Context.EditorScene.CreateEntity("entity_" + std::to_string(i++));
+			m_Context.EditorScene.AddComponent<Origo::Transform>(e);
 		}
 
 		if (ImGui::MenuItem("Delete Entity")) {

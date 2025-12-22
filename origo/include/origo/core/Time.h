@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chrono>
-
 namespace Origo::Time {
 
 using SystemClock = std::chrono::high_resolution_clock;

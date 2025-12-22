@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorContext.h"
+#include "state/EditorContext.h"
 #include <ImGuizmo.h>
 
 #include "origo/Camera.h"
@@ -13,7 +13,7 @@ class SceneViewport : public EditorPanel {
 public:
 	SceneViewport(EditorContext& ctx)
 	    : m_Context(ctx)
-	    , m_Camera(ctx.Scene.GetMainCamera()) { }
+	    , m_Camera(ctx.EditorScene.GetMainCamera()) { }
 
 	void OnImGuiRender();
 	const char* GetName() const { return "Viewport"; }

@@ -66,19 +66,6 @@ void main() {
     vec3 specular = 0.5 * spec * lightColor;
 
     vec3 litColor = (ambient + diffuse + specular) * objectColor;
-    /*
-    float fogNear = 2.0;
-    float fogFar  = 200.0;
-    vec3 fogColor = vec3(1.0, 1.0, 1.0);
-
-    float fogFactor = clamp(
-        (fogFar - v_Depth) / (fogFar - fogNear),
-        0.0,
-        1.0
-    );
-
-    vec3 finalColor = mix(fogColor, litColor, fogFactor);
-    */
     FragColor = vec4(litColor, 1.0);
 
 }

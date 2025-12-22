@@ -35,10 +35,6 @@ VaoCache::Entry& VaoCache::Create(int layoutId, int heapId) {
 		GLCall(glVertexAttribPointer(i, attrib.Amount, attrib.Type, attrib.Normalized, layout->GetStride(), attrib.Offset));
 	}
 
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 	return e;
 }
 

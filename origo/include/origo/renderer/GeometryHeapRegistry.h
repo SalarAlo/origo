@@ -6,17 +6,23 @@ namespace Origo {
 class GeometryHeapRegistry {
 public:
 	static int CreateHeap(int layoutId, GLenum usage, size_t vBytes, size_t iBytes) {
-		int id = m_Heaps.size();
-		m_Heaps.emplace_back(layoutId, usage, vBytes, iBytes);
-		return id;
+		auto& heaps = GetHeaps();
+		heaps.emplace_back(std::make_unique<GeometryHeap>(layoutId, usage, vBytes, iBytes));
+		return static_cast<int>(heaps.size() - 1);
 	}
 
-	static GeometryHeap* GetHeap(int id) {
-		return &m_Heaps[id];
+	static GeometryHeap* GetHeap(int heapId) {
+		auto& heaps = GetHeaps();
+		if (heapId < 0 || heapId >= static_cast<int>(heaps.size()))
+			return nullptr;
+		return heaps[heapId].get();
 	}
 
 private:
-	inline static std::vector<GeometryHeap> m_Heaps {};
+	static std::vector<std::unique_ptr<GeometryHeap>>& GetHeaps() {
+		static std::vector<std::unique_ptr<GeometryHeap>> s_Heaps;
+		return s_Heaps;
+	}
 };
 
 }

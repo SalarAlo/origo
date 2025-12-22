@@ -1,7 +1,6 @@
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/scene/Scene.h"
 
 using namespace Origo;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorContext.h"
+#include "state/EditorContext.h"
 #include "EditorPanel.h"
 #include "origo/assets/Texture.h"
 

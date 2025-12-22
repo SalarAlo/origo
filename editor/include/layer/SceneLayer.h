@@ -3,7 +3,7 @@
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Layer.h"
 
-#include "EditorContext.h"
+#include "state/EditorContext.h"
 
 namespace OrigoEditor {
 

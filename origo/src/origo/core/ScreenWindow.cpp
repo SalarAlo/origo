@@ -7,9 +7,29 @@
 #include "origo/input/Input.h"
 #include "origo/renderer/GlDebug.h"
 
-#include <GL/gl.h>
-#include <cassert>
-#include <stdexcept>
+static void APIENTRY MyCallback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam) {
+	// Filter out non-significant notifications if you want
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+		return;
+
+	std::cerr << "\n[OpenGL DEBUG MESSAGE]\n";
+	std::cerr << "Message: " << message << "\n";
+	std::cerr << "Source: " << source << "\n";
+	std::cerr << "Type: " << type << "\n";
+	std::cerr << "Severity: " << severity << "\n\n";
+
+	// Hard stop on serious errors
+	if (severity == GL_DEBUG_SEVERITY_HIGH) {
+		std::abort();
+	}
+}
 
 namespace Origo {
 bool ScreenWindow::s_SingleInstanceCreated { false };
@@ -64,6 +84,10 @@ void ScreenWindow::InitGlad() {
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(MyCallback, nullptr);
 
 	GLCall(glEnable(GL_MULTISAMPLE));
 	GLCall(glClearColor(.04, .04, .067, 1));

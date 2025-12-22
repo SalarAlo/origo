@@ -14,7 +14,8 @@
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
 #include "origo/renderer/VertexLayoutRegistry.h"
-#include "components/EditorMeshRenderer.h"
+#include "components/EditorSelection.h"
+#include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 
 using namespace Origo;
@@ -30,7 +31,7 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
-	SpawnGrid(100);
+	SpawnGrid(10);
 }
 
 void SceneLayer::OnEvent(Event& e) {
@@ -42,10 +43,10 @@ void SceneLayer::OnEvent(Event& e) {
 
 			constexpr float BASE_DISTANCE = 2.0f;
 
-			auto camera = m_Context.Scene.GetMainCamera();
+			auto camera = m_Context.EditorScene.GetMainCamera();
 
 			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.Scene.GetComponent<Transform>(selectedEntity.GetId()) };
+			auto transform { m_Context.EditorScene.GetComponent<Transform>(selectedEntity.GetId()) };
 
 			auto targetPos { transform->GetPosition() };
 			auto forward { glm::normalize(camera->GetForward()) };
@@ -113,17 +114,20 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 				z * spacing - half
 			};
 
-			auto entity = m_Context.Scene.CreateEntity(
+			auto entity = m_Context.EditorScene.CreateEntity(
 			    "GridCube_" + std::to_string(id++));
 
-			auto transform = m_Context.Scene.AddComponent<Transform>(entity);
+			auto transform = m_Context.EditorScene.AddComponent<Transform>(entity);
 			transform->SetPosition(pos);
 
-			m_Context.Scene.AddComponent<EditorMeshRenderer>(
+			m_Context.EditorScene.AddComponent<MeshRenderer>(
 			    entity,
 			    material,
 			    cubeMesh);
+
+			m_Context.EditorScene.AddComponent<EditorSelection>(entity);
 		}
 	}
 }
+
 }

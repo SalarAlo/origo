@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorContext.h"
+#include "state/EditorContext.h"
 #include "origo/core/Layer.h"
 #include "origo/imgui/ImGuiLayer.h"
 #include "panels/PanelManager.h"

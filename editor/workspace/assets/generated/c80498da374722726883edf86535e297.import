@@ -4,11 +4,11 @@
                 "Origin": "Generated",
                 "SourcePath": "",
                 "Type": "Shader",
-                "UUID": "fb308a2dd040c409ea814347ab00104a"
+                "UUID": "c80498da374722726883edf86535e297"
         },
         "Payload": {
                 "source": {
-                        "shader_path": "resources/shaders/gradient.glsl",
+                        "shader_path": "resources/shaders/normal.glsl",
                         "type": "File"
                 }
         }

@@ -9,17 +9,19 @@ namespace OrigoEditor {
 
 struct EditorContext {
 	EditorContext(Origo::Scene& scene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, GLFWwindow* window, EditorPalette palette)
-	    : Scene(scene)
+	    : EditorScene(scene)
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
 	    , Window(window)
 	    , ColorPalette(palette) { }
 
-	Origo::Scene& Scene;
+	Origo::Scene& EditorScene;
+
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
 	GLFWwindow* Window;
 	EditorPalette ColorPalette;
+
 	std::optional<Origo::Entity> SelectedEntity { std::nullopt };
 
 	EditorContext(const EditorContext&) = delete;

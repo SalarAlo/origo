@@ -1,6 +1,4 @@
 #pragma once
-#include <vector>
-#include <glad/glad.h>
 
 namespace Origo {
 
