@@ -3,9 +3,9 @@
 #include "state/EditorContext.h"
 #include <ImGuizmo.h>
 
-#include "origo/Camera.h"
 #include "origo/assets/Texture.h"
 #include "panels/EditorPanel.h"
+#include "systems/EditorCamera.h"
 
 namespace OrigoEditor {
 
@@ -13,14 +13,16 @@ class SceneViewport : public EditorPanel {
 public:
 	SceneViewport(EditorContext& ctx)
 	    : m_Context(ctx)
-	    , m_Camera(ctx.EditorScene.GetMainCamera()) { }
+	    , m_Camera(ctx.EditorViewportCamera) { }
 
 	void OnImGuiRender();
-	const char* GetName() const { return "Viewport"; }
+	const char* GetName() const {
+		return "Viewport";
+	}
 
 private:
 	EditorContext& m_Context;
-	Origo::Camera* m_Camera;
+	EditorCamera& m_Camera;
 
 	ImGuizmo::OPERATION m_GizmoOperation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE m_GizmoMode = ImGuizmo::LOCAL;

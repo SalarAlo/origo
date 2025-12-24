@@ -11,11 +11,15 @@ public:
 	    : m_Name(name) {
 	}
 
+	Entity(const Entity& other)
+	    : m_Id(other.m_Id)
+	    , m_Name(other.m_Name) { }
+
 	const std::string& GetName() const {
 		return m_Name;
 	}
 
-	RID GetId() { return m_Id; }
+	RID GetId() const { return m_Id; }
 
 private:
 	std::string m_Name {};

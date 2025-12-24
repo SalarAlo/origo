@@ -9,8 +9,9 @@
 
 namespace OrigoEditor {
 
-EditorUILayer::EditorUILayer(EditorContext& ctx)
+EditorUILayer::EditorUILayer(EditorContext& ctx, Origo::ImGuiLayer& controller)
     : m_Context(ctx)
+    , m_ImGuiController(controller)
     , m_PanelManager(ctx) {
 }
 
@@ -24,11 +25,11 @@ void EditorUILayer::OnAttach() {
 	UI::ApplyEditorStyle(m_Context.ColorPalette);
 	UI::LoadEditorFont();
 
+	m_PanelManager.AddPanel<SceneViewport>(m_Context);
 	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
 	m_PanelManager.AddPanel<InspectorPanel>(m_Context);
-	m_PanelManager.AddPanel<SceneViewport>(m_Context);
 	m_PanelManager.AddPanel<ConsolePanel>();
-	m_PanelManager.AddPanel<RuntimeStatePanel>();
+	m_PanelManager.AddPanel<RuntimeStatePanel>(m_Context);
 	m_PanelManager.AddPanel<AssetsPanel>();
 }
 

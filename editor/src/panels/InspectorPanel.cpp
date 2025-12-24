@@ -5,8 +5,9 @@
 namespace OrigoEditor {
 
 void InspectorPanel::OnImGuiRender() {
-	auto& selectedEntity { m_Contex.SelectedEntity };
-	auto& scene { m_Contex.EditorScene };
+	auto& selectedEntity = m_Contex.SelectedEntity;
+	auto scene = m_Contex.ActiveScene;
+
 	ImGui::SetWindowFontScale(1.1f);
 
 	if (!selectedEntity.has_value()) {
@@ -15,12 +16,17 @@ void InspectorPanel::OnImGuiRender() {
 		return;
 	}
 
-	ImGui::SeparatorText(selectedEntity.value().GetName().c_str());
+	Origo::RID entity = selectedEntity->GetId();
 
+	ImGui::SeparatorText(selectedEntity->GetName().c_str());
 	ImGui::SetWindowFontScale(0.9f);
 
-	for (auto* comp : scene.GetComponents(selectedEntity.value().GetId())) {
-		InspectorDrawRegistry::Draw(comp, typeid(*comp));
+	for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
+		if (!scene->HasComponentByType(entity, type))
+			continue;
+
+		void* componentPtr = scene->GetComponentByType(entity, type);
+		InspectorDrawRegistry::Draw(componentPtr, type);
 	}
 
 	ImGui::SetWindowFontScale(1.0f);

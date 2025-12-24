@@ -9,7 +9,7 @@ namespace OrigoEditor {
 
 class EditorUILayer : public Origo::Layer {
 public:
-	EditorUILayer(EditorContext& ctx);
+	EditorUILayer(EditorContext& ctx, Origo::ImGuiLayer& controller);
 
 	void OnAttach() override;
 	void OnDetach() override;
@@ -17,7 +17,7 @@ public:
 	void OnEvent(Origo::Event& e) override;
 
 private:
-	Origo::ImGuiLayer m_ImGuiController {};
+	Origo::ImGuiLayer& m_ImGuiController;
 	EditorContext& m_Context;
 	PanelManager m_PanelManager;
 

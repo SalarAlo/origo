@@ -3,7 +3,6 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/scene/Component.h"
-#include "origo/scene/Entity.hpp"
 
 namespace OrigoEditor {
 
@@ -12,8 +11,7 @@ public:
 	bool IsSelected = false;
 
 public:
-	EditorSelection(Origo::Entity* entity)
-	    : Component(entity) { }
+	EditorSelection() { }
 
 	std::string GetName() const override { return "EditorSelection"; }
 

@@ -38,6 +38,10 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 }
 
 void RenderContext::BeginFrame() {
+	if (!m_HasView) {
+		throw std::runtime_error("RenderContext::Flush: called without a view (SetView not called).");
+	}
+
 	FrameBuffer* fb = m_Target;
 	if (!fb)
 		return;
@@ -48,13 +52,12 @@ void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material,
 	m_DrawQueue.emplace_back(mesh, material, transform, pass);
 }
 
-void RenderContext::Flush(Camera* camera) {
+void RenderContext::Flush() {
 	BindFB();
 	Clear();
 
-	ExecutePass(RenderPass::Geometry, camera);
-	ExecutePass(RenderPass::Outline, camera);
-	ExecutePass(RenderPass::Editor, camera);
+	ExecutePass(RenderPass::Geometry);
+	ExecutePass(RenderPass::Outline);
 
 	Resolve();
 }
@@ -73,7 +76,7 @@ void RenderContext::BindFB() {
 	fb->Bind();
 }
 
-void RenderContext::ExecutePass(RenderPass pass, Camera* camera) {
+void RenderContext::ExecutePass(RenderPass pass) {
 	ConfigureState(pass);
 
 	Material* currentMaterial {};
@@ -91,10 +94,10 @@ void RenderContext::ExecutePass(RenderPass pass, Camera* camera) {
 			currentMaterialId = cmd.GetMaterial();
 
 			currentMaterial
-			    ->SetShaderDirectly("u_ProjectionMatrix", camera->GetProjection())
-			    .SetShaderDirectly("u_ViewMatrix", camera->GetView())
-			    .SetShaderDirectly("u_CameraForward", camera->GetForward())
-			    .SetShaderDirectly("u_ViewPos", camera->GetPosition());
+			    ->SetShaderDirectly("u_ProjectionMatrix", m_View.Projection)
+			    .SetShaderDirectly("u_ViewMatrix", m_View.View)
+			    .SetShaderDirectly("u_CameraForward", m_View.CameraForward)
+			    .SetShaderDirectly("u_ViewPos", m_View.CameraPosition);
 		}
 
 		DrawMesh(cmd, m_DrawMethod);
@@ -132,18 +135,6 @@ void RenderContext::ConfigureState(RenderPass pass) {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glDepthMask(GL_TRUE);
-
-		break;
-	}
-	case RenderPass::Editor: {
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-
-		glDisable(GL_CULL_FACE);
-		glDepthMask(GL_TRUE);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		break;
 	}

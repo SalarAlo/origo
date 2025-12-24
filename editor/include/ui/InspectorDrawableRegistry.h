@@ -47,6 +47,10 @@ public:
 		DrawKnown(drawablePtr, it->second);
 	}
 
+	static const auto& GetEntries() {
+		return m_Drawers;
+	}
+
 private:
 	static bool DrawInspectorHeaderRow(
 	    void* idPtr,

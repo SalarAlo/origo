@@ -5,13 +5,9 @@ class Entity;
 
 class Component {
 public:
-	Component(Entity* entity = nullptr)
-	    : AttachedTo(entity) { };
+	Component() = default;
 	virtual ~Component() = default;
 	virtual std::string GetName() const = 0;
-
-public:
-	Entity* AttachedTo;
 };
 
 }

@@ -8,7 +8,7 @@ namespace Origo {
 
 class MeshRenderSystem final : public IRenderSystem {
 public:
-	void Render(const Scene& scene, RenderContext& context) override;
+	void Render(Scene* scene, RenderContext& context) override;
 };
 
 }

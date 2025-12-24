@@ -1,4 +1,5 @@
 #include "layer/EditorCameraLayer.h"
+#include "layer/RenderLayer.h"
 #include "layer/SceneLayer.h"
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
@@ -7,6 +8,9 @@
 #include "layer/EditorUILayer.h"
 #include "state/EditorContext.h"
 #include "ui/EditorPalette.h"
+
+#include "origo/renderer/RenderContext.h"
+#include "origo/scene/Scene.h"
 
 using namespace Origo;
 
@@ -30,19 +34,18 @@ public:
 	    , m_ResolveBuffer([] {
 		    FrameBufferSpec spec;
 		    spec.Width = 1920;
-		    spec.Height = 1080;
-		    spec.Samples = 1;
 		    spec.Attachments = {
 			    { AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
 			    { AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 		    };
 		    return spec;
 	    }())
-	    , m_Context(m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette()) {
-
-		PushLayer(new EditorCameraLayer(m_Scene.GetMainCamera(), m_Context));
+	    , m_Context(&m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette())
+	    , m_Scene("Sample Scene") {
+		PushLayer(new EditorCameraLayer(m_Context));
 		PushLayer(new SceneLayer(m_Context));
-		PushLayer(new EditorUILayer(m_Context));
+		PushLayer(new EditorUILayer(m_Context, m_ImGuiController));
+		PushLayer(new RenderLayer(m_Context, m_RenderContext));
 
 		m_RenderContext.SetTarget(&m_RenderBuffer);
 		m_RenderContext.SetResolveTarget(&m_ResolveBuffer);
@@ -52,6 +55,10 @@ private:
 	FrameBuffer m_RenderBuffer;
 	FrameBuffer m_ResolveBuffer;
 	EditorContext m_Context;
+
+	Scene m_Scene;
+	RenderContext m_RenderContext { nullptr };
+	Origo::ImGuiLayer m_ImGuiController;
 };
 
 }

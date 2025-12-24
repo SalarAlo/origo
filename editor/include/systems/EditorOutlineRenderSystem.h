@@ -8,7 +8,7 @@ namespace OrigoEditor {
 
 class EditorOutlineRenderSystem final : public Origo::IRenderSystem {
 public:
-	void Render(const Origo::Scene& scene, Origo::RenderContext& context) override;
+	void Render(Origo::Scene* scene, Origo::RenderContext& context) override;
 };
 
 }

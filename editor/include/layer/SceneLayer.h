@@ -13,7 +13,6 @@ public:
 
 	void OnAttach() override;
 	void OnUpdate(double dt) override;
-	void OnEvent(Origo::Event& e) override;
 
 private:
 	void SpawnGrid(int gridSize = 10, float spacing = 1.5f);

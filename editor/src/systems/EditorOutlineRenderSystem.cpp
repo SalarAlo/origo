@@ -7,30 +7,23 @@
 #include "components/EditorSelection.h"
 
 namespace OrigoEditor {
+using namespace Origo;
 
-void EditorOutlineRenderSystem::Render(
-    const Origo::Scene& scene,
-    Origo::RenderContext& context) {
-	auto selections = scene.GetAllComponentsOfType<EditorSelection>();
+void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
+	scene->View<EditorSelection, Transform, MeshRenderer>(
+	    [&](RID entity,
+	        EditorSelection& selection,
+	        Transform& transform,
+	        MeshRenderer& mr) {
+		    if (!selection.IsSelected)
+			    return;
 
-	for (auto* selection : selections) {
-		if (!selection->IsSelected)
-			continue;
-
-		auto entityId = selection->AttachedTo->GetId();
-
-		auto* transform = scene.GetComponent<Origo::Transform>(entityId);
-		auto* mr = scene.GetComponent<Origo::MeshRenderer>(entityId);
-
-		if (!transform || !mr)
-			continue;
-
-		context.Submit(
-		    mr->GetMesh(),
-		    EditorSelection::GetOutlineMaterial(),
-		    transform,
-		    Origo::RenderPass::Outline);
-	}
+		    context.Submit(
+		        mr.GetMesh(),
+		        EditorSelection::GetOutlineMaterial(),
+		        &transform,
+		        RenderPass::Outline);
+	    });
 }
 
 }

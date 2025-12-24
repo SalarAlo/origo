@@ -13,8 +13,8 @@ public:
 		return instance;
 	}
 
-	void RunPhase(GamePhase phase, Scene& scene, float dt);
-	void RunPhase(GamePhase phase, const Scene& scene, RenderContext& ctx);
+	void RunPhase(GamePhase phase, Scene* scene, float dt);
+	void RunPhase(GamePhase phase, Scene* scene, RenderContext& ctx);
 
 	void AddUpdateSystem(GamePhase phase, Scope<IUpdateSystem> system);
 	void AddRenderSystem(GamePhase phase, Scope<IRenderSystem> system);

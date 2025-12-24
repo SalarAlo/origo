@@ -20,7 +20,6 @@ public:
 		    };
 		    return spec;
 	    }()) {
-		m_RenderContext.SetTarget(&m_Buffer);
 	}
 
 private:

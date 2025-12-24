@@ -1,6 +1,8 @@
 #include "panels/SceneViewport.h"
+#include "origo/assets/Texture.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/scene/Transform.h"
+#include "state/EditorRuntimeState.h"
 
 namespace OrigoEditor {
 
@@ -107,13 +109,13 @@ void SceneViewport::OnImGuiRender() {
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (m_Context.SelectedEntity.has_value()) {
+	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::Editing) {
 		auto& entity = m_Context.SelectedEntity.value();
-		auto transform = m_Context.EditorScene.GetComponent<Origo::Transform>(entity.GetId());
+		auto transform = m_Context.EditorScene->GetComponent<Origo::Transform>(entity.GetId());
 
 		glm::mat4 model = transform->GetModelMatrix();
-		glm::mat4 view = m_Camera->GetView();
-		glm::mat4 proj = m_Camera->GetProjection();
+		glm::mat4 view = m_Camera.GetCamera().GetView();
+		glm::mat4 proj = m_Camera.GetCamera().GetProjection();
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(
@@ -158,10 +160,12 @@ void SceneViewport::OnImGuiRender() {
 
 		smoothDelta.x = smoothDelta.x * (1.0f - smoothAlpha) + delta.x * smoothAlpha;
 		smoothDelta.y = smoothDelta.y * (1.0f - smoothAlpha) + delta.y * smoothAlpha;
+		glm::vec2 smoothDeltaGlm {
+			(smoothDelta * sensitivity).x,
+			(smoothDelta * sensitivity).y
+		};
 
-		m_Camera->Rotate(
-		    smoothDelta.x * sensitivity,
-		    -smoothDelta.y * sensitivity);
+		m_Context.EditorViewportCamera.OnMouseDelta(smoothDeltaGlm);
 	}
 }
 

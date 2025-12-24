@@ -1,5 +1,6 @@
 #include "layer/SceneLayer.h"
 
+#include "components/FallComponent.h"
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/ShaderSource.h"
@@ -7,9 +8,6 @@
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/core/Time.h"
-#include "origo/events/Event.h"
-#include "origo/events/EventTypes.h"
-#include "origo/events/KeyEvent.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
@@ -17,6 +15,7 @@
 #include "components/EditorSelection.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
+#include <random>
 
 using namespace Origo;
 
@@ -31,30 +30,7 @@ void SceneLayer::OnAttach() {
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
-	SpawnGrid(10);
-}
-
-void SceneLayer::OnEvent(Event& e) {
-	EventDispatcher dispatcher { e };
-	dispatcher.Dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
-		if (pressEvent.GetKeyPressed() == KeyboardKey::KEY_F && pressEvent.GetKeyPressType() == KeyPressType::KeyPressStart) {
-			if (!m_Context.SelectedEntity)
-				return;
-
-			constexpr float BASE_DISTANCE = 2.0f;
-
-			auto camera = m_Context.EditorScene.GetMainCamera();
-
-			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.EditorScene.GetComponent<Transform>(selectedEntity.GetId()) };
-
-			auto targetPos { transform->GetPosition() };
-			auto forward { glm::normalize(camera->GetForward()) };
-
-			camera->SetPosition(targetPos - forward * BASE_DISTANCE);
-			camera->LookAt(targetPos);
-		}
-	});
+	SpawnGrid(5);
 }
 
 void SceneLayer::OnUpdate(double dt) {
@@ -74,7 +50,12 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
 	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
 
-	int layoutId = VertexLayoutRegistry::Register(layout);
+	std::mt19937 random { std::random_device {}() };
+	std::uniform_int_distribution<int> chanceDistr { 1, 4 };
+	std::uniform_real_distribution<float> speedDistr { 1.0f, 100.0f };
+
+	int layoutId
+	    = VertexLayoutRegistry::Register(layout);
 	int heapId = GeometryHeapRegistry::CreateHeap(
 	    layoutId,
 	    GL_STATIC_DRAW,
@@ -114,18 +95,21 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 				z * spacing - half
 			};
 
-			auto entity = m_Context.EditorScene.CreateEntity(
+			auto entity = m_Context.EditorScene->CreateEntity(
 			    "GridCube_" + std::to_string(id++));
 
-			auto transform = m_Context.EditorScene.AddComponent<Transform>(entity);
+			auto transform = m_Context.EditorScene->AddComponent<Transform>(entity);
 			transform->SetPosition(pos);
 
-			m_Context.EditorScene.AddComponent<MeshRenderer>(
+			m_Context.EditorScene->AddComponent<MeshRenderer>(
 			    entity,
 			    material,
 			    cubeMesh);
 
-			m_Context.EditorScene.AddComponent<EditorSelection>(entity);
+			m_Context.EditorScene->AddComponent<EditorSelection>(entity);
+			if (chanceDistr(random) == 1) {
+				m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
+			}
 		}
 	}
 }

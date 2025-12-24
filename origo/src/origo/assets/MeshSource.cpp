@@ -22,9 +22,6 @@ void MeshSourceRaw::Serialize(ISerializer& backend) const {
 
 MeshSource* MeshSourceRaw::Deserialize(ISerializer& backend) const {
 	// TODO:
-	// when doing these deserializers new these objs and then return em
-	// cause their owner (eg. mesh, shader, ...) will wrap them around
-	// unique causing deletes automatically
 	return nullptr;
 }
 

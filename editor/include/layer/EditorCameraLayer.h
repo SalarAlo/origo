@@ -1,14 +1,13 @@
 #pragma once
 
-#include "origo/Camera.h"
 #include "origo/core/Layer.h"
 #include "state/EditorContext.h"
 
 namespace OrigoEditor {
 class EditorCameraLayer : public Origo::Layer {
 public:
-	EditorCameraLayer(Origo::Camera* camera, EditorContext& context)
-	    : m_Camera(camera)
+	EditorCameraLayer(EditorContext& context)
+	    : m_Camera(context.EditorViewportCamera)
 	    , m_Context(context) { };
 
 	void OnAttach() override;
@@ -16,7 +15,7 @@ public:
 	void OnEvent(Origo::Event& e) override;
 
 private:
-	Origo::Camera* m_Camera;
+	EditorCamera& m_Camera;
 	EditorContext& m_Context;
 
 	static constexpr float NORMAL_SPEED = .2f;

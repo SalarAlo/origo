@@ -3,13 +3,11 @@
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/scene/Component.h"
 
-#include "origo/scene/Entity.hpp"
-
 namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(Entity* entity, AssetHandle material = {}, AssetHandle mesh = {});
+	MeshRenderer(AssetHandle material = {}, AssetHandle mesh = {});
 
 	std::string GetName() const override { return "MeshRenderer"; }
 

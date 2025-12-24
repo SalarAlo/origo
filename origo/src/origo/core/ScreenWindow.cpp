@@ -15,7 +15,6 @@ static void APIENTRY MyCallback(
     GLsizei length,
     const GLchar* message,
     const void* userParam) {
-	// Filter out non-significant notifications if you want
 	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
 		return;
 
@@ -25,7 +24,6 @@ static void APIENTRY MyCallback(
 	std::cerr << "Type: " << type << "\n";
 	std::cerr << "Severity: " << severity << "\n\n";
 
-	// Hard stop on serious errors
 	if (severity == GL_DEBUG_SEVERITY_HIGH) {
 		std::abort();
 	}
@@ -76,7 +74,6 @@ void ScreenWindow::InitGlad() {
 	GLCall(glDepthFunc(GL_LESS));
 
 	GLCall(glEnable(GL_STENCIL_TEST));
-	// only replace stencil buffer entry if depth and stencil tests are passed
 	GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 	GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
 	GLCall(glStencilMask(0xFF));

@@ -4,20 +4,17 @@
 
 namespace Origo {
 
-void MeshRenderSystem::Render(const Scene& scene, RenderContext& context) {
-	auto meshRenderers = scene.GetAllComponentsOfType<MeshRenderer>();
-
-	for (auto* mr : meshRenderers) {
-		auto* transform = scene.GetComponent<Transform>(mr->AttachedTo->GetId());
-		if (!transform)
-			continue;
-
-		context.Submit(
-		    mr->GetMesh(),
-		    mr->GetMaterial(),
-		    transform,
-		    RenderPass::Geometry);
-	}
+void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
+	scene->View<MeshRenderer, Transform>(
+	    [&](RID entity,
+	        MeshRenderer& mr,
+	        Transform& transform) {
+		    context.Submit(
+		        mr.GetMesh(),
+		        mr.GetMaterial(),
+		        &transform,
+		        RenderPass::Geometry);
+	    });
 }
 
 }

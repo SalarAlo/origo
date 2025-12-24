@@ -1,5 +1,7 @@
 #include "layer/EditorCameraLayer.h"
 #include "origo/input/Input.h"
+#include "origo/scene/Transform.h"
+#include "state/EditorRuntimeState.h"
 
 using namespace Origo;
 
@@ -7,32 +9,59 @@ namespace OrigoEditor {
 
 void EditorCameraLayer::OnAttach() {
 	Input::SetCursorMode(Input::CursorMode::Free);
-	m_Camera->SetRotationEnabled(true);
-	m_Camera->SetMovementEnabled(true);
 }
 
 void EditorCameraLayer::OnUpdate(double dt) {
-	glm::vec3 direction(0.0f);
+	glm::vec3 moveInput(0.0f);
 
-	const float speed = Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_LEFT_SHIFT)
+	if (Input::IsKeyPressed(KeyboardKey::KEY_W))
+		moveInput.z += 1.0f;
+	if (Input::IsKeyPressed(KeyboardKey::KEY_S))
+		moveInput.z -= 1.0f;
+	if (Input::IsKeyPressed(KeyboardKey::KEY_D))
+		moveInput.x += 1.0f;
+	if (Input::IsKeyPressed(KeyboardKey::KEY_A))
+		moveInput.x -= 1.0f;
+	if (Input::IsKeyPressed(KeyboardKey::KEY_E))
+		moveInput.y += 1.0f;
+	if (Input::IsKeyPressed(KeyboardKey::KEY_Q))
+		moveInput.y -= 1.0f;
+
+	float speed = Input::IsKeyPressed(KeyboardKey::KEY_LEFT_SHIFT)
 	    ? FAST_SPEED
 	    : NORMAL_SPEED;
 
-	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_W))
-		direction += m_Camera->GetForward();
-	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_S))
-		direction -= m_Camera->GetForward();
-	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_D))
-		direction += m_Camera->GetRight();
-	if (Origo::Input::IsKeyPressed(Origo::KeyboardKey::KEY_A))
-		direction -= m_Camera->GetRight();
+	if (glm::length(moveInput) > 0.0f) {
+		m_Camera.OnMove(glm::normalize(moveInput), speed);
+	}
 
-	if (glm::length(direction) > 0.0f)
-		m_Camera->Move(direction * speed);
-
-	m_Camera->SetAspectResolution(static_cast<float>(m_Context.RenderBuffer.GetWidth()) / m_Context.RenderBuffer.GetHeight());
+	m_Camera.GetCamera().SetAspect(
+	    static_cast<float>(m_Context.RenderBuffer.GetWidth()) / static_cast<float>(m_Context.RenderBuffer.GetHeight()));
 }
 
-void EditorCameraLayer::OnEvent(Origo::Event& e) {
+void EditorCameraLayer::OnEvent(Event& e) {
+	EventDispatcher dispatcher { e };
+	dispatcher.Dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
+		bool pressedF { pressEvent.GetKeyPressed() == KeyboardKey::KEY_F && pressEvent.GetKeyPressType() == KeyPressType::KeyPressStart };
+		if (pressedF && m_Context.RuntimeState == EditorRuntimeState::Editing) {
+			if (!m_Context.SelectedEntity)
+				return;
+
+			constexpr float BASE_DISTANCE = 2.0f;
+
+			auto& camera = m_Context.EditorViewportCamera;
+
+			auto selectedEntity = m_Context.SelectedEntity.value();
+			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity.GetId()) };
+
+			auto targetPos { transform->GetPosition() };
+			glm::vec3 forward = camera.GetTransform().GetForward();
+
+			camera.GetTransform().SetPosition(targetPos - forward * BASE_DISTANCE);
+			camera.GetTransform().LookAt(targetPos);
+
+			camera.UpdateCamera();
+		}
+	});
 }
 }
