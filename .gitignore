@@ -14,3 +14,4 @@ compile_commands.json
 
 # Static libraries
 *.a
+callgrind.out.*
