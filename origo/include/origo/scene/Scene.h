@@ -37,6 +37,10 @@ public:
 		    std::forward<Args>(args)...);
 	}
 
+	bool AddComponent(const RID& e, std::type_index type) {
+		return m_ComponentManager.AddComponentByType(e, type);
+	}
+
 	template <ComponentType T>
 	T* GetComponent(const RID& entity) {
 		return m_ComponentManager.GetComponent<T>(entity);

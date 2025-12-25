@@ -6,7 +6,7 @@ namespace Origo {
 
 class CameraComponent : public Component {
 public:
-	bool IsPrimary;
+	bool IsPrimary { false };
 
 public:
 	std::string GetName() const override { return "Camera"; }

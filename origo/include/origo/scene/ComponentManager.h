@@ -17,11 +17,9 @@ class ComponentManager {
 private:
 	struct IStorage {
 		virtual ~IStorage() = default;
-
 		virtual bool Has(RID entity) const = 0;
 		virtual void* GetRaw(RID entity) = 0;
 		virtual const void* GetRaw(RID entity) const = 0;
-
 		virtual std::unique_ptr<IStorage> Clone() const = 0;
 	};
 
@@ -35,12 +33,12 @@ private:
 
 		void* GetRaw(RID entity) override {
 			auto it = Data.find(entity);
-			return (it != Data.end()) ? &it->second : nullptr;
+			return it != Data.end() ? &it->second : nullptr;
 		}
 
 		const void* GetRaw(RID entity) const override {
 			auto it = Data.find(entity);
-			return (it != Data.end()) ? &it->second : nullptr;
+			return it != Data.end() ? &it->second : nullptr;
 		}
 
 		std::unique_ptr<IStorage> Clone() const override {
@@ -52,35 +50,20 @@ private:
 
 public:
 	ComponentManager() = default;
-	ComponentManager(const ComponentManager& other) {
-		CloneFrom(other);
-	}
+	ComponentManager(const ComponentManager& other);
+	ComponentManager& operator=(const ComponentManager& other);
 
-	ComponentManager& operator=(const ComponentManager& other) {
-		if (this != &other) {
-			CloneFrom(other);
-		}
-		return *this;
-	}
-
-	void CloneFrom(const ComponentManager& other) {
-		m_Storages.clear();
-		m_Storages.reserve(other.m_Storages.size());
-
-		for (const auto& [type, storage] : other.m_Storages) {
-			m_Storages.emplace(type, storage->Clone());
-		}
-	}
+	void CloneFrom(const ComponentManager& other);
+	bool AddComponentByType(RID entity, std::type_index type);
+	static bool CanAddComponentByType(std::type_index type);
 
 	template <ComponentType T, typename... Args>
 	T& AddComponent(RID entity, Args&&... args) {
 		auto& storage = GetOrCreateStorage<T>();
-
 		auto [it, inserted] = storage.Data.emplace(entity, T { std::forward<Args>(args)... });
 
-		if (!inserted) {
+		if (!inserted)
 			throw std::runtime_error("Component already exists on entity");
-		}
 
 		return it->second;
 	}
@@ -98,7 +81,7 @@ public:
 			return nullptr;
 
 		auto it = storage->Data.find(entity);
-		return (it != storage->Data.end()) ? &it->second : nullptr;
+		return it != storage->Data.end() ? &it->second : nullptr;
 	}
 
 	template <ComponentType T>
@@ -108,7 +91,7 @@ public:
 			return nullptr;
 
 		auto it = storage->Data.find(entity);
-		return (it != storage->Data.end()) ? &it->second : nullptr;
+		return it != storage->Data.end() ? &it->second : nullptr;
 	}
 
 	template <ComponentType T, typename Func>
@@ -150,26 +133,17 @@ public:
 
 	bool HasComponent(RID entity, std::type_index type) const {
 		auto it = m_Storages.find(type);
-		if (it == m_Storages.end())
-			return false;
-
-		return it->second->Has(entity);
+		return it != m_Storages.end() && it->second->Has(entity);
 	}
 
 	void* GetComponentByType(RID entity, std::type_index type) {
 		auto it = m_Storages.find(type);
-		if (it == m_Storages.end())
-			return nullptr;
-
-		return it->second->GetRaw(entity);
+		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
 	}
 
 	const void* GetComponentByType(RID entity, std::type_index type) const {
 		auto it = m_Storages.find(type);
-		if (it == m_Storages.end())
-			return nullptr;
-
-		return it->second->GetRaw(entity);
+		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
 	}
 
 private:
@@ -192,20 +166,18 @@ private:
 	Storage<T>* GetStorage() {
 		const std::type_index type = typeid(T);
 		auto it = m_Storages.find(type);
-		if (it == m_Storages.end())
-			return nullptr;
-
-		return static_cast<Storage<T>*>(it->second.get());
+		return it != m_Storages.end()
+		    ? static_cast<Storage<T>*>(it->second.get())
+		    : nullptr;
 	}
 
 	template <ComponentType T>
 	const Storage<T>* GetStorage() const {
 		const std::type_index type = typeid(T);
 		auto it = m_Storages.find(type);
-		if (it == m_Storages.end())
-			return nullptr;
-
-		return static_cast<const Storage<T>*>(it->second.get());
+		return it != m_Storages.end()
+		    ? static_cast<const Storage<T>*>(it->second.get())
+		    : nullptr;
 	}
 
 private:

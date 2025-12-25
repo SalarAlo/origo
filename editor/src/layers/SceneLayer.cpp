@@ -51,6 +51,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
 
 	std::mt19937 random { std::random_device {}() };
+	std::uniform_int_distribution<int> chanceDist { 0, 3 };
 	std::uniform_real_distribution<float> speedDistr { 1.0f, 10.0f };
 
 	int layoutId
@@ -106,7 +107,8 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			    cubeMesh);
 
 			m_Context.EditorScene->AddComponent<EditorSelection>(entity);
-			m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
+			if (!chanceDist(random))
+				m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
 		}
 	}
 }
