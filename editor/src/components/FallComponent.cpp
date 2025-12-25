@@ -1,4 +1,4 @@
 #include "components/FallComponent.h"
-#include "origo/scene/ComponentRegistry.h"
+#include "origo/scene/NativeComponentRegistry.h"
 
-ORIGO_REGISTER_COMPONENT(OrigoEditor::FallComponent);
+ORIGO_REGISTER_NATIVE_COMPONENT(OrigoEditor::FallComponent);

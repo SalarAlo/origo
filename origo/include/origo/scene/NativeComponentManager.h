@@ -13,13 +13,13 @@ namespace Origo {
 template <typename T>
 concept ComponentType = std::derived_from<T, Component>;
 
-class ComponentManager {
+class NativeComponentManager {
 private:
 	struct IStorage {
 		virtual ~IStorage() = default;
-		virtual bool Has(RID entity) const = 0;
-		virtual void* GetRaw(RID entity) = 0;
-		virtual const void* GetRaw(RID entity) const = 0;
+		virtual bool Has(const RID& entity) const = 0;
+		virtual void* GetRaw(const RID& entity) = 0;
+		virtual const void* GetRaw(const RID& entity) const = 0;
 		virtual std::unique_ptr<IStorage> Clone() const = 0;
 	};
 
@@ -27,16 +27,16 @@ private:
 	struct Storage final : IStorage {
 		std::unordered_map<RID, T> Data;
 
-		bool Has(RID entity) const override {
+		bool Has(const RID& entity) const override {
 			return Data.find(entity) != Data.end();
 		}
 
-		void* GetRaw(RID entity) override {
+		void* GetRaw(const RID& entity) override {
 			auto it = Data.find(entity);
 			return it != Data.end() ? &it->second : nullptr;
 		}
 
-		const void* GetRaw(RID entity) const override {
+		const void* GetRaw(const RID& entity) const override {
 			auto it = Data.find(entity);
 			return it != Data.end() ? &it->second : nullptr;
 		}
@@ -49,16 +49,16 @@ private:
 	};
 
 public:
-	ComponentManager() = default;
-	ComponentManager(const ComponentManager& other);
-	ComponentManager& operator=(const ComponentManager& other);
+	NativeComponentManager() = default;
+	NativeComponentManager(const NativeComponentManager& other);
+	NativeComponentManager& operator=(const NativeComponentManager& other);
 
-	void CloneFrom(const ComponentManager& other);
-	bool AddComponentByType(RID entity, std::type_index type);
+	void CloneFrom(const NativeComponentManager& other);
+	bool AddComponentByType(const RID& entity, std::type_index type);
 	static bool CanAddComponentByType(std::type_index type);
 
 	template <ComponentType T, typename... Args>
-	T& AddComponent(RID entity, Args&&... args) {
+	T& AddComponent(const RID& entity, Args&&... args) {
 		auto& storage = GetOrCreateStorage<T>();
 		auto [it, inserted] = storage.Data.emplace(entity, T { std::forward<Args>(args)... });
 
@@ -69,13 +69,13 @@ public:
 	}
 
 	template <ComponentType T>
-	bool HasComponent(RID entity) const {
+	bool HasComponent(const RID& entity) const {
 		auto* storage = GetStorage<T>();
 		return storage && storage->Has(entity);
 	}
 
 	template <ComponentType T>
-	T* GetComponent(RID entity) {
+	T* GetComponent(const RID& entity) {
 		auto* storage = GetStorage<T>();
 		if (!storage)
 			return nullptr;
@@ -85,7 +85,7 @@ public:
 	}
 
 	template <ComponentType T>
-	const T* GetComponent(RID entity) const {
+	const T* GetComponent(const RID& entity) const {
 		auto* storage = GetStorage<T>();
 		if (!storage)
 			return nullptr;
@@ -131,17 +131,17 @@ public:
 		}
 	}
 
-	bool HasComponent(RID entity, std::type_index type) const {
+	bool HasComponent(const RID& entity, std::type_index type) const {
 		auto it = m_Storages.find(type);
 		return it != m_Storages.end() && it->second->Has(entity);
 	}
 
-	void* GetComponentByType(RID entity, std::type_index type) {
+	void* GetComponentByType(const RID& entity, std::type_index type) {
 		auto it = m_Storages.find(type);
 		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
 	}
 
-	const void* GetComponentByType(RID entity, std::type_index type) const {
+	const void* GetComponentByType(const RID& entity, std::type_index type) const {
 		auto it = m_Storages.find(type);
 		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
 	}

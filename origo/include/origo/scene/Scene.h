@@ -2,10 +2,8 @@
 
 #include <typeindex>
 #include <string_view>
-#include <unordered_map>
 
-#include "origo/scene/Entity.hpp"
-#include "origo/scene/ComponentManager.h"
+#include "origo/scene/NativeComponentManager.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -21,19 +19,19 @@ class Scene {
 public:
 	Scene(std::string_view name = "SampleScene");
 	Scene(const Scene& other);
-	Scene& operator=(const Scene&) = delete;
 	~Scene();
+	Scene& operator=(const Scene&) = delete;
 
-	Entity* CreateEntity(std::string_view name);
+	RID CreateEntity(std::string_view name);
 
-	const std::unordered_map<RID, Entity*>& GetEntities() const { return m_Entities; }
+	const std::vector<RID>& GetEntities() const { return m_Entities; }
 	const std::string& GetName() const { return m_Name; }
 
 #pragma region FORWARDING
 	template <ComponentType T, typename... Args>
-	T* AddComponent(Entity* e, Args&&... args) {
+	T* AddComponent(const RID& entity, Args&&... args) {
 		return &m_ComponentManager.AddComponent<T>(
-		    e->GetID(),
+		    entity,
 		    std::forward<Args>(args)...);
 	}
 
@@ -76,15 +74,15 @@ public:
 		m_ComponentManager.View<Ts...>(std::forward<Func>(func));
 	}
 
-	void* GetComponentByType(RID entity, std::type_index type) {
+	void* GetComponentByType(const RID& entity, std::type_index type) {
 		return m_ComponentManager.GetComponentByType(entity, type);
 	}
 
-	const void* GetComponentByType(RID entity, std::type_index type) const {
+	const void* GetComponentByType(const RID& entity, std::type_index type) const {
 		return m_ComponentManager.GetComponentByType(entity, type);
 	}
 
-	bool HasComponentByType(RID entity, std::type_index type) const {
+	bool HasComponentByType(const RID& entity, std::type_index type) const {
 		return m_ComponentManager.HasComponent(entity, type);
 	}
 
@@ -93,8 +91,8 @@ public:
 private:
 	std::string m_Name;
 
-	ComponentManager m_ComponentManager;
-	std::unordered_map<RID, Entity*> m_Entities;
+	NativeComponentManager m_ComponentManager;
+	std::vector<RID> m_Entities;
 };
 
 }

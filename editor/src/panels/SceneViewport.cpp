@@ -111,7 +111,7 @@ void SceneViewport::OnImGuiRender() {
 
 	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::Editing) {
 		auto& entity = m_Context.SelectedEntity.value();
-		auto transform = m_Context.EditorScene->GetComponent<Origo::Transform>(entity.GetID());
+		auto transform = m_Context.EditorScene->GetComponent<Origo::Transform>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();
 		glm::mat4 view = m_Camera.GetCamera().GetView();

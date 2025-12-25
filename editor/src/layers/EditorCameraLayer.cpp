@@ -1,7 +1,6 @@
 #include "layer/EditorCameraLayer.h"
 #include "origo/input/Input.h"
 #include "origo/scene/Transform.h"
-#include "state/EditorRuntimeState.h"
 
 using namespace Origo;
 
@@ -49,7 +48,7 @@ void EditorCameraLayer::OnEvent(Event& e) {
 			auto& camera = m_Context.EditorViewportCamera;
 
 			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity.GetID()) };
+			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity) };
 
 			auto targetPos { transform->GetPosition() };
 			glm::vec3 forward = camera.GetTransform().GetForward();

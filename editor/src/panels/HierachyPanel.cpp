@@ -1,3 +1,4 @@
+#include "origo/scene/Name.h"
 #include "state/EditorContext.h"
 #include "components/EditorSelection.h"
 #include "panels/HierarchyPanel.h"
@@ -17,20 +18,20 @@ HierarchyPanel::HierarchyPanel(EditorContext& ctx)
 }
 
 void HierarchyPanel::OnImGuiRender() {
-
-	Origo::Entity* clickedEntity = nullptr;
+	std::optional<Origo::RID> clickedEntity { std::nullopt };
 
 	ImGui::Text("Scene Entities:");
 
-	for (const auto& [id, entity] : m_Context.ActiveScene->GetEntities()) {
-		bool selected = m_Context.SelectedEntity.has_value() && m_Context.SelectedEntity->GetID() == entity->GetID();
+	for (const auto& entity : m_Context.ActiveScene->GetEntities()) {
+		bool selected = m_Context.SelectedEntity.has_value() && m_Context.SelectedEntity == entity;
 
 		ImGui::Image(
 		    (ImTextureID)(intptr_t)m_EntityTex->GetRendererID(),
 		    ImVec2(16, 16));
 		ImGui::SameLine();
 
-		if (ImGui::Selectable(entity->GetName().c_str(), selected)) {
+		auto nameComp { m_Context.ActiveScene->GetComponent<Origo::Name>(entity) };
+		if (ImGui::Selectable(nameComp->GetName().c_str(), selected)) {
 			clickedEntity = entity;
 		}
 	}
@@ -39,15 +40,15 @@ void HierarchyPanel::OnImGuiRender() {
 		ChangeActiveSelectedEntity(*clickedEntity);
 	}
 }
-void HierarchyPanel::ChangeActiveSelectedEntity(Origo::Entity& e) {
+void HierarchyPanel::ChangeActiveSelectedEntity(const Origo::RID& entity) {
 	if (m_Context.SelectedEntity.has_value()) {
-		auto emr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity.value().GetID());
+		auto emr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity.value());
 		if (emr)
 			emr->IsSelected = false;
 	}
 
-	m_Context.SelectedEntity = e;
-	auto newEmr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity->GetID());
+	m_Context.SelectedEntity = entity;
+	auto newEmr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity.value());
 	if (newEmr)
 		newEmr->IsSelected = true;
 }

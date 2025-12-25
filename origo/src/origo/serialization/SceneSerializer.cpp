@@ -8,11 +8,10 @@ void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend) {
 
 	backend.BeginArray("entities");
 
-	for (const auto& [id, entity] : scene.m_Entities) {
+	for (const auto& id : scene.m_Entities) {
 		backend.BeginArrayElement();
 
-		backend.Write("id", entity->GetID().ToString());
-		backend.Write("name", entity->GetName());
+		// TODO: serialize entity
 
 		backend.EndArrayElement();
 	}

@@ -15,7 +15,7 @@ public:
 	void OnImGuiRender() override;
 
 private:
-	void ChangeActiveSelectedEntity(Origo::Entity& e);
+	void ChangeActiveSelectedEntity(const Origo::RID& e);
 
 private:
 	EditorContext& m_Context;

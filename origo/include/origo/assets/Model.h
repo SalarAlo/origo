@@ -1,6 +1,8 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
+#include "origo/core/RID.h"
+
 namespace Origo {
 
 struct SubMesh {

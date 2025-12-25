@@ -1,7 +1,6 @@
 #pragma once
 
 namespace Origo {
-class Entity;
 
 class Component {
 public:

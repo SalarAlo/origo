@@ -1,4 +1,4 @@
 #include "origo/scene/CameraComponent.h"
-#include "origo/scene/ComponentRegistry.h"
+#include "origo/scene/NativeComponentRegistry.h"
 
-ORIGO_REGISTER_COMPONENT(Origo::CameraComponent)
+ORIGO_REGISTER_NATIVE_COMPONENT(Origo::CameraComponent)

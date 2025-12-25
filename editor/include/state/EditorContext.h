@@ -1,7 +1,6 @@
 #pragma once
 
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/scene/Entity.hpp"
 #include "origo/scene/Scene.h"
 #include "state/EditorRuntimeState.h"
 #include "systems/EditorCamera.h"
@@ -32,7 +31,7 @@ struct EditorContext {
 	EditorCamera EditorViewportCamera {};
 
 	EditorRuntimeState RuntimeState { EditorRuntimeState::Editing };
-	std::optional<Origo::Entity> SelectedEntity { std::nullopt };
+	std::optional<Origo::RID> SelectedEntity { std::nullopt };
 
 	EditorContext(const EditorContext&) = delete;
 	EditorContext& operator=(const EditorContext&) = delete;
