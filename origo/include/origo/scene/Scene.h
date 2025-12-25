@@ -30,7 +30,6 @@ public:
 	const std::string& GetName() const { return m_Name; }
 
 #pragma region FORWARDING
-
 	template <ComponentType T, typename... Args>
 	T* AddComponent(Entity* e, Args&&... args) {
 		return &m_ComponentManager.AddComponent<T>(

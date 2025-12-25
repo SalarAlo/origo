@@ -9,17 +9,7 @@ using namespace Origo;
 namespace OrigoEditor {
 
 void RenderLayer::OnUpdate(double dt) {
-	const auto& cam = m_Context.EditorViewportCamera.GetCamera();
-	const auto& transf { m_Context.EditorViewportCamera.GetTransform() };
-
-	RenderView view {
-		.Projection = cam.GetProjection(),
-		.View = cam.GetView(),
-		.CameraForward = transf.GetForward(),
-		.CameraPosition = transf.GetPosition(),
-	};
-
-	m_RenderContext.SetView(view);
+	m_RenderContext.SetView(m_ViewportController.GetActiveRenderView());
 
 	m_RenderContext.BeginFrame();
 

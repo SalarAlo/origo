@@ -34,9 +34,6 @@ void EditorCameraLayer::OnUpdate(double dt) {
 	if (glm::length(moveInput) > 0.0f) {
 		m_Camera.OnMove(glm::normalize(moveInput), speed);
 	}
-
-	m_Camera.GetCamera().SetAspect(
-	    static_cast<float>(m_Context.RenderBuffer.GetWidth()) / static_cast<float>(m_Context.RenderBuffer.GetHeight()));
 }
 
 void EditorCameraLayer::OnEvent(Event& e) {

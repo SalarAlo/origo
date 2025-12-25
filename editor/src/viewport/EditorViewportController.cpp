@@ -1,27 +1,45 @@
 #include "viewport/EditorViewportController.h"
+#include "origo/renderer/RenderView.h"
 #include "origo/scene/CameraComponent.h"
+#include "origo/scene/Transform.h"
 
+using namespace Origo;
 namespace OrigoEditor {
 
 EditorViewportController::EditorViewportController(EditorContext& ctx)
     : m_Context(ctx) { }
 
-Origo::Camera* EditorViewportController::GetActiveCamera() {
+RenderView EditorViewportController::GetActiveRenderView() {
+	Camera* cam { nullptr };
+	Transform* transf { nullptr };
+
 	if (m_Context.RuntimeState == EditorRuntimeState::Running) {
-		return &m_Context.EditorViewportCamera.GetCamera();
-	} else if (m_Context.RuntimeState == EditorRuntimeState::Running) {
-		Origo::CameraComponent* primary {};
-		m_Context.RuntimeScene->View<Origo::CameraComponent>(
-		    [&](Origo::RID entity,
-		        Origo::CameraComponent& cp) {
-			    if (primary)
-				    return;
-			    if (cp.IsPrimary)
-				    primary = &cp;
-		    });
-		return &primary->GetCamera();
+		m_Context.ActiveScene->View<CameraComponent, Transform>([&](RID e, CameraComponent& cc, Transform& tr) {
+			if (cam != nullptr)
+				return;
+
+			if (cc.IsPrimary) {
+				cam = &cc.GetCamera();
+				cam->UpdateFromTransform(tr);
+				transf = &tr;
+			}
+		});
+	} else if (m_Context.RuntimeState == EditorRuntimeState::Editing) {
+		cam = &m_Context.EditorViewportCamera.GetCamera();
+		transf = &m_Context.EditorViewportCamera.GetTransform();
 	}
 
-	return nullptr;
+	cam->SetAspect(
+	    static_cast<float>(m_Context.RenderBuffer.GetWidth())
+	    / static_cast<float>(m_Context.RenderBuffer.GetHeight()));
+
+	RenderView view {
+		.Projection = cam->GetProjection(),
+		.View = cam->GetView(),
+		.CameraForward = transf->GetForward(),
+		.CameraPosition = transf->GetPosition(),
+	};
+
+	return view;
 }
 }

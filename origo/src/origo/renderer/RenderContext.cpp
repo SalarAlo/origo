@@ -7,15 +7,13 @@
 #include "origo/renderer/VaoCache.h"
 
 namespace Origo {
-static std::hash<UUID> HashEntity {};
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-
 	auto& am = AssetManagerFast::GetInstance();
 	auto material = am.Get<Material>(cmd.GetMaterial());
 	auto mesh = am.Get<Mesh>(cmd.GetMesh());
 
-	constexpr float outlineThickness { 0.1f };
+	constexpr float outlineThickness { 0.03f };
 	glm::mat4 model = cmd.GetTransform()->GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
 		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
@@ -115,9 +113,9 @@ void RenderContext::ConfigureState(RenderPass pass) {
 
 		glEnable(GL_STENCIL_TEST);
 
-		glStencilMask(0x00);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+		glStencilMask(0xFF);
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
 		glDepthMask(GL_TRUE);
 
 		break;

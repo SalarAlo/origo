@@ -8,7 +8,8 @@ Scene::Scene(std::string_view name)
     : m_Name(name) {
 	auto cam { CreateEntity("Main Camera") };
 	AddComponent<Transform>(cam);
-	AddComponent<CameraComponent>(cam);
+	auto cameraHandle { AddComponent<CameraComponent>(cam) };
+	cameraHandle->IsPrimary = true;
 }
 
 Scene::Scene(const Scene& other)

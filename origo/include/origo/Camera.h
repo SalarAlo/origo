@@ -13,6 +13,7 @@ public:
 	void SetFOV(float fov);
 	float GetFOV() { return m_FOV; }
 	void SetAspect(float aspect);
+	float GetAspect() const { return m_Aspect; }
 	void SetClipping(float nearPlane, float farPlane);
 
 	void UpdateFromTransform(Transform& transform);

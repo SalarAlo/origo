@@ -1,0 +1,13 @@
+{
+        "Header": {
+                "Name": "GridMaterial",
+                "Origin": "Generated",
+                "SourcePath": "",
+                "Type": "Material",
+                "UUID": "72033227365f20e688a10dcb66ebc0f7"
+        },
+        "Payload": {
+                "albedo": "05f18a096920a1b02d867031d2d108a4",
+                "shader": "20c1e2eba47f9a42385c7f1ce2d6d578"
+        }
+}

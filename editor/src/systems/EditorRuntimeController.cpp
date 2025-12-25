@@ -10,6 +10,7 @@ void EditorRuntimeController::Play() {
 	m_Context.ActiveScene = m_Context.RuntimeScene;
 	m_Context.RuntimeState = EditorRuntimeState::Running;
 
+	// TODO: Change to Primary Camera & remove editor camera layer
 	ORG_INFO("Play mode started");
 }
 
