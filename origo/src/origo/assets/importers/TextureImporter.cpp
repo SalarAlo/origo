@@ -1,5 +1,5 @@
 #include "origo/assets/importers/TextureImporter.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
@@ -11,13 +11,13 @@ bool TextureImporter::CanImport(const std::filesystem::path& path) const {
 }
 
 AssetType TextureImporter::GetAssetType() const {
-	return AssetType::Texture;
+	return AssetType::Texture2D;
 }
 
 Scope<Asset> TextureImporter::Import(
     const std::filesystem::path& path,
     const Metadata& meta) {
-	auto texture = MakeScope<Texture>(TextureType::Albedo);
+	auto texture = MakeScope<Texture2D>(TextureType::Albedo);
 	texture->SetSource(MakeScope<TextureSourceFile>(path.string()));
 	return texture;
 }

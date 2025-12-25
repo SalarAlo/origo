@@ -1,0 +1,16 @@
+{
+        "Header": {
+                "Name": "Bottom",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/skybox/Bottom.png",
+                "Type": "Texture2D",
+                "UUID": "60f3e246699319b6f21497fab46e8af0"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/skybox/Bottom.png",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

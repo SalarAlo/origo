@@ -9,7 +9,7 @@
 namespace Origo {
 
 void AssetDatabase::RegisterMetadata(const Metadata& meta) {
-	s_Metadata[meta.Id] = meta;
+	s_Metadata[meta.ID] = meta;
 }
 
 void AssetDatabase::WriteImportFile(const UUID& id) {
@@ -39,7 +39,7 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 	JsonSerializer serializer { path.string() };
 
 	serializer.BeginObject("Header");
-	serializer.Write("UUID", meta.Id.ToString());
+	serializer.Write("UUID", meta.ID.ToString());
 	serializer.Write("Name", meta.Name);
 	serializer.Write("Type", magic_enum::enum_name(meta.Type));
 	serializer.Write("Origin", magic_enum::enum_name(meta.Origin));
@@ -69,7 +69,7 @@ Metadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
 
 	std::string uuidStr;
 	backend.TryRead("UUID", uuidStr);
-	meta.Id = UUID::FromString(uuidStr);
+	meta.ID = UUID::FromString(uuidStr);
 
 	backend.TryRead("Name", meta.Name);
 
@@ -125,7 +125,7 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 
 	backend.EndObject();
 
-	auto handle = am.Register(std::move(asset), meta.Id);
+	auto handle = am.Register(std::move(asset), meta.ID);
 
 	am.ResolveAll();
 
@@ -146,7 +146,7 @@ std::filesystem::path AssetDatabase::GetImportPath(const Metadata& meta) {
 		return meta.SourcePath.string() + ".import";
 	}
 
-	return ROOT / "generated" / (meta.Id.ToString() + ".import");
+	return ROOT / "generated" / (meta.ID.ToString() + ".import");
 }
 
 }

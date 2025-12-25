@@ -19,7 +19,7 @@ public:
 		return m_Name;
 	}
 
-	RID GetId() const { return m_Id; }
+	RID GetID() const { return m_Id; }
 
 private:
 	std::string m_Name {};

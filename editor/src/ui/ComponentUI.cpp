@@ -195,29 +195,39 @@ void DrawFloatControl(std::string_view label, float& value, float speed, const c
 }
 
 void DrawBoolControl(std::string_view label, bool& value) {
-	ImGui::PushID(label.data());
+	ImGui::PushID(label.data(), label.data() + label.size());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
 
 	const float fieldWidth = 180.0f;
 
 	ImGui::BeginGroup();
 
+	ImVec2 lineStart = ImGui::GetCursorScreenPos();
+
 	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
+	ImGui::TextUnformatted(label.data(), label.data() + label.size());
 
-	float avail = ImGui::GetContentRegionAvail().x;
-	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float right = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 
-	ImGui::SameLine(nextX);
+	float labelWidth = ImGui::CalcTextSize(label.data(), label.data() + label.size()).x;
+
+	float fieldX = right - fieldWidth;
+
+	float minX = lineStart.x + labelWidth + 8.0f;
+	if (fieldX < minX)
+		fieldX = minX;
+
+	float checkboxSize = ImGui::GetFrameHeight();
+
+	ImGui::SameLine();
+	ImGui::SetCursorScreenPos(
+	    ImVec2(fieldX + fieldWidth - checkboxSize, lineStart.y));
 
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_CheckMark, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
-	ImGui::SetNextItemWidth(fieldWidth);
 	ImGui::Checkbox("##bool", &value);
 
 	ImGui::PopStyleColor(4);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EditorPanel.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 
 namespace OrigoEditor {
 
@@ -9,10 +9,10 @@ struct AssetsPanelState {
 	std::filesystem::path ProjectRoot { "./" };
 	bool Initialized = false;
 
-	Origo::Ref<Origo::Texture> DirectoryIcon;
-	Origo::Ref<Origo::Texture> FileIcon;
-	Origo::Ref<Origo::Texture> ImageIcon;
-	Origo::Ref<Origo::Texture> ScriptIcon;
+	Origo::Ref<Origo::Texture2D> DirectoryIcon;
+	Origo::Ref<Origo::Texture2D> FileIcon;
+	Origo::Ref<Origo::Texture2D> ImageIcon;
+	Origo::Ref<Origo::Texture2D> ScriptIcon;
 };
 
 class AssetsPanel : public EditorPanel {

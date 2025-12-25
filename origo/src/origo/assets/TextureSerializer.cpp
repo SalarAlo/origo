@@ -1,12 +1,12 @@
 #include "origo/assets/TextureSerializer.h"
 #include "magic_enum/magic_enum.hpp"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
 void TextureSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
-	auto texture { dynamic_cast<const Texture*>(asset) };
+	auto texture { dynamic_cast<const Texture2D*>(asset) };
 
 	backend.Write("texture_type", magic_enum::enum_name(texture->GetTextureType()));
 	texture->GetSource()->Serialize(backend);
@@ -22,7 +22,7 @@ void TextureSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	}
 	auto type { optionalType.value() };
 	auto source { TextureSource::Deserialize(backend) };
-	auto& texture { static_cast<Texture&>(asset) };
+	auto& texture { static_cast<Texture2D&>(asset) };
 
 	texture.SetTextureType(type);
 	texture.SetSource(std::move(source));

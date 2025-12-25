@@ -1,0 +1,16 @@
+{
+        "Header": {
+                "Name": "Right",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/skybox/Right.png",
+                "Type": "Texture2D",
+                "UUID": "46eafd3de5ecdb29ad230a1cf01be8ec"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/skybox/Right.png",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

@@ -1,0 +1,15 @@
+{
+        "Header": {
+                "Name": "skybox",
+                "Origin": "Imported",
+                "SourcePath": "./resources/shaders/skybox.glsl",
+                "Type": "Shader",
+                "UUID": "364e162704a6879c649eabdfaf833be0"
+        },
+        "Payload": {
+                "source": {
+                        "shader_path": "./resources/shaders/skybox.glsl",
+                        "type": "File"
+                }
+        }
+}

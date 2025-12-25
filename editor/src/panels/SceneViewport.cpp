@@ -1,19 +1,19 @@
 #include "panels/SceneViewport.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/scene/Transform.h"
 #include "state/EditorRuntimeState.h"
 
 namespace OrigoEditor {
 
-static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture>& tex) {
+static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
 	return (ImTextureID)(intptr_t)tex->GetRendererID();
 }
 
-static Origo::Ref<Origo::Texture> LoadSVGTexture(const std::string& path, int size = 18) {
-	auto texture = Origo::MakeRef<Origo::Texture>(Origo::TextureType::UI);
+static Origo::Ref<Origo::Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
+	auto texture = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
 	texture->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
-	texture->LoadCpuIfTextureNotExistent();
+	texture->Load();
 
 	return texture;
 }
@@ -75,7 +75,7 @@ void SceneViewport::OnImGuiRender() {
 	const ImVec4 activeTint(0.30f, 0.60f, 1.00f, 1.0f);
 
 	auto drawToolButton = [&](const char* id,
-	                          const Origo::Ref<Origo::Texture>& icon,
+	                          const Origo::Ref<Origo::Texture2D>& icon,
 	                          ImGuizmo::OPERATION op) {
 		ImVec4 tint = (m_GizmoOperation == op) ? activeTint : inactiveTint;
 
@@ -111,7 +111,7 @@ void SceneViewport::OnImGuiRender() {
 
 	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::Editing) {
 		auto& entity = m_Context.SelectedEntity.value();
-		auto transform = m_Context.EditorScene->GetComponent<Origo::Transform>(entity.GetId());
+		auto transform = m_Context.EditorScene->GetComponent<Origo::Transform>(entity.GetID());
 
 		glm::mat4 model = transform->GetModelMatrix();
 		glm::mat4 view = m_Camera.GetCamera().GetView();

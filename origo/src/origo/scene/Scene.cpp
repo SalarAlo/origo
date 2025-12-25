@@ -7,9 +7,11 @@ namespace Origo {
 Scene::Scene(std::string_view name)
     : m_Name(name) {
 	auto cam { CreateEntity("Main Camera") };
-	AddComponent<Transform>(cam);
-	auto cameraHandle { AddComponent<CameraComponent>(cam) };
-	cameraHandle->IsPrimary = true;
+	auto transfComp { AddComponent<Transform>(cam) };
+	auto cameraComp { AddComponent<CameraComponent>(cam) };
+	cameraComp->IsPrimary = true;
+	transfComp->SetPosition({ -3.5, 4, 5 });
+	transfComp->SetRotation({ -33, -33, 0 });
 }
 
 Scene::Scene(const Scene& other)
@@ -24,7 +26,7 @@ Scene::Scene(const Scene& other)
 
 Entity* Scene::CreateEntity(std::string_view name) {
 	auto entity = new Entity(name);
-	m_Entities.emplace(entity->GetId(), entity);
+	m_Entities.emplace(entity->GetID(), entity);
 	return entity;
 }
 

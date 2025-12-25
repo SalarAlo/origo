@@ -10,7 +10,7 @@ namespace OrigoEditor {
 static bool s_Registered = []() {
 	InspectorDrawRegistry::Register<Origo::MeshRenderer>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRenderer& renderer) {
 		auto& am { Origo::AssetManagerFast::GetInstance() };
-		auto material { am.Get<Origo::Material>(renderer.GetMaterial()) };
+		auto material { am.Get<Origo::Material2D>(renderer.GetMaterial()) };
 
 		auto shaderId { am.GetUUID(material->GetShader()).ToString() };
 		auto materialId { am.GetUUID(renderer.GetMaterial()).ToString() };

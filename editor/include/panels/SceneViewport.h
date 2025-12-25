@@ -3,7 +3,7 @@
 #include "state/EditorContext.h"
 #include <ImGuizmo.h>
 
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "panels/EditorPanel.h"
 #include "systems/EditorCamera.h"
 
@@ -27,9 +27,9 @@ private:
 	ImGuizmo::OPERATION m_GizmoOperation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE m_GizmoMode = ImGuizmo::LOCAL;
 
-	Origo::Ref<Origo::Texture> m_MoveIcon;
-	Origo::Ref<Origo::Texture> m_RotateIcon;
-	Origo::Ref<Origo::Texture> m_ScaleIcon;
+	Origo::Ref<Origo::Texture2D> m_MoveIcon;
+	Origo::Ref<Origo::Texture2D> m_RotateIcon;
+	Origo::Ref<Origo::Texture2D> m_ScaleIcon;
 
 	bool m_IconsLoaded = false;
 };

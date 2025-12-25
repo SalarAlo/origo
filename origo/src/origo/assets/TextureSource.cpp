@@ -44,7 +44,7 @@ void TextureSourceFile::SerializeBody(ISerializer& backend) const {
 }
 
 TextureInitialisationData TextureSourceFile::GetInitialisationData() const {
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(Flip);
 
 	TextureInitialisationData initialisationData {};
 	const auto pixels = stbi_load(Path.c_str(), &initialisationData.Width, &initialisationData.Height, &initialisationData.Channels, 0);

@@ -4,7 +4,7 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/ShaderSource.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/core/Time.h"
@@ -24,8 +24,8 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetFactory::CreateAsset<Texture>("Origo");
-	AssetManagerFast::GetInstance().Get<Texture>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/origo_logo.png"));
+	m_Texture = AssetFactory::CreateAsset<Texture2D>("Origo");
+	AssetManagerFast::GetInstance().Get<Texture2D>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/origo_logo.png"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
@@ -51,8 +51,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
 
 	std::mt19937 random { std::random_device {}() };
-	std::uniform_int_distribution<int> chanceDistr { 1, 4 };
-	std::uniform_real_distribution<float> speedDistr { 1.0f, 100.0f };
+	std::uniform_real_distribution<float> speedDistr { 1.0f, 10.0f };
 
 	int layoutId
 	    = VertexLayoutRegistry::Register(layout);
@@ -78,7 +77,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	    heapId,
 	    range);
 
-	auto material = AssetFactory::CreateAsset<Material>(
+	auto material = AssetFactory::CreateAsset<Material2D>(
 	    "GridMaterial",
 	    m_Shader,
 	    m_Texture);
@@ -107,9 +106,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			    cubeMesh);
 
 			m_Context.EditorScene->AddComponent<EditorSelection>(entity);
-			if (chanceDistr(random) == 1) {
-				m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
-			}
+			m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
 		}
 	}
 }

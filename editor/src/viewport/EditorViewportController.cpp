@@ -24,7 +24,9 @@ RenderView EditorViewportController::GetActiveRenderView() {
 				transf = &tr;
 			}
 		});
-	} else if (m_Context.RuntimeState == EditorRuntimeState::Editing) {
+	}
+
+	if (m_Context.RuntimeState == EditorRuntimeState::Editing || !cam) {
 		cam = &m_Context.EditorViewportCamera.GetCamera();
 		transf = &m_Context.EditorViewportCamera.GetTransform();
 	}

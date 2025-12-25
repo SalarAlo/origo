@@ -40,7 +40,7 @@ void EditorCameraLayer::OnEvent(Event& e) {
 	EventDispatcher dispatcher { e };
 	dispatcher.Dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
 		bool pressedF { pressEvent.GetKeyPressed() == KeyboardKey::KEY_F && pressEvent.GetKeyPressType() == KeyPressType::KeyPressStart };
-		if (pressedF && m_Context.RuntimeState == EditorRuntimeState::Editing) {
+		if (pressedF) {
 			if (!m_Context.SelectedEntity)
 				return;
 
@@ -49,7 +49,7 @@ void EditorCameraLayer::OnEvent(Event& e) {
 			auto& camera = m_Context.EditorViewportCamera;
 
 			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity.GetId()) };
+			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity.GetID()) };
 
 			auto targetPos { transform->GetPosition() };
 			glm::vec3 forward = camera.GetTransform().GetForward();

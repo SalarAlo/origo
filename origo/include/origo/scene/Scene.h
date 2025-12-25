@@ -33,7 +33,7 @@ public:
 	template <ComponentType T, typename... Args>
 	T* AddComponent(Entity* e, Args&&... args) {
 		return &m_ComponentManager.AddComponent<T>(
-		    e->GetId(),
+		    e->GetID(),
 		    std::forward<Args>(args)...);
 	}
 

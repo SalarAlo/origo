@@ -6,11 +6,11 @@
 
 namespace Origo {
 
-class Material : public Asset {
+class Material2D : public Asset {
 public:
-	Material() = default;
-	Material(AssetHandle shader, AssetHandle texture = {});
-	Material(UUID shader, UUID material);
+	Material2D() = default;
+	Material2D(AssetHandle shader, AssetHandle texture = {});
+	Material2D(UUID shader, UUID material);
 
 	void Resolve() override {
 		auto& am = AssetManagerFast::GetInstance();
@@ -27,14 +27,14 @@ public:
 	void WriteModel(const glm::mat4& model);
 
 	template <typename T>
-	Material& SetShaderDirectly(std::string_view name, const T& val) {
+	Material2D& SetShaderDirectly(std::string_view name, const T& val) {
 		auto shader { AssetManagerFast::GetInstance().Get<Shader>(m_Shader) };
 		shader->SetUniform(name, val);
 		return *this;
 	}
 
 	template <typename T>
-	Material& SetUniform(std::string_view name, const T& val) {
+	Material2D& SetUniform(std::string_view name, const T& val) {
 		m_UniformList.AddUniform<T>(name.data(), val);
 		return *this;
 	}

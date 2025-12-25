@@ -4,8 +4,10 @@ namespace Origo {
 
 enum class AssetType {
 	Shader,
-	Texture,
+	Texture2D,
+	TextureCubemap,
 	Material,
+	SkyboxMaterial,
 	Mesh,
 	Model
 };

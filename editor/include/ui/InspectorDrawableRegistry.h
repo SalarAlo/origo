@@ -4,7 +4,7 @@
 #include "ui/IInspectorDrawable.h"
 
 #include "imgui.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 
 #include <typeindex>
 #include <unordered_map>
@@ -17,7 +17,7 @@ private:
 	struct InspectorEntry {
 		const char* Name = nullptr;
 		const char* IconPath = nullptr;
-		Origo::Ref<Origo::Texture> Icon;
+		Origo::Ref<Origo::Texture2D> Icon;
 		Origo::Scope<IInspectorDrawable> Drawer;
 	};
 
@@ -124,16 +124,16 @@ private:
 		}
 	}
 
-	static Origo::Ref<Origo::Texture> LoadIcon(const std::string& path) {
-		auto tex = Origo::MakeRef<Origo::Texture>(Origo::TextureType::UI);
+	static Origo::Ref<Origo::Texture2D> LoadIcon(const std::string& path) {
+		auto tex = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
 		tex->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, 14, 14));
-		tex->LoadCpuIfTextureNotExistent();
+		tex->Load();
 		return tex;
 	}
 
 private:
 	inline static std::unordered_map<std::type_index, InspectorEntry> m_Drawers;
-	inline static Origo::Ref<Origo::Texture> m_UnknownIcon;
+	inline static Origo::Ref<Origo::Texture2D> m_UnknownIcon;
 };
 
 }

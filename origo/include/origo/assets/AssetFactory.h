@@ -6,7 +6,7 @@
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/Shader.h"
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/core/UUID.h"
 
 namespace Origo {
@@ -23,7 +23,7 @@ public:
 
 		Metadata meta {};
 		meta.Name = name;
-		meta.Id = id;
+		meta.ID = id;
 		meta.Type = type;
 		meta.Origin = AssetOrigin::Generated;
 
@@ -40,10 +40,10 @@ public:
 		switch (type) {
 		case AssetType::Shader:
 			return MakeScope<Shader>();
-		case AssetType::Texture:
-			return MakeScope<Texture>();
+		case AssetType::Texture2D:
+			return MakeScope<Texture2D>();
 		case AssetType::Material:
-			return MakeScope<Material>();
+			return MakeScope<Material2D>();
 		default:
 			ORG_ERROR("AssetFactory: Unknown asset type");
 			return nullptr;

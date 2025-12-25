@@ -1,6 +1,7 @@
 #include "origo/renderer/RenderContext.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
+#include "origo/assets/SkyboxMaterial.h"
 #include "origo/renderer/GlDebug.h"
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/RenderCommand.h"
@@ -10,11 +11,11 @@ namespace Origo {
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto& am = AssetManagerFast::GetInstance();
-	auto material = am.Get<Material>(cmd.GetMaterial());
+	auto material = am.Get<Material2D>(cmd.GetMaterial());
 	auto mesh = am.Get<Mesh>(cmd.GetMesh());
 
 	constexpr float outlineThickness { 0.03f };
-	glm::mat4 model = cmd.GetTransform()->GetModelMatrix();
+	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetTransform()->GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
 		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
 
@@ -40,6 +41,10 @@ void RenderContext::BeginFrame() {
 		throw std::runtime_error("RenderContext::Flush: called without a view (SetView not called).");
 	}
 
+	if (m_SkyboxVAO == 0) {
+		glGenVertexArrays(1, &m_SkyboxVAO);
+	}
+
 	FrameBuffer* fb = m_Target;
 	if (!fb)
 		return;
@@ -54,6 +59,7 @@ void RenderContext::Flush() {
 	BindFB();
 	Clear();
 
+	ExecutePass(RenderPass::Skybox);
 	ExecutePass(RenderPass::Geometry);
 	ExecutePass(RenderPass::Outline);
 
@@ -77,7 +83,19 @@ void RenderContext::BindFB() {
 void RenderContext::ExecutePass(RenderPass pass) {
 	ConfigureState(pass);
 
-	Material* currentMaterial {};
+	if (pass == RenderPass::Skybox) {
+		if (m_SkyboxMaterial.IsNull())
+			return;
+
+		auto material = AssetManagerFast::GetInstance().Get<SkyboxMaterial>(m_SkyboxMaterial);
+		material->Bind(m_View.Projection, m_View.View);
+
+		glBindVertexArray(m_SkyboxVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		return;
+	}
+
+	Material2D* currentMaterial {};
 	AssetHandle currentMaterialId {};
 
 	for (auto& cmd : m_DrawQueue) {
@@ -85,7 +103,7 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			continue;
 
 		if (cmd.GetMaterial() != currentMaterialId) {
-			auto material { AssetManagerFast::GetInstance().Get<Material>(cmd.GetMaterial()) };
+			auto material { AssetManagerFast::GetInstance().Get<Material2D>(cmd.GetMaterial()) };
 			material->Bind();
 
 			currentMaterial = material;
@@ -136,6 +154,16 @@ void RenderContext::ConfigureState(RenderPass pass) {
 
 		break;
 	}
+
+	case RenderPass::Skybox: {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_FALSE);
+
+		glDisable(GL_STENCIL_TEST);
+		glDisable(GL_CULL_FACE);
+		break;
+	}
 	}
 }
 
@@ -150,6 +178,10 @@ void RenderContext::Resolve() {
 	}
 
 	m_DrawQueue.clear();
+}
+
+void RenderContext::SetSkyboxMaterial(AssetHandle skyboxMaterial) {
+	m_SkyboxMaterial = skyboxMaterial;
 }
 
 }

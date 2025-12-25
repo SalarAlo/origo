@@ -40,9 +40,9 @@ void AssetPipeline::RunInitialImport() {
 			if (!asset)
 				continue;
 
-			AssetManagerFast::GetInstance().Register(std::move(asset), meta->Id);
+			AssetManagerFast::GetInstance().Register(std::move(asset), meta->ID);
 			AssetDatabase::RegisterMetadata(*meta);
-			AssetDatabase::WriteImportFile(meta->Id);
+			AssetDatabase::WriteImportFile(meta->ID);
 
 			importCount++;
 		} else {
@@ -65,7 +65,7 @@ Scope<Metadata> AssetPipeline::LoadOrCreateMetadata(
 		    AssetDatabase::LoadImportHeader(importPath));
 	} else {
 		meta = MakeScope<Metadata>();
-		meta->Id = UUID::Generate();
+		meta->ID = UUID::Generate();
 		meta->Name = sourcePath.stem().string();
 		meta->Type = importer->GetAssetType();
 		meta->Origin = AssetOrigin::Imported;

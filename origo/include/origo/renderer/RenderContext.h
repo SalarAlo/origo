@@ -1,6 +1,5 @@
 #pragma once
 
-#include "origo/Camera.h"
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/RenderView.h"
 #include "origo/scene/Transform.h"
@@ -16,6 +15,7 @@ public:
 
 	void SetTarget(FrameBuffer* target) { m_Target = target; }
 	void SetResolveTarget(FrameBuffer* resolveTarget) { m_ResolveTarget = resolveTarget; }
+	void SetSkyboxMaterial(AssetHandle skyboxMaterial);
 
 	void SetView(const RenderView& view) {
 		m_View = view;
@@ -45,6 +45,9 @@ private:
 private:
 	FrameBuffer* m_Target {};
 	FrameBuffer* m_ResolveTarget {};
+
+	AssetHandle m_SkyboxMaterial {};
+	GLuint m_SkyboxVAO {};
 
 	RenderView m_View {};
 	bool m_HasView {};

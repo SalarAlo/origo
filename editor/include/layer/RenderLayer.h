@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/renderer/RenderContext.h"
 #include "state/EditorContext.h"
 #include "origo/core/Layer.h"
@@ -14,12 +15,16 @@ public:
 	    , m_RenderContext(rCtx)
 	    , m_ViewportController(ctx) { };
 
+	void OnAttach() override;
 	void OnUpdate(double dt) override;
 
 private:
 	EditorContext& m_Context;
 	Origo::RenderContext& m_RenderContext;
 	EditorViewportController m_ViewportController;
+
+	Origo::AssetHandle m_SkyboxCubeMesh;
+	Origo::AssetHandle m_SkyboxMaterial;
 };
 
 }

@@ -39,14 +39,16 @@ protected:
 
 class TextureSourceFile : public TextureSource {
 public:
-	TextureSourceFile(std::string_view path)
-	    : Path(path) { }
+	TextureSourceFile(std::string_view path, bool flip = true)
+	    : Path(path)
+	    , Flip(flip) { }
 
 	void SerializeBody(ISerializer& backend) const override;
 	TextureSourceType GetType() const override { return TextureSourceType::File; }
 	TextureInitialisationData GetInitialisationData() const override;
 
 	std::string Path;
+	bool Flip;
 };
 
 class TextureSourceRaw : public TextureSource {

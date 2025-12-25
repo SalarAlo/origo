@@ -1,0 +1,16 @@
+{
+        "Header": {
+                "Name": "Front",
+                "Origin": "Imported",
+                "SourcePath": "./resources/textures/skybox/Front.png",
+                "Type": "Texture2D",
+                "UUID": "5b62d62baa22d2065408bf5c8d3fd5ad"
+        },
+        "Payload": {
+                "source": {
+                        "path": "./resources/textures/skybox/Front.png",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

@@ -7,7 +7,7 @@ namespace Origo {
 
 void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	auto material {
-		static_cast<const Material*>(asset)
+		static_cast<const Material2D*>(asset)
 	};
 
 	auto& am { AssetManagerFast::GetInstance() };
@@ -18,7 +18,7 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 }
 
 void MaterialSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
-	auto& material { static_cast<Material&>(asset) };
+	auto& material { static_cast<Material2D&>(asset) };
 
 	std::string albedoUuidStr {};
 	std::string shaderUuidStr {};

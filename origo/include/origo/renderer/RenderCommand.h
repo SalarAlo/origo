@@ -7,7 +7,8 @@ namespace Origo {
 
 enum class RenderPass {
 	Geometry,
-	Outline
+	Outline,
+	Skybox
 };
 
 class RenderCommand {

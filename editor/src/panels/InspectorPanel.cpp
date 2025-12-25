@@ -16,7 +16,7 @@ void InspectorPanel::OnImGuiRender() {
 		return;
 	}
 
-	Origo::RID entity = selectedEntity->GetId();
+	Origo::RID entity = selectedEntity->GetID();
 
 	ImGui::SeparatorText(selectedEntity->GetName().c_str());
 	ImGui::SetWindowFontScale(0.9f);

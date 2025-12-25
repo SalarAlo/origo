@@ -1,18 +1,18 @@
 #include "panels/AssetsPanel.h"
 
-#include "origo/assets/Texture.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 
 namespace OrigoEditor {
 
-static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture>& tex) {
+static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
 	return (ImTextureID)(intptr_t)tex->GetRendererID();
 }
 
-static Origo::Ref<Origo::Texture> LoadSVGTexture(const std::string& path, int size = 18) {
-	auto texture = Origo::MakeRef<Origo::Texture>(Origo::TextureType::UI);
+static Origo::Ref<Origo::Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
+	auto texture = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
 	texture->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
-	texture->LoadCpuIfTextureNotExistent();
+	texture->Load();
 
 	return texture;
 }
