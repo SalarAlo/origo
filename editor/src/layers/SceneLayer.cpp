@@ -25,7 +25,7 @@ SceneLayer::SceneLayer(EditorContext& ctx)
 
 void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture2D>("Origo");
-	AssetManagerFast::GetInstance().Get<Texture2D>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/origo_logo.png"));
+	AssetManagerFast::GetInstance().Get<Texture2D>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
 
 	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));

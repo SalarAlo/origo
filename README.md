@@ -1,23 +1,21 @@
-# What this is
+
+# Origo
 
 Origo is a Linux only 3D game engine written in C++23 and modern OpenGL.
-
-It is intentionally conservative.
-- no Vulkan
-- no attempt to be a beginner friendly engine
-
-The goal is not accessibility.
 
 ---
 
 ## Design Choices and Goals
 
-Origo is not an engine that is trying to compete with godot or unity. 
-This engine is more of a learning experience for me and i will be submitting 
-this project for the CV-Tag 2026 at the University of Koblenz.
+Origo is not intended to compete with established engines such as Unity or Godot.
+It is a learning project developed for submission to the CV-Tag 2026 at the University of Koblenz.
 
-If you are looking for rapid prototyping, visual scripting, or cross platform
-deployment, this engine is not for you.
+---
+
+## Showcase
+
+![Origo Showcase 1](resources/showcase/first.png)
+![Origo Showcase 2](resources/showcase/second.png)
 
 ---
 
@@ -39,3 +37,4 @@ deployment, this engine is not for you.
 
 Licensed under the Apache License, Version 2.0.  
 See the [LICENSE](LICENSE) and [NOTICE](NOTICE) files for details.
+e the [LICENSE](LICENSE) and [NOTICE](NOTICE) files for details.

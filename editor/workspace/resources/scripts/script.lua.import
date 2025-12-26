@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4670877587497564220",
+                "imported_time_stamp": "-4670877516573962795",
                 "name": "script",
                 "origin": "Imported",
                 "source_path": "./resources/scripts/script.lua",
-                "source_time_stamp": "-4670877587497564220",
+                "source_time_stamp": "-4670877516573962795",
                 "type": "Script",
                 "uuid": "ea99a51a27b42f2359e51eecade61814"
         },
