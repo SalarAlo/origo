@@ -65,6 +65,7 @@ Scope<ShaderSource> ShaderSource::Deserialize(ISerializer& backend) {
 	std::string typeStr {};
 	backend.TryRead("type", typeStr);
 	auto typeOptional { magic_enum::enum_cast<ShaderSourceType>(typeStr) };
+
 	if (!typeOptional.has_value()) {
 		ORG_ERROR("ShaderSource::Deserialize: Unidentifiable type {}", typeStr);
 		return nullptr;
@@ -76,6 +77,7 @@ Scope<ShaderSource> ShaderSource::Deserialize(ISerializer& backend) {
 		std::string path {};
 		backend.TryRead("shader_path", path);
 		backend.EndObject();
+
 		return MakeScope<ShaderSourceFile>(path);
 	}
 

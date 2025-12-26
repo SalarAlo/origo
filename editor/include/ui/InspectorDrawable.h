@@ -8,6 +8,7 @@ template <typename T>
 class InspectorDrawable : public IInspectorDrawable {
 public:
 	using DrawFn = std::function<void(T&)>;
+
 	InspectorDrawable(std::string_view name, DrawFn drawer)
 	    : m_Name(name.data())
 	    , m_DrawFn(drawer) {

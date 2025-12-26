@@ -15,8 +15,10 @@ public:
 	void Resolve() override {
 		auto& am = AssetManagerFast::GetInstance();
 
-		m_Shader = am.Resolve(m_ShaderUUID);
-		m_Albedo = am.Resolve(m_AlbedoUUID);
+		if (!m_ShaderUUID.IsBad())
+			m_Shader = am.Resolve(m_ShaderUUID);
+		if (!m_AlbedoUUID.IsBad())
+			m_Albedo = am.Resolve(m_AlbedoUUID);
 	}
 
 	AssetHandle GetShader() const { return m_Shader; }

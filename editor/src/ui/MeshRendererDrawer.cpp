@@ -2,13 +2,13 @@
 #include "origo/assets/Material.h"
 #include "origo/scene/MeshRenderer.h"
 #include "ui/ComponentUI.h"
-#include "ui/InspectorDrawableRegistry.h"
+#include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>
 
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	InspectorDrawRegistry::Register<Origo::MeshRenderer>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRenderer& renderer) {
+	InspectorDrawRegistry::RegisterNativeDrawer<Origo::MeshRenderer>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRenderer& renderer) {
 		auto& am { Origo::AssetManagerFast::GetInstance() };
 		auto material { am.Get<Origo::Material2D>(renderer.GetMaterial()) };
 

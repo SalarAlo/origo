@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "origo_logo",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/origo_logo.png",
-                "Type": "Texture",
-                "UUID": "8a22b3e129779c5f08a06aa7517abcb8"
+        "header": {
+                "imported_time_stamp": "-4671537538585402914",
+                "name": "origo_logo",
+                "origin": "Imported",
+                "source_path": "./resources/textures/origo_logo.png",
+                "source_time_stamp": "-4671537538585402914",
+                "type": "Texture2D",
+                "uuid": "d376db00ffd74aff9c604d30ff46c145"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/origo_logo.png",
                         "type": "File"

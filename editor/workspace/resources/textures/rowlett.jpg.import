@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "rowlett",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/rowlett.jpg",
-                "Type": "Texture",
-                "UUID": "c1a6c47064b958f636d24d21fcc09228"
+        "header": {
+                "imported_time_stamp": "-4673479123110946367",
+                "name": "rowlett",
+                "origin": "Imported",
+                "source_path": "./resources/textures/rowlett.jpg",
+                "source_time_stamp": "-4673479123110946367",
+                "type": "Texture2D",
+                "uuid": "b7900be03dc7f30d4615824a2cef7ffe"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/rowlett.jpg",
                         "type": "File"

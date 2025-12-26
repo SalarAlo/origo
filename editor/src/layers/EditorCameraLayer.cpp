@@ -48,7 +48,7 @@ void EditorCameraLayer::OnEvent(Event& e) {
 			auto& camera = m_Context.EditorViewportCamera;
 
 			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.EditorScene->GetComponent<Transform>(selectedEntity) };
+			auto transform { m_Context.EditorScene->GetNativeComponent<Transform>(selectedEntity) };
 
 			auto targetPos { transform->GetPosition() };
 			glm::vec3 forward = camera.GetTransform().GetForward();

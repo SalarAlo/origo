@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "Front",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/skybox/Front.png",
-                "Type": "Texture2D",
-                "UUID": "5b62d62baa22d2065408bf5c8d3fd5ad"
+        "header": {
+                "imported_time_stamp": "-4670986019192944981",
+                "name": "Front",
+                "origin": "Imported",
+                "source_path": "./resources/textures/skybox/Front.png",
+                "source_time_stamp": "-4670986019192944981",
+                "type": "Texture2D",
+                "uuid": "85a1ba60179cb02e7fdc0304c7d55979"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/skybox/Front.png",
                         "type": "File"

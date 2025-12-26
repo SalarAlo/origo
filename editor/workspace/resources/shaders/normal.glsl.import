@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "normal",
-                "Origin": "Imported",
-                "SourcePath": "./resources/shaders/normal.glsl",
-                "Type": "Shader",
-                "UUID": "38fb04c0cda0115bdbcfa8198185d13e"
+        "header": {
+                "imported_time_stamp": "-4670988883469344831",
+                "name": "normal",
+                "origin": "Imported",
+                "source_path": "./resources/shaders/normal.glsl",
+                "source_time_stamp": "-4670988883469344831",
+                "type": "Shader",
+                "uuid": "d6dc9bf0f71b4697c47678e5bb0e8642"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "shader_path": "./resources/shaders/normal.glsl",
                         "type": "File"

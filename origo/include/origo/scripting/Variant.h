@@ -1,0 +1,48 @@
+#pragma once
+
+#include <variant>
+#include <cassert>
+
+#define ORIGO_VARIANT_CTOR(TYPE, ENUM) \
+	Variant(TYPE v)                \
+	    : m_Value(v)               \
+	    , m_Type(ENUM) { }
+
+#define ORIGO_VARIANT_GETTER(SUFFIX, TYPE, ENUM)                        \
+	TYPE GetAs##SUFFIX() const {                                    \
+		assert(m_Type == ENUM && "Variant: wrong type access"); \
+		return std::get<TYPE>(m_Value);                         \
+	}
+
+namespace Origo {
+
+enum class VariantType {
+	Bool,
+	Int,
+	Float,
+	String
+};
+
+class Variant {
+public:
+	using StdVariantType = std::variant<int, bool, float, std::string>;
+
+public:
+	ORIGO_VARIANT_CTOR(bool, VariantType::Bool)
+	ORIGO_VARIANT_CTOR(int, VariantType::Int)
+	ORIGO_VARIANT_CTOR(float, VariantType::Float)
+	ORIGO_VARIANT_CTOR(const std::string&, VariantType::String)
+
+	ORIGO_VARIANT_GETTER(Bool, bool, VariantType::Bool)
+	ORIGO_VARIANT_GETTER(Int, int, VariantType::Int)
+	ORIGO_VARIANT_GETTER(Float, float, VariantType::Float)
+	ORIGO_VARIANT_GETTER(String, std::string, VariantType::String)
+
+	VariantType GetType() const { return m_Type; }
+
+private:
+	StdVariantType m_Value;
+	VariantType m_Type;
+};
+
+}

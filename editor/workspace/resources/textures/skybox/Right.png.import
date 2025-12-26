@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "Right",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/skybox/Right.png",
-                "Type": "Texture2D",
-                "UUID": "46eafd3de5ecdb29ad230a1cf01be8ec"
+        "header": {
+                "imported_time_stamp": "-4670988205578470744",
+                "name": "Right",
+                "origin": "Imported",
+                "source_path": "./resources/textures/skybox/Right.png",
+                "source_time_stamp": "-4670988205578470744",
+                "type": "Texture2D",
+                "uuid": "43c2df2efe3584a4c53792f9fb44d80a"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/skybox/Right.png",
                         "type": "File"

@@ -30,7 +30,7 @@ void HierarchyPanel::OnImGuiRender() {
 		    ImVec2(16, 16));
 		ImGui::SameLine();
 
-		auto nameComp { m_Context.ActiveScene->GetComponent<Origo::Name>(entity) };
+		auto nameComp { m_Context.ActiveScene->GetNativeComponent<Origo::Name>(entity) };
 		if (ImGui::Selectable(nameComp->GetName().c_str(), selected)) {
 			clickedEntity = entity;
 		}
@@ -42,13 +42,13 @@ void HierarchyPanel::OnImGuiRender() {
 }
 void HierarchyPanel::ChangeActiveSelectedEntity(const Origo::RID& entity) {
 	if (m_Context.SelectedEntity.has_value()) {
-		auto emr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity.value());
+		auto emr = m_Context.EditorScene->GetNativeComponent<EditorSelection>(m_Context.SelectedEntity.value());
 		if (emr)
 			emr->IsSelected = false;
 	}
 
 	m_Context.SelectedEntity = entity;
-	auto newEmr = m_Context.EditorScene->GetComponent<EditorSelection>(m_Context.SelectedEntity.value());
+	auto newEmr = m_Context.EditorScene->GetNativeComponent<EditorSelection>(m_Context.SelectedEntity.value());
 	if (newEmr)
 		newEmr->IsSelected = true;
 }

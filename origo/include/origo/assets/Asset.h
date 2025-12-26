@@ -9,7 +9,8 @@ enum class AssetType {
 	Material,
 	SkyboxMaterial,
 	Mesh,
-	Model
+	Model,
+	Script
 };
 
 class Asset {

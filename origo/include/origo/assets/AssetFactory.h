@@ -1,10 +1,11 @@
 #pragma once
 
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/AssetDescriptor.h"
+#include "origo/assets/Metadata.h"
 #include "origo/assets/AssetEvents.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
+#include "origo/assets/Script.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/core/UUID.h"
@@ -21,7 +22,7 @@ public:
 		UUID id { UUID::Generate() };
 		AssetType type = T::GetClassAssetType();
 
-		Metadata meta {};
+		AssetMetadata meta {};
 		meta.Name = name;
 		meta.ID = id;
 		meta.Type = type;
@@ -44,6 +45,8 @@ public:
 			return MakeScope<Texture2D>();
 		case AssetType::Material:
 			return MakeScope<Material2D>();
+		case AssetType::Script:
+			return MakeScope<Script>();
 		default:
 			ORG_ERROR("AssetFactory: Unknown asset type");
 			return nullptr;

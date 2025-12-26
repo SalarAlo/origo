@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "skybox",
-                "Origin": "Imported",
-                "SourcePath": "./resources/shaders/skybox.glsl",
-                "Type": "Shader",
-                "UUID": "364e162704a6879c649eabdfaf833be0"
+        "header": {
+                "imported_time_stamp": "-4670986019194275595",
+                "name": "skybox",
+                "origin": "Imported",
+                "source_path": "./resources/shaders/skybox.glsl",
+                "source_time_stamp": "-4670986019194275595",
+                "type": "Shader",
+                "uuid": "b6f99889a03836002e588c4de1cb9fb0"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "shader_path": "./resources/shaders/skybox.glsl",
                         "type": "File"

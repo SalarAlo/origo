@@ -5,10 +5,11 @@
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
 #include "magic_enum/magic_enum.hpp"
+#include <filesystem>
 
 namespace Origo {
 
-void AssetDatabase::RegisterMetadata(const Metadata& meta) {
+void AssetDatabase::RegisterMetadata(const AssetMetadata& meta) {
 	s_Metadata[meta.ID] = meta;
 }
 
@@ -19,7 +20,7 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 		return;
 	}
 
-	const Metadata& meta = metaIt->second;
+	const AssetMetadata& meta = metaIt->second;
 
 	auto& am = AssetManagerFast::GetInstance();
 	AssetHandle handle = am.Resolve(id);
@@ -38,15 +39,17 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 	auto path = GetImportPath(meta);
 	JsonSerializer serializer { path.string() };
 
-	serializer.BeginObject("Header");
-	serializer.Write("UUID", meta.ID.ToString());
-	serializer.Write("Name", meta.Name);
-	serializer.Write("Type", magic_enum::enum_name(meta.Type));
-	serializer.Write("Origin", magic_enum::enum_name(meta.Origin));
-	serializer.Write("SourcePath", meta.SourcePath.string());
+	serializer.BeginObject("header");
+	serializer.Write("uuid", meta.ID.ToString());
+	serializer.Write("name", meta.Name);
+	serializer.Write("type", magic_enum::enum_name(meta.Type));
+	serializer.Write("origin", magic_enum::enum_name(meta.Origin));
+	serializer.Write("source_path", meta.SourcePath.string());
+	serializer.Write("source_time_stamp", std::to_string(meta.SourceTimestamp.time_since_epoch().count()));
+	serializer.Write("imported_time_stamp", std::to_string(meta.ImportedTimestamp.time_since_epoch().count()));
 	serializer.EndObject();
 
-	serializer.BeginObject("Payload");
+	serializer.BeginObject("payload");
 	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
 	assetSerializer->Serialize(asset, serializer);
 	serializer.EndObject();
@@ -54,7 +57,7 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 	serializer.SaveToFile();
 }
 
-Metadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
+AssetMetadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
 	if (!std::filesystem::exists(path)) {
 		ORG_ERROR("Import file '{}' does not exist", path.string());
 		return {};
@@ -63,31 +66,36 @@ Metadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
 	JsonSerializer backend { path.string() };
 	backend.LoadFile();
 
-	Metadata meta;
+	AssetMetadata meta;
 
-	backend.BeginObject("Header");
+	backend.BeginObject("header");
 
 	std::string uuidStr;
-	backend.TryRead("UUID", uuidStr);
+	backend.TryRead("uuid", uuidStr);
 	meta.ID = UUID::FromString(uuidStr);
 
-	backend.TryRead("Name", meta.Name);
+	backend.TryRead("name", meta.Name);
 
 	std::string typeStr;
-	backend.TryRead("Type", typeStr);
+	backend.TryRead("type", typeStr);
 	if (auto t = magic_enum::enum_cast<AssetType>(typeStr))
 		meta.Type = *t;
 
 	std::string originStr;
-	backend.TryRead("Origin", originStr);
+	backend.TryRead("origin", originStr);
 	if (auto o = magic_enum::enum_cast<AssetOrigin>(originStr))
 		meta.Origin = *o;
 
 	std::string source;
-	backend.TryRead("SourcePath", source);
+	if (backend.TryRead("source_path", source))
+		meta.SourceTimestamp = std::filesystem::last_write_time(source);
 	meta.SourcePath = source;
 
-	backend.BeginArray("Dependencies");
+	std::string importedStamp;
+	backend.TryRead("imported_time_stamp", importedStamp);
+	meta.ImportedTimestamp = std::filesystem::file_time_type(std::filesystem::file_time_type::duration(std::stoll(importedStamp)));
+
+	backend.BeginArray("dependencies");
 	std::string dep;
 	while (backend.TryReadArrayElement(dep)) {
 		meta.Dependencies.push_back(UUID::FromString(dep));
@@ -108,16 +116,16 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 		return nullptr;
 	}
 
-	const Metadata& meta = metaIt->second;
+	const AssetMetadata& meta = metaIt->second;
 	auto path = GetImportPath(meta);
 
 	JsonSerializer backend { path.string() };
 	backend.LoadFile();
 
-	backend.BeginObject("Header");
+	backend.BeginObject("header");
 	backend.EndObject();
 
-	backend.BeginObject("Payload");
+	backend.BeginObject("payload");
 
 	auto serializer = AssetSerializationSystem::Get(meta.Type);
 	auto asset { AssetFactory::Create(meta.Type) };
@@ -126,8 +134,6 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 	backend.EndObject();
 
 	auto handle = am.Register(std::move(asset), meta.ID);
-
-	am.ResolveAll();
 
 	return am.Get(handle);
 }
@@ -141,7 +147,7 @@ void AssetDatabase::SaveAll() {
 	}
 }
 
-std::filesystem::path AssetDatabase::GetImportPath(const Metadata& meta) {
+std::filesystem::path AssetDatabase::GetImportPath(const AssetMetadata& meta) {
 	if (!meta.SourcePath.empty()) {
 		return meta.SourcePath.string() + ".import";
 	}

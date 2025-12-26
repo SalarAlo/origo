@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "outline",
-                "Origin": "Imported",
-                "SourcePath": "./resources/shaders/outline.glsl",
-                "Type": "Shader",
-                "UUID": "ccb1d0c71699f88aef201398691dc8eb"
+        "header": {
+                "imported_time_stamp": "-4671700900239740575",
+                "name": "outline",
+                "origin": "Imported",
+                "source_path": "./resources/shaders/outline.glsl",
+                "source_time_stamp": "-4671700900239740575",
+                "type": "Shader",
+                "uuid": "e2e165048ad16742a796d1197d4b0d47"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "shader_path": "./resources/shaders/outline.glsl",
                         "type": "File"

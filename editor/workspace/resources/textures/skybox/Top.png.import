@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "Top",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/skybox/Top.png",
-                "Type": "Texture2D",
-                "UUID": "7f466bd312e6365cfc01978206f2bb65"
+        "header": {
+                "imported_time_stamp": "-4670986019192275522",
+                "name": "Top",
+                "origin": "Imported",
+                "source_path": "./resources/textures/skybox/Top.png",
+                "source_time_stamp": "-4670986019192275522",
+                "type": "Texture2D",
+                "uuid": "b8fa8a725bdaaa32e76afe5dfcf82e8f"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/skybox/Top.png",
                         "type": "File"

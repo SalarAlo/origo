@@ -1,12 +1,14 @@
 {
-        "Header": {
-                "Name": "dirt",
-                "Origin": "Imported",
-                "SourcePath": "./resources/textures/dirt.jpg",
-                "Type": "Texture",
-                "UUID": "a191dc90a051d4d7429a16d0d704bd7f"
+        "header": {
+                "imported_time_stamp": "-4672923738155465226",
+                "name": "dirt",
+                "origin": "Imported",
+                "source_path": "./resources/textures/dirt.jpg",
+                "source_time_stamp": "-4672923738155465226",
+                "type": "Texture2D",
+                "uuid": "56020f40d16ade55a3fc561efc1deb97"
         },
-        "Payload": {
+        "payload": {
                 "source": {
                         "path": "./resources/textures/dirt.jpg",
                         "type": "File"

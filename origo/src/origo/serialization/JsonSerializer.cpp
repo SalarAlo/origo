@@ -125,8 +125,7 @@ void JsonSerializer::LoadFile() {
 void JsonSerializer::BeginObject(std::string_view key) {
 	nlohmann::json& parent = top_json();
 	if (!parent.is_object()) {
-		ORG_ERROR("BeginObject('{}') called on non-object (type: {})",
-		    key, parent.type_name());
+		ORG_ERROR("BeginObject('{}') called on non-object (type: {})", key, parent.type_name());
 		return;
 	}
 

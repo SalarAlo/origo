@@ -3,7 +3,8 @@
 #include "imgui.h"
 #include "origo/scene/Name.h"
 #include "origo/scene/NativeComponentRegistry.h"
-#include "ui/InspectorDrawableRegistry.h"
+#include "origo/scripting/ScriptComponentRegistry.h"
+#include "ui/InspectorDrawRegistry.h"
 
 namespace OrigoEditor {
 
@@ -24,7 +25,7 @@ void InspectorPanel::OnImGuiRender() {
 	}
 
 	const Origo::RID entity = selectedEntity.value();
-	auto* nameComp = scene->GetComponent<Origo::Name>(entity);
+	auto* nameComp = scene->GetNativeComponent<Origo::Name>(entity);
 	const std::string& name = nameComp->GetName();
 
 	if (!isEditingName || editingEntity != entity) {
@@ -65,11 +66,20 @@ void InspectorPanel::OnImGuiRender() {
 	ImGui::SetWindowFontScale(0.9f);
 
 	for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-		if (!scene->HasComponentByType(entity, type))
+		if (!scene->HasNativeComponentByType(entity, type))
 			continue;
 
-		void* componentPtr = scene->GetComponentByType(entity, type);
-		InspectorDrawRegistry::Draw(componentPtr, type);
+		void* componentPtr = scene->GetNativeComponentByType(entity, type);
+		InspectorDrawRegistry::DrawNativeComponent(componentPtr, type);
+	}
+
+	for (const auto& descr : Origo::ScriptComponentRegistry::GetAll()) {
+		auto id = Origo::ScriptComponentRegistry::FindByName(descr.Name);
+		if (!scene->HasScriptComponent(entity, id))
+			continue;
+
+		auto* instance = scene->GetScriptComponent(entity, id);
+		InspectorDrawRegistry::DrawScriptComponent(*instance);
 	}
 
 	ImGui::SetWindowFontScale(1.0f);
@@ -107,7 +117,7 @@ void InspectorPanel::OnImGuiRender() {
 		ImGui::Separator();
 
 		for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-			if (scene->HasComponentByType(entity, type))
+			if (scene->HasNativeComponentByType(entity, type))
 				continue;
 
 			const bool isRegistered = Origo::NativeComponentRegistry::Get(type) != nullptr;
@@ -124,7 +134,23 @@ void InspectorPanel::OnImGuiRender() {
 			}
 
 			if (ImGui::MenuItem(entry.Name)) {
-				scene->AddComponent(entity, type);
+				scene->AddNativeComponent(entity, type);
+				ImGui::CloseCurrentPopup();
+				break;
+			}
+		}
+
+		ImGui::Separator();
+		ImGui::TextDisabled("Script Components");
+
+		for (const auto& desc : Origo::ScriptComponentRegistry::GetAll()) {
+			Origo::ScriptComponentID id = Origo::ScriptComponentRegistry::FindByName(desc.Name);
+
+			if (scene->HasScriptComponent(entity, id))
+				continue;
+
+			if (ImGui::MenuItem(desc.Name.c_str())) {
+				scene->AddScriptComponent(entity, id);
 				ImGui::CloseCurrentPopup();
 				break;
 			}

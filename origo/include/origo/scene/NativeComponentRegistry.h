@@ -27,7 +27,7 @@ public:
 		        .DisplayName = name,
 		        .Type = type,
 		        .Add = [](NativeComponentManager& mgr, RID e) { mgr.AddComponent<T>(e); },
-		        .Remove = [](NativeComponentManager& mgr, RID e) { /* optional */ },
+		        .Remove = [](NativeComponentManager& mgr, RID e) {},
 		        .Has = [](const NativeComponentManager& mgr, RID e) { return mgr.HasComponent<T>(e); },
 		        .Get = [](NativeComponentManager& mgr, RID e) -> void* { return mgr.GetComponent<T>(e); } });
 	}

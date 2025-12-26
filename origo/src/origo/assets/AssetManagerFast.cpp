@@ -40,11 +40,9 @@ auto AssetManagerFast::GetNextFreeHandle() -> AssetHandle {
 }
 
 void AssetManagerFast::Destroy(const AssetHandle& handle) {
-
 };
 
 bool AssetManagerFast::IsValid(const AssetHandle& handle) const {
-
 	bool isInBounds { m_Entries.size() > handle.Index };
 	if (!isInBounds)
 		return false;
@@ -81,8 +79,9 @@ AssetHandle AssetManagerFast::Resolve(const UUID& id) const {
 
 void AssetManagerFast::ResolveAll() {
 	for (const auto& entry : m_Entries) {
-		if (entry.AssetPtr)
+		if (entry.AssetPtr) {
 			entry.AssetPtr->Resolve();
+		}
 	}
 }
 

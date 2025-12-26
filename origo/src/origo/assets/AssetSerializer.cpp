@@ -4,6 +4,7 @@
 #include "origo/assets/MaterialSerializer.h"
 #include "origo/assets/MeshSerializer.h"
 #include "origo/assets/ModelSerializer.h"
+#include "origo/assets/ScriptSerializer.h"
 #include "origo/assets/ShaderSerializer.h"
 #include "origo/assets/TextureSerializer.h"
 
@@ -41,6 +42,7 @@ void RegisterAllAssetSerializers() {
 	Register(AssetType::Mesh, new MeshSerializer());
 	Register(AssetType::Model, new ModelSerializer());
 	Register(AssetType::Shader, new ShaderSerializer());
+	Register(AssetType::Script, new ScriptSerializer());
 }
 
 }

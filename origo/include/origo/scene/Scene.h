@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include "origo/scene/NativeComponentManager.h"
+#include "origo/scripting/ScriptComponentManager.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -29,61 +30,77 @@ public:
 
 #pragma region FORWARDING
 	template <ComponentType T, typename... Args>
-	T* AddComponent(const RID& entity, Args&&... args) {
-		return &m_ComponentManager.AddComponent<T>(
+	T* AddNativeComponent(const RID& entity, Args&&... args) {
+		return &m_NativeComponentManager.AddComponent<T>(
 		    entity,
 		    std::forward<Args>(args)...);
 	}
 
-	bool AddComponent(const RID& e, std::type_index type) {
-		return m_ComponentManager.AddComponentByType(e, type);
+	bool AddNativeComponent(const RID& e, std::type_index type) {
+		return m_NativeComponentManager.AddComponentByType(e, type);
+	}
+
+	void AddScriptComponent(RID entity, ScriptComponentID type) {
+		m_ScriptComponentManager.Add(entity, type);
 	}
 
 	template <ComponentType T>
-	T* GetComponent(const RID& entity) {
-		return m_ComponentManager.GetComponent<T>(entity);
+	T* GetNativeComponent(const RID& entity) {
+		return m_NativeComponentManager.GetComponent<T>(entity);
+	}
+
+	ScriptComponentInstance* GetScriptComponent(RID entity, ScriptComponentID type) {
+		return m_ScriptComponentManager.Get(entity, type);
+	}
+
+	const ScriptComponentInstance* GetScriptComponent(RID entity, ScriptComponentID type) const {
+		return m_ScriptComponentManager.Get(entity, type);
 	}
 
 	template <ComponentType T>
-	const T* GetComponent(const RID& entity) const {
-		return m_ComponentManager.GetComponent<T>(entity);
+	const T* GetNativeComponent(const RID& entity) const {
+		return m_NativeComponentManager.GetComponent<T>(entity);
 	}
 
 	template <ComponentType T>
-	bool HasComponent(const RID& entity) const {
-		return m_ComponentManager.HasComponent<T>(entity);
+	bool HasNativeComponent(const RID& entity) const {
+		return m_NativeComponentManager.HasComponent<T>(entity);
+	}
+
+	bool HasScriptComponent(RID entity, ScriptComponentID type) const {
+		return m_ScriptComponentManager.Has(entity, type);
 	}
 
 	template <ComponentType T, typename Func>
 	void ForEach(Func&& func) {
-		m_ComponentManager.ForEach<T>(std::forward<Func>(func));
+		m_NativeComponentManager.ForEach<T>(std::forward<Func>(func));
 	}
 
 	template <ComponentType T, typename Func>
 	void ForEach(Func&& func) const {
-		m_ComponentManager.ForEach<T>(std::forward<Func>(func));
+		m_NativeComponentManager.ForEach<T>(std::forward<Func>(func));
 	}
 
 	template <ComponentType... Ts, typename Func>
 	void View(Func&& func) {
-		m_ComponentManager.View<Ts...>(std::forward<Func>(func));
+		m_NativeComponentManager.View<Ts...>(std::forward<Func>(func));
 	}
 
 	template <ComponentType... Ts, typename Func>
 	void View(Func&& func) const {
-		m_ComponentManager.View<Ts...>(std::forward<Func>(func));
+		m_NativeComponentManager.View<Ts...>(std::forward<Func>(func));
 	}
 
-	void* GetComponentByType(const RID& entity, std::type_index type) {
-		return m_ComponentManager.GetComponentByType(entity, type);
+	void* GetNativeComponentByType(const RID& entity, std::type_index type) {
+		return m_NativeComponentManager.GetComponentByType(entity, type);
 	}
 
-	const void* GetComponentByType(const RID& entity, std::type_index type) const {
-		return m_ComponentManager.GetComponentByType(entity, type);
+	const void* GetNativeComponentByType(const RID& entity, std::type_index type) const {
+		return m_NativeComponentManager.GetComponentByType(entity, type);
 	}
 
-	bool HasComponentByType(const RID& entity, std::type_index type) const {
-		return m_ComponentManager.HasComponent(entity, type);
+	bool HasNativeComponentByType(const RID& entity, std::type_index type) const {
+		return m_NativeComponentManager.HasComponent(entity, type);
 	}
 
 #pragma endregion
@@ -91,7 +108,8 @@ public:
 private:
 	std::string m_Name;
 
-	NativeComponentManager m_ComponentManager;
+	NativeComponentManager m_NativeComponentManager;
+	ScriptComponentManager m_ScriptComponentManager;
 	std::vector<RID> m_Entities;
 };
 

@@ -98,17 +98,17 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			auto entity = m_Context.EditorScene->CreateEntity(
 			    "GridCube_" + std::to_string(id++));
 
-			auto transform = m_Context.EditorScene->AddComponent<Transform>(entity);
+			auto transform = m_Context.EditorScene->AddNativeComponent<Transform>(entity);
 			transform->SetPosition(pos);
 
-			m_Context.EditorScene->AddComponent<MeshRenderer>(
+			m_Context.EditorScene->AddNativeComponent<MeshRenderer>(
 			    entity,
 			    material,
 			    cubeMesh);
 
-			m_Context.EditorScene->AddComponent<EditorSelection>(entity);
+			m_Context.EditorScene->AddNativeComponent<EditorSelection>(entity);
 			if (!chanceDist(random))
-				m_Context.EditorScene->AddComponent<FallComponent>(entity, speedDistr(random));
+				m_Context.EditorScene->AddNativeComponent<FallComponent>(entity, speedDistr(random));
 		}
 	}
 }
