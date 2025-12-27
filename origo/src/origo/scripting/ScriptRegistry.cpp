@@ -1,3 +1,5 @@
+#include "origo/scripting/ScriptComponentInstance.h"
+#include "origo/scripting/ScriptComponentManager.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 
 namespace Origo {
@@ -32,12 +34,15 @@ static Variant MakeVariant(
 	throw std::runtime_error("Invalid VariantType");
 }
 
-ScriptComponentID ScriptComponentRegistry::Register(ScriptComponentDescriptor descriptor) {
+ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescriptor descriptor) {
 	auto& descriptors = Descriptors();
 	auto& nameMap = NameToID();
 
 	if (nameMap.contains(descriptor.Name)) {
-		throw std::runtime_error("ScriptComponent already registered: " + descriptor.Name);
+		auto id = nameMap[descriptor.Name];
+		descriptors[id].Fields = descriptor.Fields;
+		OnScriptComponentUpdated().Invoke(id);
+		return id;
 	}
 
 	for (const auto& field : descriptor.Fields) {
@@ -55,7 +60,6 @@ ScriptComponentID ScriptComponentRegistry::Register(ScriptComponentDescriptor de
 }
 
 ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const std::string& name, sol::table fields) {
-
 	ScriptComponentDescriptor desc;
 	desc.Name = name;
 
@@ -78,7 +82,7 @@ ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const std::s
 		desc.Fields.push_back(std::move(field));
 	}
 
-	return ScriptComponentRegistry::Register(std::move(desc));
+	return ScriptComponentRegistry::RegisterOrUpdate(std::move(desc));
 }
 
 const ScriptComponentDescriptor& ScriptComponentRegistry::Get(ScriptComponentID id) {
@@ -91,15 +95,19 @@ const ScriptComponentDescriptor& ScriptComponentRegistry::Get(ScriptComponentID 
 	return descriptors[id];
 }
 
-ScriptComponentID ScriptComponentRegistry::FindByName(const std::string& name) {
+std::optional<ScriptComponentID> ScriptComponentRegistry::TryFindByName(const std::string& name) {
 	auto& map = NameToID();
 	auto it = map.find(name);
 
 	if (it == map.end()) {
-		throw std::runtime_error("Unknown ScriptComponent: " + name);
+		return std::nullopt;
 	}
 
 	return it->second;
+}
+Action<void, ScriptComponentID> ScriptComponentRegistry::OnScriptComponentUpdated() {
+	static Action<void, ScriptComponentID> action {};
+	return action;
 }
 
 std::vector<ScriptComponentDescriptor>& ScriptComponentRegistry::Descriptors() {
@@ -111,27 +119,5 @@ std::unordered_map<std::string, ScriptComponentID>& ScriptComponentRegistry::Nam
 	static std::unordered_map<std::string, ScriptComponentID> s_Map;
 	return s_Map;
 }
-
-ScriptComponentDescriptor CreateHealthComponentDescriptor() {
-	ScriptComponentDescriptor desc;
-	desc.Name = "Health";
-
-	desc.Fields.push_back(ScriptFieldDescriptor {
-	    .Name = "max",
-	    .Type = VariantType::Int,
-	    .DefaultValue = Variant(100) });
-
-	desc.Fields.push_back(ScriptFieldDescriptor {
-	    .Name = "current",
-	    .Type = VariantType::Int,
-	    .DefaultValue = Variant(75) });
-
-	return desc;
-}
-
-static bool registered = []() {
-	ScriptComponentID healthID = ScriptComponentRegistry::Register(CreateHealthComponentDescriptor());
-	return true;
-}();
 
 }

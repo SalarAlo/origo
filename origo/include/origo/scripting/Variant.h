@@ -8,17 +8,19 @@
 	    : m_Value(v)               \
 	    , m_Type(ENUM) { }
 
-#define ORIGO_VARIANT_GETTER(SUFFIX, TYPE, ENUM)                        \
-	TYPE GetAs##SUFFIX() const {                                    \
-		assert(m_Type == ENUM && "Variant: wrong type access"); \
-		return std::get<TYPE>(m_Value);                         \
+#define ORIGO_VARIANT_GETTER(SUFFIX, TYPE, ENUM) \
+	bool TryGetAs##SUFFIX(TYPE& out) const { \
+		if (m_Type != ENUM)              \
+			return false;            \
+		out = std::get<TYPE>(m_Value);   \
+		return true;                     \
 	}
 
 namespace Origo {
 
 enum class VariantType {
-	Bool,
 	Int,
+	Bool,
 	Float,
 	String
 };

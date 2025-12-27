@@ -13,6 +13,7 @@ namespace Origo {
 
 void AssetPipeline::RunInitialImport() {
 	std::filesystem::path rootAssetDir { "./" };
+
 	if (!std::filesystem::exists(rootAssetDir)) {
 		ORG_WARN("No directory for resources found.");
 		return;
@@ -39,8 +40,6 @@ void AssetPipeline::RunInitialImport() {
 		bool importNecessary = !std::filesystem::exists(importFile) || !meta->SourcePath.empty() && meta->ImportedTimestamp < meta->SourceTimestamp;
 
 		if (importNecessary) {
-			ORG_INFO("Importing asset {}", path.string());
-
 			Scope<Asset> asset = importer->Import(path, *meta);
 			if (!asset)
 				continue;

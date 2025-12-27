@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/core/Action.h"
 #include "origo/scripting/ScriptComponentDescriptor.h"
 #include "origo/scripting/ScriptComponentInstance.h"
 #include "sol/table.hpp"
@@ -11,15 +12,16 @@ namespace Origo {
 
 class ScriptComponentRegistry {
 public:
-	static ScriptComponentID Register(ScriptComponentDescriptor descriptor);
+	static ScriptComponentID RegisterOrUpdate(ScriptComponentDescriptor descriptor);
 	static ScriptComponentID RegisterComponentFromLua(const std::string& name, sol::table fields);
 
 	static const ScriptComponentDescriptor& Get(ScriptComponentID id);
 
-	static ScriptComponentID FindByName(const std::string& name);
+	static std::optional<ScriptComponentID> TryFindByName(const std::string& name);
 	static bool Exists(ScriptComponentID id);
 
 	static const std::vector<ScriptComponentDescriptor>& GetAll() { return Descriptors(); }
+	static Action<void, ScriptComponentID> OnScriptComponentUpdated();
 
 private:
 	static std::vector<ScriptComponentDescriptor>& Descriptors();

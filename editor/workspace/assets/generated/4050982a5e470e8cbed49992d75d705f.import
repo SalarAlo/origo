@@ -1,0 +1,15 @@
+{
+        "header": {
+                "imported_time_stamp": "0",
+                "name": "GridMaterial",
+                "origin": "Generated",
+                "source_path": "",
+                "source_time_stamp": "0",
+                "type": "Material",
+                "uuid": "4050982a5e470e8cbed49992d75d705f"
+        },
+        "payload": {
+                "albedo": "245488f0b1dad4a46364dba32db961cd",
+                "shader": "0ff7b538b311627f3e89d1877f40d907"
+        }
+}

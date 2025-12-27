@@ -1,0 +1,15 @@
+{
+        "header": {
+                "imported_time_stamp": "-4670805170025232865",
+                "name": "ScriptComponent",
+                "origin": "Imported",
+                "source_path": "./resources/scripts/ScriptComponent.lua",
+                "source_time_stamp": "-4670805170025232865",
+                "type": "Script",
+                "uuid": "0683dcecc34913194e7ece6b1f20f6d6"
+        },
+        "payload": {
+                "id": "0683dcecc34913194e7ece6b1f20f6d6",
+                "path": "./resources/scripts/ScriptComponent.lua"
+        }
+}

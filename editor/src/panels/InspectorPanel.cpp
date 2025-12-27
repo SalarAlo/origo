@@ -74,11 +74,12 @@ void InspectorPanel::OnImGuiRender() {
 	}
 
 	for (const auto& descr : Origo::ScriptComponentRegistry::GetAll()) {
-		auto id = Origo::ScriptComponentRegistry::FindByName(descr.Name);
-		if (!scene->HasScriptComponent(entity, id))
+		auto id = Origo::ScriptComponentRegistry::TryFindByName(descr.Name);
+
+		if (!scene->HasScriptComponent(entity, id.value()))
 			continue;
 
-		auto* instance = scene->GetScriptComponent(entity, id);
+		auto* instance = scene->GetScriptComponent(entity, id.value());
 		InspectorDrawRegistry::DrawScriptComponent(*instance);
 	}
 
@@ -144,13 +145,13 @@ void InspectorPanel::OnImGuiRender() {
 		ImGui::TextDisabled("Script Components");
 
 		for (const auto& desc : Origo::ScriptComponentRegistry::GetAll()) {
-			Origo::ScriptComponentID id = Origo::ScriptComponentRegistry::FindByName(desc.Name);
+			auto id = Origo::ScriptComponentRegistry::TryFindByName(desc.Name);
 
-			if (scene->HasScriptComponent(entity, id))
+			if (scene->HasScriptComponent(entity, id.value()))
 				continue;
 
 			if (ImGui::MenuItem(desc.Name.c_str())) {
-				scene->AddScriptComponent(entity, id);
+				scene->AddScriptComponent(entity, id.value());
 				ImGui::CloseCurrentPopup();
 				break;
 			}

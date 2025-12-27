@@ -1,22 +1,31 @@
 #include "ui/InspectorDrawRegistry.h"
 
 #include "origo/scripting/ScriptComponentRegistry.h"
-#include "ui/ComponentUI.h"
 
 #include "imgui.h"
 #include "origo/assets/Texture2D.h"
+#include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
 
 void InspectorDrawRegistry::DrawScriptComponent(
     Origo::ScriptComponentInstance& instance) {
+
 	const auto& desc = Origo::ScriptComponentRegistry::Get(instance.ID);
 
 	if (!DrawScriptComponentHeader(desc.Name.c_str(), &instance))
 		return;
 
-	for (size_t i = 0; i < desc.Fields.size(); ++i) {
-		DrawScriptField(desc.Fields[i], instance.Values[i]);
+	for (const auto& field : desc.Fields) {
+		auto value = instance.FindValue(field.Name);
+
+		if (!value.has_value()) {
+			Origo::Variant tmp = field.DefaultValue;
+			DrawScriptField(field, tmp);
+			continue;
+		}
+
+		DrawScriptField(field, value.value());
 	}
 }
 
@@ -74,34 +83,30 @@ bool InspectorDrawRegistry::DrawInspectorHeaderRow(
 	return open;
 }
 
-void InspectorDrawRegistry::DrawScriptField(
-    const Origo::ScriptFieldDescriptor& field,
-    Origo::Variant& value) {
+#define SCRIPT_FIELD_CASE(TYPE, ACTUAL)                                              \
+	case Origo::VariantType::TYPE: {                                             \
+		ACTUAL v {};                                                         \
+		if (!value.TryGetAs##TYPE(v)) {                                      \
+			std::cout << "Trying to get as " #TYPE                       \
+			          << " while its actually: "                         \
+			          << magic_enum::enum_name(value.GetType()) << "\n"; \
+			return;                                                      \
+		}                                                                    \
+		ComponentUI::Draw##TYPE##Control(field.Name, v);                     \
+		value = Origo::Variant(v);                                           \
+		break;                                                               \
+	}
+
+void InspectorDrawRegistry::DrawScriptField(const Origo::ScriptFieldDescriptor& field, Origo::Variant& value) {
+	if (value.GetType() != field.Type) {
+		value = field.DefaultValue;
+	}
+
 	switch (field.Type) {
-	case Origo::VariantType::Bool: {
-		bool v = value.GetAsBool();
-		ComponentUI::DrawBoolControl(field.Name, v);
-		value = Origo::Variant(v);
-		break;
-	}
-	case Origo::VariantType::Int: {
-		int v = value.GetAsInt();
-		ComponentUI::DrawIntControl(field.Name, v);
-		value = Origo::Variant(v);
-		break;
-	}
-	case Origo::VariantType::Float: {
-		float v = value.GetAsFloat();
-		ComponentUI::DrawFloatControl(field.Name, v);
-		value = Origo::Variant(v);
-		break;
-	}
-	case Origo::VariantType::String: {
-		std::string v = value.GetAsString();
-		ComponentUI::DrawStringControl(field.Name, v);
-		value = Origo::Variant(v);
-		break;
-	}
+		SCRIPT_FIELD_CASE(Bool, bool)
+		SCRIPT_FIELD_CASE(Int, int)
+		SCRIPT_FIELD_CASE(Float, float)
+		SCRIPT_FIELD_CASE(String, std::string)
 	}
 }
 

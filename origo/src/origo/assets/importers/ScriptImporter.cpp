@@ -1,6 +1,5 @@
 #include "origo/assets/importers/ScriptImporter.h"
 #include "origo/assets/Script.h"
-#include "origo/renderer/Helpers.h"
 
 namespace Origo {
 
@@ -15,8 +14,7 @@ AssetType ScriptImporter::GetAssetType() const {
 }
 
 Scope<Asset> ScriptImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto source = ReadFile(path);
-	auto asset = MakeScope<Script>(source, meta.ID);
+	auto asset = MakeScope<Script>(path, meta.ID);
 
 	return asset;
 }

@@ -1,5 +1,7 @@
 #include "ui/UI.h"
 #include "origo/assets/AssetDatabase.h"
+#include "origo/assets/AssetManagerFast.h"
+#include "origo/scripting/ScriptSystem.h"
 #include "panels/PanelManager.h"
 
 namespace OrigoEditor::UI {
@@ -142,6 +144,11 @@ void DrawMenuBar(PanelManager& manager) {
 		ImGui::MenuItem("Save Scene");
 		if (ImGui::MenuItem("Save Generated Assets"))
 			Origo::AssetDatabase::SaveAll();
+
+		if (ImGui::MenuItem("Reload Scripts")) {
+			Origo::AssetManagerFast::GetInstance().ResolveAll();
+			Origo::ScriptSystem::ReloadAll();
+		}
 		ImGui::Separator();
 		ImGui::EndMenu();
 	}

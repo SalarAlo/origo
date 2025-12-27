@@ -1,13 +1,14 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/core/UUID.h"
+#include "origo/renderer/Helpers.h"
 #include "origo/scripting/ScriptSystem.h"
 namespace Origo {
 
 class Script : public Asset {
 public:
-	Script(std::string source = "", const UUID& id = UUID::Generate())
-	    : m_Source(std::move(source))
+	Script(const std::filesystem::path& path = "/", const UUID& id = UUID::Generate())
+	    : m_Path(path)
 	    , m_ID(id) {
 		m_AssetType = AssetType::Script;
 	}
@@ -15,18 +16,19 @@ public:
 	AssetType GetAssetType() const override { return AssetType::Script; }
 	static AssetType GetClassAssetType() { return AssetType::Script; }
 
-	const std::string& GetSource() const { return m_Source; }
-	void SetSource(const std::string& source) { m_Source = source; }
+	const std::filesystem::path& GetPath() const { return m_Path; }
+	void SetPath(const std::filesystem::path& path) { m_Path = path; }
 
 	void SetID(const UUID& id) { m_ID = id; }
 	const UUID& GetID() const { return m_ID; }
 
 	void Resolve() override {
-		ScriptSystem::Register(m_ID, m_Source);
+		auto src { ReadFile(m_Path) };
+		ScriptSystem::Register(m_ID, m_Path, src);
 	}
 
 private:
-	std::string m_Source;
+	std::filesystem::path m_Path;
 	UUID m_ID;
 };
 }

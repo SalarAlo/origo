@@ -1,0 +1,18 @@
+{
+        "header": {
+                "imported_time_stamp": "0",
+                "name": "Origo",
+                "origin": "Generated",
+                "source_path": "",
+                "source_time_stamp": "0",
+                "type": "Texture2D",
+                "uuid": "245488f0b1dad4a46364dba32db961cd"
+        },
+        "payload": {
+                "source": {
+                        "path": "resources/textures/dirt.jpg",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

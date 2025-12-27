@@ -6,12 +6,12 @@ namespace Origo {
 void ScriptSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	ORG_INFO("Seriliazing an asset of type shader");
 	auto script { static_cast<const Script*>(asset) };
-	backend.Write("source", script->GetSource());
+	backend.Write("path", script->GetPath().c_str());
 	backend.Write("id", script->GetID().ToString());
 }
 
 void ScriptSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
-	std::string source;
+	std::string path;
 	std::string id;
 
 	if (!backend.TryRead("id", id)) {
@@ -19,13 +19,13 @@ void ScriptSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 		return;
 	}
 
-	if (!backend.TryRead("source", source)) {
+	if (!backend.TryRead("path", path)) {
 		ORG_CORE_ERROR("Unable to deserialize Script Asset because backend has no source entry");
 		return;
 	}
 
 	auto& script { static_cast<Script&>(asset) };
-	script.SetSource(source);
+	script.SetPath(path);
 	script.SetID(UUID::FromString(id));
 }
 
