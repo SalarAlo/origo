@@ -37,4 +37,3 @@ It is a learning project developed for submission to the CV-Tag 2026 at the Univ
 
 Licensed under the Apache License, Version 2.0.  
 See the [LICENSE](LICENSE) and [NOTICE](NOTICE) files for details.
-e the [LICENSE](LICENSE) and [NOTICE](NOTICE) files for details.
