@@ -11,7 +11,6 @@ target_include_directories(OrigoEditor PRIVATE
     ${CMAKE_SOURCE_DIR}/vendor/imguizmo
 )
 
-
 target_link_libraries(OrigoEditor PRIVATE
     OrigoEngine
     imgui

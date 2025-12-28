@@ -1,48 +1,35 @@
-#include "origo/scripting/ScriptComponentInstance.h"
-#include "origo/scripting/ScriptComponentManager.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
+
+#include "origo/core/Logger.h"
+#include "origo/scripting/ScriptComponentInstance.h"
 
 namespace Origo {
 
-static VariantType ParseType(const std::string& type) {
-	if (type == "int")
-		return VariantType::Int;
-	if (type == "float")
-		return VariantType::Float;
-	if (type == "bool")
-		return VariantType::Bool;
-	if (type == "string")
-		return VariantType::String;
-
-	throw std::runtime_error("Unknown field type: " + type);
+namespace {
+	struct ScriptTypeInfo {
+		VariantType Type;
+		std::function<Variant(const sol::object&)> FromLua;
+	};
 }
 
-static Variant MakeVariant(
-    VariantType type,
-    const sol::object& obj) {
-	switch (type) {
-	case VariantType::Int:
-		return Variant(obj.as<int>());
-	case VariantType::Float:
-		return Variant(obj.as<float>());
-	case VariantType::Bool:
-		return Variant(obj.as<bool>());
-	case VariantType::String:
-		return Variant(obj.as<std::string>());
-	}
-
-	throw std::runtime_error("Invalid VariantType");
-}
+static const std::unordered_map<std::string_view, ScriptTypeInfo> s_TypeRegistry = {
+	{ "int", { VariantType::Int, [](const sol::object& o) { return Variant(o.as<int>()); } } },
+	{ "float", { VariantType::Float, [](const sol::object& o) { return Variant(o.as<float>()); } } },
+	{ "bool", { VariantType::Bool, [](const sol::object& o) { return Variant(o.as<bool>()); } } },
+	{ "string", { VariantType::String, [](const sol::object& o) { return Variant(o.as<std::string>()); } } },
+};
 
 ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescriptor descriptor) {
-	auto& descriptors = Descriptors();
-	auto& nameMap = NameToID();
+	if (s_Descriptors.contains(descriptor.ID)) {
+		ORG_INFO("Registering already existent Component {}", descriptor.Name);
+		auto& existing = s_Descriptors[descriptor.ID];
+		existing.Fields = descriptor.Fields;
+		existing.Name = descriptor.Name;
 
-	if (nameMap.contains(descriptor.Name)) {
-		auto id = nameMap[descriptor.Name];
-		descriptors[id].Fields = descriptor.Fields;
-		OnScriptComponentUpdated().Invoke(id);
-		return id;
+		s_NameToScriptComponentID.erase(existing.Name);
+		s_NameToScriptComponentID[descriptor.Name] = descriptor.ID;
+		OnScriptComponentUpdated().Invoke(descriptor.ID);
+		return descriptor.ID;
 	}
 
 	for (const auto& field : descriptor.Fields) {
@@ -51,33 +38,42 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 		}
 	}
 
-	ScriptComponentID id = static_cast<ScriptComponentID>(descriptors.size());
+	ORG_INFO("Registering Component {}", descriptor.Name);
+	ScriptComponentID id = descriptor.ID;
 
-	descriptors.push_back(std::move(descriptor));
-	nameMap[descriptors.back().Name] = id;
+	s_NameToScriptComponentID.insert({ descriptor.Name, id });
+	s_Descriptors.insert({ id, std::move(descriptor) });
 
 	return id;
 }
 
-ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const std::string& name, sol::table fields) {
+ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& uuid, const std::string& name, sol::table fields) {
 	ScriptComponentDescriptor desc;
 	desc.Name = name;
+	desc.ID = uuid;
 
 	for (auto& kv : fields) {
 		std::string fieldName = kv.first.as<std::string>();
 		sol::table fieldDef = kv.second.as<sol::table>();
 
 		if (!fieldDef["type"].valid() || !fieldDef["default"].valid()) {
-			throw std::runtime_error(
-			    "Field '" + fieldName + "' must have 'type' and 'default'");
+			throw std::runtime_error("Field '" + fieldName + "' must have 'type' and 'default'");
 		}
 
 		std::string typeStr = fieldDef["type"];
 		sol::object defVal = fieldDef["default"];
 
-		VariantType type = ParseType(typeStr);
+		auto it = s_TypeRegistry.find(typeStr);
 
-		ScriptFieldDescriptor field { fieldName, type, MakeVariant(type, defVal) };
+		if (it == s_TypeRegistry.end()) {
+			ORG_ERROR("Unknown script field type: " + typeStr);
+			throw std::runtime_error("Unknown script field type: " + typeStr);
+		}
+
+		VariantType type = it->second.Type;
+		Variant value = it->second.FromLua(defVal);
+
+		ScriptFieldDescriptor field { fieldName, type, value };
 
 		desc.Fields.push_back(std::move(field));
 	}
@@ -86,20 +82,17 @@ ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const std::s
 }
 
 const ScriptComponentDescriptor& ScriptComponentRegistry::Get(ScriptComponentID id) {
-	auto& descriptors = Descriptors();
-
-	if (id < 0 || id >= static_cast<int>(descriptors.size())) {
+	if (!s_Descriptors.contains(id)) {
 		throw std::runtime_error("Invalid ScriptComponentID");
 	}
 
-	return descriptors[id];
+	return s_Descriptors[id];
 }
 
 std::optional<ScriptComponentID> ScriptComponentRegistry::TryFindByName(const std::string& name) {
-	auto& map = NameToID();
-	auto it = map.find(name);
+	auto it = s_NameToScriptComponentID.find(name);
 
-	if (it == map.end()) {
+	if (it == s_NameToScriptComponentID.end()) {
 		return std::nullopt;
 	}
 
@@ -108,16 +101,6 @@ std::optional<ScriptComponentID> ScriptComponentRegistry::TryFindByName(const st
 Action<void, ScriptComponentID> ScriptComponentRegistry::OnScriptComponentUpdated() {
 	static Action<void, ScriptComponentID> action {};
 	return action;
-}
-
-std::vector<ScriptComponentDescriptor>& ScriptComponentRegistry::Descriptors() {
-	static std::vector<ScriptComponentDescriptor> s_Descriptors;
-	return s_Descriptors;
-}
-
-std::unordered_map<std::string, ScriptComponentID>& ScriptComponentRegistry::NameToID() {
-	static std::unordered_map<std::string, ScriptComponentID> s_Map;
-	return s_Map;
 }
 
 }

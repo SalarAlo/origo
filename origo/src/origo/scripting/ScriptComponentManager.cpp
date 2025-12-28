@@ -151,7 +151,6 @@ void ScriptComponentManager::MigrateComponent(RID entity, ScriptComponentID type
 
 		for (size_t i = 0; i < instance->FieldNames.size(); ++i) {
 			if (instance->FieldNames[i] == field.Name && instance->Values[i].GetType() == field.Type) {
-
 				newValues.push_back(instance->Values[i]);
 				newNames.push_back(field.Name);
 				found = true;

@@ -1,10 +1,11 @@
 
 #pragma once
 
+#include "origo/core/UUID.h"
 #include "origo/scripting/Variant.h"
 
 namespace Origo {
-using ScriptComponentID = int;
+using ScriptComponentID = UUID;
 
 struct ScriptComponentInstance {
 	ScriptComponentID ID;

@@ -1,7 +1,7 @@
 Component.define("HealthComponent", {
 	current_health = {
-		type = "float",
-		default = 100
+		type = "bool",
+		default = false
 	},
 	sigma_boi = {
 		type = "int",

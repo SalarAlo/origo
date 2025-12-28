@@ -1,15 +1,15 @@
 {
         "header": {
-                "imported_time_stamp": "-4670799891795434569",
+                "imported_time_stamp": "-4670781924504916939",
                 "name": "HealthComponent",
                 "origin": "Imported",
                 "source_path": "./resources/scripts/HealthComponent.lua",
-                "source_time_stamp": "-4670799891795434569",
+                "source_time_stamp": "-4670781924504916939",
                 "type": "Script",
-                "uuid": "2b96385d42cb0a177bdd6101f2a7873d"
+                "uuid": "99d7f84aa64bdf79402f32d31d48006a"
         },
         "payload": {
-                "id": "2b96385d42cb0a177bdd6101f2a7873d",
+                "id": "99d7f84aa64bdf79402f32d31d48006a",
                 "path": "./resources/scripts/HealthComponent.lua"
         }
 }
