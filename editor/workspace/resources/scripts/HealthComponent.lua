@@ -1,14 +1,14 @@
 Component.define("HealthComponent", {
 	current_health = {
-		type = "bool",
-		default = false
+		type = "float",
+		default = 100
 	},
-	sigma_boi = {
+	max_health = {
+		type = "float",
+		default = 100
+	},
+	max_aura = {
 		type = "int",
-		default = 1
-	},
-	dead = {
-		type = "bool",
-		default = false
+		default = 100
 	},
 })

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "origo/core/LayerStack.h"
+#include "origo/core/LayerSystem.h"
 #include "origo/core/Time.h"
 #include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
@@ -21,8 +21,8 @@ public:
 	virtual void OnShutdown() { }
 	void OnEvent(Event& event);
 
-	void PushLayer(Layer*);
-	void PushOverlay(Layer*);
+	void PushLayer(Layer*, size_t);
+	void PopLayer(size_t);
 
 private:
 	void InternalAwake();
@@ -32,7 +32,7 @@ private:
 protected:
 	ScreenWindow m_Window;
 	ApplicationSettings m_Settings {};
-	LayerStack m_LayerStack {};
+	LayerSystem m_LayerSystem {};
 
 	bool m_Running {};
 	Time::TimePoint m_LastTimeStamp {};

@@ -1,0 +1,17 @@
+{
+        "header": {
+                "imported_time_stamp": "0",
+                "name": "Normal Shader",
+                "origin": "Generated",
+                "source_path": "",
+                "source_time_stamp": "0",
+                "type": "Shader",
+                "uuid": "9b4f4402835fbcc34ddb56b9b7423744"
+        },
+        "payload": {
+                "source": {
+                        "shader_path": "resources/shaders/normal.glsl",
+                        "type": "File"
+                }
+        }
+}

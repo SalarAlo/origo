@@ -1,7 +1,7 @@
 Component.define("StatusComponent", {
 	poisoned = {
-		type = "float",
-		default = 0
+		type = "bool",
+		default = false
 	},
 	freezing = {
 		type = "bool",
@@ -9,6 +9,6 @@ Component.define("StatusComponent", {
 	},
 	scared = {
 		type = "bool",
-		default = false
+		default = true
 	},
 })

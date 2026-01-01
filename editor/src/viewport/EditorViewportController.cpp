@@ -2,6 +2,7 @@
 #include "origo/renderer/RenderView.h"
 #include "origo/scene/CameraComponent.h"
 #include "origo/scene/Transform.h"
+#include "state/EditorRuntimeState.h"
 
 using namespace Origo;
 namespace OrigoEditor {
@@ -26,7 +27,7 @@ RenderView EditorViewportController::GetActiveRenderView() {
 		});
 	}
 
-	if (m_Context.RuntimeState == EditorRuntimeState::Editing || !cam) {
+	if (m_Context.RuntimeState == EditorRuntimeState::EditingOnly || !cam) {
 		cam = &m_Context.EditorViewportCamera.GetCamera();
 		transf = &m_Context.EditorViewportCamera.GetTransform();
 	}

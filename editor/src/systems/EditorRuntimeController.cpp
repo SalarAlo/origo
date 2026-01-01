@@ -3,7 +3,7 @@
 namespace OrigoEditor {
 
 void EditorRuntimeController::Play() {
-	if (m_Context.RuntimeState != EditorRuntimeState::Editing)
+	if (m_Context.RuntimeState != EditorRuntimeState::EditingOnly)
 		return;
 
 	m_Context.RuntimeScene = new Origo::Scene(*m_Context.EditorScene);
@@ -23,7 +23,7 @@ void EditorRuntimeController::Stop() {
 
 	m_Context.RuntimeScene = nullptr;
 	m_Context.ActiveScene = m_Context.EditorScene;
-	m_Context.RuntimeState = EditorRuntimeState::Editing;
+	m_Context.RuntimeState = EditorRuntimeState::EditingOnly;
 }
 
 }

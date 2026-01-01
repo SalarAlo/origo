@@ -9,24 +9,46 @@
 namespace OrigoEditor {
 
 void InspectorPanel::OnImGuiRender() {
-	static Origo::RID editingEntity {};
-	static bool isEditingName = false;
-	static char nameBuffer[256] {};
+	auto& selectedEntityOptional = m_Context.SelectedEntity;
+	auto activeScene = m_Context.ActiveScene;
 
-	auto& selectedEntity = m_Context.SelectedEntity;
-	auto scene = m_Context.ActiveScene;
-
-	ImGui::SetWindowFontScale(1.1f);
-
-	if (!selectedEntity.has_value()) {
+	if (!selectedEntityOptional.has_value()) {
 		ImGui::TextDisabled("No entity selected.");
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
+	DrawEntityName();
+
+	const Origo::RID selectedEntity = selectedEntityOptional.value();
+
+	ImGui::SetWindowFontScale(0.9f);
+
+	DrawNativeComponents(activeScene, selectedEntity);
+	DrawScriptComponents(activeScene, selectedEntity);
+
+	ImGui::SetWindowFontScale(1.0f);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	DrawAddComponent(activeScene, selectedEntity);
+}
+
+void InspectorPanel::DrawEntityName() {
+	auto& selectedEntity = m_Context.SelectedEntity;
+	auto scene = m_Context.ActiveScene;
+
 	const Origo::RID entity = selectedEntity.value();
 	auto* nameComp = scene->GetNativeComponent<Origo::Name>(entity);
 	const std::string& name = nameComp->GetName();
+
+	static Origo::RID editingEntity {};
+	static bool isEditingName = false;
+	static char nameBuffer[256] {};
+
+	ImGui::SetWindowFontScale(1.1f);
 
 	if (!isEditingName || editingEntity != entity) {
 		isEditingName = false;
@@ -62,31 +84,29 @@ void InspectorPanel::OnImGuiRender() {
 			isEditingName = false;
 		}
 	}
+}
 
-	ImGui::SetWindowFontScale(0.9f);
-
+void InspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-		if (!scene->HasNativeComponentByType(entity, type))
+		if (!activeScene->HasNativeComponentByType(selectedEntity, type))
 			continue;
 
-		void* componentPtr = scene->GetNativeComponentByType(entity, type);
+		void* componentPtr = activeScene->GetNativeComponentByType(selectedEntity, type);
 		InspectorDrawRegistry::DrawNativeComponent(componentPtr, type);
 	}
+}
 
+void InspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	for (const auto& [id, descr] : Origo::ScriptComponentRegistry::GetAll()) {
-		if (!scene->HasScriptComponent(entity, id))
+		if (!activeScene->HasScriptComponent(selectedEntity, id))
 			continue;
 
-		auto* instance = scene->GetScriptComponent(entity, id);
+		auto* instance = activeScene->GetScriptComponent(selectedEntity, id);
 		InspectorDrawRegistry::DrawScriptComponent(*instance);
 	}
+}
 
-	ImGui::SetWindowFontScale(1.0f);
-
-	ImGui::Spacing();
-	ImGui::Separator();
-	ImGui::Spacing();
-
+void InspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	const float buttonWidth = 180.0f;
 	const float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 
@@ -116,7 +136,7 @@ void InspectorPanel::OnImGuiRender() {
 		ImGui::Separator();
 
 		for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-			if (scene->HasNativeComponentByType(entity, type))
+			if (activeScene->HasNativeComponentByType(selectedEntity, type))
 				continue;
 
 			const bool isRegistered = Origo::NativeComponentRegistry::Get(type) != nullptr;
@@ -133,7 +153,7 @@ void InspectorPanel::OnImGuiRender() {
 			}
 
 			if (ImGui::MenuItem(entry.Name)) {
-				scene->AddNativeComponent(entity, type);
+				activeScene->AddNativeComponent(selectedEntity, type);
 				ImGui::CloseCurrentPopup();
 				break;
 			}
@@ -144,11 +164,11 @@ void InspectorPanel::OnImGuiRender() {
 
 		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::GetAll()) {
 
-			if (scene->HasScriptComponent(entity, id))
+			if (activeScene->HasScriptComponent(selectedEntity, id))
 				continue;
 
 			if (ImGui::MenuItem(desc.Name.c_str())) {
-				scene->AddScriptComponent(entity, id);
+				activeScene->AddScriptComponent(selectedEntity, id);
 				ImGui::CloseCurrentPopup();
 				break;
 			}
@@ -157,5 +177,4 @@ void InspectorPanel::OnImGuiRender() {
 		ImGui::EndPopup();
 	}
 }
-
 }

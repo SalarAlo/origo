@@ -109,7 +109,7 @@ void SceneViewport::OnImGuiRender() {
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::Editing) {
+	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::EditingOnly) {
 		auto& entity = m_Context.SelectedEntity.value();
 		auto transform = m_Context.EditorScene->GetNativeComponent<Origo::Transform>(entity);
 

@@ -2,7 +2,7 @@
 
 namespace OrigoEditor {
 enum class EditorRuntimeState {
-	Editing,
+	EditingOnly,
 	Running
 };
 }

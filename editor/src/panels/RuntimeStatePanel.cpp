@@ -30,7 +30,7 @@ void RuntimeStatePanel::OnImGuiRender() {
 		initialized = true;
 	}
 
-	bool isEdit = m_Context.RuntimeState == EditorRuntimeState::Editing;
+	bool isEdit = m_Context.RuntimeState == EditorRuntimeState::EditingOnly;
 	bool isPlaying = m_Context.RuntimeState == EditorRuntimeState::Running;
 
 	const ImVec2 buttonSize { 24.0f, 24.0f };

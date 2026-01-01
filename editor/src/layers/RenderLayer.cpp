@@ -41,13 +41,9 @@ void RenderLayer::OnUpdate(double dt) {
 
 	auto scenePtr = m_Context.ActiveScene;
 
-	if (m_Context.RuntimeState == EditorRuntimeState::Running) {
-		SystemScheduler::Get().RunPhase(GamePhase::Update, scenePtr, dt);
-	}
-
 	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, scenePtr, m_RenderContext);
 
-	if (m_Context.RuntimeState == EditorRuntimeState::Editing) {
+	if (m_Context.RuntimeState == EditorRuntimeState::EditingOnly) {
 		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, scenePtr, m_RenderContext);
 	}
 

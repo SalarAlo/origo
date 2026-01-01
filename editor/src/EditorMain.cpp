@@ -1,6 +1,8 @@
 #include "layer/EditorCameraLayer.h"
+#include "layer/LayerType.h"
 #include "layer/RenderLayer.h"
 #include "layer/SceneLayer.h"
+#include "layer/UpdateLayer.h"
 #include "origo/core/EntryPoint.h"
 #include "origo/core/Application.h"
 #include "origo/renderer/FrameBuffer.h"
@@ -42,10 +44,11 @@ public:
 	    }())
 	    , m_Context(&m_Scene, m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette())
 	    , m_Scene("Sample Scene") {
-		PushLayer(new EditorCameraLayer(m_Context));
-		PushLayer(new SceneLayer(m_Context));
-		PushLayer(new EditorUILayer(m_Context, m_ImGuiController));
-		PushLayer(new RenderLayer(m_Context, m_RenderContext));
+		PushLayer(new EditorCameraLayer(m_Context), static_cast<size_t>(LayerType::EditorCameraLayer));
+		PushLayer(new SceneLayer(m_Context), static_cast<size_t>(LayerType::SceneLayer));
+		PushLayer(new EditorUILayer(m_Context, m_ImGuiController), static_cast<size_t>(LayerType::EditorUILayer));
+		PushLayer(new RenderLayer(m_Context, m_RenderContext), static_cast<size_t>(LayerType::RenderLayer));
+		PushLayer(new UpdateLayer(m_Context), static_cast<size_t>(LayerType::UpdateLayer));
 
 		m_RenderContext.SetTarget(&m_RenderBuffer);
 		m_RenderContext.SetResolveTarget(&m_ResolveBuffer);

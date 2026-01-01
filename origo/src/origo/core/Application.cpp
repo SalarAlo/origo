@@ -7,15 +7,12 @@
 #include "origo/core/Init.h"
 
 namespace Origo {
-void Application::PushLayer(Layer* l) {
-	m_LayerStack.PushLayer(l);
+void Application::PushLayer(Layer* layer, size_t key) {
+	m_LayerSystem.PushLayer(layer, key);
 }
 
-void Application::PushOverlay(Layer* l) {
-	m_LayerStack.PushOverlay(l);
-}
 void Application::InternalUpdate(double dt) {
-	for (Layer* layer : m_LayerStack) {
+	for (Layer* layer : m_LayerSystem) {
 		layer->OnUpdate(dt);
 	}
 }
@@ -27,14 +24,14 @@ void Application::InternalAwake() {
 
 	Origo::Input::SetContext(&m_Window);
 
-	for (Layer* layer : m_LayerStack) {
+	for (Layer* layer : m_LayerSystem) {
 		layer->OnAttach();
 	}
 }
 
 void Application::InternalShutdown() {
 	Logger::Shutdown();
-	for (Layer* layer : m_LayerStack) {
+	for (Layer* layer : m_LayerSystem) {
 		layer->OnDetach();
 	}
 	AssetSerializationSystem::Cleanup();
@@ -49,7 +46,7 @@ Application::Application(const ApplicationSettings& settings)
 }
 
 void Application::OnEvent(Event& event) {
-	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+	for (auto it = m_LayerSystem.end(); it != m_LayerSystem.begin();) {
 		(*--it)->OnEvent(event);
 		if (event.IsHandled())
 			break;

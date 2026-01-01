@@ -8,24 +8,22 @@
 
 namespace OrigoEditor {
 
-void InspectorDrawRegistry::DrawScriptComponent(
-    Origo::ScriptComponentInstance& instance) {
+void InspectorDrawRegistry::DrawScriptComponent(Origo::ScriptComponentInstance& instance) {
+	auto& componentDescription = Origo::ScriptComponentRegistry::Get(instance.ID);
 
-	const auto& desc = Origo::ScriptComponentRegistry::Get(instance.ID);
-
-	if (!DrawScriptComponentHeader(desc.Name.c_str(), &instance))
+	if (!DrawScriptComponentHeader(componentDescription.Name.c_str(), &instance))
 		return;
 
-	for (const auto& field : desc.Fields) {
-		auto value = instance.FindValue(field.Name);
+	for (auto& field : componentDescription.Fields) {
+		auto fieldValue = instance.FindValue(field.Name);
 
-		if (!value.has_value()) {
-			Origo::Variant tmp = field.DefaultValue;
-			DrawScriptField(field, tmp);
+		// refactor!
+		if (!fieldValue.has_value()) {
+			ORG_INFO("Skipped an iter");
 			continue;
 		}
 
-		DrawScriptField(field, value.value());
+		DrawScriptField(field, *(*fieldValue));
 	}
 }
 
