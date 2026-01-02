@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/core/LayerSystem.h"
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/scene/Scene.h"
 #include "state/EditorRuntimeState.h"
@@ -11,12 +12,13 @@
 namespace OrigoEditor {
 
 struct EditorContext {
-	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, GLFWwindow* window, const EditorPalette& palette)
+	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
 	    : EditorScene(editorScene)
 	    , ActiveScene(editorScene)
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
 	    , Window(window)
+	    , LayerSystem(layerSystem)
 	    , ViewportController(*this)
 	    , ColorPalette(palette) { }
 
@@ -27,6 +29,8 @@ struct EditorContext {
 
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
+
+	Origo::LayerSystem& LayerSystem;
 
 	GLFWwindow* Window;
 

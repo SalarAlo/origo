@@ -4,6 +4,8 @@
 #include "origo/scene/Transform.h"
 #include "state/EditorViewMode.h"
 
+using namespace Origo;
+
 namespace OrigoEditor {
 
 static void ViewModeToggle(EditorViewMode& mode) {
@@ -17,7 +19,7 @@ static void ViewModeToggle(EditorViewMode& mode) {
 	const char* labels[] = { "Scene", "Run" };
 	const EditorViewMode modes[] = {
 		EditorViewMode::Editor,
-		EditorViewMode::Run
+		EditorViewMode::Game
 	};
 
 	float widths[2];
@@ -70,13 +72,13 @@ static void ViewModeToggle(EditorViewMode& mode) {
 	}
 }
 
-static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
+static ImTextureID ToImTextureID(const Ref<Texture2D>& tex) {
 	return (ImTextureID)(intptr_t)tex->GetRendererID();
 }
 
-static Origo::Ref<Origo::Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
-	auto texture = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
-	texture->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
+static Ref<Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
+	auto texture = MakeRef<Texture2D>(TextureType::UI);
+	texture->SetSource(MakeScope<TextureSourceSVG>(path, size, size));
 	texture->Load();
 
 	return texture;
@@ -140,7 +142,7 @@ void SceneViewport::OnImGuiRender() {
 	const ImVec4 activeTint(0.30f, 0.60f, 1.00f, 1.0f);
 
 	auto drawToolButton = [&](const char* id,
-	                          const Origo::Ref<Origo::Texture2D>& icon,
+	                          const Ref<Texture2D>& icon,
 	                          ImGuizmo::OPERATION op) {
 		ImVec4 tint = (m_GizmoOperation == op) ? activeTint : inactiveTint;
 
@@ -187,7 +189,7 @@ void SceneViewport::OnImGuiRender() {
 
 	if (editingView && m_Context.GetSelectedEntity().has_value()) {
 		auto entity = *m_Context.GetSelectedEntity();
-		auto transform = activeScene->GetNativeComponent<Origo::Transform>(entity);
+		auto transform = activeScene->GetNativeComponent<Transform>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();
 		glm::mat4 view = m_Context.ViewportController.GetActiveRenderView().View;

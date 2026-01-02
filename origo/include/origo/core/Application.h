@@ -21,7 +21,7 @@ public:
 	virtual void OnShutdown() { }
 	void OnEvent(Event& event);
 
-	void PushLayer(Layer*, size_t);
+	void PushLayer(Layer*, size_t, bool frozen = false);
 	void PopLayer(size_t);
 
 private:

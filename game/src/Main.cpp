@@ -18,6 +18,7 @@ public:
 			    { AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
 			    { AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 		    };
+
 		    return spec;
 	    }()) {
 	}

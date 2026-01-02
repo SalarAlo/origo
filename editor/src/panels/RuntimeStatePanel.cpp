@@ -1,5 +1,6 @@
 #include "panels/RuntimeStatePanel.h"
 
+#include "layer/LayerType.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 #include "state/EditorRuntimeState.h"
@@ -30,9 +31,6 @@ void RuntimeStatePanel::OnImGuiRender() {
 		initialized = true;
 	}
 
-	bool isEdit = m_Context.RuntimeState == EditorRuntimeState::Editing;
-	bool isPlaying = m_Context.RuntimeState == EditorRuntimeState::Running;
-
 	const ImVec2 buttonSize { 24.0f, 24.0f };
 	const float spacing = ImGui::GetStyle().ItemSpacing.x;
 
@@ -41,7 +39,7 @@ void RuntimeStatePanel::OnImGuiRender() {
 	const float availableWidth = ImGui::GetContentRegionAvail().x;
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (availableWidth - totalWidth) * 0.5f);
 
-	ImGui::BeginDisabled(!isEdit);
+	ImGui::BeginDisabled(!m_Controller.CanPlay());
 	if (ImGui::ImageButton(
 	        "Play",
 	        ToImTextureID(playIcon),
@@ -52,12 +50,35 @@ void RuntimeStatePanel::OnImGuiRender() {
 
 	ImGui::SameLine();
 
-	ImGui::BeginDisabled(isEdit);
+	ImGui::BeginDisabled(!m_Controller.CanStop());
+
 	if (ImGui::ImageButton(
 	        "Stop",
 	        ToImTextureID(stopIcon),
 	        buttonSize)) {
 		m_Controller.Stop();
+	}
+
+	ImGui::EndDisabled();
+
+	ImGui::SameLine();
+
+	ImGui::BeginDisabled(!m_Controller.CanPause() && !m_Controller.CanResume());
+
+	if (m_Controller.CanPause()) {
+		if (ImGui::ImageButton(
+		        "Pause",
+		        ToImTextureID(pauseIcon),
+		        buttonSize)) {
+			m_Controller.Pause();
+		}
+	} else if (m_Controller.CanResume()) {
+		if (ImGui::ImageButton(
+		        "Resume",
+		        ToImTextureID(playIcon),
+		        buttonSize)) {
+			m_Controller.Resume();
+		}
 	}
 	ImGui::EndDisabled();
 

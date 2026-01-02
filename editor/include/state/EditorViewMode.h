@@ -3,6 +3,6 @@
 namespace OrigoEditor {
 enum class EditorViewMode {
 	Editor,
-	Run
+	Game
 };
 }

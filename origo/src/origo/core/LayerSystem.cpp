@@ -1,96 +1,154 @@
 #include "origo/core/LayerSystem.h"
 #include "origo/core/Logger.h"
 
+#include <algorithm>
+
 namespace Origo {
 
-LayerSystem::LayerSystem() {
-}
+LayerSystem::LayerSystem() { }
 
 LayerSystem::~LayerSystem() {
 	for (Layer* layer : m_Layers)
 		delete layer;
+
+	for (Layer* layer : m_FrozenLayers)
+		delete layer;
 }
 
-void LayerSystem::PushLayer(Layer* layer, size_t activeKey) {
-	for (const auto& key : m_Keys) {
-		if (key == activeKey) {
-			ORG_ERROR("LayerSystem::PushLayer: Already contain layer with key {}", key);
-			return;
-		}
+void LayerSystem::RequestPushLayer(Layer* layer, size_t key, bool frozen) {
+	m_Commands.push_back({ LayerCommandType::Push,
+	    key,
+	    layer,
+	    frozen });
+}
+
+void LayerSystem::RequestRemoveLayer(size_t key) {
+	m_Commands.push_back({ LayerCommandType::Remove,
+	    key,
+	    nullptr,
+	    false });
+}
+
+void LayerSystem::RequestFreezeLayer(size_t key) {
+	m_Commands.push_back({ LayerCommandType::Freeze,
+	    key,
+	    nullptr,
+	    false });
+}
+
+void LayerSystem::RequestActivateLayer(size_t key) {
+	m_Commands.push_back({ LayerCommandType::Activate,
+	    key,
+	    nullptr,
+	    false });
+}
+
+void LayerSystem::PushLayer(Layer* layer, size_t key, bool frozen) {
+	auto& keys = frozen ? m_FrozenKeys : m_Keys;
+	auto& layers = frozen ? m_FrozenLayers : m_Layers;
+
+	auto it = std::lower_bound(keys.begin(), keys.end(), key);
+
+	if (it != keys.end() && *it == key) {
+		ORG_CORE_ERROR("LayerSystem::PushLayer: Duplicate key {}", key);
+		delete layer;
+		return;
 	}
 
-	m_Layers.push_back(layer);
-	m_Keys.push_back(activeKey);
+	size_t idx = std::distance(keys.begin(), it);
+	keys.insert(it, key);
+	layers.insert(layers.begin() + idx, layer);
 }
 
 void LayerSystem::RemoveLayer(size_t key) {
-	auto keyIdx { 0uz };
-	for (; keyIdx < m_Keys.size(); keyIdx++) {
-		if (key == m_Keys[keyIdx])
-			break;
+	auto it = std::lower_bound(m_Keys.begin(), m_Keys.end(), key);
+
+	if (it == m_Keys.end() || *it != key) {
+		ORG_CORE_ERROR("LayerSystem::RemoveLayer: No layer with key {}", key);
+		return;
 	}
 
-	if (key == m_Keys.size()) {
-		ORG_ERROR("LayerStack::PopLayer: No Layer with key {}", key);
-	}
-	auto layer { m_Layers[keyIdx] };
+	size_t idx = std::distance(m_Keys.begin(), it);
+	Layer* layer = m_Layers[idx];
 
-	m_Layers.erase(m_Layers.begin() + keyIdx);
-	m_Keys.erase(m_Keys.begin() + keyIdx);
+	m_Keys.erase(it);
+	m_Layers.erase(m_Layers.begin() + idx);
 
 	delete layer;
 }
 
 void LayerSystem::FreezeLayer(size_t key) {
-	auto keyIdx { 0uz };
-	for (; keyIdx < m_Keys.size(); keyIdx++) {
-		if (key == m_Keys[keyIdx])
-			break;
+	auto it = std::lower_bound(m_Keys.begin(), m_Keys.end(), key);
+
+	if (it == m_Keys.end() || *it != key) {
+		ORG_CORE_ERROR("LayerSystem::FreezeLayer: No layer with key {}", key);
+		return;
 	}
 
-	if (key == m_Keys.size()) {
-		ORG_ERROR("LayerStack::FreezeLayer: No Layer with key {}", key);
-	}
+	size_t idx = std::distance(m_Keys.begin(), it);
+	Layer* layer = m_Layers[idx];
 
-	auto layer { m_Layers[keyIdx] };
-	auto layerKey { m_Keys[keyIdx] };
 	layer->OnDetach();
 
-	m_Layers.erase(m_Layers.begin() + keyIdx);
-	m_Keys.erase(m_Keys.begin() + keyIdx);
+	m_Keys.erase(it);
+	m_Layers.erase(m_Layers.begin() + idx);
 
-	m_FrozenLayers.push_back(layer);
-	m_FrozenKeys.push_back(layerKey);
+	auto fit = std::lower_bound(m_FrozenKeys.begin(), m_FrozenKeys.end(), key);
+	size_t fidx = std::distance(m_FrozenKeys.begin(), fit);
 
-	delete layer;
+	m_FrozenKeys.insert(fit, key);
+	m_FrozenLayers.insert(m_FrozenLayers.begin() + fidx, layer);
 }
 
 void LayerSystem::ActivateLayer(size_t key) {
-	auto frozenKeyIdx { 0uz };
-	for (; frozenKeyIdx < m_FrozenKeys.size(); frozenKeyIdx++) {
-		if (key == m_FrozenKeys[frozenKeyIdx])
+	auto it = std::lower_bound(m_FrozenKeys.begin(), m_FrozenKeys.end(), key);
+
+	if (it == m_FrozenKeys.end() || *it != key) {
+		ORG_CORE_ERROR("LayerSystem::ActivateLayer: No frozen layer with key {}", key);
+		return;
+	}
+
+	size_t idx = std::distance(m_FrozenKeys.begin(), it);
+	Layer* layer = m_FrozenLayers[idx];
+
+	m_FrozenKeys.erase(it);
+	m_FrozenLayers.erase(m_FrozenLayers.begin() + idx);
+
+	auto ait = std::lower_bound(m_Keys.begin(), m_Keys.end(), key);
+	size_t aidx = std::distance(m_Keys.begin(), ait);
+
+	m_Keys.insert(ait, key);
+	m_Layers.insert(m_Layers.begin() + aidx, layer);
+
+	layer->OnAttach();
+}
+
+bool LayerSystem::HasActiveLayer(size_t key) const {
+	return std::binary_search(m_Keys.begin(), m_Keys.end(), key);
+}
+
+void LayerSystem::FlushCommands() {
+	for (const LayerCommand& cmd : m_Commands) {
+		switch (cmd.Type) {
+		case LayerCommandType::Push:
+			PushLayer(cmd.ActiveLayer, cmd.Key, cmd.Frozen);
 			break;
-	}
 
-	if (key == m_Keys.size()) {
-		ORG_ERROR("LayerStack::FreezeLayer: No Layer with key {}", key);
-	}
-
-	auto layer { m_FrozenLayers[frozenKeyIdx] };
-
-	auto keyIdx { 0uz };
-	for (; keyIdx < m_Keys.size(); keyIdx++) {
-		if (m_Keys[keyIdx] > key)
+		case LayerCommandType::Remove:
+			RemoveLayer(cmd.Key);
 			break;
+
+		case LayerCommandType::Freeze:
+			FreezeLayer(cmd.Key);
+			break;
+
+		case LayerCommandType::Activate:
+			ActivateLayer(cmd.Key);
+			break;
+		}
 	}
 
-	m_Layers.insert(m_Layers.begin() + keyIdx, layer);
-	m_Keys.insert(m_Keys.begin() + keyIdx, key);
-
-	m_FrozenLayers.erase(m_FrozenLayers.begin() + frozenKeyIdx);
-	m_FrozenKeys.erase(m_FrozenKeys.begin() + frozenKeyIdx);
-
-	delete layer;
+	m_Commands.clear();
 }
 
 }

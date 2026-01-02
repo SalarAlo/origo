@@ -7,14 +7,15 @@
 #include "origo/core/Init.h"
 
 namespace Origo {
-void Application::PushLayer(Layer* layer, size_t key) {
-	m_LayerSystem.PushLayer(layer, key);
+void Application::PushLayer(Layer* layer, size_t key, bool frozen) {
+	m_LayerSystem.RequestPushLayer(layer, key, frozen);
 }
 
 void Application::InternalUpdate(double dt) {
 	for (Layer* layer : m_LayerSystem) {
 		layer->OnUpdate(dt);
 	}
+	m_LayerSystem.FlushCommands();
 }
 
 void Application::InternalAwake() {
@@ -24,6 +25,7 @@ void Application::InternalAwake() {
 
 	Origo::Input::SetContext(&m_Window);
 
+	m_LayerSystem.FlushCommands();
 	for (Layer* layer : m_LayerSystem) {
 		layer->OnAttach();
 	}

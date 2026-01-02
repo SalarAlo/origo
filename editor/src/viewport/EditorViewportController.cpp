@@ -15,7 +15,7 @@ RenderView EditorViewportController::GetActiveRenderView() {
 	Camera* cam { nullptr };
 	Transform* transf { nullptr };
 
-	if (m_Context.ViewMode == EditorViewMode::Run) {
+	if (m_Context.ViewMode == EditorViewMode::Game) {
 		m_Context.ActiveScene->View<CameraComponent, Transform>([&](RID e, CameraComponent& cc, Transform& tr) {
 			if (cam != nullptr)
 				return;
