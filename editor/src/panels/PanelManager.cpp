@@ -36,8 +36,8 @@ void PanelManager::RenderMenuItems() {
 	if (ImGui::BeginMenu("Entities")) {
 		static int i {};
 		if (ImGui::MenuItem("Create Entity")) {
-			auto e = m_Context.EditorScene->CreateEntity("entity_" + std::to_string(i++));
-			m_Context.EditorScene->AddNativeComponent<Origo::Transform>(e);
+			auto e = m_Context.ActiveScene->CreateEntity("entity_" + std::to_string(i++));
+			m_Context.ActiveScene->AddNativeComponent<Origo::Transform>(e);
 		}
 
 		if (ImGui::MenuItem("Delete Entity")) {

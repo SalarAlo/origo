@@ -1,5 +1,7 @@
 #include "layer/SceneLayer.h"
 
+#include <random>
+
 #include "components/FallComponent.h"
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
@@ -12,10 +14,9 @@
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/VertexAttribute.h"
 #include "origo/renderer/VertexLayoutRegistry.h"
-#include "components/EditorSelection.h"
+#include "components/EditorOutline.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
-#include <random>
 
 using namespace Origo;
 
@@ -106,7 +107,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			    material,
 			    cubeMesh);
 
-			m_Context.EditorScene->AddNativeComponent<EditorSelection>(entity);
+			m_Context.EditorScene->AddNativeComponent<EditorOutline>(entity);
 			if (!chanceDist(random))
 				m_Context.EditorScene->AddNativeComponent<FallComponent>(entity, speedDistr(random));
 		}

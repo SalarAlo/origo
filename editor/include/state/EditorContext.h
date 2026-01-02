@@ -37,12 +37,17 @@ struct EditorContext {
 	EditorViewMode ViewMode { EditorViewMode::Editor };
 	EditorViewportController ViewportController;
 
-	std::optional<Origo::RID> SelectedEntity { std::nullopt };
+	void SetSelectedEntity(const Origo::RID& entity);
+	void UnselectSelectedEntity();
+	std::optional<Origo::RID> GetSelectedEntity() const { return m_SelectedEntity; }
 
 	EditorContext(const EditorContext&) = delete;
-	EditorContext& operator=(const EditorContext&) = delete;
+	void operator=(const EditorContext&) = delete;
 	EditorContext(EditorContext&&) = delete;
-	EditorContext& operator=(EditorContext&&) = delete;
+	void operator=(EditorContext&&) = delete;
+
+private:
+	std::optional<Origo::RID> m_SelectedEntity { std::nullopt };
 };
 
 }

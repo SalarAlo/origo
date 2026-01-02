@@ -6,12 +6,12 @@
 
 namespace OrigoEditor {
 
-class EditorSelection : public Origo::Component {
+class EditorOutline : public Origo::Component {
 public:
-	bool IsSelected = false;
+	bool ShouldOutline = false;
 
 public:
-	EditorSelection() { }
+	EditorOutline() { }
 
 	std::string GetName() const override { return "EditorSelection"; }
 

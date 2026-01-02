@@ -185,8 +185,8 @@ void SceneViewport::OnImGuiRender() {
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (editingView && m_Context.SelectedEntity.has_value()) {
-		auto& entity = m_Context.SelectedEntity.value();
+	if (editingView && m_Context.GetSelectedEntity().has_value()) {
+		auto entity = *m_Context.GetSelectedEntity();
 		auto transform = activeScene->GetNativeComponent<Origo::Transform>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();

@@ -40,15 +40,15 @@ void EditorCameraLayer::OnEvent(Event& e) {
 	dispatcher.Dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
 		bool pressedF { pressEvent.GetKeyPressed() == KeyboardKey::KEY_F && pressEvent.GetKeyPressType() == KeyPressType::KeyPressStart };
 		if (pressedF) {
-			if (!m_Context.SelectedEntity)
+			if (!m_Context.GetSelectedEntity())
 				return;
 
 			constexpr float BASE_DISTANCE = 2.0f;
 
 			auto& camera = m_Context.EditorViewportCamera;
 
-			auto selectedEntity = m_Context.SelectedEntity.value();
-			auto transform { m_Context.EditorScene->GetNativeComponent<Transform>(selectedEntity) };
+			auto selectedEntity = m_Context.GetSelectedEntity().value();
+			auto transform { m_Context.ActiveScene->GetNativeComponent<Transform>(selectedEntity) };
 
 			auto targetPos { transform->GetPosition() };
 			glm::vec3 forward = camera.GetTransform().GetForward();

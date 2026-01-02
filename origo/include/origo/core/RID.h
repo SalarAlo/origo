@@ -21,9 +21,6 @@ public:
 		return RID(current++);
 	}
 
-	bool IsValid() const { return m_ID >= 0; }
-	bool IsNull() const { return m_ID < 0; }
-
 	int GetId() const { return m_ID; }
 	std::string ToString() const { return std::to_string(m_ID); }
 

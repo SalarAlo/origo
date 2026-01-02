@@ -9,7 +9,7 @@
 namespace OrigoEditor {
 
 void InspectorPanel::OnImGuiRender() {
-	auto& selectedEntityOptional = m_Context.SelectedEntity;
+	auto selectedEntityOptional = m_Context.GetSelectedEntity();
 	auto activeScene = m_Context.ActiveScene;
 
 	if (!selectedEntityOptional.has_value()) {
@@ -37,7 +37,7 @@ void InspectorPanel::OnImGuiRender() {
 }
 
 void InspectorPanel::DrawEntityName() {
-	auto& selectedEntity = m_Context.SelectedEntity;
+	auto selectedEntity = m_Context.GetSelectedEntity();
 	auto scene = m_Context.ActiveScene;
 
 	const Origo::RID entity = selectedEntity.value();

@@ -12,10 +12,13 @@ void EditorRuntimeController::Play() {
 	m_Context.RuntimeState = EditorRuntimeState::Running;
 	m_Context.ViewMode = EditorViewMode::Run;
 
+	m_Context.UnselectSelectedEntity();
+
 	ORG_INFO("Play mode started");
 }
 
 void EditorRuntimeController::Stop() {
+
 	if (m_Context.RuntimeState != EditorRuntimeState::Running)
 		return;
 
@@ -25,6 +28,8 @@ void EditorRuntimeController::Stop() {
 	m_Context.ActiveScene = m_Context.EditorScene;
 	m_Context.RuntimeState = EditorRuntimeState::Editing;
 	m_Context.ViewMode = EditorViewMode::Editor;
+
+	m_Context.UnselectSelectedEntity();
 }
 
 }

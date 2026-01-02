@@ -4,23 +4,23 @@
 
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
-#include "components/EditorSelection.h"
+#include "components/EditorOutline.h"
 
 namespace OrigoEditor {
 using namespace Origo;
 
 void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
-	scene->View<EditorSelection, Transform, MeshRenderer>(
+	scene->View<EditorOutline, Transform, MeshRenderer>(
 	    [&](RID entity,
-	        EditorSelection& selection,
+	        EditorOutline& selection,
 	        Transform& transform,
 	        MeshRenderer& mr) {
-		    if (!selection.IsSelected)
+		    if (!selection.ShouldOutline)
 			    return;
 
 		    context.Submit(
 		        mr.GetMesh(),
-		        EditorSelection::GetOutlineMaterial(),
+		        EditorOutline::GetOutlineMaterial(),
 		        &transform,
 		        RenderPass::Outline);
 	    });

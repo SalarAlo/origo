@@ -41,12 +41,12 @@ void RenderLayer::OnUpdate(double dt) {
 
 	m_RenderContext.BeginFrame();
 
-	auto scenePtr = m_Context.ActiveScene;
+	auto activeScenePtr = m_Context.ActiveScene;
 
-	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, scenePtr, m_RenderContext);
+	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, activeScenePtr, m_RenderContext);
 
 	if (editingView) {
-		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, scenePtr, m_RenderContext);
+		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, activeScenePtr, m_RenderContext);
 	}
 
 	m_RenderContext.Flush();
