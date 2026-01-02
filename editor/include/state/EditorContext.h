@@ -1,11 +1,12 @@
 #pragma once
 
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/core/LayerSystem.h"
 #include "origo/scene/Scene.h"
 #include "state/EditorRuntimeState.h"
+#include "state/EditorViewMode.h"
 #include "systems/EditorCamera.h"
 #include "ui/EditorPalette.h"
+#include "viewport/EditorViewportController.h"
 
 namespace OrigoEditor {
 
@@ -16,6 +17,7 @@ struct EditorContext {
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
 	    , Window(window)
+	    , ViewportController(*this)
 	    , ColorPalette(palette) { }
 
 	Origo::Scene* EditorScene;
@@ -31,7 +33,10 @@ struct EditorContext {
 	EditorPalette ColorPalette {};
 	EditorCamera EditorViewportCamera {};
 
-	EditorRuntimeState RuntimeState { EditorRuntimeState::EditingOnly };
+	EditorRuntimeState RuntimeState { EditorRuntimeState::Editing };
+	EditorViewMode ViewMode { EditorViewMode::Editor };
+	EditorViewportController ViewportController;
+
 	std::optional<Origo::RID> SelectedEntity { std::nullopt };
 
 	EditorContext(const EditorContext&) = delete;

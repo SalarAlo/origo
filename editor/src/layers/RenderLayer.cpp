@@ -35,7 +35,9 @@ void RenderLayer::OnAttach() {
 }
 
 void RenderLayer::OnUpdate(double dt) {
-	m_RenderContext.SetView(m_ViewportController.GetActiveRenderView());
+	const bool editingView = (m_Context.ViewMode == EditorViewMode::Editor);
+
+	m_RenderContext.SetView(m_Context.ViewportController.GetActiveRenderView());
 
 	m_RenderContext.BeginFrame();
 
@@ -43,7 +45,7 @@ void RenderLayer::OnUpdate(double dt) {
 
 	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, scenePtr, m_RenderContext);
 
-	if (m_Context.RuntimeState == EditorRuntimeState::EditingOnly) {
+	if (editingView) {
 		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, scenePtr, m_RenderContext);
 	}
 

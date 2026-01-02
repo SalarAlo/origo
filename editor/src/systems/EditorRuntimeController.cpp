@@ -1,16 +1,16 @@
 #include "systems/EditorRuntimeController.h"
+#include "state/EditorViewMode.h"
 
 namespace OrigoEditor {
 
 void EditorRuntimeController::Play() {
-	if (m_Context.RuntimeState != EditorRuntimeState::EditingOnly)
+	if (m_Context.RuntimeState != EditorRuntimeState::Editing)
 		return;
 
 	m_Context.RuntimeScene = new Origo::Scene(*m_Context.EditorScene);
 	m_Context.ActiveScene = m_Context.RuntimeScene;
 	m_Context.RuntimeState = EditorRuntimeState::Running;
-
-	// TODO: Change to Primary Camera & remove editor camera layer
+	m_Context.ViewMode = EditorViewMode::Run;
 
 	ORG_INFO("Play mode started");
 }
@@ -23,7 +23,8 @@ void EditorRuntimeController::Stop() {
 
 	m_Context.RuntimeScene = nullptr;
 	m_Context.ActiveScene = m_Context.EditorScene;
-	m_Context.RuntimeState = EditorRuntimeState::EditingOnly;
+	m_Context.RuntimeState = EditorRuntimeState::Editing;
+	m_Context.ViewMode = EditorViewMode::Editor;
 }
 
 }

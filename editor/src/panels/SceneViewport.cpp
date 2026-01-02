@@ -2,9 +2,73 @@
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/scene/Transform.h"
-#include "state/EditorRuntimeState.h"
+#include "state/EditorViewMode.h"
 
 namespace OrigoEditor {
+
+static void ViewModeToggle(EditorViewMode& mode) {
+	ImDrawList* draw = ImGui::GetWindowDrawList();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+
+	const float height = 28.0f;
+	const float radius = 7.0f;
+	const float padding = 3.0f;
+
+	const char* labels[] = { "Scene", "Run" };
+	const EditorViewMode modes[] = {
+		EditorViewMode::Editor,
+		EditorViewMode::Run
+	};
+
+	float widths[2];
+	for (int i = 0; i < 2; i++)
+		widths[i] = ImGui::CalcTextSize(labels[i]).x + 20.0f;
+
+	float totalWidth = widths[0] + widths[1] + padding * 2;
+
+	ImVec2 size(totalWidth, height);
+	ImGui::InvisibleButton("##viewmode", size);
+
+	draw->AddRectFilled(
+	    pos,
+	    pos + size,
+	    IM_COL32(40, 40, 40, 255),
+	    radius);
+
+	float x = pos.x + padding;
+
+	for (int i = 0; i < 2; i++) {
+		bool active = (mode == modes[i]);
+
+		ImVec2 segMin(x, pos.y + padding);
+		ImVec2 segMax(x + widths[i], pos.y + height - padding);
+
+		if (active) {
+			draw->AddRectFilled(
+			    segMin,
+			    segMax,
+			    IM_COL32(90, 90, 90, 255),
+			    radius);
+		}
+
+		ImVec2 textSize = ImGui::CalcTextSize(labels[i]);
+		ImVec2 textPos(
+		    segMin.x + (widths[i] - textSize.x) * 0.5f,
+		    pos.y + (height - textSize.y) * 0.5f);
+
+		draw->AddText(
+		    textPos,
+		    active ? IM_COL32(255, 255, 255, 255)
+		           : IM_COL32(160, 160, 160, 255),
+		    labels[i]);
+
+		if (ImGui::IsMouseHoveringRect(segMin, segMax) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			mode = modes[i];
+		}
+
+		x += widths[i];
+	}
+}
 
 static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
 	return (ImTextureID)(intptr_t)tex->GetRendererID();
@@ -30,6 +94,7 @@ void SceneViewport::OnImGuiRender() {
 		m_IconsLoaded = true;
 	}
 
+	auto& activeScene { m_Context.ActiveScene };
 	ImGuizmo::BeginFrame();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -60,7 +125,7 @@ void SceneViewport::OnImGuiRender() {
 
 	ImVec2 viewportMin = ImGui::GetItemRectMin();
 	ImVec2 viewportMax = ImGui::GetItemRectMax();
-	ImVec2 viewportSize {
+	ImVec2 viewportSize = {
 		viewportMax.x - viewportMin.x,
 		viewportMax.y - viewportMin.y
 	};
@@ -91,31 +156,42 @@ void SceneViewport::OnImGuiRender() {
 		}
 	};
 
-	drawToolButton("##Move", m_MoveIcon, ImGuizmo::TRANSLATE);
-	ImGui::SameLine();
-	drawToolButton("##Rotate", m_RotateIcon, ImGuizmo::ROTATE);
-	ImGui::SameLine();
-	drawToolButton("##Scale", m_ScaleIcon, ImGuizmo::SCALE);
+	const bool editingView = (m_Context.ViewMode == EditorViewMode::Editor);
 
-	ImGui::SameLine();
-	ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-	ImGui::SameLine();
+	if (editingView) {
+		drawToolButton("##Move", m_MoveIcon, ImGuizmo::TRANSLATE);
+		ImGui::SameLine();
+		drawToolButton("##Rotate", m_RotateIcon, ImGuizmo::ROTATE);
+		ImGui::SameLine();
+		drawToolButton("##Scale", m_ScaleIcon, ImGuizmo::SCALE);
 
-	if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? "Local" : "World"))
-		m_GizmoMode = (m_GizmoMode == ImGuizmo::LOCAL)
-		    ? ImGuizmo::WORLD
-		    : ImGuizmo::LOCAL;
+		ImGui::SameLine();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+		ImGui::SameLine();
+
+		if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? "Local" : "World")) {
+			m_GizmoMode = (m_GizmoMode == ImGuizmo::LOCAL)
+			    ? ImGuizmo::WORLD
+			    : ImGuizmo::LOCAL;
+		}
+
+		ImGui::SameLine();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+		ImGui::SameLine();
+	}
+
+	ViewModeToggle(m_Context.ViewMode);
 
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (m_Context.SelectedEntity.has_value() && m_Context.RuntimeState == EditorRuntimeState::EditingOnly) {
+	if (editingView && m_Context.SelectedEntity.has_value()) {
 		auto& entity = m_Context.SelectedEntity.value();
-		auto transform = m_Context.EditorScene->GetNativeComponent<Origo::Transform>(entity);
+		auto transform = activeScene->GetNativeComponent<Origo::Transform>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();
-		glm::mat4 view = m_Camera.GetCamera().GetView();
-		glm::mat4 proj = m_Camera.GetCamera().GetProjection();
+		glm::mat4 view = m_Context.ViewportController.GetActiveRenderView().View;
+		glm::mat4 proj = m_Context.ViewportController.GetActiveRenderView().Projection;
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(
@@ -160,13 +236,14 @@ void SceneViewport::OnImGuiRender() {
 
 		smoothDelta.x = smoothDelta.x * (1.0f - smoothAlpha) + delta.x * smoothAlpha;
 		smoothDelta.y = smoothDelta.y * (1.0f - smoothAlpha) + delta.y * smoothAlpha;
+
 		glm::vec2 smoothDeltaGlm {
 			(smoothDelta * sensitivity).x,
 			(smoothDelta * sensitivity).y
 		};
 
-		m_Context.EditorViewportCamera.OnMouseDelta(smoothDeltaGlm);
+		if (m_Context.ViewMode == EditorViewMode::Editor)
+			m_Camera.OnMouseDelta(smoothDeltaGlm);
 	}
 }
-
 }

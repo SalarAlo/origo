@@ -12,8 +12,7 @@ class RenderLayer : public Origo::Layer {
 public:
 	RenderLayer(EditorContext& ctx, Origo::RenderContext& rCtx)
 	    : m_Context(ctx)
-	    , m_RenderContext(rCtx)
-	    , m_ViewportController(ctx) { };
+	    , m_RenderContext(rCtx) { };
 
 	void OnAttach() override;
 	void OnUpdate(double dt) override;
@@ -21,7 +20,6 @@ public:
 private:
 	EditorContext& m_Context;
 	Origo::RenderContext& m_RenderContext;
-	EditorViewportController m_ViewportController;
 
 	Origo::AssetHandle m_SkyboxCubeMesh;
 	Origo::AssetHandle m_SkyboxMaterial;
