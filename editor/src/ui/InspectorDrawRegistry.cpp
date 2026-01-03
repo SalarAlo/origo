@@ -1,5 +1,6 @@
 #include "ui/InspectorDrawRegistry.h"
 
+#include "origo/scripting/ScriptComponentInstance.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 
 #include "imgui.h"
@@ -8,21 +9,26 @@
 
 namespace OrigoEditor {
 
-void InspectorDrawRegistry::DrawScriptComponent(Origo::ScriptComponentInstance& instance) {
-	auto& componentDescription = Origo::ScriptComponentRegistry::Get(instance.ID);
+void InspectorDrawRegistry::DrawScriptComponent(Origo::ScriptComponentInstance& componentInstance) {
+	auto& registeredComponentDescription = Origo::ScriptComponentRegistry::Get(componentInstance.ID);
 
-	if (!DrawScriptComponentHeader(componentDescription.Name.c_str(), &instance))
+	if (!DrawScriptComponentHeader(registeredComponentDescription.Name.c_str(), &componentInstance))
 		return;
 
-	for (auto& field : componentDescription.Fields) {
-		auto fieldValue = instance.FindValue(field.Name);
+	for (auto& registeredFieldDescription : registeredComponentDescription.Fields) {
+		auto isPartOfRegisteredFields { [&](Origo::ScriptComponentFieldInstance& fieldInstance) { return fieldInstance.ID == registeredFieldDescription.ID; } };
+		auto resultField = std::find_if(componentInstance.Fields.begin(), componentInstance.Fields.end(), isPartOfRegisteredFields);
 
-		// refactor!
-		if (!fieldValue.has_value()) {
-			continue;
+		if (resultField == componentInstance.Fields.end()) {
+			componentInstance.Fields.emplace_back(
+			    registeredFieldDescription.ID,
+			    registeredFieldDescription.Name,
+			    registeredFieldDescription.DefaultValue);
+
+			resultField = std::prev(componentInstance.Fields.end());
 		}
 
-		DrawScriptField(field, *(*fieldValue));
+		DrawScriptField(registeredFieldDescription, resultField->Value);
 	}
 }
 
@@ -38,8 +44,7 @@ void InspectorDrawRegistry::DrawNativeComponent(void* componentPtr, std::type_in
 	DrawKnown(componentPtr, it->second);
 }
 
-bool InspectorDrawRegistry::DrawScriptComponentHeader(
-    const char* name, void* idPtr) {
+bool InspectorDrawRegistry::DrawScriptComponentHeader(const char* name, void* idPtr) {
 	EnsureScriptIcon();
 
 	std::string label = std::string(name) + "##" + std::to_string(reinterpret_cast<uintptr_t>(idPtr));
@@ -96,6 +101,7 @@ bool InspectorDrawRegistry::DrawInspectorHeaderRow(
 
 void InspectorDrawRegistry::DrawScriptField(const Origo::ScriptFieldDescriptor& field, Origo::Variant& value) {
 	if (value.GetType() != field.Type) {
+		ORG_CORE_ERROR("Script Field Value does not match up with given variant type");
 		value = field.DefaultValue;
 	}
 

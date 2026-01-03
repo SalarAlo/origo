@@ -6,19 +6,17 @@
 
 namespace Origo {
 using ScriptComponentID = UUID;
+using ScriptComponentFieldID = UUID;
+
+struct ScriptComponentFieldInstance {
+	ScriptComponentFieldID ID;
+	std::string Name;
+	Variant Value;
+};
 
 struct ScriptComponentInstance {
 	ScriptComponentID ID;
-	std::vector<std::string> FieldNames;
-	std::vector<Variant> Values;
-
-	std::optional<Origo::Variant*> FindValue(const std::string& name) {
-		for (size_t i = 0; i < FieldNames.size(); ++i)
-			if (FieldNames[i] == name)
-				return &Values[i];
-
-		return std::nullopt;
-	}
+	std::vector<ScriptComponentFieldInstance> Fields;
 };
 
 }

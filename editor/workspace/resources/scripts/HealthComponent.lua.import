@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4670356624687934719",
+                "imported_time_stamp": "-4670234944768018094",
                 "name": "HealthComponent",
                 "origin": "Imported",
                 "source_path": "./resources/scripts/HealthComponent.lua",
-                "source_time_stamp": "-4670356624687934719",
+                "source_time_stamp": "-4670234944768018094",
                 "type": "Script",
                 "uuid": "99d7f84aa64bdf79402f32d31d48006a"
         },

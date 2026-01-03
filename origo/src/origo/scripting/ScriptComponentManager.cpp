@@ -1,4 +1,5 @@
 #include "origo/scripting/ScriptComponentManager.h"
+#include "origo/scripting/ScriptComponentInstance.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 #include <cassert>
 
@@ -37,12 +38,10 @@ void ScriptComponentManager::Add(RID entity, ScriptComponentID type) {
 
 	ScriptComponentInstance instance;
 	instance.ID = type;
-	instance.Values.reserve(desc.Fields.size());
+	instance.Fields.reserve(desc.Fields.size());
 
 	for (const auto& field : desc.Fields) {
-		assert(field.DefaultValue.GetType() == field.Type);
-		instance.Values.push_back(field.DefaultValue);
-		instance.FieldNames.push_back(field.Name);
+		instance.Fields.emplace_back(field.ID, field.Name, field.DefaultValue);
 	}
 
 	components.push_back(std::move(instance));
@@ -140,32 +139,33 @@ void ScriptComponentManager::MigrateComponent(RID entity, ScriptComponentID type
 
 	const auto& desc = ScriptComponentRegistry::Get(type);
 
-	std::vector<Variant> newValues;
-	std::vector<std::string> newNames;
+	std::vector<ScriptComponentFieldInstance> newFields;
 
-	newValues.reserve(desc.Fields.size());
-	newNames.reserve(desc.Fields.size());
+	newFields.reserve(desc.Fields.size());
 
-	for (const auto& field : desc.Fields) {
-		bool found = false;
+	for (const auto& newField : desc.Fields) {
+		auto it = std::find_if(
+		    instance->Fields.begin(),
+		    instance->Fields.end(),
+		    [&](const ScriptComponentFieldInstance& oldField) {
+			    return oldField.ID == newField.ID;
+		    });
 
-		for (size_t i = 0; i < instance->FieldNames.size(); ++i) {
-			if (instance->FieldNames[i] == field.Name && instance->Values[i].GetType() == field.Type) {
-				newValues.push_back(instance->Values[i]);
-				newNames.push_back(field.Name);
-				found = true;
-				break;
+		if (it != instance->Fields.end()) {
+			if (it->Value.GetType() == newField.Type) {
+				newFields.emplace_back(newField.ID, newField.Name, it->Value);
+			} else {
+				newFields.emplace_back(newField.ID, newField.Name, newField.DefaultValue);
 			}
-		}
-
-		if (!found) {
-			newValues.push_back(field.DefaultValue);
-			newNames.push_back(field.Name);
+		} else {
+			newFields.emplace_back(
+			    newField.ID,
+			    newField.Name,
+			    newField.DefaultValue);
 		}
 	}
 
-	instance->Values = std::move(newValues);
-	instance->FieldNames = std::move(newNames);
+	instance->Fields = std::move(newFields);
 }
 
 }

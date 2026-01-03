@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4670245161992232418",
+                "imported_time_stamp": "-4670234980728846478",
                 "name": "BrokenLuaScriptSyntax",
                 "origin": "Imported",
                 "source_path": "./resources/scripts/BrokenLuaScriptSyntax.lua",
-                "source_time_stamp": "-4670245161992232418",
+                "source_time_stamp": "-4670234980728846478",
                 "type": "Script",
                 "uuid": "0ccd6eeb3e0ec0fea2052af761d11845"
         },

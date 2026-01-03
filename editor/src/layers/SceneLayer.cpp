@@ -25,10 +25,10 @@ SceneLayer::SceneLayer(EditorContext& ctx)
     : m_Context(ctx) { }
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetFactory::CreateAsset<Texture2D>("Origo");
+	m_Texture = AssetFactory::CreateAsset<Texture2D>("Origo_Texture");
 	AssetManagerFast::GetInstance().Get<Texture2D>(m_Texture)->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
 
-	m_Shader = AssetFactory::CreateAsset<Shader>("Normal Shader");
+	m_Shader = AssetFactory::CreateAsset<Shader>("Normal_Shader");
 	AssetManagerFast::GetInstance().Get<Shader>(m_Shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
 
 	SpawnGrid(5);
@@ -74,13 +74,13 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 	    data.Indices.size());
 
 	auto cubeMesh = AssetFactory::CreateAsset<Mesh>(
-	    "GridCube",
+	    "Grid_Cube_Mesh",
 	    layoutId,
 	    heapId,
 	    range);
 
 	auto material = AssetFactory::CreateAsset<Material2D>(
-	    "GridMaterial",
+	    "Grid_Cube_Material",
 	    m_Shader,
 	    m_Texture);
 

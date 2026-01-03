@@ -2,7 +2,6 @@
 
 #include "state/EditorContext.h"
 #include "EditorPanel.h"
-#include "origo/assets/Texture2D.h"
 
 namespace OrigoEditor {
 
@@ -19,7 +18,6 @@ private:
 
 private:
 	EditorContext& m_Context;
-	Origo::Ref<Origo::Texture2D> m_EntityTex;
 };
 
 }

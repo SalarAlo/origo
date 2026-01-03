@@ -50,6 +50,7 @@ float u_FogFar;
 
 void main() {
     vec3 lightPos = vec3(1.0, 8.0, 1.0);
+
     vec3 objectColor = texture(u_Texture_Albedo, vUv).rgb;
 
     vec3 lightColor = vec3(1.0);

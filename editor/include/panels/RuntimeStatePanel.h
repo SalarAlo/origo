@@ -8,9 +8,7 @@ namespace OrigoEditor {
 
 class RuntimeStatePanel : public EditorPanel {
 public:
-	RuntimeStatePanel(EditorContext& context)
-	    : m_Context(context)
-	    , m_Controller(context) { }
+	RuntimeStatePanel(EditorContext& context);
 	const char* GetName() const override { return "RuntimePanel"; }
 
 	void OnImGuiRender() override;

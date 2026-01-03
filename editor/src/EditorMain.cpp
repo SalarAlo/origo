@@ -9,6 +9,7 @@
 
 #include "layer/EditorUILayer.h"
 #include "state/EditorContext.h"
+#include "systems/EditorIcons.h"
 #include "ui/EditorPalette.h"
 
 #include "origo/renderer/RenderContext.h"
@@ -52,6 +53,10 @@ public:
 
 		m_RenderContext.SetTarget(&m_RenderBuffer);
 		m_RenderContext.SetResolveTarget(&m_ResolveBuffer);
+	}
+
+	void OnAwake() override {
+		EditorIcons::Init();
 	}
 
 private:

@@ -1,5 +1,6 @@
 #include "layer/EditorUILayer.h"
-#include "panels/AssetsPanel.h"
+#include "panels/AssetPanel.h"
+#include "panels/FilesPanel.h"
 #include "panels/ConsolePanel.h"
 #include "panels/HierarchyPanel.h"
 #include "panels/InspectorPanel.h"
@@ -29,8 +30,9 @@ void EditorUILayer::OnAttach() {
 	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
 	m_PanelManager.AddPanel<InspectorPanel>(m_Context);
 	m_PanelManager.AddPanel<ConsolePanel>();
+	m_PanelManager.AddPanel<AssetPanel>();
 	m_PanelManager.AddPanel<RuntimeStatePanel>(m_Context);
-	m_PanelManager.AddPanel<AssetsPanel>();
+	m_PanelManager.AddPanel<FilesPanel>();
 }
 
 void EditorUILayer::OnUpdate(double dt) {

@@ -11,4 +11,8 @@ Component.define("StatusComponent", {
 		type = "bool",
 		default = true
 	},
+	happy = {
+		type = "bool",
+		default = true
+	},
 })

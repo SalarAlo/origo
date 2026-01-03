@@ -6,13 +6,9 @@
 namespace OrigoEditor {
 
 void ConsolePanel::OnImGuiRender() {
-	ImGui::Begin("Console");
-
 	DrawToolbar();
 	ImGui::Separator();
 	DrawLogView();
-
-	ImGui::End();
 }
 
 void ConsolePanel::DrawToolbar() {

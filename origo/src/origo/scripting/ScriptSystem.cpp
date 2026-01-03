@@ -18,22 +18,31 @@ void ScriptSystem::InitialiseState() {
 	    [](const std::string& name,
 	        sol::table fields,
 	        sol::this_environment this_env) {
-		    ORG_CORE_TRACE("Component.define called from script with name {}", name);
-
-		    if (!this_env.env) {
+		    if (!this_env.env)
 			    throw std::runtime_error("Component.define called without a Lua environment");
-		    }
 
 		    sol::environment env = this_env.env.value();
 
 		    sol::object uuidObj = env["__SCRIPT_UUID"];
 		    if (!uuidObj.valid())
+			    throw std::runtime_error("Component.define called outside import context");
+
+		    sol::table defined = env["__DEFINED_COMPONENTS"];
+		    if (!defined.valid())
+			    throw std::runtime_error("Internal error: __DEFINED_COMPONENTS missing");
+
+		    if (defined[name].valid()) {
 			    throw std::runtime_error(
-			        "Component.define called outside import context");
+			        "Component '" + name + "' is defined multiple times in the same script");
+		    }
+
+		    defined[name] = true;
 
 		    std::string uuid = uuidObj.as<std::string>();
-
-		    ScriptComponentRegistry::RegisterComponentFromLua(UUID::FromString(uuid), name, fields);
+		    ScriptComponentRegistry::RegisterComponentFromLua(
+		        UUID::FromString(uuid),
+		        name,
+		        fields);
 	    });
 }
 
@@ -48,7 +57,6 @@ void ScriptSystem::Register(const UUID& id, const std::filesystem::path& path, c
 		entry.Path = path;
 		entry.Source = source;
 		entry.ReloadNecessary = true;
-
 		return;
 	}
 
@@ -84,6 +92,7 @@ void ScriptSystem::ReloadAllNecessary() {
 void ScriptSystem::Execute(const ScriptEntry& entry, const UUID& id) {
 	sol::environment env(s_Lua, sol::create, s_Lua.globals());
 	env["__SCRIPT_UUID"] = id.ToString();
+	env["__DEFINED_COMPONENTS"] = sol::table::create(env.lua_state());
 
 	sol::load_result load = s_Lua.load(entry.Source, id.ToString());
 	if (!load.valid()) {

@@ -12,14 +12,10 @@ static bool s_Registered = []() {
 		auto& am { Origo::AssetManagerFast::GetInstance() };
 		auto material { am.Get<Origo::Material2D>(renderer.GetMaterial()) };
 
-		auto shaderId { am.GetUUID(material->GetShader()).ToString() };
 		auto materialId { am.GetUUID(renderer.GetMaterial()).ToString() };
-		auto albedoId { am.GetUUID(material->GetAlbedo()).ToString() };
 		auto meshId { am.GetUUID(renderer.GetMesh()).ToString() };
 
 		ComponentUI::DrawStringControl("Material", materialId);
-		ComponentUI::DrawStringControl("Shader", shaderId);
-		ComponentUI::DrawStringControl("Albedo", albedoId);
 		ComponentUI::DrawStringControl("Mesh", meshId);
 	});
 

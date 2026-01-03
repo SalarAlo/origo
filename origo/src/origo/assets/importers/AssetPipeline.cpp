@@ -56,7 +56,7 @@ void AssetPipeline::RunInitialImport() {
 			JsonSerializer serializer { importFile.c_str() };
 			serializer.LoadFile();
 
-			auto asset { AssetFactory::Create(meta->Type) };
+			auto asset { AssetFactory::AllocateHollowAsset(meta->Type) };
 
 			ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta->Name, magic_enum::enum_name(meta->Type), meta->SourcePath.c_str());
 

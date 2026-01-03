@@ -128,7 +128,7 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 	backend.BeginObject("payload");
 
 	auto serializer = AssetSerializationSystem::Get(meta.Type);
-	auto asset { AssetFactory::Create(meta.Type) };
+	auto asset { AssetFactory::AllocateHollowAsset(meta.Type) };
 	serializer->Deserialize(backend, *asset);
 
 	backend.EndObject();
@@ -154,5 +154,7 @@ std::filesystem::path AssetDatabase::GetImportPath(const AssetMetadata& meta) {
 
 	return ROOT / "generated" / (meta.ID.ToString() + ".import");
 }
+
+const AssetMetadata& AssetDatabase::GetMetadata(const UUID& id) { return s_Metadata[id]; }
 
 }

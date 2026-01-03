@@ -28,7 +28,9 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 
 		s_NameToScriptComponentID.erase(existing.Name);
 		s_NameToScriptComponentID[descriptor.Name] = descriptor.ID;
+
 		OnScriptComponentUpdated().Invoke(descriptor.ID);
+
 		return descriptor.ID;
 	}
 
@@ -73,10 +75,24 @@ ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& 
 		VariantType type = it->second.Type;
 		Variant value = it->second.FromLua(defVal);
 
-		ScriptFieldDescriptor field { fieldName, type, value };
+		UUID fieldID = UUID::FromHash(
+		    uuid.ToString() + "::" + fieldName);
+
+		ScriptFieldDescriptor field {
+			fieldID,
+			fieldName,
+			type,
+			value
+		};
 
 		desc.Fields.push_back(std::move(field));
 	}
+
+	std::sort(desc.Fields.begin(), desc.Fields.end(),
+	    [](const ScriptFieldDescriptor& a,
+	        const ScriptFieldDescriptor& b) {
+		    return a.Name < b.Name;
+	    });
 
 	return ScriptComponentRegistry::RegisterOrUpdate(std::move(desc));
 }

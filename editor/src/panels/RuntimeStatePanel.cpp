@@ -1,92 +1,64 @@
 #include "panels/RuntimeStatePanel.h"
 
-#include "origo/assets/Texture2D.h"
-#include "origo/assets/TextureSource.h"
+#include "state/EditorContext.h"
+#include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
 
-static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
-	return (ImTextureID)(intptr_t)tex->GetRendererID();
-}
-
-static Origo::Ref<Origo::Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
-	auto texture = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
-	texture->SetSource(Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
-	texture->Load();
-	return texture;
+RuntimeStatePanel::RuntimeStatePanel(EditorContext& context)
+    : m_Context(context)
+    , m_Controller(context) {
 }
 
 void RuntimeStatePanel::OnImGuiRender() {
-	static bool initialized = false;
-	static Origo::Ref<Origo::Texture2D> playIcon;
-	static Origo::Ref<Origo::Texture2D> pauseIcon;
-	static Origo::Ref<Origo::Texture2D> stopIcon;
-	static Origo::Ref<Origo::Texture2D> stepIcon;
-
-	if (!initialized) {
-		playIcon = LoadSVGTexture("icons/Play.svg");
-		pauseIcon = LoadSVGTexture("icons/Pause.svg");
-		stopIcon = LoadSVGTexture("icons/Stop.svg");
-		stepIcon = LoadSVGTexture("icons/Step.svg");
-		initialized = true;
-	}
-
 	const ImVec2 buttonSize { 24.0f, 24.0f };
-	const float spacing = ImGui::GetStyle().ItemSpacing.x;
+	const auto& style = ImGui::GetStyle();
 
-	const float totalWidth = buttonSize.x * 3 + spacing * 2;
+	ImTextureID playIcon = EditorIcons::Get(IconType::Play);
+	ImTextureID resumeIcon = EditorIcons::Get(IconType::Resume);
+	ImTextureID pauseIcon = EditorIcons::Get(IconType::Pause);
+	ImTextureID stopIcon = EditorIcons::Get(IconType::Stop);
+	ImTextureID stepIcon = EditorIcons::Get(IconType::Step);
 
-	const float availableWidth = ImGui::GetContentRegionAvail().x;
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (availableWidth - totalWidth) * 0.5f);
+	int buttonCount = 2;
+
+	if (m_Controller.CanPause())
+		buttonCount += 1;
+	else if (m_Controller.CanResume())
+		buttonCount += 2;
+	else
+		buttonCount += 1;
+
+	float buttonWidth = buttonSize.x + style.FramePadding.x * 2.0f;
+	float totalWidth = buttonCount * buttonWidth + (buttonCount - 1) * style.ItemSpacing.x;
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (avail - totalWidth) * 0.5f);
 
 	ImGui::BeginDisabled(!m_Controller.CanPlay());
-	if (ImGui::ImageButton(
-	        "Play",
-	        ToImTextureID(playIcon),
-	        buttonSize)) {
+	if (ImGui::ImageButton("Play", playIcon, buttonSize))
 		m_Controller.Play();
-	}
 	ImGui::EndDisabled();
 
 	ImGui::SameLine();
 
 	ImGui::BeginDisabled(!m_Controller.CanStop());
-
-	if (ImGui::ImageButton(
-	        "Stop",
-	        ToImTextureID(stopIcon),
-	        buttonSize)) {
+	if (ImGui::ImageButton("Stop", stopIcon, buttonSize))
 		m_Controller.Stop();
-	}
-
 	ImGui::EndDisabled();
 
 	ImGui::SameLine();
 
 	ImGui::BeginDisabled(!m_Controller.CanPause() && !m_Controller.CanResume());
-
 	if (m_Controller.CanPause()) {
-		if (ImGui::ImageButton(
-		        "Pause",
-		        ToImTextureID(pauseIcon),
-		        buttonSize)) {
+		if (ImGui::ImageButton("Pause", pauseIcon, buttonSize))
 			m_Controller.Pause();
-		}
 	} else if (m_Controller.CanResume()) {
-		if (ImGui::ImageButton(
-		        "Resume",
-		        ToImTextureID(playIcon),
-		        buttonSize)) {
+		if (ImGui::ImageButton("Resume", resumeIcon, buttonSize))
 			m_Controller.Resume();
-		}
 		ImGui::SameLine();
-
-		if (ImGui::ImageButton(
-		        "Step",
-		        ToImTextureID(stepIcon),
-		        buttonSize)) {
+		if (ImGui::ImageButton("Step", stepIcon, buttonSize))
 			m_Controller.Step();
-		}
 	}
 	ImGui::EndDisabled();
 

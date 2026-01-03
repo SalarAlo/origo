@@ -2,7 +2,6 @@
 
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/Metadata.h"
-#include "origo/assets/AssetEvents.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/Script.h"
@@ -28,8 +27,6 @@ public:
 		meta.Type = type;
 		meta.Origin = AssetOrigin::Generated;
 
-		AssetEvents::OnAssetCreated.Invoke(meta);
-
 		AssetDatabase::RegisterMetadata(meta);
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
@@ -37,7 +34,7 @@ public:
 		return AssetManagerFast::GetInstance().Register(std::move(asset), id);
 	}
 
-	static Scope<Asset> Create(AssetType type) {
+	static Scope<Asset> AllocateHollowAsset(AssetType type) {
 		switch (type) {
 		case AssetType::Shader:
 			return MakeScope<Shader>();

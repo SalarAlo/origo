@@ -11,4 +11,4 @@ Component.define("Broken Component", {
 		type = "bool",
 		default = true
 	},
-}
+})

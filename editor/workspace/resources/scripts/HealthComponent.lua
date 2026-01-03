@@ -4,11 +4,15 @@ Component.define("HealthComponent", {
 		default = 100
 	},
 	max_health = {
-		type = "float",
-		default = 100
-	},
-	max_aura = {
 		type = "int",
-		default = 100
+		default = 10
 	},
+	sigma = {
+		type = "int",
+		default = 10
+	},
+	minimum_health = {
+		type = "bool",
+		default = false
+	}
 })

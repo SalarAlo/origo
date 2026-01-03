@@ -10,6 +10,7 @@ class Asset;
 class AssetDatabase {
 public:
 	static void WriteImportFile(const UUID& id);
+	static const AssetMetadata& GetMetadata(const UUID& id);
 	static void RegisterMetadata(const AssetMetadata& meta);
 	static AssetMetadata LoadImportHeader(const std::filesystem::path& path);
 	static Asset* LoadAsset(const UUID& id);
