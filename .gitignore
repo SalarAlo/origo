@@ -14,4 +14,11 @@ compile_commands.json
 
 # Static libraries
 *.a
+
+# profiler output
 callgrind.out.*
+
+# helper scripts
+overview.sh
+run.sh
+generate.sh
