@@ -7,6 +7,16 @@ namespace OrigoEditor {
 
 static constexpr size_t UPDATE_LAYER_KEY { static_cast<size_t>(LayerType::UpdateLayer) };
 
+bool EditorRuntimeController::CanStep() const { return CanResume(); }
+void EditorRuntimeController::Step() {
+	if (!CanStep())
+		return;
+
+	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY, [&]() { Pause(false); });
+
+	ORG_INFO("Step started");
+}
+
 bool EditorRuntimeController::CanPlay() const { return m_Context.RuntimeState == EditorRuntimeState::Editing; }
 void EditorRuntimeController::Play() {
 	if (!CanPlay())
@@ -25,20 +35,19 @@ void EditorRuntimeController::Play() {
 }
 
 bool EditorRuntimeController::CanPause() const { return m_Context.RuntimeState == EditorRuntimeState::Running && m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
-void EditorRuntimeController::Pause() {
+void EditorRuntimeController::Pause(bool changeToEditorView) {
 	if (!CanPause()) {
-		ORG_INFO("{}", !m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY));
 		return;
 	}
 
 	m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
-	m_Context.ViewMode = EditorViewMode::Editor;
+	if (changeToEditorView)
+		m_Context.ViewMode = EditorViewMode::Editor;
 
 	ORG_INFO("Pause started");
 }
 
 bool EditorRuntimeController::CanResume() const { return m_Context.RuntimeState == EditorRuntimeState::Running && !m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
-
 void EditorRuntimeController::Resume() {
 	if (!CanResume()) {
 		return;
@@ -51,7 +60,6 @@ void EditorRuntimeController::Resume() {
 }
 
 bool EditorRuntimeController::CanStop() const { return m_Context.RuntimeState == EditorRuntimeState::Running; }
-
 void EditorRuntimeController::Stop() {
 	if (!CanStop())
 		return;

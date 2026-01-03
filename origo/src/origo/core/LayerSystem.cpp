@@ -29,6 +29,20 @@ void LayerSystem::RequestRemoveLayer(size_t key) {
 	    false });
 }
 
+void LayerSystem::UpdateAll(float dt) {
+	for (auto i { 0uz }; i < m_Layers.size(); i++) {
+		m_Layers[i]->OnUpdate(dt);
+	}
+
+	while (!m_OneRunners.empty()) {
+		m_OneRunners.top().second();
+		FreezeLayer(m_OneRunners.top().first);
+		m_OneRunners.pop();
+	}
+
+	FlushCommands();
+}
+
 void LayerSystem::RequestFreezeLayer(size_t key) {
 	m_Commands.push_back({ LayerCommandType::Freeze,
 	    key,
@@ -36,11 +50,17 @@ void LayerSystem::RequestFreezeLayer(size_t key) {
 	    false });
 }
 
-void LayerSystem::RequestActivateLayer(size_t key) {
-	m_Commands.push_back({ LayerCommandType::Activate,
-	    key,
-	    nullptr,
-	    false });
+void LayerSystem::RequestActivateLayer(size_t key, std::optional<std::function<void()>> runOnce) {
+	LayerCommand toPush { LayerCommandType::Activate,
+		key,
+		nullptr,
+		false };
+
+	if (runOnce.has_value()) {
+		toPush.OneRunner = runOnce;
+	}
+
+	m_Commands.push_back(toPush);
 }
 
 void LayerSystem::PushLayer(Layer* layer, size_t key, bool frozen) {
@@ -100,7 +120,7 @@ void LayerSystem::FreezeLayer(size_t key) {
 	m_FrozenLayers.insert(m_FrozenLayers.begin() + fidx, layer);
 }
 
-void LayerSystem::ActivateLayer(size_t key) {
+void LayerSystem::ActivateLayer(size_t key, std::optional<std::function<void()>> runOnce) {
 	auto it = std::lower_bound(m_FrozenKeys.begin(), m_FrozenKeys.end(), key);
 
 	if (it == m_FrozenKeys.end() || *it != key) {
@@ -121,6 +141,8 @@ void LayerSystem::ActivateLayer(size_t key) {
 	m_Layers.insert(m_Layers.begin() + aidx, layer);
 
 	layer->OnAttach();
+	if (runOnce)
+		m_OneRunners.push({ key, *runOnce });
 }
 
 bool LayerSystem::HasActiveLayer(size_t key) const {
@@ -143,7 +165,7 @@ void LayerSystem::FlushCommands() {
 			break;
 
 		case LayerCommandType::Activate:
-			ActivateLayer(cmd.Key);
+			ActivateLayer(cmd.Key, cmd.OneRunner);
 			break;
 		}
 	}

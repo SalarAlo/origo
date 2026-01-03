@@ -1,6 +1,8 @@
 #pragma once
 
 #include "origo/core/Layer.h"
+#include <optional>
+#include <stack>
 #include <vector>
 
 namespace Origo {
@@ -19,6 +21,7 @@ public:
 		size_t Key;
 		Layer* ActiveLayer;
 		bool Frozen;
+		std::optional<std::function<void()>> OneRunner { std::nullopt };
 	};
 
 public:
@@ -30,7 +33,9 @@ public:
 	void RequestPushLayer(Layer* layer, size_t key, bool frozen = false);
 	void RequestRemoveLayer(size_t key);
 	void RequestFreezeLayer(size_t key);
-	void RequestActivateLayer(size_t key);
+	void RequestActivateLayer(size_t key, std::optional<std::function<void()>> runOnce = std::nullopt);
+
+	void UpdateAll(float dt);
 
 	bool HasActiveLayer(size_t key) const;
 
@@ -41,7 +46,7 @@ private:
 	void PushLayer(Layer* layer, size_t key, bool frozen = false);
 	void RemoveLayer(size_t key);
 	void FreezeLayer(size_t key);
-	void ActivateLayer(size_t key);
+	void ActivateLayer(size_t key, std::optional<std::function<void()>> runOnc);
 
 private:
 	std::vector<Layer*> m_Layers {};
@@ -49,6 +54,7 @@ private:
 
 	std::vector<Layer*> m_FrozenLayers {};
 	std::vector<size_t> m_FrozenKeys {};
+	std::stack<std::pair<size_t, std::function<void()>>> m_OneRunners {};
 
 	std::vector<LayerCommand> m_Commands {};
 };

@@ -12,10 +12,7 @@ void Application::PushLayer(Layer* layer, size_t key, bool frozen) {
 }
 
 void Application::InternalUpdate(double dt) {
-	for (Layer* layer : m_LayerSystem) {
-		layer->OnUpdate(dt);
-	}
-	m_LayerSystem.FlushCommands();
+	m_LayerSystem.UpdateAll(dt);
 }
 
 void Application::InternalAwake() {

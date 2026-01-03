@@ -1,9 +1,7 @@
 #include "panels/RuntimeStatePanel.h"
 
-#include "layer/LayerType.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
-#include "state/EditorRuntimeState.h"
 
 namespace OrigoEditor {
 
@@ -23,11 +21,13 @@ void RuntimeStatePanel::OnImGuiRender() {
 	static Origo::Ref<Origo::Texture2D> playIcon;
 	static Origo::Ref<Origo::Texture2D> pauseIcon;
 	static Origo::Ref<Origo::Texture2D> stopIcon;
+	static Origo::Ref<Origo::Texture2D> stepIcon;
 
 	if (!initialized) {
 		playIcon = LoadSVGTexture("icons/Play.svg");
 		pauseIcon = LoadSVGTexture("icons/Pause.svg");
 		stopIcon = LoadSVGTexture("icons/Stop.svg");
+		stepIcon = LoadSVGTexture("icons/Step.svg");
 		initialized = true;
 	}
 
@@ -78,6 +78,14 @@ void RuntimeStatePanel::OnImGuiRender() {
 		        ToImTextureID(playIcon),
 		        buttonSize)) {
 			m_Controller.Resume();
+		}
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton(
+		        "Step",
+		        ToImTextureID(stepIcon),
+		        buttonSize)) {
+			m_Controller.Step();
 		}
 	}
 	ImGui::EndDisabled();

@@ -9,10 +9,12 @@ public:
 	    : m_Context(ctx) { }
 
 	void Play();
-	void Pause();
+	void Pause(bool changeToEditorView = true);
 	void Stop();
 	void Resume();
+	void Step();
 
+	bool CanStep() const;
 	bool CanResume() const;
 	bool CanPlay() const;
 	bool CanStop() const;
