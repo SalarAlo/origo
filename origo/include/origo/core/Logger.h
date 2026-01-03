@@ -1,5 +1,7 @@
 #pragma once
 
+#include "origo/core/ConsoleLogBuffer.h"
+
 namespace Origo::Logger {
 
 using LoggerRef = std::shared_ptr<spdlog::logger>;
@@ -9,6 +11,7 @@ void Shutdown();
 
 LoggerRef& GetCore();
 LoggerRef& GetClient();
+std::shared_ptr<ConsoleLogBuffer> GetConsoleBuffer();
 
 }
 

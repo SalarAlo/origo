@@ -50,7 +50,7 @@ TextureInitialisationData TextureSourceFile::GetInitialisationData() const {
 	const auto pixels = stbi_load(Path.c_str(), &initialisationData.Width, &initialisationData.Height, &initialisationData.Channels, 0);
 
 	if (!pixels) {
-		ORG_ERROR("Texture::LoadCPU: failed to load image {}", Path);
+		ORG_CORE_ERROR("Texture::LoadCPU: failed to load image {}", Path);
 		return {};
 	}
 	const size_t byteCount {
@@ -70,13 +70,13 @@ TextureInitialisationData TextureSourceRaw::GetInitialisationData() const {
 TextureInitialisationData TextureSourceSVG::GetInitialisationData() const {
 	NSVGimage* svg = nsvgParseFromFile(Path.c_str(), "px", 96.0f);
 	if (!svg) {
-		ORG_INFO("TextureSourceSVG::GetInitialisationData: Failed to parse from file path {}", Path);
+		ORG_CORE_WARN("TextureSourceSVG::GetInitialisationData: Failed to parse from file path {}", Path);
 		return {};
 	}
 
 	NSVGrasterizer* rast = nsvgCreateRasterizer();
 	if (!rast) {
-		ORG_INFO("TextureSourceSVG::GetInitialisationData: Failed to create rasterizer");
+		ORG_CORE_WARN("TextureSourceSVG::GetInitialisationData: Failed to create rasterizer");
 		nsvgDelete(svg);
 		return {};
 	}
@@ -106,7 +106,7 @@ Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 
 	if (!optionalType.has_value()) {
 		backend.EndObject();
-		ORG_INFO("Texture Source type {} is unidentifiable", typeStr);
+		ORG_CORE_WARN("Texture Source type {} is unidentifiable", typeStr);
 		return nullptr;
 	}
 

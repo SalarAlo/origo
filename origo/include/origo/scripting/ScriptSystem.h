@@ -22,7 +22,7 @@ public:
 	static void Register(const UUID& id, const std::filesystem::path& path, const std::string& source);
 	static void ReloadAll();
 	static void ReloadAllNecessary();
-	static void Execute(const std::string& source, const UUID& id);
+	static void Execute(const ScriptEntry& entry, const UUID& id);
 
 private:
 	inline static sol::state s_Lua {};

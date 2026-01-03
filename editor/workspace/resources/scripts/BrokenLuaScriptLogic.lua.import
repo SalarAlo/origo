@@ -1,0 +1,15 @@
+{
+        "header": {
+                "imported_time_stamp": "-4670245147622730794",
+                "name": "BrokenLuaScriptLogic",
+                "origin": "Imported",
+                "source_path": "./resources/scripts/BrokenLuaScriptLogic.lua",
+                "source_time_stamp": "-4670245147622730794",
+                "type": "Script",
+                "uuid": "5c4b8bc853c51f468ae85bea455b0e5d"
+        },
+        "payload": {
+                "id": "5c4b8bc853c51f468ae85bea455b0e5d",
+                "path": "./resources/scripts/BrokenLuaScriptLogic.lua"
+        }
+}

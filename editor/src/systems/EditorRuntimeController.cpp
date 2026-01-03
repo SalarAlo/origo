@@ -12,9 +12,7 @@ void EditorRuntimeController::Step() {
 	if (!CanStep())
 		return;
 
-	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY, [&]() { Pause(false); });
-
-	ORG_INFO("Step started");
+	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY, [&]() { ORG_CORE_TRACE("Step made"); });
 }
 
 bool EditorRuntimeController::CanPlay() const { return m_Context.RuntimeState == EditorRuntimeState::Editing; }
@@ -31,7 +29,7 @@ void EditorRuntimeController::Play() {
 
 	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
 
-	ORG_INFO("Play mode started");
+	ORG_CORE_TRACE("Play mode started");
 }
 
 bool EditorRuntimeController::CanPause() const { return m_Context.RuntimeState == EditorRuntimeState::Running && m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
@@ -44,7 +42,7 @@ void EditorRuntimeController::Pause(bool changeToEditorView) {
 	if (changeToEditorView)
 		m_Context.ViewMode = EditorViewMode::Editor;
 
-	ORG_INFO("Pause started");
+	ORG_CORE_TRACE("Pause");
 }
 
 bool EditorRuntimeController::CanResume() const { return m_Context.RuntimeState == EditorRuntimeState::Running && !m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
@@ -56,7 +54,7 @@ void EditorRuntimeController::Resume() {
 	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
 	m_Context.ViewMode = EditorViewMode::Game;
 
-	ORG_INFO("Pause started");
+	ORG_CORE_TRACE("Resume");
 }
 
 bool EditorRuntimeController::CanStop() const { return m_Context.RuntimeState == EditorRuntimeState::Running; }
@@ -71,7 +69,9 @@ void EditorRuntimeController::Stop() {
 	m_Context.RuntimeState = EditorRuntimeState::Editing;
 	m_Context.ViewMode = EditorViewMode::Editor;
 
-	m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
+	if (m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY)) {
+		m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
+	}
 	m_Context.UnselectSelectedEntity();
 }
 

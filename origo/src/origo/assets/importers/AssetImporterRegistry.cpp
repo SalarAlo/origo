@@ -19,7 +19,7 @@ IAssetImporter* AssetImporterRegistry::GetImporter(const std::filesystem::path& 
 }
 
 void AssetImporterRegistry::InitialiseDefaultImporters() {
-	ORG_INFO("Registering all default asset importers");
+	ORG_CORE_TRACE("Registering all default asset importers");
 	Register(MakeScope<TextureImporter>());
 	Register(MakeScope<ShaderImporter>());
 	Register(MakeScope<ScriptImporter>());

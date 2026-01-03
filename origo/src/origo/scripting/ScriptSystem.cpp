@@ -18,10 +18,11 @@ void ScriptSystem::InitialiseState() {
 	    [](const std::string& name,
 	        sol::table fields,
 	        sol::this_environment this_env) {
-		    ORG_INFO("Component.define called from script with name {}", name);
+		    ORG_CORE_TRACE("Component.define called from script with name {}", name);
 
-		    if (!this_env.env)
+		    if (!this_env.env) {
 			    throw std::runtime_error("Component.define called without a Lua environment");
+		    }
 
 		    sol::environment env = this_env.env.value();
 
@@ -62,7 +63,7 @@ void ScriptSystem::ReloadAll() {
 	InitialiseState();
 
 	for (auto& [id, entry] : s_Scripts) {
-		Execute(entry.Source, id);
+		Execute(entry, id);
 		entry.ReloadNecessary = false;
 	}
 }
@@ -75,19 +76,20 @@ void ScriptSystem::ReloadAllNecessary() {
 		if (!entry.ReloadNecessary)
 			continue;
 
-		Execute(entry.Source, id);
+		Execute(entry, id);
 		entry.ReloadNecessary = false;
 	}
 }
 
-void ScriptSystem::Execute(const std::string& source, const UUID& id) {
+void ScriptSystem::Execute(const ScriptEntry& entry, const UUID& id) {
 	sol::environment env(s_Lua, sol::create, s_Lua.globals());
 	env["__SCRIPT_UUID"] = id.ToString();
 
-	sol::load_result load = s_Lua.load(source, id.ToString());
+	sol::load_result load = s_Lua.load(entry.Source, id.ToString());
 	if (!load.valid()) {
 		sol::error err = load;
-		throw std::runtime_error(err.what());
+		ORG_CORE_ERROR("{} failed to compile because {}", entry.Path.filename().c_str(), err.what());
+		return;
 	}
 
 	sol::protected_function fn = load;
@@ -96,7 +98,7 @@ void ScriptSystem::Execute(const std::string& source, const UUID& id) {
 	sol::protected_function_result res = fn();
 	if (!res.valid()) {
 		sol::error err = res;
-		throw std::runtime_error(err.what());
+		ORG_CORE_ERROR("{} failed to execute because {}", entry.Path.filename().c_str(), err.what());
 	}
 }
 

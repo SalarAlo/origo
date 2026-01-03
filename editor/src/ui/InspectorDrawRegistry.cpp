@@ -19,7 +19,6 @@ void InspectorDrawRegistry::DrawScriptComponent(Origo::ScriptComponentInstance& 
 
 		// refactor!
 		if (!fieldValue.has_value()) {
-			ORG_INFO("Skipped an iter");
 			continue;
 		}
 

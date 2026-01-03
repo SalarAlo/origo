@@ -21,7 +21,7 @@ static const std::unordered_map<std::string_view, ScriptTypeInfo> s_TypeRegistry
 
 ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescriptor descriptor) {
 	if (s_Descriptors.contains(descriptor.ID)) {
-		ORG_INFO("Registering already existent Component {}", descriptor.Name);
+		ORG_CORE_TRACE("Registering already existent Component {}", descriptor.Name);
 		auto& existing = s_Descriptors[descriptor.ID];
 		existing.Fields = descriptor.Fields;
 		existing.Name = descriptor.Name;
@@ -38,7 +38,7 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 		}
 	}
 
-	ORG_INFO("Registering Component {}", descriptor.Name);
+	ORG_CORE_TRACE("Registering Component {}", descriptor.Name);
 	ScriptComponentID id = descriptor.ID;
 
 	s_NameToScriptComponentID.insert({ descriptor.Name, id });
@@ -66,7 +66,7 @@ ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& 
 		auto it = s_TypeRegistry.find(typeStr);
 
 		if (it == s_TypeRegistry.end()) {
-			ORG_ERROR("Unknown script field type: " + typeStr);
+			ORG_CORE_ERROR("Unknown script field type: " + typeStr);
 			throw std::runtime_error("Unknown script field type: " + typeStr);
 		}
 

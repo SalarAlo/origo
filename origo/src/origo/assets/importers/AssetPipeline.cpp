@@ -15,7 +15,7 @@ void AssetPipeline::RunInitialImport() {
 	std::filesystem::path rootAssetDir { "./" };
 
 	if (!std::filesystem::exists(rootAssetDir)) {
-		ORG_WARN("No directory for resources found.");
+		ORG_CORE_WARN("No directory for resources found.");
 		return;
 	}
 
@@ -58,7 +58,7 @@ void AssetPipeline::RunInitialImport() {
 
 			auto asset { AssetFactory::Create(meta->Type) };
 
-			ORG_INFO("Beginning deserilaization for {} of type {} and path {}", meta->Name, magic_enum::enum_name(meta->Type), meta->SourcePath.c_str());
+			ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta->Name, magic_enum::enum_name(meta->Type), meta->SourcePath.c_str());
 
 			serializer.BeginObject("payload");
 			assetSerializer->Deserialize(serializer, *asset.get());
@@ -69,7 +69,7 @@ void AssetPipeline::RunInitialImport() {
 		}
 	}
 
-	ORG_INFO("Initial import complete. {} assets imported.", importCount);
+	ORG_CORE_TRACE("Initial import complete. {} assets imported.", importCount);
 	AssetManagerFast::GetInstance().ResolveAll();
 }
 
