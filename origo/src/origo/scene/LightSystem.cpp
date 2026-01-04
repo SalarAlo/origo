@@ -19,7 +19,6 @@ void LightSystem::Update(Origo::Scene* scene, float dt) {
 		    if (!shader)
 			    return;
 
-		    ORG_INFO("LightSystem program {}", shader->GetProgramID());
 		    shader->SetUniform("u_LightPos", transform.GetPosition());
 
 		    shader->SetUniform("u_Ambient", light.GetAmbientFactor());

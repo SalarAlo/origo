@@ -114,8 +114,6 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			    .SetShaderDirectly("u_ViewMatrix", m_View.View)
 			    .SetShaderDirectly("u_CameraForward", m_View.CameraForward)
 			    .SetShaderDirectly("u_ViewPos", m_View.CameraPosition);
-
-			ORG_INFO("RenderContext program {}", AssetManagerFast::GetInstance().Get<Shader>(material->GetShader())->GetProgramID());
 		}
 
 		DrawMesh(cmd, m_DrawMethod);
