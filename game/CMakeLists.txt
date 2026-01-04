@@ -1,7 +1,9 @@
+# game/CMakeLists.txt
+
 project(OrigoGame LANGUAGES CXX)
 
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
 )
 
 add_executable(OrigoGame ${GAME_SOURCES})
@@ -19,5 +21,5 @@ add_custom_command(TARGET OrigoGame POST_BUILD
 
 target_include_directories(OrigoGame
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

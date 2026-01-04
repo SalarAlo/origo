@@ -1,12 +1,14 @@
+# origo/CMakeLists.txt
+
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
     ${CMAKE_SOURCE_DIR}/pch.cpp
 )
 
 add_library(OrigoEngine SHARED ${ENGINE_SOURCES})
 
 target_include_directories(OrigoEngine PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_SOURCE_DIR}/vendor/glad/include
     ${CMAKE_SOURCE_DIR}/vendor/glm

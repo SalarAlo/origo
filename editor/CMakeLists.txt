@@ -1,4 +1,8 @@
-file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS src/*.cpp)
+# editor/CMakeLists.txt
+
+file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+)
 
 add_executable(OrigoEditor
     ${EDITOR_SOURCES}
@@ -6,7 +10,7 @@ add_executable(OrigoEditor
 )
 
 target_include_directories(OrigoEditor PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/vendor/nanosvg/src
     ${CMAKE_SOURCE_DIR}/vendor/imguizmo
 )
