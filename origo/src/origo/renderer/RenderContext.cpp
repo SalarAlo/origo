@@ -10,11 +10,11 @@
 namespace Origo {
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-	auto& am = AssetManagerFast::GetInstance();
-	auto material = am.Get<Material2D>(cmd.GetMaterial());
-	auto mesh = am.Get<Mesh>(cmd.GetMesh());
+	auto& am { AssetManagerFast::GetInstance() };
+	auto material { am.Get<Material2D>(cmd.GetMaterial()) };
+	auto mesh { am.Get<Mesh>(cmd.GetMesh()) };
 
-	constexpr float outlineThickness { 0.03f };
+	constexpr float outlineThickness { 0.1f };
 	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetTransform()->GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
 		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
@@ -114,6 +114,8 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			    .SetShaderDirectly("u_ViewMatrix", m_View.View)
 			    .SetShaderDirectly("u_CameraForward", m_View.CameraForward)
 			    .SetShaderDirectly("u_ViewPos", m_View.CameraPosition);
+
+			ORG_INFO("RenderContext program {}", AssetManagerFast::GetInstance().Get<Shader>(material->GetShader())->GetProgramID());
 		}
 
 		DrawMesh(cmd, m_DrawMethod);

@@ -7,6 +7,7 @@ AssetManagerFast& AssetManagerFast::GetInstance() {
 	static AssetManagerFast s_Instance {};
 	return s_Instance;
 }
+
 Asset* AssetManagerFast::Get(const AssetHandle& handle) const {
 	if (!IsValid(handle))
 		return nullptr;
@@ -57,7 +58,7 @@ UUID AssetManagerFast::GetUUID(const AssetHandle& handle) const {
 	return m_Entries[handle.Index].Uuid;
 }
 
-AssetHandle AssetManagerFast::Resolve(const UUID& id) const {
+AssetHandle AssetManagerFast::GetHandleByUUID(const UUID& id) const {
 	if (id == UUID::Bad())
 		return {};
 

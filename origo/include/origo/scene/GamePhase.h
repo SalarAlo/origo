@@ -3,7 +3,8 @@
 namespace Origo {
 
 enum class GamePhase {
-	Update,
+	Update, // only play runs
+	UpdatePresentation, // runs always
 	RenderGeometry,
 	RenderEditor,
 };

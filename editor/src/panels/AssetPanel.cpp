@@ -19,8 +19,7 @@ void AssetPanel::OnImGuiRender() {
 
 	ImGui::Columns(columnCount, nullptr, false);
 
-	for (const auto& [uuid, assetHandle] :
-	    Origo::AssetManagerFast::GetInstance().GetUuidMap()) {
+	for (const auto& [uuid, assetHandle] : Origo::AssetManagerFast::GetInstance().GetUuidMap()) {
 
 		auto md = Origo::AssetDatabase::GetMetadata(uuid);
 		bool isSelected = (uuid == selectedAssetID);
@@ -31,6 +30,19 @@ void AssetPanel::OnImGuiRender() {
 		ImVec2 tileSize = { TILE_SIZE, TILE_SIZE + TEXT_HEIGHT };
 
 		ImGui::InvisibleButton("asset_tile", tileSize);
+
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+			std::string uuidStr = uuid.ToString();
+
+			ImGui::TextUnformatted(md.Name.c_str());
+
+			ImGui::SetDragDropPayload(
+			    "ORIGO_ASSET_UUID",
+			    uuidStr.c_str(),
+			    uuidStr.size() + 1);
+
+			ImGui::EndDragDropSource();
+		}
 
 		bool hovered = ImGui::IsItemHovered();
 		bool clicked = ImGui::IsItemClicked();

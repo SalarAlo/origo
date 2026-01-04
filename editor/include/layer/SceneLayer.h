@@ -16,13 +16,19 @@ public:
 
 private:
 	void SpawnGrid(int gridSize = 10, float spacing = 1.5f);
+	void CreateAssets();
 
 private:
 	EditorContext& m_Context;
 
-	Origo::AssetHandle m_Shader {};
-	Origo::AssetHandle m_OutlineShader {};
-	Origo::AssetHandle m_Texture {};
+	Origo::AssetHandle m_Shader;
+	Origo::AssetHandle m_Texture;
+	Origo::AssetHandle m_Material;
+	Origo::AssetHandle m_CubeMesh;
+
+	uint32_t m_VertexLayoutID = 0;
+	uint32_t m_HeapID = 0;
+	size_t m_VertexStride = 0;
 };
 
 }

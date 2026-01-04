@@ -16,9 +16,9 @@ public:
 		auto& am = AssetManagerFast::GetInstance();
 
 		if (!m_ShaderUUID.IsBad())
-			m_Shader = am.Resolve(m_ShaderUUID);
+			m_Shader = am.GetHandleByUUID(m_ShaderUUID);
 		if (!m_AlbedoUUID.IsBad())
-			m_Albedo = am.Resolve(m_AlbedoUUID);
+			m_Albedo = am.GetHandleByUUID(m_AlbedoUUID);
 	}
 
 	AssetHandle GetShader() const { return m_Shader; }

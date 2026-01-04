@@ -6,6 +6,16 @@
 
 namespace Origo {
 
+GLint Shader::GetUniformLocation(std::string_view name) const {
+	auto it = m_UniformCache.find(std::string(name));
+	if (it != m_UniformCache.end())
+		return it->second;
+
+	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
+	m_UniformCache.emplace(name, loc);
+	return loc;
+}
+
 static GLuint CompileShader(GLenum type, const char* src) {
 	GLuint shader = glCreateShader(type);
 	GLCall(glShaderSource(shader, 1, &src, nullptr));
@@ -71,59 +81,72 @@ void Shader::UseProgram() const {
 }
 
 #pragma region TEMPLATE_UNIFORM_SPECIALIZATIONS
+
 template <>
-void Shader::SetUniform<glm::mat4>(std::string_view name, const glm::mat4& mat) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<glm::mat4>(
+    std::string_view name, const glm::mat4& mat) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat)));
+
+	GLCall(glProgramUniformMatrix4fv(
+	    m_ProgramId, loc, 1, GL_FALSE, glm::value_ptr(mat)));
 }
 
 template <>
-void Shader::SetUniform<glm::vec3>(std::string_view name, const glm::vec3& pos) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<glm::vec3>(
+    std::string_view name, const glm::vec3& v) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniform3f(loc, pos.x, pos.y, pos.z));
+
+	GLCall(glProgramUniform3f(
+	    m_ProgramId, loc, v.x, v.y, v.z));
 }
 
 template <>
-void Shader::SetUniform<float>(std::string_view name, const float& val) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<glm::vec2>(
+    std::string_view name, const glm::vec2& v) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniform1f(loc, val));
+
+	GLCall(glProgramUniform2f(
+	    m_ProgramId, loc, v.x, v.y));
 }
 
 template <>
-void Shader::SetUniform<glm::vec2>(std::string_view name, const glm::vec2& pos) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<float>(
+    std::string_view name, const float& v) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniform2f(loc, pos.x, pos.y));
+
+	GLCall(glProgramUniform1f(
+	    m_ProgramId, loc, v));
 }
 
 template <>
-void Shader::SetUniform<int>(std::string_view name, const int& value) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<int>(
+    std::string_view name, const int& v) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniform1i(loc, value));
+
+	GLCall(glProgramUniform1i(
+	    m_ProgramId, loc, v));
 }
 
 template <>
-void Shader::SetUniform<unsigned int>(std::string_view name, const unsigned int& value) const {
-	GLint loc = glGetUniformLocation(m_ProgramId, name.data());
-	if (loc == -1) {
+void Shader::SetUniform<unsigned int>(
+    std::string_view name, const unsigned int& v) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
 		return;
-	}
-	GLCall(glUniform1ui(loc, value));
-}
 
+	GLCall(glProgramUniform1ui(
+	    m_ProgramId, loc, v));
+}
 #pragma endregion
+
 }

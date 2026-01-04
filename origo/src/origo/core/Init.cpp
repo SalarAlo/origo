@@ -14,5 +14,6 @@ void Init() {
 	ScriptSystem::ReloadAll();
 
 	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
+	ORG_INFO("ImGUI version: {} ({})", IMGUI_VERSION, IMGUI_VERSION_NUM);
 }
 }

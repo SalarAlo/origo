@@ -62,7 +62,7 @@ public:
 	void Destroy(const AssetHandle& handle);
 	bool IsValid(const AssetHandle& handle) const;
 	UUID GetUUID(const AssetHandle& handle) const;
-	AssetHandle Resolve(const UUID& uuid) const;
+	AssetHandle GetHandleByUUID(const UUID& uuid) const;
 	void ResolveAll();
 	ankerl::unordered_dense::map<UUID, AssetHandle> GetUuidMap() { return m_UuidToHandle; }
 

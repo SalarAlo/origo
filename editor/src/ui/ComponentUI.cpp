@@ -1,4 +1,8 @@
 #include "ui/ComponentUI.h"
+#include "imgui.h"
+#include "origo/assets/Asset.h"
+#include "origo/assets/AssetDatabase.h"
+#include "origo/assets/AssetManagerFast.h"
 
 namespace ComponentUI {
 void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
@@ -233,6 +237,73 @@ void DrawBoolControl(std::string_view label, bool& value) {
 	ImGui::PopStyleColor(4);
 
 	ImGui::EndGroup();
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
+
+void DrawAssetControl(std::string_view label, Origo::AssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
+	auto& am = Origo::AssetManagerFast::GetInstance();
+
+	Origo::UUID uuid = !handle.IsNull() ? am.GetUUID(handle) : Origo::UUID {};
+	auto md = !uuid.IsBad() ? Origo::AssetDatabase::GetMetadata(uuid)
+	                        : Origo::AssetMetadata {};
+
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 180.0f;
+	const float fieldHeight = ImGui::GetFrameHeight();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
+
+	ImGui::SameLine(nextX);
+
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+	std::string display = !handle.IsNull() ? md.Name : std::string { "None" };
+	ImGui::Button(display.c_str(), ImVec2(fieldWidth, fieldHeight));
+
+	ImGui::PopStyleColor(4);
+
+	ImRect rect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+	ImGuiID id = ImGui::GetID("AssetDropTarget");
+
+	if (ImGui::BeginDragDropTargetCustom(rect, id)) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID")) {
+			const char* uuidStr = static_cast<const char*>(payload->Data);
+			Origo::UUID payloadID = Origo::UUID::FromString(uuidStr);
+			auto payloadMetadata { Origo::AssetDatabase::GetMetadata(payloadID) };
+			bool anyTypeValid { !assetValidationType.has_value() };
+
+			if (anyTypeValid || payloadMetadata.Type == *assetValidationType) {
+				handle = am.GetHandleByUUID(payloadID);
+			} else {
+				if (assetValidationType) {
+					std::string assetValidationTypeStr { magic_enum::enum_name(*assetValidationType) };
+					std::string providedAssetTypeStr { magic_enum::enum_name(payloadMetadata.Type) };
+					ORG_CORE_WARN("Received {} while the asset control {} expects {}", providedAssetTypeStr, label, assetValidationTypeStr);
+				}
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Clear"))
+			handle = {};
+		ImGui::EndPopup();
+	}
+
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }

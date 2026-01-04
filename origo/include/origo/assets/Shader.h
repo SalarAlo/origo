@@ -21,6 +21,8 @@ public:
 	AssetType GetAssetType() const override { return AssetType::Shader; };
 	static AssetType GetClassAssetType() { return AssetType::Shader; }
 
+	GLuint GetProgramID() const { return m_ProgramId; }
+
 	Shader(const Shader&) = delete;
 	Shader& operator=(const Shader&) = delete;
 	Shader(Shader&&) = delete;
@@ -28,9 +30,12 @@ public:
 
 private:
 	void Init();
+	GLint GetUniformLocation(std::string_view name) const;
 
 private:
 	Scope<ShaderSource> m_Source {};
+
 	unsigned int m_ProgramId {};
+	mutable std::unordered_map<std::string, GLint> m_UniformCache;
 };
 }

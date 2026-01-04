@@ -13,6 +13,7 @@ void FallSystem::Update(Origo::Scene* scene, float dt) {
 	        FallComponent& faller,
 	        Transform& transform) {
 		    transform.SetPosition(transform.GetPosition() - transform.GetUp() * (dt * faller.GetFallSpeed()));
+		    faller.SetFallSpeed(std::min<float>(faller.GetFallSpeed() * 1.02, 1000.0f));
 	    });
 }
 

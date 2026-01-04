@@ -101,9 +101,9 @@ static const std::vector<float> SPHERE_VERTICES = [] {
             float u = (float)j / sectors;
             float vCoord = (float)i / stacks;
 
-            v.push_back(x);
-            v.push_back(y);
-            v.push_back(z);
+            v.push_back(0.5f * x);
+	    v.push_back(0.5f * y);
+	    v.push_back(0.5f * z);
 
             v.push_back(x);
             v.push_back(y);
@@ -129,16 +129,17 @@ static const std::vector<unsigned int> SPHERE_INDICES = [] {
         int k2 = k1 + sectors + 1;
 
         for (int j = 0; j < sectors; j++, k1++, k2++) {
+            // CCW from outside
             if (i != 0) {
                 idx.push_back(k1);
-                idx.push_back(k2);
                 idx.push_back(k1 + 1);
+                idx.push_back(k2);
             }
 
             if (i != (stacks - 1)) {
                 idx.push_back(k1 + 1);
-                idx.push_back(k2);
                 idx.push_back(k2 + 1);
+                idx.push_back(k2);
             }
         }
     }

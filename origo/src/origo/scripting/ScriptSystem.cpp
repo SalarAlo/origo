@@ -27,6 +27,7 @@ void ScriptSystem::InitialiseState() {
 		    if (!uuidObj.valid())
 			    throw std::runtime_error("Component.define called outside import context");
 
+		    // this only ensures defined components in one file arent repeated
 		    sol::table defined = env["__DEFINED_COMPONENTS"];
 		    if (!defined.valid())
 			    throw std::runtime_error("Internal error: __DEFINED_COMPONENTS missing");

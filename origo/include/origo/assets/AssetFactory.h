@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/assets/AssetDatabase.h"
+#include "origo/assets/Mesh.h"
 #include "origo/assets/Metadata.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"

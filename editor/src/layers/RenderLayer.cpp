@@ -44,6 +44,7 @@ void RenderLayer::OnUpdate(double dt) {
 	auto activeScenePtr = m_Context.ActiveScene;
 
 	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, activeScenePtr, m_RenderContext);
+	SystemScheduler::Get().RunPhase(GamePhase::UpdatePresentation, activeScenePtr, dt);
 
 	if (editingView) {
 		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, activeScenePtr, m_RenderContext);

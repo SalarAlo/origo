@@ -40,6 +40,7 @@ private:
 		static ORIGO_CONCAT(AutoRegister_UpdateSystem_, N)             \
 		    ORIGO_CONCAT(s_AutoRegister_UpdateSystem_, N);             \
 	}
+
 #define ORIGO_CONCAT_IMPL(x, y) x##y
 #define ORIGO_CONCAT(x, y) ORIGO_CONCAT_IMPL(x, y)
 

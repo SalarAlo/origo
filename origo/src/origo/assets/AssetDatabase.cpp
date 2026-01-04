@@ -23,7 +23,7 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 	const AssetMetadata& meta = metaIt->second;
 
 	auto& am = AssetManagerFast::GetInstance();
-	AssetHandle handle = am.Resolve(id);
+	AssetHandle handle = am.GetHandleByUUID(id);
 
 	if (!am.IsValid(handle)) {
 		ORG_WARN("Skipping save: asset {} not loaded", id.ToString());
