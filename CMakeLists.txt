@@ -60,9 +60,8 @@ include_directories(
 )
 
 # ------------------------------------------------------------------------------
-# Engine, Game, Editor
+# Engine, Editor
 # ------------------------------------------------------------------------------
 
 add_subdirectory(origo)
-add_subdirectory(game)
 add_subdirectory(editor)

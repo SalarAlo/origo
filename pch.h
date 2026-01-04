@@ -28,7 +28,7 @@
 #include <exception>
 #include <stdexcept>
 
-#include "origo/include/origo/core/Typedefs.h"
-#include "origo/include/origo/renderer/GlDebug.h"
+#include <origo/core/Typedefs.h>
+#include <origo/renderer/GlDebug.h>
 
 #include "magic_enum/magic_enum.hpp"

@@ -1,7 +1,10 @@
 # origo/CMakeLists.txt
 
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*/*/*.cpp
     ${CMAKE_SOURCE_DIR}/pch.cpp
 )
 

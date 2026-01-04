@@ -1,5 +1,5 @@
 #include "systems/EditorRuntimeController.h"
-#include "layer/LayerType.h"
+#include "layers/LayerType.h"
 #include "origo/core/Logger.h"
 #include "state/EditorViewMode.h"
 

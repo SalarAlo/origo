@@ -1,7 +1,9 @@
 # editor/CMakeLists.txt
 
-file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*/*.cpp
 )
 
 add_executable(OrigoEditor
