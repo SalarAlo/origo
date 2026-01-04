@@ -25,7 +25,7 @@ void EditorRuntimeController::Play() {
 	m_Context.RuntimeState = EditorRuntimeState::Running;
 	m_Context.ViewMode = EditorViewMode::Game;
 
-	m_Context.UnselectSelectedEntity();
+	m_Context.UnselectEntity();
 
 	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
 
@@ -72,7 +72,7 @@ void EditorRuntimeController::Stop() {
 	if (m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY)) {
 		m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
 	}
-	m_Context.UnselectSelectedEntity();
+	m_Context.UnselectEntity();
 }
 
 }

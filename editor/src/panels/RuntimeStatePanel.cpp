@@ -26,8 +26,6 @@ void RuntimeStatePanel::OnImGuiRender() {
 		buttonCount += 1;
 	else if (m_Controller.CanResume())
 		buttonCount += 2;
-	else
-		buttonCount += 1;
 
 	float buttonWidth = buttonSize.x + style.FramePadding.x * 2.0f;
 	float totalWidth = buttonCount * buttonWidth + (buttonCount - 1) * style.ItemSpacing.x;

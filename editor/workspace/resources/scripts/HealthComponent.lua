@@ -10,11 +10,7 @@ Component.define("HealthComponent", {
 	minimum_health = {
 		type = "float",
 		default = 0
-	},
-	is_dead = {
-		type = "bool",
-		default = false
-	}
+	
 })
 
 print("Hello from lua")

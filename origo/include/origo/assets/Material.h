@@ -23,7 +23,9 @@ public:
 
 	AssetHandle GetShader() const { return m_Shader; }
 	UniformList& GetUniformList() { return m_UniformList; }
+
 	AssetHandle GetAlbedo() const { return m_Albedo; }
+	void SetAlbedo(const AssetHandle& handle) { m_Albedo = handle; }
 
 	void Bind();
 	void WriteModel(const glm::mat4& model);

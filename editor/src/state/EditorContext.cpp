@@ -8,9 +8,17 @@ void EditorContext::SetSelectedEntity(const Origo::RID& entity) {
 	EditorSelectionSystem::Apply(*this);
 }
 
-void EditorContext::UnselectSelectedEntity() {
+void EditorContext::UnselectEntity() {
 	m_SelectedEntity = std::nullopt;
 	EditorSelectionSystem::Apply(*this);
+}
+
+void EditorContext::UnselectAsset() {
+	m_SelectedAsset = std::nullopt;
+}
+
+void EditorContext::SetSelectedAsset(const Origo::UUID& uuid) {
+	m_SelectedAsset = uuid;
 }
 
 };

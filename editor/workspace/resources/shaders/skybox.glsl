@@ -17,12 +17,10 @@ void main()
     vec2 pos = verts[gl_VertexID];
     gl_Position = vec4(pos, 0.0, 1.0);
 
-    // Ray in View-Space
-vec4 clip = vec4(pos, -1.0, 1.0);
-vec4 view = inverse(u_ProjectionMatrix) * clip;
-view.xyz /= view.w;
+    vec4 clip = vec4(pos, -1.0, 1.0);
+    vec4 view = inverse(u_ProjectionMatrix) * clip;
+    view.xyz /= view.w;
 
-    // nur Rotation aus View
     mat3 rot = transpose(mat3(u_ViewMatrix));
     v_Dir = rot * view.xyz;
 }

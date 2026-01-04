@@ -42,8 +42,12 @@ struct EditorContext {
 	EditorViewportController ViewportController;
 
 	void SetSelectedEntity(const Origo::RID& entity);
-	void UnselectSelectedEntity();
+	void UnselectEntity();
 	std::optional<Origo::RID> GetSelectedEntity() const { return m_SelectedEntity; }
+
+	void SetSelectedAsset(const Origo::UUID& asset);
+	void UnselectAsset();
+	std::optional<Origo::UUID> GetSelectedAsset() const { return m_SelectedAsset; }
 
 	EditorContext(const EditorContext&) = delete;
 	void operator=(const EditorContext&) = delete;
@@ -52,6 +56,7 @@ struct EditorContext {
 
 private:
 	std::optional<Origo::RID> m_SelectedEntity { std::nullopt };
+	std::optional<Origo::UUID> m_SelectedAsset { std::nullopt };
 };
 
 }

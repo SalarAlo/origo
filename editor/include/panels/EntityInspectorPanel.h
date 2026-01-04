@@ -5,12 +5,12 @@
 
 namespace OrigoEditor {
 
-class InspectorPanel : public EditorPanel {
+class EntityInspectorPanel : public EditorPanel {
 public:
-	InspectorPanel(EditorContext& ctx)
+	EntityInspectorPanel(EditorContext& ctx)
 	    : m_Context(ctx) { }
 
-	const char* GetName() const override { return "Inspector"; }
+	const char* GetName() const override { return "Entity Inspector"; }
 	void OnImGuiRender() override;
 
 private:

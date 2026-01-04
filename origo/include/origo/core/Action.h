@@ -1,9 +1,5 @@
 #pragma once
 
-// always gotta go back to the roots (C#)
-// even though c++ is now my fav language.
-// iykyk
-
 #include <functional>
 
 namespace Origo {

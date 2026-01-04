@@ -89,7 +89,7 @@ const char* ConsolePanel::LevelToString(spdlog::level::level_enum level) {
 	case spdlog::level::info:
 		return "[INFO ]";
 	case spdlog::level::warn:
-		return "[WARN ]";
+		return "[WARN]";
 	case spdlog::level::err:
 		return "[ERROR]";
 	case spdlog::level::critical:

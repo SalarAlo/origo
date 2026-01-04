@@ -1,4 +1,4 @@
-#include "panels/InspectorPanel.h"
+#include "panels/EntityInspectorPanel.h"
 
 #include "imgui.h"
 #include "origo/scene/Name.h"
@@ -8,7 +8,7 @@
 
 namespace OrigoEditor {
 
-void InspectorPanel::OnImGuiRender() {
+void EntityInspectorPanel::OnImGuiRender() {
 	auto selectedEntityOptional = m_Context.GetSelectedEntity();
 	auto activeScene = m_Context.ActiveScene;
 
@@ -36,7 +36,7 @@ void InspectorPanel::OnImGuiRender() {
 	DrawAddComponent(activeScene, selectedEntity);
 }
 
-void InspectorPanel::DrawEntityName() {
+void EntityInspectorPanel::DrawEntityName() {
 	auto selectedEntity = m_Context.GetSelectedEntity();
 	auto scene = m_Context.ActiveScene;
 
@@ -86,7 +86,7 @@ void InspectorPanel::DrawEntityName() {
 	}
 }
 
-void InspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+void EntityInspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
 		if (!activeScene->HasNativeComponentByType(selectedEntity, type))
 			continue;
@@ -96,7 +96,7 @@ void InspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo::RID 
 	}
 }
 
-void InspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+void EntityInspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	for (const auto& [id, descr] : Origo::ScriptComponentRegistry::GetAll()) {
 		if (!activeScene->HasScriptComponent(selectedEntity, id))
 			continue;
@@ -106,7 +106,7 @@ void InspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo::RID 
 	}
 }
 
-void InspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RID selectedEntity) {
 	const float buttonWidth = 180.0f;
 	const float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 
