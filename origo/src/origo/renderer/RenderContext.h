@@ -2,7 +2,6 @@
 
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/RenderView.h"
-#include "origo/scene/Transform.h"
 #include "origo/renderer/RenderCommand.h"
 
 namespace Origo {
@@ -30,7 +29,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform, RenderPass pass = RenderPass::Geometry);
+	void Submit(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry);
 	void Flush();
 
 	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }

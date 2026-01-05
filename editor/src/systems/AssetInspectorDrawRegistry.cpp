@@ -20,7 +20,6 @@ void AssetInspectorDrawer::DrawSpecific(Origo::Asset* asset, Origo::AssetType ty
 		break;
 	default: {
 		std::string assetTypeStr { magic_enum::enum_name(type) };
-		ORG_CORE_WARN("No draw for assets of type {} implemented yet", assetTypeStr);
 		ImGui::Text("%s", ("No draw for assets of type " + assetTypeStr + "implemented yet").c_str());
 	}
 	}

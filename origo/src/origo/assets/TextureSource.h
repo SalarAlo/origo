@@ -6,7 +6,8 @@ namespace Origo {
 enum class TextureSourceType {
 	File = 0,
 	Raw,
-	Svg
+	Svg,
+	Embedded
 };
 
 struct TextureInitialisationData {
@@ -78,6 +79,39 @@ public:
 	std::string Path;
 	int Width;
 	int Height;
+};
+
+class TextureSourceEmbedded : public TextureSource {
+public:
+	TextureSourceEmbedded(
+	    std::vector<unsigned char>&& compressedData,
+	    bool generateMipmaps = true)
+	    : m_CompressedData(std::move(compressedData))
+	    , m_GenerateMipmaps(generateMipmaps) { }
+
+	TextureSourceEmbedded(
+	    int w,
+	    int h,
+	    int channels,
+	    std::vector<unsigned char>&& pixels,
+	    bool generateMipmaps = true)
+	    : m_RawData(w, h, channels, std::move(pixels), generateMipmaps)
+	    , m_GenerateMipmaps(generateMipmaps) { }
+
+	TextureSourceType GetType() const override {
+		return TextureSourceType::Embedded;
+	}
+
+	TextureInitialisationData GetInitialisationData() const override;
+
+protected:
+	void SerializeBody(ISerializer& backend) const override;
+
+private:
+	std::vector<unsigned char> m_CompressedData {};
+	TextureInitialisationData m_RawData {};
+
+	bool m_GenerateMipmaps = true;
 };
 
 }

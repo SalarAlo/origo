@@ -15,7 +15,7 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	auto mesh { am.Get<Mesh>(cmd.GetMesh()) };
 
 	constexpr float outlineThickness { 0.1f };
-	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetTransform()->GetModelMatrix();
+	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
 		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
 
@@ -51,8 +51,8 @@ void RenderContext::BeginFrame() {
 	glViewport(0, 0, fb->GetWidth(), fb->GetHeight());
 }
 
-void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, Transform* transform, RenderPass pass) {
-	m_DrawQueue.emplace_back(mesh, material, transform, pass);
+void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass) {
+	m_DrawQueue.emplace_back(mesh, material, modelMatrix, pass);
 }
 
 void RenderContext::Flush() {

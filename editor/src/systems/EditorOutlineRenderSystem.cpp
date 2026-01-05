@@ -21,7 +21,7 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 		    context.Submit(
 		        mr.GetMesh(),
 		        EditorOutline::GetOutlineMaterial(),
-		        &transform,
+		        transform.GetModelMatrix(),
 		        RenderPass::Outline);
 	    });
 }

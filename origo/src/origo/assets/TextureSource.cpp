@@ -47,7 +47,8 @@ TextureInitialisationData TextureSourceFile::GetInitialisationData() const {
 	stbi_set_flip_vertically_on_load(Flip);
 
 	TextureInitialisationData initialisationData {};
-	const auto pixels = stbi_load(Path.c_str(), &initialisationData.Width, &initialisationData.Height, &initialisationData.Channels, 0);
+	const auto pixels = stbi_load(Path.c_str(), &initialisationData.Width, &initialisationData.Height, &initialisationData.Channels, 4);
+	initialisationData.Channels = 4;
 
 	if (!pixels) {
 		ORG_CORE_ERROR("Texture::LoadCPU: failed to load image {}", Path);
@@ -97,6 +98,45 @@ TextureInitialisationData TextureSourceSVG::GetInitialisationData() const {
 	return { w, h, 4, std::move(pixels), false };
 }
 
+void TextureSourceEmbedded::SerializeBody(ISerializer& backend) const {
+	// Intentionally empty.
+	// Embedded textures are reconstructed during model import.
+}
+
+TextureInitialisationData TextureSourceEmbedded::GetInitialisationData() const {
+	if (!m_RawData.PixelData.empty()) {
+		return m_RawData;
+	}
+
+	int w, h, channels;
+
+	stbi_uc* pixels = stbi_load_from_memory(
+	    m_CompressedData.data(),
+	    static_cast<int>(m_CompressedData.size()),
+	    &w,
+	    &h,
+	    &channels,
+	    4);
+
+	if (!pixels) {
+		ORG_ERROR("TextureSourceEmbedded: Failed to decode embedded texture");
+		return {};
+	}
+
+	std::vector<unsigned char> data(
+	    pixels,
+	    pixels + (w * h * 4));
+
+	stbi_image_free(pixels);
+
+	return TextureInitialisationData(
+	    w,
+	    h,
+	    4,
+	    std::move(data),
+	    m_GenerateMipmaps);
+}
+
 Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 	backend.BeginObject("source");
 
@@ -120,6 +160,12 @@ Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 
 		return MakeScope<TextureSourceFile>(path);
 	}
+
+	case TextureSourceType::Embedded:
+		ORG_CORE_ERROR(
+		    "TextureSourceEmbedded cannot be deserialized independently. "
+		    "Reimport the parent model.");
+		return nullptr;
 	default: {
 		backend.EndObject();
 		ORG_ERROR("TextureSource::Deserialize: Unsupported type {}", typeStr);

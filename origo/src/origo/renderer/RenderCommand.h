@@ -1,7 +1,6 @@
 #pragma once
 
 #include "origo/assets/AssetManagerFast.h"
-#include "origo/scene/Transform.h"
 
 namespace Origo {
 
@@ -13,21 +12,21 @@ enum class RenderPass {
 
 class RenderCommand {
 public:
-	RenderCommand(const AssetHandle& mesh, const AssetHandle& material, Transform* transform, RenderPass renderPass)
+	RenderCommand(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& model, RenderPass renderPass)
 	    : m_Mesh(mesh)
 	    , m_Material(material)
-	    , m_Transform(transform)
+	    , m_ModelMatrix(model)
 	    , m_RenderPass(renderPass) { }
 
 	AssetHandle GetMesh() const { return m_Mesh; }
 	AssetHandle GetMaterial() const { return m_Material; }
-	Transform* GetTransform() const { return m_Transform; }
+	glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 private:
 	AssetHandle m_Mesh;
 	AssetHandle m_Material;
-	Transform* m_Transform;
+	const glm::mat4& m_ModelMatrix;
 	RenderPass m_RenderPass;
 };
 }

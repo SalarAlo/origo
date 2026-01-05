@@ -10,6 +10,7 @@ public:
 	void AddAttribute(unsigned int amount, bool normalized = false, VertexAttributeSemantic semantic = VertexAttributeSemantic::None);
 	std::vector<VertexAttribute>& GetAttributes();
 	size_t GetStride() { return m_Stride; }
+	static int GetStaticMeshLayout();
 
 private:
 	std::vector<VertexAttribute> m_Attributes {};

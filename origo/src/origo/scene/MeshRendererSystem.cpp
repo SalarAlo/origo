@@ -1,6 +1,7 @@
 #include "origo/scene/MeshRenderSystem.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/SystemScheduler.h"
+#include "origo/scene/Transform.h"
 
 namespace Origo {
 
@@ -12,7 +13,7 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 		    context.Submit(
 		        mr.GetMesh(),
 		        mr.GetMaterial(),
-		        &transform,
+		        transform.GetModelMatrix(),
 		        RenderPass::Geometry);
 	    });
 }

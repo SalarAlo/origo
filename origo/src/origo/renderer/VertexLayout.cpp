@@ -1,6 +1,7 @@
 #include "origo/renderer/VertexLayout.h"
 #include "origo/renderer/Helpers.h"
 #include "origo/renderer/VertexAttribute.h"
+#include "origo/renderer/VertexLayoutRegistry.h"
 
 namespace Origo {
 
@@ -27,4 +28,16 @@ void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized, Ver
 std::vector<VertexAttribute>& VertexLayout::GetAttributes() {
 	return m_Attributes;
 }
+
+int VertexLayout::GetStaticMeshLayout() {
+	static int id = [] {
+		VertexLayout layout {};
+		layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Position);
+		layout.AddAttribute<float>(3, false, VertexAttributeSemantic::Normal);
+		layout.AddAttribute<float>(2, false, VertexAttributeSemantic::TexCoord);
+		return VertexLayoutRegistry::Register(layout);
+	}();
+	return id;
+}
+
 }
