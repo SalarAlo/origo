@@ -43,7 +43,7 @@ void SceneLayer::OnAttach() {
 
 	CreateAssets();
 
-	SpawnGrid(5);
+	SpawnGrid(10);
 }
 
 void SceneLayer::OnUpdate(double) {

@@ -129,7 +129,7 @@ void Model::LoadFromAssimp() {
 			vertices.push_back(n.z);
 
 			if (mesh->mTextureCoords[0]) {
-				vertices.push_back(mesh->mTextureCoords[0][v].x);
+				vertices.push_back(1.0f - mesh->mTextureCoords[0][v].x);
 				vertices.push_back(1.0f - mesh->mTextureCoords[0][v].y);
 			} else {
 				vertices.push_back(0.0f);

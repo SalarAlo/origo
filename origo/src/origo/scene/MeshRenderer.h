@@ -14,8 +14,8 @@ public:
 	AssetHandle GetMesh() const { return m_Mesh; }
 	AssetHandle GetMaterial() const { return m_Material; }
 
-	void SetMesh(const AssetHandle& uuid) { m_Mesh = uuid; }
-	void SetMaterial(const AssetHandle& uuid) { m_Mesh = uuid; }
+	void SetMesh(const AssetHandle& handle) { m_Mesh = handle; }
+	void SetMaterial(const AssetHandle& handle) { m_Material = handle; }
 
 private:
 	AssetHandle m_Material {};

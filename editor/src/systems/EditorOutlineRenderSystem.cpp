@@ -15,7 +15,7 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 	        EditorOutline& selection,
 	        Transform& transform,
 	        MeshRenderer& mr) {
-		    if (!selection.ShouldOutline)
+		    if (!selection.ShouldOutline || mr.GetMesh().IsNull() || mr.GetMaterial().IsNull())
 			    return;
 
 		    context.Submit(

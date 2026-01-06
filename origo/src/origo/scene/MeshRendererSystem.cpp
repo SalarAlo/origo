@@ -10,8 +10,9 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 	    [&](RID entity,
 	        MeshRenderer& mr,
 	        Transform& transform) {
-		    if (mr.GetMesh().IsNull() || mr.GetMaterial().IsNull())
+		    if (mr.GetMesh().IsNull() || mr.GetMaterial().IsNull()) {
 			    return;
+		    }
 
 		    context.Submit(
 		        mr.GetMesh(),

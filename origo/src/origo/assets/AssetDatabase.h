@@ -9,6 +9,9 @@ class Asset;
 
 class AssetDatabase {
 public:
+	static const std::unordered_map<UUID, AssetMetadata>& GetAllMetadata() {
+		return s_Metadata;
+	}
 	static void WriteImportFile(const UUID& id);
 	static const AssetMetadata& GetMetadata(const UUID& id);
 	static void RegisterMetadata(const AssetMetadata& meta);

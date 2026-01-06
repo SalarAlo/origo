@@ -70,6 +70,9 @@ void EditorIcons::Shutdown() {
 }
 
 ImTextureID EditorIcons::Get(IconType type) {
+	if (!s_Initialized)
+		Init();
+
 	auto it = s_Icons.find(type);
 	if (it == s_Icons.end()) {
 		ORG_CORE_WARN("EditorIcons::Get: Asset Icon of type {} not found", magic_enum::enum_name(type));

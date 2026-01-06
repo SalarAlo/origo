@@ -64,7 +64,7 @@ public:
 	UUID GetUUID(const AssetHandle& handle) const;
 	AssetHandle GetHandleByUUID(const UUID& uuid) const;
 	void ResolveAll(std::optional<std::function<bool(Asset*)>> = std::nullopt);
-	ankerl::unordered_dense::map<UUID, AssetHandle> GetUuidMap() { return m_UuidToHandle; }
+	const ankerl::unordered_dense::map<UUID, AssetHandle>& GetUuidMap() { return m_UuidToHandle; }
 
 	AssetManager(const AssetManager&) = delete;
 	AssetManager& operator=(const AssetManager&) = delete;

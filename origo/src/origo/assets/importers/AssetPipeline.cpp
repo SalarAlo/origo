@@ -3,7 +3,6 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetSerializer.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
-#include "origo/assets/importers/IAssetImporter.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
@@ -21,51 +20,22 @@ void AssetPipeline::RunInitialImport() {
 
 	int importCount {};
 
-	for (auto& possibleAsset : std::filesystem::recursive_directory_iterator(rootAssetDir)) {
-		if (!possibleAsset.is_regular_file())
+	for (auto& assetFile : std::filesystem::recursive_directory_iterator(rootAssetDir)) {
+		if (!IsImportCandidate(assetFile))
 			continue;
 
-		const auto& path = possibleAsset.path();
+		const auto& assetPath = assetFile.path();
 
-		if (path.extension() == ".import")
+		IAssetImporter* assetImporter = ResolveImporter(assetPath);
+		if (!assetImporter)
 			continue;
 
-		IAssetImporter* importer = AssetImporterRegistry::GetImporter(path);
-		if (!importer)
-			continue;
+		auto meta = LoadOrCreateMetadata(assetPath, assetImporter);
 
-		auto meta = LoadOrCreateMetadata(path, importer);
-
-		std::filesystem::path importFile { path.string() + ".import" };
-		bool importNecessary = !std::filesystem::exists(importFile) || !meta->SourcePath.empty() && meta->ImportedTimestamp < meta->SourceTimestamp;
-
-		if (importNecessary) {
-			Scope<Asset> asset = importer->Import(path, *meta);
-			if (!asset)
-				continue;
-
-			AssetManager::GetInstance().Register(std::move(asset), meta->ID);
-			meta->ImportedTimestamp = meta->SourceTimestamp;
-			AssetDatabase::RegisterMetadata(*meta);
-			AssetDatabase::WriteImportFile(meta->ID);
-
-			importCount++;
+		if (IsImportNecessary(assetPath, *meta)) {
+			ImportAsset(assetPath, assetImporter, *meta, importCount);
 		} else {
-			auto assetSerializer = AssetSerializationSystem::Get(meta->Type);
-
-			JsonSerializer serializer { importFile.c_str() };
-			serializer.LoadFile();
-
-			auto asset { AssetFactory::AllocateHollowAsset(meta->Type) };
-
-			ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta->Name, magic_enum::enum_name(meta->Type), meta->SourcePath.c_str());
-
-			serializer.BeginObject("payload");
-			assetSerializer->Deserialize(serializer, *asset.get());
-			serializer.EndObject();
-
-			AssetHandle handle = AssetFactory::CreateImportedAsset(*meta, std::move(asset));
-			AssetDatabase::RegisterMetadata(*meta);
+			LoadCachedAsset(assetPath.string() + ".import", *meta);
 		}
 	}
 
@@ -73,11 +43,61 @@ void AssetPipeline::RunInitialImport() {
 	AssetManager::GetInstance().ResolveAll();
 }
 
-Scope<AssetMetadata> AssetPipeline::LoadOrCreateMetadata(
-    const std::filesystem::path& sourcePath,
-    IAssetImporter* importer) {
-	const std::filesystem::path importPath { sourcePath.string() + ".import" };
+bool AssetPipeline::IsImportCandidate(const std::filesystem::directory_entry& entry) {
+	if (!entry.is_regular_file())
+		return false;
 
+	return entry.path().extension() != ".import";
+}
+
+IAssetImporter* AssetPipeline::ResolveImporter(const std::filesystem::path& path) {
+	return AssetImporterRegistry::GetImporter(path);
+}
+
+bool AssetPipeline::IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta) {
+	std::filesystem::path importFile { path.string() + ".import" };
+
+	if (!std::filesystem::exists(importFile))
+		return true;
+
+	if (!meta.SourcePath.empty() && meta.ImportedTimestamp < meta.SourceTimestamp)
+		return true;
+
+	return false;
+}
+
+void AssetPipeline::ImportAsset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount) {
+	Scope<Asset> asset = importer->Import(path, meta);
+
+	AssetManager::GetInstance().Register(std::move(asset), meta.ID);
+	meta.ImportedTimestamp = meta.SourceTimestamp;
+
+	AssetDatabase::RegisterMetadata(meta);
+	AssetDatabase::WriteImportFile(meta.ID);
+
+	importCount++;
+}
+
+void AssetPipeline::LoadCachedAsset(const std::filesystem::path& importFile, AssetMetadata& meta) {
+	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
+
+	JsonSerializer serializer { importFile.c_str() };
+	serializer.LoadFile();
+
+	auto asset = AssetFactory::AllocateHollowAsset(meta.Type);
+
+	ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta.Name, magic_enum::enum_name(meta.Type), meta.SourcePath.c_str());
+
+	serializer.BeginObject("payload");
+	assetSerializer->Deserialize(serializer, *asset.get());
+	serializer.EndObject();
+
+	AssetFactory::CreateImportedAsset(meta, std::move(asset));
+	AssetDatabase::RegisterMetadata(meta);
+}
+
+Scope<AssetMetadata> AssetPipeline::LoadOrCreateMetadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
+	const std::filesystem::path importPath { sourcePath.string() + ".import" };
 	Scope<AssetMetadata> meta;
 
 	if (std::filesystem::exists(importPath)) {
@@ -94,8 +114,8 @@ Scope<AssetMetadata> AssetPipeline::LoadOrCreateMetadata(
 			meta->SourceTimestamp = std::filesystem::last_write_time(sourcePath);
 
 		using sys = std::chrono::system_clock;
-		sys::time_point unixEpoch = sys::from_time_t(0);
-		meta->ImportedTimestamp = std::chrono::clock_cast<std::filesystem::file_time_type::clock>(unixEpoch);
+		meta->ImportedTimestamp = std::chrono::clock_cast<std::filesystem::file_time_type::clock>(
+		    sys::from_time_t(0));
 	}
 
 	return meta;
