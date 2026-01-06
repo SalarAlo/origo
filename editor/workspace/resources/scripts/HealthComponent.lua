@@ -6,11 +6,5 @@ Component.define("HealthComponent", {
 	max_health = {
 		type = "int",
 		default = 10
-	},
-	minimum_health = {
-		type = "float",
-		default = 0
-	
+	}
 })
-
-print("Hello from lua")

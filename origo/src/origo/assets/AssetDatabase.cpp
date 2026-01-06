@@ -22,7 +22,7 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 
 	const AssetMetadata& meta = metaIt->second;
 
-	auto& am = AssetManagerFast::GetInstance();
+	auto& am = AssetManager::GetInstance();
 	AssetHandle handle = am.GetHandleByUUID(id);
 
 	if (!am.IsValid(handle)) {
@@ -108,7 +108,7 @@ AssetMetadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path)
 }
 
 Asset* AssetDatabase::LoadAsset(const UUID& id) {
-	auto& am { AssetManagerFast::GetInstance() };
+	auto& am { AssetManager::GetInstance() };
 
 	auto metaIt = s_Metadata.find(id);
 	if (metaIt == s_Metadata.end()) {
@@ -139,7 +139,7 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 }
 
 void AssetDatabase::SaveAll() {
-	auto& am = AssetManagerFast::GetInstance();
+	auto& am = AssetManager::GetInstance();
 
 	for (const auto& [uuid, handle] : am.GetUuidMap()) {
 		if (am.IsValid(handle))

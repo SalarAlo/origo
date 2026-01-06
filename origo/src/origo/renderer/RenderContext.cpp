@@ -10,7 +10,7 @@
 namespace Origo {
 
 static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
-	auto& am { AssetManagerFast::GetInstance() };
+	auto& am { AssetManager::GetInstance() };
 	auto material { am.Get<Material2D>(cmd.GetMaterial()) };
 	auto mesh { am.Get<Mesh>(cmd.GetMesh()) };
 
@@ -87,7 +87,7 @@ void RenderContext::ExecutePass(RenderPass pass) {
 		if (m_SkyboxMaterial.IsNull())
 			return;
 
-		auto material = AssetManagerFast::GetInstance().Get<SkyboxMaterial>(m_SkyboxMaterial);
+		auto material = AssetManager::GetInstance().Get<SkyboxMaterial>(m_SkyboxMaterial);
 		material->Bind(m_View.Projection, m_View.View);
 
 		glBindVertexArray(m_SkyboxVAO);
@@ -103,7 +103,7 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			continue;
 
 		if (cmd.GetMaterial() != currentMaterialId) {
-			auto material { AssetManagerFast::GetInstance().Get<Material2D>(cmd.GetMaterial()) };
+			auto material { AssetManager::GetInstance().Get<Material2D>(cmd.GetMaterial()) };
 			material->Bind();
 
 			currentMaterial = material;

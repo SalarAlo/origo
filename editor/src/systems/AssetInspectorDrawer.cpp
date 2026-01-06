@@ -8,7 +8,7 @@
 namespace OrigoEditor {
 
 void AssetInspectorDrawer::Draw(const Origo::AssetMetadata& md) {
-	auto& am { Origo::AssetManagerFast::GetInstance() };
+	auto& am { Origo::AssetManager::GetInstance() };
 	auto assetPtr { am.Get(am.GetHandleByUUID(md.ID)) };
 	DrawSpecific(assetPtr, md.Type);
 }
@@ -27,8 +27,13 @@ void AssetInspectorDrawer::DrawSpecific(Origo::Asset* asset, Origo::AssetType ty
 
 void AssetInspectorDrawer::DrawMaterial(Origo::Material2D* material) {
 	auto albedoHandle { material->GetAlbedo() };
+	auto shaderHandle { material->GetShader() };
+
 	ComponentUI::DrawAssetControl("Albedo", albedoHandle, Origo::AssetType::Texture2D);
+	ComponentUI::DrawAssetControl("Shader", shaderHandle, Origo::AssetType::Shader);
+
 	material->SetAlbedo(albedoHandle);
+	material->SetShader(shaderHandle);
 }
 
 }

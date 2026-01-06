@@ -21,7 +21,7 @@ public:
 		static bool s_Initialised { false };
 		if (!s_Initialised) {
 			auto shader = AssetFactory::CreateAsset<Shader>("Outline Shader");
-			AssetManagerFast::GetInstance().Get<Shader>(shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
+			AssetManager::GetInstance().Get<Shader>(shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
 
 			m_OutlineMaterial = AssetFactory::CreateAsset<Material2D>("Outline Shader", shader);
 

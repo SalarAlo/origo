@@ -10,7 +10,7 @@ SkyboxMaterial::SkyboxMaterial(AssetHandle shader, AssetHandle cubemap)
     , m_Cubemap(cubemap) { }
 
 void SkyboxMaterial::Bind(const glm::mat4& projection, const glm::mat4& view) {
-	auto& am = AssetManagerFast::GetInstance();
+	auto& am = AssetManager::GetInstance();
 
 	auto shader = am.Get<Shader>(m_Shader);
 	shader->UseProgram();

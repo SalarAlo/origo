@@ -7,6 +7,7 @@ namespace Origo {
 
 class ModelRenderer : public Component {
 public:
+	ModelRenderer() = default;
 	ModelRenderer(const AssetHandle& model)
 	    : m_Model(model) { };
 
@@ -16,7 +17,7 @@ public:
 	std::string GetName() const override { return "ModelRenderer"; }
 
 private:
-	AssetHandle m_Model;
+	AssetHandle m_Model {};
 };
 
 }

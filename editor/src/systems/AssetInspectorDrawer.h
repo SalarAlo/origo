@@ -3,7 +3,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/Metadata.h"
-#include "origo/core/UUID.h"
+
 namespace OrigoEditor {
 
 class AssetInspectorDrawer {

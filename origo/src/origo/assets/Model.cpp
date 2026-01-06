@@ -46,7 +46,7 @@ static void MakeFallbackModel(std::vector<Model::Node>& nodes, int& rootNode) {
 
 Model::Model(const std::filesystem::path& path, const AssetHandle& shader)
     : m_Path(path)
-    , m_ModelShader(shader) { }
+    , m_ModelShaderHandle(shader) { }
 
 AssetType Model::GetAssetType() const { return AssetType::Model; }
 AssetType Model::GetClassAssetType() { return AssetType::Model; }
@@ -55,8 +55,16 @@ const std::filesystem::path& Model::GetPath() const { return m_Path; }
 int Model::GetRootNode() const { return m_RootNode; }
 const std::vector<Model::Node>& Model::GetNodes() const { return m_Nodes; }
 const std::vector<Model::SubMesh>& Model::GetSubMeshes() const { return m_SubMeshes; }
+void Model::SetPath(const std::filesystem::path& path) {
+	m_Path = path;
+}
+void Model::SetShaderHandle(const AssetHandle& handle) {
+	m_ModelShaderHandle = handle;
+}
 
-void Model::SetPath(const std::filesystem::path& path) { m_Path = path; }
+void Model::SetShaderUUID(const UUID& id) {
+	m_ShaderUUID = id;
+}
 
 void Model::Load() {
 	if (m_Path.empty()) {
@@ -166,7 +174,7 @@ void Model::LoadFromAssimp() {
 			    "ModelTex_" + std::to_string(i),
 			    TextureType::Albedo);
 
-			auto tex = AssetManagerFast::GetInstance().Get<Texture2D>(textureHandle);
+			auto tex = AssetManager::GetInstance().Get<Texture2D>(textureHandle);
 
 			if (!path.empty() && path[0] == '*') {
 				int idx = std::atoi(path.c_str() + 1);
@@ -205,7 +213,7 @@ void Model::LoadFromAssimp() {
 
 		AssetHandle materialHandle = AssetFactory::CreateAsset<Material2D>(
 		    "ModelMat_" + std::to_string(i),
-		    m_ModelShader,
+		    m_ModelShaderHandle,
 		    textureHandle);
 
 		m_SubMeshes.push_back({ meshHandle, materialHandle });
@@ -232,5 +240,26 @@ int Model::ProcessNode(aiNode* node, int parent) {
 
 	return index;
 }
+void Model::Resolve() {
+	if (m_Path.empty()) {
+		ORG_CORE_WARN("Could not Resolve Model because no path provided");
+		return;
+	}
+
+	if (m_ModelShaderHandle.IsNull()) {
+		auto uuidHandle = AssetManager::GetInstance().GetHandleByUUID(m_ShaderUUID);
+
+		if (uuidHandle.IsNull()) {
+			ORG_CORE_WARN("Shader UUID invalid for model '{}', using default shader", m_Path.c_str());
+			m_ModelShaderHandle = Shader::DefaultNormalShader();
+		} else {
+			m_ModelShaderHandle = uuidHandle;
+		}
+	}
+
+	Load();
+}
+
+AssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
 
 }

@@ -40,21 +40,21 @@ struct AssetEntry {
 	OptionalPath Path { std::nullopt };
 };
 
-class AssetManagerFast {
+class AssetManager {
 
 public:
-	static AssetManagerFast& GetInstance();
+	static AssetManager& GetInstance();
 
 	template <AssetConcept T>
 	T* Get(const AssetHandle& handle) {
 		if (!IsValid(handle))
 			return nullptr;
 
-		Asset* base = m_Entries[handle.Index].AssetPtr.get();
+		Asset* base = m_AssetEntries[handle.Index].AssetPtr.get();
 		if (base->GetAssetType() != T::GetClassAssetType())
 			return nullptr;
 
-		return static_cast<T*>(m_Entries[handle.Index].AssetPtr.get());
+		return static_cast<T*>(m_AssetEntries[handle.Index].AssetPtr.get());
 	}
 
 	Asset* Get(const AssetHandle& handle) const;
@@ -63,20 +63,20 @@ public:
 	bool IsValid(const AssetHandle& handle) const;
 	UUID GetUUID(const AssetHandle& handle) const;
 	AssetHandle GetHandleByUUID(const UUID& uuid) const;
-	void ResolveAll();
+	void ResolveAll(std::optional<std::function<bool(Asset*)>> = std::nullopt);
 	ankerl::unordered_dense::map<UUID, AssetHandle> GetUuidMap() { return m_UuidToHandle; }
 
-	AssetManagerFast(const AssetManagerFast&) = delete;
-	AssetManagerFast& operator=(const AssetManagerFast&) = delete;
-	AssetManagerFast(AssetManagerFast&&) = delete;
-	AssetManagerFast& operator=(AssetManagerFast&&) = delete;
+	AssetManager(const AssetManager&) = delete;
+	AssetManager& operator=(const AssetManager&) = delete;
+	AssetManager(AssetManager&&) = delete;
+	AssetManager& operator=(AssetManager&&) = delete;
 
 private:
-	AssetManagerFast() = default;
+	AssetManager() = default;
 	AssetHandle GetNextFreeHandle();
 
 private:
-	std::vector<AssetEntry> m_Entries {};
+	std::vector<AssetEntry> m_AssetEntries {};
 	std::vector<uint32_t> m_Free {};
 	ankerl::unordered_dense::map<UUID, AssetHandle> m_UuidToHandle;
 };

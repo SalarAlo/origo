@@ -1,0 +1,15 @@
+{
+        "header": {
+                "imported_time_stamp": "-4673479123115006689",
+                "name": "low_poly_tree",
+                "origin": "Imported",
+                "source_path": "./resources/models/low_poly_tree.glb",
+                "source_time_stamp": "-4673479123115006689",
+                "type": "Model",
+                "uuid": "b4ac290169e168468b9a13f2fab0279f"
+        },
+        "payload": {
+                "path": "./resources/models/low_poly_tree.glb",
+                "shader_id": "1f263d53bd919b10e537c1b7c2d93aeb"
+        }
+}

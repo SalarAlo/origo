@@ -74,7 +74,7 @@ struct UUID {
 
 	uint64_t GetHigh() const { return m_High; }
 	uint64_t GetLow() const { return m_Low; }
-	bool IsBad() { return m_IsBad; }
+	bool IsBad() const { return m_IsBad; }
 
 private:
 	UUID(uint64_t high, uint64_t low, bool isBad = false)

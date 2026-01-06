@@ -1,5 +1,6 @@
 #include "origo/assets/Texture2D.h"
 
+#include "origo/assets/AssetFactory.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/assets/Shader.h"
 
@@ -7,6 +8,29 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
+AssetHandle Texture2D::DefaultWhite() {
+	static AssetHandle handle { [] {
+		std::vector<unsigned char> whitePixel = {
+			255, 255, 255, 255
+		};
+
+		auto handle = AssetFactory::CreateAsset<Texture2D>(
+		    "Default White Texture",
+		    TextureType::Albedo);
+
+		auto tex = AssetManager::GetInstance().Get<Texture2D>(handle);
+		tex->SetSource(MakeScope<TextureSourceRaw>(
+		    1, 1, 4,
+		    std::move(whitePixel),
+		    false));
+
+		tex->Load();
+
+		return handle;
+	}() };
+
+	return handle;
+}
 
 Texture2D::Texture2D(TextureType type)
     : m_TextureType(type)
@@ -63,7 +87,7 @@ void Texture2D::Bind(AssetHandle shaderId) const {
 		return;
 	}
 
-	auto shader = AssetManagerFast::GetInstance().Get<Shader>(shaderId);
+	auto shader = AssetManager::GetInstance().Get<Shader>(shaderId);
 	int slot = static_cast<int>(m_TextureType);
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));

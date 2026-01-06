@@ -10,7 +10,7 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 		static_cast<const Material2D*>(asset)
 	};
 
-	auto& am { AssetManagerFast::GetInstance() };
+	auto& am { AssetManager::GetInstance() };
 	backend.Write("albedo", am.GetUUID(material->GetAlbedo()).ToString());
 	backend.Write("shader", am.GetUUID(material->GetShader()).ToString());
 

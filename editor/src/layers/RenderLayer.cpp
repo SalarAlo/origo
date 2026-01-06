@@ -22,11 +22,11 @@ void RenderLayer::OnAttach() {
 	descr.Back = "./resources/textures/skybox/Back.png";
 
 	auto cubemapHandle { AssetFactory::CreateAsset<CubemapTexture>("skybox_texture", descr) };
-	auto cubemap { AssetManagerFast::GetInstance().Get<CubemapTexture>(cubemapHandle) };
+	auto cubemap { AssetManager::GetInstance().Get<CubemapTexture>(cubemapHandle) };
 	cubemap->Load();
 
 	auto skyboxShaderHandle { AssetFactory::CreateAsset<Shader>("skybox_shader") };
-	auto skyboxShader { AssetManagerFast::GetInstance().Get<Shader>(skyboxShaderHandle) };
+	auto skyboxShader { AssetManager::GetInstance().Get<Shader>(skyboxShaderHandle) };
 	skyboxShader->SetSource(MakeScope<ShaderSourceFile>("./resources/shaders/skybox.glsl"));
 
 	m_SkyboxMaterial = AssetFactory::CreateAsset<SkyboxMaterial>("skybox_material", skyboxShaderHandle, cubemapHandle);

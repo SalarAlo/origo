@@ -62,8 +62,9 @@ public:
 		auto& storage = GetOrCreateStorage<T>();
 		auto [it, inserted] = storage.Data.emplace(entity, T { std::forward<Args>(args)... });
 
-		if (!inserted)
-			throw std::runtime_error("Component already exists on entity");
+		if (!inserted) {
+			return storage.Data[entity];
+		}
 
 		return it->second;
 	}

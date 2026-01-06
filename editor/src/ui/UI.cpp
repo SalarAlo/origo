@@ -1,4 +1,5 @@
 #include "ui/UI.h"
+#include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/scripting/ScriptSystem.h"
@@ -146,7 +147,7 @@ void DrawMenuBar(PanelManager& manager) {
 			Origo::AssetDatabase::SaveAll();
 
 		if (ImGui::MenuItem("Reload Scripts")) {
-			Origo::AssetManagerFast::GetInstance().ResolveAll();
+			Origo::AssetManager::GetInstance().ResolveAll([](Origo::Asset* a) { return a->GetAssetType() == Origo::AssetType::Script; });
 			Origo::ScriptSystem::ReloadAll();
 		}
 		ImGui::Separator();

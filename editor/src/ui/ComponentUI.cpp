@@ -242,7 +242,7 @@ void DrawBoolControl(std::string_view label, bool& value) {
 }
 
 void DrawAssetControl(std::string_view label, Origo::AssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
-	auto& am = Origo::AssetManagerFast::GetInstance();
+	auto& am = Origo::AssetManager::GetInstance();
 
 	Origo::UUID uuid = !handle.IsNull() ? am.GetUUID(handle) : Origo::UUID {};
 	auto md = !uuid.IsBad() ? Origo::AssetDatabase::GetMetadata(uuid)

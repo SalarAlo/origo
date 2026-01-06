@@ -1,7 +1,6 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/scene/Light.h"
-#include "origo/scene/NativeComponentRegistry.h"
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>
@@ -10,7 +9,7 @@ namespace OrigoEditor {
 
 static bool s_Registered = []() {
 	InspectorDrawRegistry::RegisterNativeDrawer<Origo::Light>("Light", "icons/Light.svg", [](Origo::Light& light) {
-		auto& am { Origo::AssetManagerFast::GetInstance() };
+		auto& am { Origo::AssetManager::GetInstance() };
 
 		auto target { light.GetShaderTarget() };
 		float ambient { light.GetAmbientFactor() };
@@ -30,7 +29,5 @@ static bool s_Registered = []() {
 
 	return true;
 }();
-
-ORIGO_REGISTER_NATIVE_COMPONENT(Origo::Light)
 
 }

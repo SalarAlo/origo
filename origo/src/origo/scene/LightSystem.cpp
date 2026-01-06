@@ -14,7 +14,7 @@ void LightSystem::Update(Origo::Scene* scene, float dt) {
 	    [&](RID entity,
 	        Light& light,
 	        Transform& transform) {
-		    auto shader { AssetManagerFast::GetInstance().Get<Shader>(light.GetShaderTarget()) };
+		    auto shader { AssetManager::GetInstance().Get<Shader>(light.GetShaderTarget()) };
 
 		    if (!shader)
 			    return;

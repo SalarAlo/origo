@@ -20,7 +20,7 @@ void AssetPanel::OnImGuiRender() {
 	ImGui::Columns(columnCount, nullptr, false);
 
 	const auto selectedAssetID { m_Context.GetSelectedAsset() };
-	for (const auto& [uuid, assetHandle] : Origo::AssetManagerFast::GetInstance().GetUuidMap()) {
+	for (const auto& [uuid, assetHandle] : Origo::AssetManager::GetInstance().GetUuidMap()) {
 		auto md = Origo::AssetDatabase::GetMetadata(uuid);
 		bool isSelected = (uuid == selectedAssetID);
 
@@ -45,9 +45,8 @@ void AssetPanel::OnImGuiRender() {
 		}
 
 		bool hovered = ImGui::IsItemHovered();
-		bool clicked = ImGui::IsItemClicked();
 
-		if (clicked) {
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 			m_Context.SetSelectedAsset(uuid);
 		}
 

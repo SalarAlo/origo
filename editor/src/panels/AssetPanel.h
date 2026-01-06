@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EditorPanel.h"
-#include "origo/core/UUID.h"
 #include "state/EditorContext.h"
 #include <spdlog/spdlog.h>
 

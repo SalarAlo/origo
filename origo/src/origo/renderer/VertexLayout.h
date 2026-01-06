@@ -8,6 +8,7 @@ class VertexLayout {
 public:
 	template <typename>
 	void AddAttribute(unsigned int amount, bool normalized = false, VertexAttributeSemantic semantic = VertexAttributeSemantic::None);
+
 	std::vector<VertexAttribute>& GetAttributes();
 	size_t GetStride() { return m_Stride; }
 	static int GetStaticMeshLayout();
@@ -19,6 +20,7 @@ private:
 
 template <>
 void VertexLayout::AddAttribute<unsigned int>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
+
 template <>
 void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
 

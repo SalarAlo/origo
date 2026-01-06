@@ -1,15 +1,40 @@
 #include "origo/assets/ModelSerializer.h"
+#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/Model.h"
+#include "origo/core/Logger.h"
 #include "origo/serialization/ISerializer.h"
-
-// TODO
 
 namespace Origo {
 
 void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
 	ORG_INFO("Seriliazing an asset of type model");
+
+	auto model { static_cast<const Model*>(asset) };
+
+	auto shaderHandle { model->GetShaderHandle() };
+	auto shaderID { AssetManager::GetInstance().GetUUID(shaderHandle) };
+
+	auto path { model->GetPath() };
+
+	backend.Write("path", path.c_str());
+	backend.Write("shader_id", shaderID.ToString());
 }
 
 void ModelSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
-	throw std::logic_error("Not implemented");
+	std::string path {};
+	std::string shaderID {};
+
+	backend.TryRead("shader_id", shaderID);
+	if (!backend.TryRead("path", path)) {
+		ORG_CORE_WARN("No Path provided");
+	} else {
+		ORG_CORE_TRACE("Path {} provided", path);
+	}
+
+	auto& model { static_cast<Model&>(asset) };
+
+	model.SetPath(path);
+	model.SetShaderUUID(UUID::FromString(shaderID));
 }
+
 }

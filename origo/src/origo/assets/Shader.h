@@ -1,5 +1,6 @@
 #pragma once
 
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/assets/Asset.h"
 
@@ -10,6 +11,7 @@ public:
 	Shader() = default;
 	~Shader();
 
+	static AssetHandle DefaultNormalShader();
 	void UseProgram() const;
 
 	template <typename T>

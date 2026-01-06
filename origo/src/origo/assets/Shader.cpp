@@ -1,10 +1,24 @@
 #include "origo/assets/Shader.h"
+#include "origo/assets/AssetFactory.h"
+#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/core/Logger.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Origo {
+
+AssetHandle Shader::DefaultNormalShader() {
+	static auto handle { [] {
+		auto handle = AssetFactory::CreateAsset<Shader>("Default Normal Shader");
+		AssetManager::GetInstance()
+		    .Get<Shader>(handle)
+		    ->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
+
+		return handle;
+	}() };
+	return handle;
+}
 
 GLint Shader::GetUniformLocation(std::string_view name) const {
 	auto it = m_UniformCache.find(std::string(name));

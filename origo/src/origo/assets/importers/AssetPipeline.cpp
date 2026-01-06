@@ -44,7 +44,7 @@ void AssetPipeline::RunInitialImport() {
 			if (!asset)
 				continue;
 
-			AssetManagerFast::GetInstance().Register(std::move(asset), meta->ID);
+			AssetManager::GetInstance().Register(std::move(asset), meta->ID);
 			meta->ImportedTimestamp = meta->SourceTimestamp;
 			AssetDatabase::RegisterMetadata(*meta);
 			AssetDatabase::WriteImportFile(meta->ID);
@@ -64,13 +64,13 @@ void AssetPipeline::RunInitialImport() {
 			assetSerializer->Deserialize(serializer, *asset.get());
 			serializer.EndObject();
 
-			AssetManagerFast::GetInstance().Register(std::move(asset), meta->ID);
+			AssetHandle handle = AssetFactory::CreateImportedAsset(*meta, std::move(asset));
 			AssetDatabase::RegisterMetadata(*meta);
 		}
 	}
 
 	ORG_CORE_TRACE("Initial import complete. {} assets imported.", importCount);
-	AssetManagerFast::GetInstance().ResolveAll();
+	AssetManager::GetInstance().ResolveAll();
 }
 
 Scope<AssetMetadata> AssetPipeline::LoadOrCreateMetadata(

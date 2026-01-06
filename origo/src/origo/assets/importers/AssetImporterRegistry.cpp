@@ -1,5 +1,6 @@
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/IAssetImporter.h"
+#include "origo/assets/importers/ModelImporter.h"
 #include "origo/assets/importers/ScriptImporter.h"
 #include "origo/assets/importers/ShaderImporter.h"
 #include "origo/assets/importers/TextureImporter.h"
@@ -23,6 +24,7 @@ void AssetImporterRegistry::InitialiseDefaultImporters() {
 	Register(MakeScope<TextureImporter>());
 	Register(MakeScope<ShaderImporter>());
 	Register(MakeScope<ScriptImporter>());
+	Register(MakeScope<ModelImporter>());
 }
 
 }

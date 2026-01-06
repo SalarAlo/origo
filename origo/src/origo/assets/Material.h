@@ -12,8 +12,10 @@ public:
 	Material2D(AssetHandle shader, AssetHandle texture = {});
 	Material2D(UUID shader, UUID material);
 
+	static AssetHandle Default();
+
 	void Resolve() override {
-		auto& am = AssetManagerFast::GetInstance();
+		auto& am = AssetManager::GetInstance();
 
 		if (!m_ShaderUUID.IsBad())
 			m_Shader = am.GetHandleByUUID(m_ShaderUUID);
@@ -22,6 +24,8 @@ public:
 	}
 
 	AssetHandle GetShader() const { return m_Shader; }
+	void SetShader(const AssetHandle& handle) { m_Shader = handle; }
+
 	UniformList& GetUniformList() { return m_UniformList; }
 
 	AssetHandle GetAlbedo() const { return m_Albedo; }
@@ -32,7 +36,7 @@ public:
 
 	template <typename T>
 	Material2D& SetShaderDirectly(std::string_view name, const T& val) {
-		auto shader { AssetManagerFast::GetInstance().Get<Shader>(m_Shader) };
+		auto shader { AssetManager::GetInstance().Get<Shader>(m_Shader) };
 		shader->SetUniform(name, val);
 		return *this;
 	}

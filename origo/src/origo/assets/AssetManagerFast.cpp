@@ -3,86 +3,102 @@
 
 namespace Origo {
 
-AssetManagerFast& AssetManagerFast::GetInstance() {
-	static AssetManagerFast s_Instance {};
+AssetManager& AssetManager::GetInstance() {
+	static AssetManager s_Instance {};
 	return s_Instance;
 }
 
-Asset* AssetManagerFast::Get(const AssetHandle& handle) const {
+Asset* AssetManager::Get(const AssetHandle& handle) const {
 	if (!IsValid(handle))
 		return nullptr;
 
-	return m_Entries[handle.Index].AssetPtr.get();
+	return m_AssetEntries[handle.Index].AssetPtr.get();
 }
 
-auto AssetManagerFast::Register(Scope<Asset>&& assetPtr, UUID uuid, OptionalPath path) -> AssetHandle {
+auto AssetManager::Register(Scope<Asset>&& assetPtr, UUID uuid, OptionalPath path) -> AssetHandle {
 	auto handle { GetNextFreeHandle() };
 
-	m_Entries[handle.Index].AssetPtr = std::move(assetPtr);
-	m_Entries[handle.Index].Uuid = uuid;
-	m_Entries[handle.Index].Path = path;
+	m_AssetEntries[handle.Index].AssetPtr = std::move(assetPtr);
+	m_AssetEntries[handle.Index].Uuid = uuid;
+	m_AssetEntries[handle.Index].Path = path;
 
 	m_UuidToHandle[uuid] = handle;
 
 	return handle;
 }
 
-auto AssetManagerFast::GetNextFreeHandle() -> AssetHandle {
+auto AssetManager::GetNextFreeHandle() -> AssetHandle {
 	if (!m_Free.empty()) {
 		auto i { m_Free.back() };
 		m_Free.pop_back();
-		AssetHandle handle { i, ++m_Entries[i].Generation };
+		AssetHandle handle { i, ++m_AssetEntries[i].Generation };
 		return handle;
 	} else {
-		uint32_t i { static_cast<uint32_t>(m_Entries.size()) };
-		m_Entries.emplace_back(0);
+		uint32_t i { static_cast<uint32_t>(m_AssetEntries.size()) };
+		m_AssetEntries.emplace_back(0);
 		return { i, 0 };
 	}
 }
 
-void AssetManagerFast::Destroy(const AssetHandle& handle) {
+void AssetManager::Destroy(const AssetHandle& handle) {
 };
 
-bool AssetManagerFast::IsValid(const AssetHandle& handle) const {
-	bool isInBounds { m_Entries.size() > handle.Index };
+bool AssetManager::IsValid(const AssetHandle& handle) const {
+	bool isInBounds { m_AssetEntries.size() > handle.Index };
 	if (!isInBounds)
 		return false;
 
-	bool isGenerationsMatch { m_Entries[handle.Index].Generation == handle.Generation };
+	bool isGenerationsMatch { m_AssetEntries[handle.Index].Generation == handle.Generation };
 	return isGenerationsMatch;
 }
 
-UUID AssetManagerFast::GetUUID(const AssetHandle& handle) const {
+UUID AssetManager::GetUUID(const AssetHandle& handle) const {
 	if (!IsValid(handle))
 		return UUID::Bad();
-	return m_Entries[handle.Index].Uuid;
+	return m_AssetEntries[handle.Index].Uuid;
 }
 
-AssetHandle AssetManagerFast::GetHandleByUUID(const UUID& id) const {
+AssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
 	if (id == UUID::Bad())
 		return {};
 
 	auto it = m_UuidToHandle.find(id);
 	if (it == m_UuidToHandle.end()) {
-		ORG_ERROR("AssetManager::Resolve: unknown UUID {}", id.ToString());
+		ORG_ERROR("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
 		return {};
 	}
 
 	const AssetHandle& handle = it->second;
 
 	if (!IsValid(handle)) {
-		ORG_ERROR("AssetManager::Resolve: stale handle for UUID {}", id.ToString());
+		ORG_ERROR("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.ToString());
 		return {};
 	}
 
 	return handle;
 }
 
-void AssetManagerFast::ResolveAll() {
-	for (const auto& entry : m_Entries) {
-		if (entry.AssetPtr) {
-			entry.AssetPtr->Resolve();
-		}
+void AssetManager::ResolveAll(std::optional<std::function<bool(Asset*)>> resolveCond) {
+	// need to do this because some assets resolve might resize the entries and they move
+	// because of behaviour of std::vector (realloc on capacity exceedence)
+	size_t assetSize = m_AssetEntries.size();
+
+	for (size_t i = 0; i < assetSize; ++i) {
+		auto& entry = m_AssetEntries[i];
+
+		if (!entry.AssetPtr)
+			continue;
+		if (entry.Uuid.IsBad())
+			continue;
+		if (auto assetPtr = entry.AssetPtr.get(); resolveCond.has_value() && !((*resolveCond)(assetPtr)))
+			continue;
+
+		std::string pathStr = entry.Path ? entry.Path->string() : "<no path>";
+		ORG_INFO("Resolving asset of type '{}' with path '{}'",
+		    magic_enum::enum_name(entry.AssetPtr->GetAssetType()),
+		    pathStr);
+
+		entry.AssetPtr->Resolve();
 	}
 }
 

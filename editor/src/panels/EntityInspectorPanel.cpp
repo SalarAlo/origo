@@ -1,10 +1,14 @@
 #include "panels/EntityInspectorPanel.h"
 
 #include "imgui.h"
+#include "origo/assets/Asset.h"
+#include "origo/assets/AssetDatabase.h"
 #include "origo/scene/Name.h"
 #include "origo/scene/NativeComponentRegistry.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 #include "ui/InspectorDrawRegistry.h"
+
+using namespace Origo;
 
 namespace OrigoEditor {
 
@@ -34,6 +38,7 @@ void EntityInspectorPanel::OnImGuiRender() {
 	ImGui::Spacing();
 
 	DrawAddComponent(activeScene, selectedEntity);
+	DrawScriptDropTarget(activeScene, selectedEntity);
 }
 
 void EntityInspectorPanel::DrawEntityName() {
@@ -163,7 +168,6 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 		ImGui::TextDisabled("Script Components");
 
 		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::GetAll()) {
-
 			if (activeScene->HasScriptComponent(selectedEntity, id))
 				continue;
 
@@ -177,4 +181,54 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 		ImGui::EndPopup();
 	}
 }
+
+void EntityInspectorPanel::DrawScriptDropTarget(
+    Origo::Scene* activeScene,
+    Origo::RID selectedEntity) {
+	ImGui::Spacing();
+
+	ImVec2 dropSize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+	ImGui::Dummy(dropSize);
+
+	ImVec2 min = ImGui::GetItemRectMin();
+	ImVec2 max = ImGui::GetItemRectMax();
+
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+
+	const bool hoveringPayload = ImGui::GetDragDropPayload() != nullptr && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+
+	if (hoveringPayload) {
+		dl->AddRect(
+		    min, max,
+		    IM_COL32(120, 160, 255, 180),
+		    4.0f, 0, 2.0f);
+
+		dl->AddText(
+		    ImVec2(min.x + 8, min.y + 8),
+		    IM_COL32(180, 200, 255, 220),
+		    "Drop script to add");
+	}
+
+	if (!ImGui::BeginDragDropTarget())
+		return;
+
+	const ImGuiPayload* payload {};
+	if (payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID"); !payload) {
+		ImGui::EndDragDropTarget();
+		return;
+	}
+
+	const char* uuidStr = static_cast<const char*>(payload->Data);
+	Origo::UUID uuid = Origo::UUID::FromString(uuidStr);
+
+	auto metadata = Origo::AssetDatabase::GetMetadata(uuid);
+	if (metadata.Type == Origo::AssetType::Script) {
+
+		auto scriptID = Origo::ScriptComponentRegistry::Get(uuid);
+		if (!activeScene->HasScriptComponent(selectedEntity, scriptID.ID)) {
+			activeScene->AddScriptComponent(selectedEntity, scriptID.ID);
+		}
+	}
+}
+
 }

@@ -5,6 +5,7 @@
 #include "origo/assets/Metadata.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
+#include "origo/assets/Model.h"
 #include "origo/assets/Script.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
@@ -32,7 +33,16 @@ public:
 
 		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
 
-		return AssetManagerFast::GetInstance().Register(std::move(asset), id);
+		return AssetManager::GetInstance().Register(std::move(asset), id);
+	}
+
+	static AssetHandle CreateImportedAsset(const AssetMetadata& meta, Scope<Asset>&& asset) {
+		AssetDatabase::RegisterMetadata(meta);
+
+		return AssetManager::GetInstance().Register(
+		    std::move(asset),
+		    meta.ID,
+		    meta.SourcePath);
 	}
 
 	static Scope<Asset> AllocateHollowAsset(AssetType type) {
@@ -45,6 +55,8 @@ public:
 			return MakeScope<Material2D>();
 		case AssetType::Script:
 			return MakeScope<Script>();
+		case AssetType::Model:
+			return MakeScope<Model>();
 		default:
 			ORG_ERROR("AssetFactory: Unknown asset type");
 			return nullptr;

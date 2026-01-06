@@ -7,8 +7,6 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
-#include "origo/assets/Model.h"
-#include "origo/assets/ShaderSource.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/assets/PrimitiveShape.h"
@@ -21,7 +19,6 @@
 #include "origo/renderer/VertexLayoutRegistry.h"
 
 #include "origo/scene/MeshRenderer.h"
-#include "origo/scene/ModelRenderer.h"
 #include "origo/scene/Transform.h"
 
 using namespace Origo;
@@ -33,30 +30,16 @@ SceneLayer::SceneLayer(EditorContext& ctx)
 
 void SceneLayer::OnAttach() {
 	m_Texture = AssetFactory::CreateAsset<Texture2D>("Grid_Texture");
-	AssetManagerFast::GetInstance()
+	AssetManager::GetInstance()
 	    .Get<Texture2D>(m_Texture)
 	    ->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
 
-	m_Shader = AssetFactory::CreateAsset<Shader>("Grid_Shader");
-	AssetManagerFast::GetInstance()
-	    .Get<Shader>(m_Shader)
-	    ->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
+	m_Shader = Shader::DefaultNormalShader();
 
 	m_VertexLayoutID = VertexLayout::GetStaticMeshLayout();
 	m_VertexStride = VertexLayoutRegistry::Get(m_VertexLayoutID)->GetStride();
 
 	m_HeapID = GeometryHeapRegistry::GetOrCreateStaticMeshHeap(m_VertexLayoutID);
-
-	m_ModelShader = m_Shader;
-
-	m_Model = AssetFactory::CreateAsset<Model>(
-	    "Tree_Model",
-	    "resources/models/pikachu.glb",
-	    m_ModelShader);
-
-	AssetManagerFast::GetInstance()
-	    .Get<Model>(m_Model)
-	    ->Load();
 
 	CreateAssets();
 
@@ -64,7 +47,7 @@ void SceneLayer::OnAttach() {
 }
 
 void SceneLayer::OnUpdate(double) {
-	auto shader = AssetManagerFast::GetInstance().Get<Shader>(m_Shader);
+	auto shader = AssetManager::GetInstance().Get<Shader>(m_Shader);
 
 	shader->UseProgram();
 	shader->SetUniform("u_Time",
@@ -156,16 +139,6 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			}
 		}
 	}
-
-	auto entity = m_Context.EditorScene->CreateEntity("Tree");
-
-	auto transform = m_Context.EditorScene->AddNativeComponent<Transform>(entity);
-	transform->SetPosition({ 0.0f, 0.0f, 0.0f });
-	transform->SetScale({ 1.0f, 1.0f, 1.0f });
-
-	m_Context.EditorScene->AddNativeComponent<ModelRenderer>(
-	    entity,
-	    m_Model);
 }
 
 }

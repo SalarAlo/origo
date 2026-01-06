@@ -13,6 +13,7 @@ enum class TextureType {
 
 class Texture2D : public Asset {
 public:
+	static AssetHandle DefaultWhite();
 	Texture2D(TextureType type = TextureType::Albedo);
 
 	void SetSource(Scope<TextureSource> src);

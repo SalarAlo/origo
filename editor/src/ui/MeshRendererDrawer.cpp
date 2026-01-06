@@ -9,7 +9,7 @@ namespace OrigoEditor {
 
 static bool s_Registered = []() {
 	InspectorDrawRegistry::RegisterNativeDrawer<Origo::MeshRenderer>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRenderer& renderer) {
-		auto& am { Origo::AssetManagerFast::GetInstance() };
+		auto& am { Origo::AssetManager::GetInstance() };
 
 		auto material { renderer.GetMaterial() };
 		auto mesh { renderer.GetMesh() };

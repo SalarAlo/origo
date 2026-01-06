@@ -7,7 +7,7 @@ namespace Origo {
 Scene::Scene(std::string_view name)
     : m_Name(name) {
 	auto cam { CreateEntity("Main Camera") };
-	auto transfComp { AddNativeComponent<Transform>(cam) };
+	auto transfComp { GetNativeComponent<Transform>(cam) };
 	auto cameraComp { AddNativeComponent<CameraComponent>(cam) };
 	cameraComp->IsPrimary = true;
 	transfComp->SetPosition({ -3.5, 4, 5 });
@@ -27,6 +27,7 @@ Scene::Scene(const Scene& other)
 RID Scene::CreateEntity(std::string_view name) {
 	m_Entities.push_back(RID::New());
 	AddNativeComponent<Name>(m_Entities.back())->SetName(name);
+	AddNativeComponent<Transform>(m_Entities.back());
 	return m_Entities.back();
 }
 

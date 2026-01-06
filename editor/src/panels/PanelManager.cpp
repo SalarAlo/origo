@@ -1,4 +1,5 @@
 #include "panels/PanelManager.h"
+#include "components/EditorOutline.h"
 #include "state/EditorContext.h"
 #include "imgui.h"
 #include "origo/scene/Transform.h"
@@ -37,7 +38,7 @@ void PanelManager::RenderMenuItems() {
 		static int i {};
 		if (ImGui::MenuItem("Create Entity")) {
 			auto e = m_Context.ActiveScene->CreateEntity("entity_" + std::to_string(i++));
-			m_Context.ActiveScene->AddNativeComponent<Origo::Transform>(e);
+			m_Context.ActiveScene->AddNativeComponent<OrigoEditor::EditorOutline>(e);
 		}
 
 		if (ImGui::MenuItem("Delete Entity")) {

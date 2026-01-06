@@ -35,7 +35,7 @@ AssetSerializer* Get(AssetType type) {
 }
 
 void RegisterAllAssetSerializers() {
-	ORG_INFO("Registering all default asset serializers");
+	ORG_CORE_TRACE("Registering all default asset serializers");
 
 	Register(AssetType::Texture2D, new TextureSerializer());
 	Register(AssetType::Material, new MaterialSerializer());

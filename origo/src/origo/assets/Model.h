@@ -12,7 +12,7 @@ struct aiNode;
 
 namespace Origo {
 
-struct Model : public Asset {
+class Model : public Asset {
 public:
 	struct SubMesh {
 		AssetHandle Mesh;
@@ -43,8 +43,11 @@ public:
 
 	AssetHandle GetShaderHandle() const;
 	void SetShaderHandle(const AssetHandle&);
+	void SetShaderUUID(const UUID&);
 
 	void SetPath(const std::filesystem::path& path);
+
+	void Resolve() override;
 
 private:
 	void LoadFromAssimp();
@@ -55,10 +58,13 @@ private:
 private:
 	std::filesystem::path m_Path {};
 
-	int m_RootNode = -1;
-	std::vector<SubMesh> m_SubMeshes;
-	std::vector<Node> m_Nodes;
-	AssetHandle m_ModelShader;
+	int m_RootNode { -1 };
+
+	std::vector<SubMesh> m_SubMeshes {};
+	std::vector<Node> m_Nodes {};
+
+	AssetHandle m_ModelShaderHandle {};
+	UUID m_ShaderUUID {};
 };
 
 }
