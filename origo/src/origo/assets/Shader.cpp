@@ -8,7 +8,7 @@
 
 namespace Origo {
 
-AssetHandle Shader::DefaultNormalShader() {
+AssetHandle Shader::DefaultShader() {
 	static auto handle { [] {
 		auto handle = AssetFactory::CreateAsset<Shader>("Default Normal Shader");
 		AssetManager::GetInstance()

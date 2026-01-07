@@ -12,6 +12,7 @@ public:
 
 	virtual bool CanImport(const std::filesystem::path& path) const = 0;
 	virtual AssetType GetAssetType() const = 0;
+	// TODO: Metadata alr contains path refactor!
 	virtual Scope<Asset> Import(const std::filesystem::path& path, const AssetMetadata& meta) = 0;
 };
 

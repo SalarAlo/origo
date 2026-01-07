@@ -38,7 +38,7 @@ void RegisterAllAssetSerializers() {
 	ORG_CORE_TRACE("Registering all default asset serializers");
 
 	Register(AssetType::Texture2D, new TextureSerializer());
-	Register(AssetType::Material, new MaterialSerializer());
+	Register(AssetType::Material2D, new MaterialSerializer());
 	Register(AssetType::Mesh, new MeshSerializer());
 	Register(AssetType::Model, new ModelSerializer());
 	Register(AssetType::Shader, new ShaderSerializer());

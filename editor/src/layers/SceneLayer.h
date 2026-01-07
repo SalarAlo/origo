@@ -21,9 +21,6 @@ private:
 private:
 	EditorContext& m_Context;
 
-	Origo::AssetHandle m_Shader;
-	Origo::AssetHandle m_Texture;
-	Origo::AssetHandle m_Material;
 	Origo::AssetHandle m_CubeMesh;
 
 	Origo::AssetHandle m_ModelShader;

@@ -3,7 +3,7 @@
 #include "origo/assets/importers/IAssetImporter.h"
 namespace Origo {
 
-class ModelImporter : public IAssetImporter {
+class MaterialImporter : public IAssetImporter {
 public:
 	bool CanImport(const std::filesystem::path& path) const override;
 	AssetType GetAssetType() const override;

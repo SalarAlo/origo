@@ -8,27 +8,21 @@ namespace Origo {
 
 class Material2D : public Asset {
 public:
-	Material2D() = default;
+	Material2D();
 	Material2D(AssetHandle shader, AssetHandle texture = {});
 	Material2D(UUID shader, UUID material);
 
-	static AssetHandle Default();
+	static AssetHandle DefaultMaterial2D();
 
-	void Resolve() override {
-		auto& am = AssetManager::GetInstance();
-
-		if (!m_ShaderUUID.IsBad())
-			m_Shader = am.GetHandleByUUID(m_ShaderUUID);
-		if (!m_AlbedoUUID.IsBad())
-			m_Albedo = am.GetHandleByUUID(m_AlbedoUUID);
-	}
-
+	void Resolve() override;
 	AssetHandle GetShader() const { return m_Shader; }
 	void SetShader(const AssetHandle& handle) { m_Shader = handle; }
+	void SetShaderUUID(const UUID& uuid) { m_ShaderUUID = uuid; };
 
 	UniformList& GetUniformList() { return m_UniformList; }
 
 	AssetHandle GetAlbedo() const { return m_Albedo; }
+	void SetAlbedoUUID(const UUID& uuid) { m_AlbedoUUID = uuid; };
 	void SetAlbedo(const AssetHandle& handle) { m_Albedo = handle; }
 
 	void Bind();
@@ -47,8 +41,8 @@ public:
 		return *this;
 	}
 
-	AssetType GetAssetType() const override { return AssetType::Material; }
-	static AssetType GetClassAssetType() { return AssetType::Material; }
+	AssetType GetAssetType() const override { return AssetType::Material2D; }
+	static AssetType GetClassAssetType() { return AssetType::Material2D; }
 
 private:
 	AssetHandle m_Shader {};

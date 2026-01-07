@@ -8,7 +8,7 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
-AssetHandle Texture2D::DefaultWhite() {
+AssetHandle Texture2D::DefaultTexture() {
 	static AssetHandle handle { [] {
 		std::vector<unsigned char> whitePixel = {
 			255, 255, 255, 255

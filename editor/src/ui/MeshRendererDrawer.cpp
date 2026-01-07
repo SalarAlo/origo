@@ -14,7 +14,7 @@ static bool s_Registered = []() {
 		auto material { renderer.GetMaterial() };
 		auto mesh { renderer.GetMesh() };
 
-		ComponentUI::DrawAssetControl("Material", material, Origo::AssetType::Material);
+		ComponentUI::DrawAssetControl("Material", material, Origo::AssetType::Material2D);
 		ComponentUI::DrawAssetControl("Mesh", mesh, Origo::AssetType::Mesh);
 
 		if (mesh != renderer.GetMesh())

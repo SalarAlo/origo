@@ -4,6 +4,7 @@ namespace Origo {
 
 class ISerializer {
 public:
+	// TODO path should be of type std::filesystem::path
 	ISerializer(std::string_view path)
 	    : m_Path(path) { }
 	virtual ~ISerializer() = default;

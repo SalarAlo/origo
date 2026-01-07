@@ -275,8 +275,10 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 
 	ImGui::InvisibleButton("asset_tile", tileSize);
 
+	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		m_Context.SetSelectedAsset(asset->id);
+
 	const bool hovered = ImGui::IsItemHovered();
-	const bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
 
 	const auto selectedAssetID = m_Context.GetSelectedAsset();
 	const bool isSelected = (asset->id == selectedAssetID);
@@ -315,12 +317,15 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 		ImGui::EndTooltip();
 	}
 
-	if (clicked)
-		m_Context.SetSelectedAsset(asset->id);
-
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+		const std::string uuidStr = asset->id.ToString();
+
 		ImGui::TextUnformatted(asset->name.c_str());
-		ImGui::SetDragDropPayload("ORIGO_ASSET_UUID", &asset->id, sizeof(Origo::UUID));
+		ImGui::SetDragDropPayload(
+		    "ORIGO_ASSET_UUID",
+		    uuidStr.c_str(),
+		    uuidStr.size() + 1);
+
 		ImGui::EndDragDropSource();
 	}
 

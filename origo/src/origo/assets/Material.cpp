@@ -7,6 +7,11 @@
 
 namespace Origo {
 
+Material2D::Material2D() {
+	m_Shader = Shader::DefaultShader();
+	m_Albedo = Texture2D::DefaultTexture();
+}
+
 Material2D::Material2D(AssetHandle shader, AssetHandle albedo)
     : m_UniformList()
     , m_Shader(shader)
@@ -22,10 +27,15 @@ Material2D::Material2D(AssetHandle shader, AssetHandle albedo)
 	}
 }
 
-AssetHandle Material2D::Default() {
+// fails because not UUID changes each time so that cant be stored
+// as a ref in a .import file.
+// 2 solutions:
+// introduce a new type of ref thats not uuid but "name" for example
+// make the default material a file and hook that up somehow in here
+AssetHandle Material2D::DefaultMaterial2D() {
 	static auto material {
 		[] {
-		        return AssetFactory::CreateAsset<Material2D>("Default Material", Shader::DefaultNormalShader(), Texture2D::DefaultWhite());
+		        return AssetFactory::CreateAsset<Material2D>("Default Material", Shader::DefaultShader(), Texture2D::DefaultTexture());
 		}()
 	};
 	return material;
@@ -46,6 +56,20 @@ void Material2D::Bind() {
 void Material2D::WriteModel(const glm::mat4& modelMatrix) {
 	auto shader { AssetManager::GetInstance().Get<Shader>(m_Shader) };
 	shader->SetUniform("u_ModelMatrix", modelMatrix);
+}
+
+void Material2D::Resolve() {
+	auto& am = AssetManager::GetInstance();
+
+	m_Shader = m_ShaderUUID.IsBad() ? Shader::DefaultShader() : am.GetHandleByUUID(m_ShaderUUID);
+	if (m_Shader.IsNull()) {
+		m_Shader = Shader::DefaultShader();
+	}
+
+	m_Albedo = m_AlbedoUUID.IsBad() ? Texture2D::DefaultTexture() : am.GetHandleByUUID(m_AlbedoUUID);
+	if (m_Albedo.IsNull()) {
+		m_Albedo = Shader::DefaultShader();
+	}
 }
 
 }

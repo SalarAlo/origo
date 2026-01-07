@@ -7,8 +7,6 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
-#include "origo/assets/Texture2D.h"
-#include "origo/assets/TextureSource.h"
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Mesh.h"
 
@@ -18,6 +16,8 @@
 #include "origo/renderer/VertexLayout.h"
 #include "origo/renderer/VertexLayoutRegistry.h"
 
+#include "origo/scene/CameraComponent.h"
+#include "origo/scene/Light.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 
@@ -26,28 +26,37 @@ using namespace Origo;
 namespace OrigoEditor {
 
 SceneLayer::SceneLayer(EditorContext& ctx)
-    : m_Context(ctx) { }
+    : m_Context(ctx) {
+}
 
 void SceneLayer::OnAttach() {
-	m_Texture = AssetFactory::CreateAsset<Texture2D>("Grid_Texture");
-	AssetManager::GetInstance()
-	    .Get<Texture2D>(m_Texture)
-	    ->SetSource(MakeScope<TextureSourceFile>("resources/textures/dirt.jpg"));
-
-	m_Shader = Shader::DefaultNormalShader();
-
 	m_VertexLayoutID = VertexLayout::GetStaticMeshLayout();
 	m_VertexStride = VertexLayoutRegistry::Get(m_VertexLayoutID)->GetStride();
 
 	m_HeapID = GeometryHeapRegistry::GetOrCreateStaticMeshHeap(m_VertexLayoutID);
 
+	auto scene { m_Context.ActiveScene };
+	auto cam { scene->CreateEntity("Main Camera") };
+
+	auto cameraTransformComponent { scene->GetNativeComponent<Transform>(cam) };
+	auto cameraComponent { scene->AddNativeComponent<Origo::CameraComponent>(cam) };
+	cameraComponent->IsPrimary = true;
+	cameraTransformComponent->SetPosition({ -3.5, 4, 5 });
+	cameraTransformComponent->SetRotation({ -33, -33, 0 });
+
+	auto lightEntity { scene->CreateEntity("Light") };
+	auto lightTransformComponent { scene->GetNativeComponent<Transform>(lightEntity) };
+	auto lightComponent { scene->AddNativeComponent<Origo::Light>(lightEntity) };
+	lightComponent->SetShaderTarget(Shader::DefaultShader());
+	lightTransformComponent->SetPosition({ 0, 4.0, 0.0 });
+
 	CreateAssets();
 
-	SpawnGrid(10);
+	SpawnGrid(50);
 }
 
 void SceneLayer::OnUpdate(double) {
-	auto shader = AssetManager::GetInstance().Get<Shader>(m_Shader);
+	auto shader = AssetManager::GetInstance().Get<Shader>(Shader::DefaultShader());
 
 	shader->UseProgram();
 	shader->SetUniform("u_Time",
@@ -95,11 +104,6 @@ void SceneLayer::CreateAssets() {
 		    m_HeapID,
 		    range);
 	}
-
-	m_Material = AssetFactory::CreateAsset<Material2D>(
-	    "Grid_Material",
-	    m_Shader,
-	    m_Texture);
 }
 
 void SceneLayer::SpawnGrid(int gridSize, float spacing) {
@@ -127,7 +131,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 
 			m_Context.EditorScene->AddNativeComponent<MeshRenderer>(
 			    entity,
-			    m_Material,
+			    Material2D::DefaultMaterial2D(),
 			    m_CubeMesh);
 
 			m_Context.EditorScene->AddNativeComponent<EditorOutline>(entity);

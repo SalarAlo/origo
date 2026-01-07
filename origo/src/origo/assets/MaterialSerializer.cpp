@@ -20,14 +20,15 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 void MaterialSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	auto& material { static_cast<Material2D&>(asset) };
 
-	std::string albedoUuidStr {};
-	std::string shaderUuidStr {};
+	if (std::string albedoUuidStr {}; backend.TryRead("albedo", albedoUuidStr)) {
+		auto albedoUuid { UUID::FromString(albedoUuidStr) };
+		material.SetAlbedoUUID(albedoUuid);
+	}
 
-	backend.TryRead("albedo", albedoUuidStr);
-	backend.TryRead("shader", shaderUuidStr);
-
-	auto albedoUuid { UUID::FromString(albedoUuidStr) };
-	auto shaderUuid { UUID::FromString(shaderUuidStr) };
+	if (std::string shaderUuidStr {}; backend.TryRead("shader", shaderUuidStr)) {
+		auto shaderUuid { UUID::FromString(shaderUuidStr) };
+		material.SetShaderUUID(shaderUuid);
+	}
 }
 
 }

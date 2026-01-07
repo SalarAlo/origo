@@ -15,7 +15,7 @@ void AssetInspectorDrawer::Draw(const Origo::AssetMetadata& md) {
 
 void AssetInspectorDrawer::DrawSpecific(Origo::Asset* asset, Origo::AssetType type) {
 	switch (type) {
-	case Origo::AssetType::Material:
+	case Origo::AssetType::Material2D:
 		DrawMaterial(dynamic_cast<Origo::Material2D*>(asset));
 		break;
 	default: {

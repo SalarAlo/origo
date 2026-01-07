@@ -251,7 +251,7 @@ void Model::Resolve() {
 
 		if (uuidHandle.IsNull()) {
 			ORG_CORE_WARN("Shader UUID invalid for model '{}', using default shader", m_Path.c_str());
-			m_ModelShaderHandle = Shader::DefaultNormalShader();
+			m_ModelShaderHandle = Shader::DefaultShader();
 		} else {
 			m_ModelShaderHandle = uuidHandle;
 		}

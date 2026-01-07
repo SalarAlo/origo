@@ -1,17 +1,10 @@
 #include "origo/scene/Scene.h"
-#include "origo/scene/CameraComponent.h"
 #include "origo/scene/Transform.h"
 #include "origo/scene/Name.h"
 
 namespace Origo {
 Scene::Scene(std::string_view name)
     : m_Name(name) {
-	auto cam { CreateEntity("Main Camera") };
-	auto transfComp { GetNativeComponent<Transform>(cam) };
-	auto cameraComp { AddNativeComponent<CameraComponent>(cam) };
-	cameraComp->IsPrimary = true;
-	transfComp->SetPosition({ -3.5, 4, 5 });
-	transfComp->SetRotation({ -33, -33, 0 });
 }
 
 Scene::Scene(const Scene& other)

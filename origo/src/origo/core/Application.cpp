@@ -7,6 +7,15 @@
 #include "origo/core/Init.h"
 
 namespace Origo {
+
+Application::Application(const ApplicationSettings& settings)
+    : m_Settings(settings)
+    , m_Window(settings.WindowSettings)
+    , m_Running(true)
+    , m_LastTimeStamp(Time::GetNow()) {
+	m_Window.SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+}
+
 void Application::PushLayer(Layer* layer, size_t key, bool frozen) {
 	m_LayerSystem.RequestPushLayer(layer, key, frozen);
 }
@@ -34,14 +43,6 @@ void Application::InternalShutdown() {
 		layer->OnDetach();
 	}
 	AssetSerializationSystem::Cleanup();
-}
-
-Application::Application(const ApplicationSettings& settings)
-    : m_Settings(settings)
-    , m_Window(settings.WindowSettings)
-    , m_Running(true)
-    , m_LastTimeStamp(Time::GetNow()) {
-	m_Window.SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 }
 
 void Application::OnEvent(Event& event) {
