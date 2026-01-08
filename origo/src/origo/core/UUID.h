@@ -53,6 +53,12 @@ struct UUID {
 		return UUID(high, low);
 	}
 
+	static UUID FromArbitraryString(std::string_view str) {
+		uint64_t high = HashFNV1a64(str);
+		uint64_t low = HashFNV1a64("origo::uuid::salt::" + std::string(str));
+		return UUID(high, low);
+	}
+
 	static uint64_t HashFNV1a64(std::string_view str) {
 		constexpr uint64_t FNV_OFFSET = 14695981039346656037ull;
 		constexpr uint64_t FNV_PRIME = 1099511628211ull;
@@ -74,6 +80,7 @@ struct UUID {
 
 	uint64_t GetHigh() const { return m_High; }
 	uint64_t GetLow() const { return m_Low; }
+	// TODO: remove and use std::optional instead
 	bool IsBad() const { return m_IsBad; }
 
 private:

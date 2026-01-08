@@ -23,7 +23,6 @@ private:
 
 	Origo::AssetHandle m_CubeMesh;
 
-	Origo::AssetHandle m_ModelShader;
 	Origo::AssetHandle m_Model;
 
 	uint32_t m_VertexLayoutID = 0;

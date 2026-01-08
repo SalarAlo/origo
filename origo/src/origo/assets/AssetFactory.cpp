@@ -1,4 +1,8 @@
 #include "AssetFactory.h"
+#include "origo/assets/Material.h"
+#include "origo/assets/Model.h"
+#include "origo/assets/Shader.h"
+#include "origo/assets/Texture2D.h"
 
 namespace Origo {
 Scope<Asset> AssetFactory::AllocateHollowAsset(AssetType type) {

@@ -12,10 +12,10 @@ void ModelRenderSystem::Render(Scene* scene, RenderContext& context) {
 	        ModelRenderer& mr,
 	        Transform& transform) {
 		    auto modelHandle = mr.GetModel();
-		    if (modelHandle.IsNull())
+		    if (!modelHandle.has_value())
 			    return;
 
-		    auto model = AssetManager::GetInstance().Get<Model>(modelHandle);
+		    auto model = AssetManager::GetInstance().Get<Model>(*modelHandle);
 		    if (!model)
 			    return;
 

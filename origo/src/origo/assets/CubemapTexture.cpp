@@ -2,6 +2,7 @@
 #include "origo/assets/TextureSource.h"
 
 namespace Origo {
+
 CubemapTexture::CubemapTexture(CubemapDescription description)
     : m_Description(description) {
 }

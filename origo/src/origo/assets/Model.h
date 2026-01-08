@@ -1,3 +1,4 @@
+// Model.h
 #pragma once
 
 #include <filesystem>
@@ -27,7 +28,7 @@ public:
 	};
 
 public:
-	Model() = default;
+	Model();
 	Model(const std::filesystem::path& path, const AssetHandle& shader);
 
 	void Load();
@@ -41,7 +42,7 @@ public:
 	const std::vector<Node>& GetNodes() const;
 	const std::vector<SubMesh>& GetSubMeshes() const;
 
-	AssetHandle GetShaderHandle() const;
+	OptionalAssetHandle GetShaderHandle() const;
 	void SetShaderHandle(const AssetHandle&);
 	void SetShaderUUID(const UUID&);
 
@@ -62,8 +63,9 @@ private:
 
 	std::vector<SubMesh> m_SubMeshes {};
 	std::vector<Node> m_Nodes {};
+	std::vector<int> m_AssimpMeshToSubMesh {};
 
-	AssetHandle m_ModelShaderHandle {};
+	OptionalAssetHandle m_ModelShaderHandle {};
 	UUID m_ShaderUUID {};
 };
 

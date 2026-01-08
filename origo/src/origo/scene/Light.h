@@ -16,7 +16,7 @@ public:
 	std::string GetName() const override { return "Light"; };
 
 	void SetShaderTarget(const AssetHandle& handle) { m_ShaderTarget = handle; }
-	const AssetHandle& GetShaderTarget() { return m_ShaderTarget; }
+	OptionalAssetHandle GetShaderTarget() { return m_ShaderTarget; }
 
 	void SetShinyFactor(int factor) { m_ShinyFactor = factor; }
 	int GetShinyFactor() const { return m_ShinyFactor; }
@@ -32,7 +32,7 @@ private:
 	glm::vec3 m_LightColor { 1.0f };
 	float m_AmbientFactor { 0.2f };
 
-	AssetHandle m_ShaderTarget {};
+	OptionalAssetHandle m_ShaderTarget {};
 };
 
 }

@@ -11,15 +11,15 @@ public:
 
 	std::string GetName() const override { return "MeshRenderer"; }
 
-	AssetHandle GetMesh() const { return m_Mesh; }
-	AssetHandle GetMaterial() const { return m_Material; }
+	OptionalAssetHandle GetMesh() const { return m_Mesh; }
+	OptionalAssetHandle GetMaterial() const { return m_Material; }
 
 	void SetMesh(const AssetHandle& handle) { m_Mesh = handle; }
 	void SetMaterial(const AssetHandle& handle) { m_Material = handle; }
 
 private:
-	AssetHandle m_Material {};
-	AssetHandle m_Mesh {};
+	OptionalAssetHandle m_Material {};
+	OptionalAssetHandle m_Mesh {};
 };
 
 }

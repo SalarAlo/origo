@@ -61,8 +61,8 @@ static bool TryReadArrayElementImpl(std::stack<JsonStackEntry>& stack, T& value)
 	}
 }
 
-JsonSerializer::JsonSerializer(std::string_view name)
-    : ISerializer(name) {
+JsonSerializer::JsonSerializer(const std::filesystem::path& path)
+    : ISerializer(path) {
 	m_Root = nlohmann::json::object();
 	while (!m_ObjectsStack.empty())
 		m_ObjectsStack.pop();
@@ -84,14 +84,14 @@ nlohmann::json& JsonSerializer::top_json() {
 
 void JsonSerializer::SaveToFile() {
 	if (m_ObjectsStack.size() > 1) {
-		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_Path);
+		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_Path.c_str());
 		return;
 	}
 
-	std::filesystem::create_directories(std::filesystem::path(m_Path).parent_path());
+	std::filesystem::create_directories(m_Path.parent_path());
 	std::ofstream out(m_Path, std::ios::out | std::ios::trunc);
 	if (!out) {
-		ORG_ERROR("Failed to open output file: {}", m_Path);
+		ORG_ERROR("Failed to open output file: {}", m_Path.c_str());
 		return;
 	}
 	out << top_json().dump(8);
@@ -100,7 +100,7 @@ void JsonSerializer::SaveToFile() {
 void JsonSerializer::LoadFile() {
 	std::ifstream in(m_Path);
 	if (!in) {
-		ORG_ERROR("Failed to open input file: {}", m_Path);
+		ORG_ERROR("Failed to open input file: {}", m_Path.c_str());
 		m_Root = nlohmann::json::object();
 		while (!m_ObjectsStack.empty())
 			m_ObjectsStack.pop();
@@ -113,7 +113,7 @@ void JsonSerializer::LoadFile() {
 		in >> loaded;
 		m_Root = loaded.is_object() ? std::move(loaded) : nlohmann::json::object();
 	} catch (const std::exception& e) {
-		ORG_ERROR("JSON parse error in {}: {}", m_Path, e.what());
+		ORG_ERROR("JSON parse error in {}: {}", m_Path.c_str(), e.what());
 		m_Root = nlohmann::json::object();
 	}
 

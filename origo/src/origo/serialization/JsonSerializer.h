@@ -2,6 +2,7 @@
 
 #include "nlohmann/json.hpp"
 #include "origo/serialization/ISerializer.h"
+#include <filesystem>
 #include <stack>
 
 namespace Origo {
@@ -13,7 +14,7 @@ struct JsonStackEntry {
 
 class JsonSerializer : public ISerializer {
 public:
-	JsonSerializer(std::string_view name);
+	JsonSerializer(const std::filesystem::path& name);
 
 	SERIALIZER_FWD
 private:

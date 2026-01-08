@@ -17,10 +17,10 @@ static bool s_Registered = []() {
 		ComponentUI::DrawAssetControl("Material", material, Origo::AssetType::Material2D);
 		ComponentUI::DrawAssetControl("Mesh", mesh, Origo::AssetType::Mesh);
 
-		if (mesh != renderer.GetMesh())
-			renderer.SetMesh(mesh);
-		if (material != renderer.GetMaterial())
-			renderer.SetMaterial(material);
+		if (mesh != renderer.GetMesh() && mesh.has_value())
+			renderer.SetMesh(*mesh);
+		if (material != renderer.GetMaterial() && material.has_value())
+			renderer.SetMaterial(*material);
 	});
 
 	return true;

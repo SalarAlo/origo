@@ -24,7 +24,8 @@ static bool s_Registered = []() {
 		light.SetLightColor(lightColor);
 		light.SetAmbientFactor(ambient);
 		light.SetShinyFactor(shinyFactor);
-		light.SetShaderTarget(target);
+		if (target.has_value())
+			light.SetShaderTarget(*target);
 	});
 
 	return true;

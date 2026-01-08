@@ -1,7 +1,9 @@
 #pragma once
+
 #include <filesystem>
 #include <unordered_map>
 #include <vector>
+
 #include "origo/assets/Metadata.h"
 #include "origo/core/UUID.h"
 #include "origo/assets/Asset.h"
@@ -12,7 +14,7 @@ struct AssetEntry {
 	Origo::UUID id;
 	Origo::AssetType type;
 	std::string name;
-	std::filesystem::path path; // relative, normalized
+	std::filesystem::path path;
 	ImTextureID icon;
 };
 

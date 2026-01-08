@@ -14,13 +14,16 @@ void LightSystem::Update(Origo::Scene* scene, float dt) {
 	    [&](RID entity,
 	        Light& light,
 	        Transform& transform) {
-		    auto shader { AssetManager::GetInstance().Get<Shader>(light.GetShaderTarget()) };
+		    auto shaderHandle { light.GetShaderTarget() };
+		    if (!shaderHandle.has_value()) {
+			    return;
+		    }
+		    auto shader { AssetManager::GetInstance().Get<Shader>(*shaderHandle) };
 
 		    if (!shader)
 			    return;
 
 		    shader->SetUniform("u_LightPos", transform.GetPosition());
-
 		    shader->SetUniform("u_Ambient", light.GetAmbientFactor());
 		    shader->SetUniform("u_LightColor", light.GetLightColor());
 		    shader->SetUniform("u_ShinyFactor", light.GetShinyFactor());

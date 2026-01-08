@@ -6,9 +6,10 @@
 
 namespace Origo {
 
-class AssetPipeline {
+class AssetImportPipeline {
 public:
 	static void RunInitialImport();
+	static bool HasRunInitialImport() { return s_InitialImportComplete; }
 
 private:
 	static bool IsImportCandidate(const std::filesystem::directory_entry& entry);
@@ -17,6 +18,9 @@ private:
 	static bool IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta);
 	static void ImportAsset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount);
 	static void LoadCachedAsset(const std::filesystem::path& importFile, AssetMetadata& meta);
+
+private:
+	inline static bool s_InitialImportComplete;
 };
 
 }

@@ -84,10 +84,10 @@ void RenderContext::ExecutePass(RenderPass pass) {
 	ConfigureState(pass);
 
 	if (pass == RenderPass::Skybox) {
-		if (m_SkyboxMaterial.IsNull())
+		if (!m_SkyboxMaterial.has_value())
 			return;
 
-		auto material = AssetManager::GetInstance().Get<SkyboxMaterial>(m_SkyboxMaterial);
+		auto material = AssetManager::GetInstance().Get<SkyboxMaterial>(*m_SkyboxMaterial);
 		material->Bind(m_View.Projection, m_View.View);
 
 		glBindVertexArray(m_SkyboxVAO);

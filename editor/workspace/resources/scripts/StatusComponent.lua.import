@@ -6,10 +6,10 @@
                 "source_path": "./resources/scripts/StatusComponent.lua",
                 "source_time_stamp": "-4670235933660096711",
                 "type": "Script",
-                "uuid": "4279a7ddea75d93b3308ddcf11292f5d"
+                "uuid": "c29bc4fe21da04c6d446fd68a4c3b8ac"
         },
         "payload": {
-                "id": "4279a7ddea75d93b3308ddcf11292f5d",
+                "id": "c29bc4fe21da04c6d446fd68a4c3b8ac",
                 "path": "./resources/scripts/StatusComponent.lua"
         }
 }

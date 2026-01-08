@@ -16,6 +16,9 @@ concept AssetConcept = std::derived_from<T, Asset> && requires(T t) {
 
 using OptionalPath = std::optional<std::filesystem::path>;
 
+// TODO: (REFACTOR)
+// this should not have IsNull. should just be std::optional where
+// necessary
 struct AssetHandle {
 	AssetHandle() = default;
 	AssetHandle(uint32_t index, uint32_t generation)
@@ -25,10 +28,10 @@ struct AssetHandle {
 	uint32_t Generation { 0 };
 	uint32_t Index { std::numeric_limits<uint32_t>::max() };
 
-	constexpr bool IsNull() const { return Index == std::numeric_limits<uint32_t>::max(); }
 	bool operator==(const AssetHandle& other) const { return other.Index == Index && other.Generation == Generation; }
 	bool operator!=(const AssetHandle& other) const { return !(other == *this); }
 };
+using OptionalAssetHandle = std::optional<AssetHandle>;
 
 struct AssetEntry {
 	AssetEntry(uint32_t generation)
@@ -62,9 +65,10 @@ public:
 	void Destroy(const AssetHandle& handle);
 	bool IsValid(const AssetHandle& handle) const;
 	UUID GetUUID(const AssetHandle& handle) const;
-	AssetHandle GetHandleByUUID(const UUID& uuid) const;
+	OptionalAssetHandle GetHandleByUUID(const UUID& uuid) const;
 	void ResolveAll(std::optional<std::function<bool(Asset*)>> = std::nullopt);
 	const ankerl::unordered_dense::map<UUID, AssetHandle>& GetUuidMap() { return m_UuidToHandle; }
+	OptionalAssetHandle Load(const std::filesystem::path& path);
 
 	AssetManager(const AssetManager&) = delete;
 	AssetManager& operator=(const AssetManager&) = delete;

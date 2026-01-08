@@ -22,7 +22,7 @@ void AssetInspectorPanel::OnImGuiRender() {
 	ImGui::SeparatorText(name.c_str());
 
 	ImGui::SetWindowFontScale(0.9f);
-	AssetInspectorDrawer::Draw(md);
+	AssetInspectorDrawer::DrawAsset(md);
 	ImGui::SetWindowFontScale(1.0f);
 }
 

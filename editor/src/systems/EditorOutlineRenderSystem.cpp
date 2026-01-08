@@ -1,4 +1,5 @@
 #include "systems/EditorOutlineRenderSystem.h"
+#include "origo/scene/ModelRenderer.h"
 #include "origo/scene/SystemScheduler.h"
 #include "origo/scene/GamePhase.h"
 
@@ -15,14 +16,24 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 	        EditorOutline& selection,
 	        Transform& transform,
 	        MeshRenderer& mr) {
-		    if (!selection.ShouldOutline || mr.GetMesh().IsNull() || mr.GetMaterial().IsNull())
+		    if (!selection.ShouldOutline || !mr.GetMesh().has_value())
 			    return;
 
 		    context.Submit(
-		        mr.GetMesh(),
+		        *mr.GetMesh(),
 		        EditorOutline::GetOutlineMaterial(),
 		        transform.GetModelMatrix(),
 		        RenderPass::Outline);
+	    });
+
+	scene->View<EditorOutline, Transform, ModelRenderer>(
+	    [&](RID entity,
+	        EditorOutline& selection,
+	        Transform& transform,
+	        ModelRenderer& mr) {
+		    if (!selection.ShouldOutline || !mr.GetModel().has_value())
+			    return;
+		    // TODO: Make models outline work
 	    });
 }
 

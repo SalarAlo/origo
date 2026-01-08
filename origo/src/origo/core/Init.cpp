@@ -10,7 +10,7 @@ void Init() {
 
 	AssetSerializationSystem::RegisterAllAssetSerializers();
 	AssetImporterRegistry::InitialiseDefaultImporters();
-	AssetPipeline::RunInitialImport();
+	AssetImportPipeline::RunInitialImport();
 	ScriptSystem::ReloadAll();
 
 	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));

@@ -10,8 +10,8 @@
 
 namespace Origo {
 
-void AssetPipeline::RunInitialImport() {
-	std::filesystem::path rootAssetDir { "./" };
+void AssetImportPipeline::RunInitialImport() {
+	std::filesystem::path rootAssetDir { "./resources" };
 
 	if (!std::filesystem::exists(rootAssetDir)) {
 		ORG_CORE_WARN("No directory for resources found.");
@@ -40,21 +40,24 @@ void AssetPipeline::RunInitialImport() {
 	}
 
 	ORG_CORE_TRACE("Initial import complete. {} assets imported.", importCount);
+
+	s_InitialImportComplete = true;
+
 	AssetManager::GetInstance().ResolveAll();
 }
 
-bool AssetPipeline::IsImportCandidate(const std::filesystem::directory_entry& entry) {
+bool AssetImportPipeline::IsImportCandidate(const std::filesystem::directory_entry& entry) {
 	if (!entry.is_regular_file())
 		return false;
 
 	return entry.path().extension() != ".import";
 }
 
-IAssetImporter* AssetPipeline::ResolveImporter(const std::filesystem::path& path) {
+IAssetImporter* AssetImportPipeline::ResolveImporter(const std::filesystem::path& path) {
 	return AssetImporterRegistry::GetImporter(path);
 }
 
-bool AssetPipeline::IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta) {
+bool AssetImportPipeline::IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta) {
 	std::filesystem::path importFile { path.string() + ".import" };
 
 	if (!std::filesystem::exists(importFile))
@@ -66,7 +69,7 @@ bool AssetPipeline::IsImportNecessary(const std::filesystem::path& path, const A
 	return false;
 }
 
-void AssetPipeline::ImportAsset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount) {
+void AssetImportPipeline::ImportAsset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount) {
 	Scope<Asset> asset = importer->Import(path, meta);
 
 	AssetManager::GetInstance().Register(std::move(asset), meta.ID);
@@ -78,7 +81,7 @@ void AssetPipeline::ImportAsset(const std::filesystem::path& path, IAssetImporte
 	importCount++;
 }
 
-void AssetPipeline::LoadCachedAsset(const std::filesystem::path& importFile, AssetMetadata& meta) {
+void AssetImportPipeline::LoadCachedAsset(const std::filesystem::path& importFile, AssetMetadata& meta) {
 	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
 
 	JsonSerializer serializer { importFile.c_str() };
@@ -96,7 +99,7 @@ void AssetPipeline::LoadCachedAsset(const std::filesystem::path& importFile, Ass
 	AssetDatabase::RegisterMetadata(meta);
 }
 
-Scope<AssetMetadata> AssetPipeline::LoadOrCreateMetadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
+Scope<AssetMetadata> AssetImportPipeline::LoadOrCreateMetadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
 	const std::filesystem::path importPath { sourcePath.string() + ".import" };
 	Scope<AssetMetadata> meta;
 

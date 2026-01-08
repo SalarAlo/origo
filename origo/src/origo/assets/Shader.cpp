@@ -1,22 +1,25 @@
 #include "origo/assets/Shader.h"
-#include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetFactory.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/core/Logger.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include <stdexcept>
 
 namespace Origo {
 
 AssetHandle Shader::DefaultShader() {
-	static auto handle { [] {
-		auto handle = AssetFactory::CreateAsset<Shader>("Default Normal Shader");
-		AssetManager::GetInstance()
-		    .Get<Shader>(handle)
-		    ->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/normal.glsl"));
+	static AssetHandle handle = [] {
+		auto shader = AssetFactory::CreateSyntheticAsset<Shader>(
+		    "Default Shader",
+		    UUID::FromHash("ENGINE_DEFAULT_SHADER"));
 
-		return handle;
-	}() };
+		AssetManager::GetInstance().Get<Shader>(shader)->SetSource(MakeScope<ShaderSourceFile>("./default_resources/default_shader.glsl"));
+
+		return shader;
+	}();
+
 	return handle;
 }
 

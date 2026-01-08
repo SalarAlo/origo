@@ -12,6 +12,7 @@ public:
 	~Shader();
 
 	static AssetHandle DefaultShader();
+	static void CreateDefaultShader();
 	void UseProgram() const;
 
 	template <typename T>

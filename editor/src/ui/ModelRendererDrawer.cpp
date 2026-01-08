@@ -16,8 +16,8 @@ static bool s_Registered = []() {
 
 		ComponentUI::DrawAssetControl("Model", mesh, Origo::AssetType::Model);
 
-		if (mesh != renderer.GetModel())
-			renderer.SetModel(mesh);
+		if (mesh != renderer.GetModel() && mesh.has_value())
+			renderer.SetModel(*mesh);
 	});
 
 	return true;

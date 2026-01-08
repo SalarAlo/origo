@@ -1,12 +1,21 @@
+// Model.cpp
 #include "Model.h"
+
+#include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/Material.h"
+#include "origo/assets/Mesh.h"
+#include "origo/assets/Shader.h"
+#include "origo/assets/Texture2D.h"
+#include "origo/assets/TextureSource.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/VertexLayout.h"
-#include "origo/assets/AssetFactory.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+
+#include <optional>
 
 namespace Origo {
 
@@ -44,6 +53,10 @@ static void MakeFallbackModel(std::vector<Model::Node>& nodes, int& rootNode) {
 	rootNode = 0;
 }
 
+Model::Model()
+    : m_Path("")
+    , m_ModelShaderHandle(std::nullopt) { }
+
 Model::Model(const std::filesystem::path& path, const AssetHandle& shader)
     : m_Path(path)
     , m_ModelShaderHandle(shader) { }
@@ -55,16 +68,10 @@ const std::filesystem::path& Model::GetPath() const { return m_Path; }
 int Model::GetRootNode() const { return m_RootNode; }
 const std::vector<Model::Node>& Model::GetNodes() const { return m_Nodes; }
 const std::vector<Model::SubMesh>& Model::GetSubMeshes() const { return m_SubMeshes; }
-void Model::SetPath(const std::filesystem::path& path) {
-	m_Path = path;
-}
-void Model::SetShaderHandle(const AssetHandle& handle) {
-	m_ModelShaderHandle = handle;
-}
 
-void Model::SetShaderUUID(const UUID& id) {
-	m_ShaderUUID = id;
-}
+void Model::SetPath(const std::filesystem::path& path) { m_Path = path; }
+void Model::SetShaderHandle(const AssetHandle& handle) { m_ModelShaderHandle = handle; }
+void Model::SetShaderUUID(const UUID& id) { m_ShaderUUID = id; }
 
 void Model::Load() {
 	if (m_Path.empty()) {
@@ -86,6 +93,7 @@ void Model::Load() {
 void Model::Clear() {
 	m_SubMeshes.clear();
 	m_Nodes.clear();
+	m_AssimpMeshToSubMesh.clear();
 	m_RootNode = -1;
 }
 
@@ -101,6 +109,7 @@ void Model::LoadFromAssimp() {
 		return;
 	}
 
+	m_AssimpMeshToSubMesh.assign(scene->mNumMeshes, -1);
 	m_SubMeshes.reserve(scene->mNumMeshes);
 
 	for (uint32_t i = 0; i < scene->mNumMeshes; ++i) {
@@ -157,7 +166,7 @@ void Model::LoadFromAssimp() {
 		    indices.data(),
 		    indices.size());
 
-		AssetHandle meshHandle = AssetFactory::CreateAsset<Mesh>(
+		AssetHandle meshHandle = AssetFactory::CreateRuntimeAsset<Mesh>(
 		    "ModelMesh_" + std::to_string(i),
 		    layoutId,
 		    heapId,
@@ -170,7 +179,7 @@ void Model::LoadFromAssimp() {
 		if (aiMat && aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 			std::string path = texPath.C_Str();
 
-			textureHandle = AssetFactory::CreateAsset<Texture2D>(
+			textureHandle = AssetFactory::CreateRuntimeAsset<Texture2D>(
 			    "ModelTex_" + std::to_string(i),
 			    TextureType::Albedo);
 
@@ -211,11 +220,12 @@ void Model::LoadFromAssimp() {
 			tex->Load();
 		}
 
-		AssetHandle materialHandle = AssetFactory::CreateAsset<Material2D>(
+		AssetHandle materialHandle = AssetFactory::CreateRuntimeAsset<Material2D>(
 		    "ModelMat_" + std::to_string(i),
-		    m_ModelShaderHandle,
+		    *m_ModelShaderHandle,
 		    textureHandle);
 
+		m_AssimpMeshToSubMesh[i] = (int)m_SubMeshes.size();
 		m_SubMeshes.push_back({ meshHandle, materialHandle });
 	}
 
@@ -231,7 +241,18 @@ int Model::ProcessNode(aiNode* node, int parent) {
 	Node& dst = m_Nodes.emplace_back();
 	dst.Parent = parent;
 	dst.LocalTransform = ConvertMatrix(node->mTransformation);
-	dst.SubMeshIndex = (node->mNumMeshes > 0) ? (int)node->mMeshes[0] : -1;
+
+	dst.SubMeshIndex = -1;
+	for (uint32_t k = 0; k < node->mNumMeshes; ++k) {
+		const int assimpMeshIdx = (int)node->mMeshes[k];
+		if (assimpMeshIdx >= 0 && assimpMeshIdx < (int)m_AssimpMeshToSubMesh.size()) {
+			const int mapped = m_AssimpMeshToSubMesh[assimpMeshIdx];
+			if (mapped != -1) {
+				dst.SubMeshIndex = mapped;
+				break;
+			}
+		}
+	}
 
 	dst.Children.reserve(node->mNumChildren);
 	for (uint32_t i = 0; i < node->mNumChildren; ++i) {
@@ -240,26 +261,27 @@ int Model::ProcessNode(aiNode* node, int parent) {
 
 	return index;
 }
+
 void Model::Resolve() {
 	if (m_Path.empty()) {
 		ORG_CORE_WARN("Could not Resolve Model because no path provided");
 		return;
 	}
 
-	if (m_ModelShaderHandle.IsNull()) {
-		auto uuidHandle = AssetManager::GetInstance().GetHandleByUUID(m_ShaderUUID);
+	if (!m_ModelShaderHandle.has_value()) {
+		auto shaderHandle = AssetManager::GetInstance().GetHandleByUUID(m_ShaderUUID);
 
-		if (uuidHandle.IsNull()) {
+		if (!shaderHandle.has_value()) {
 			ORG_CORE_WARN("Shader UUID invalid for model '{}', using default shader", m_Path.c_str());
 			m_ModelShaderHandle = Shader::DefaultShader();
 		} else {
-			m_ModelShaderHandle = uuidHandle;
+			m_ModelShaderHandle = shaderHandle;
 		}
 	}
 
 	Load();
 }
 
-AssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
+OptionalAssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
 
 }

@@ -52,7 +52,7 @@ void SceneLayer::OnAttach() {
 
 	CreateAssets();
 
-	SpawnGrid(50);
+	SpawnGrid(4);
 }
 
 void SceneLayer::OnUpdate(double) {
@@ -81,7 +81,7 @@ void SceneLayer::CreateAssets() {
 		    data.Indices.data(),
 		    data.Indices.size());
 
-		m_CubeMesh = AssetFactory::CreateAsset<Mesh>(
+		m_CubeMesh = AssetFactory::CreateRuntimeAsset<Mesh>(
 		    "Grid_Cube_Mesh",
 		    m_VertexLayoutID,
 		    m_HeapID,
@@ -98,7 +98,7 @@ void SceneLayer::CreateAssets() {
 		    data.Indices.data(),
 		    data.Indices.size());
 
-		AssetFactory::CreateAsset<Mesh>(
+		AssetFactory::CreateRuntimeAsset<Mesh>(
 		    "Grid_Sphere_Mesh",
 		    m_VertexLayoutID,
 		    m_HeapID,

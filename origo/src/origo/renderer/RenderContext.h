@@ -3,6 +3,7 @@
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/RenderView.h"
 #include "origo/renderer/RenderCommand.h"
+#include <optional>
 
 namespace Origo {
 
@@ -45,7 +46,7 @@ private:
 	FrameBuffer* m_Target {};
 	FrameBuffer* m_ResolveTarget {};
 
-	AssetHandle m_SkyboxMaterial {};
+	OptionalAssetHandle m_SkyboxMaterial { std::nullopt };
 	GLuint m_SkyboxVAO {};
 
 	RenderView m_View {};

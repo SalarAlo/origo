@@ -1,5 +1,6 @@
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Asset.h"
+#include <optional>
 
 namespace Origo {
 
@@ -58,24 +59,35 @@ UUID AssetManager::GetUUID(const AssetHandle& handle) const {
 	return m_AssetEntries[handle.Index].Uuid;
 }
 
-AssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
+OptionalAssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
 	if (id == UUID::Bad())
-		return {};
+		return std::nullopt;
 
 	auto it = m_UuidToHandle.find(id);
 	if (it == m_UuidToHandle.end()) {
 		ORG_ERROR("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
-		return {};
+		return std::nullopt;
 	}
 
 	const AssetHandle& handle = it->second;
 
 	if (!IsValid(handle)) {
 		ORG_ERROR("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.ToString());
-		return {};
+		return std::nullopt;
 	}
 
 	return handle;
+}
+
+OptionalAssetHandle AssetManager::Load(const std::filesystem::path& path) {
+	for (const auto& assetEntry : m_AssetEntries) {
+		if (!assetEntry.Path || *assetEntry.Path != path)
+			continue;
+
+		return m_UuidToHandle[assetEntry.Uuid];
+	}
+
+	return std::nullopt;
 }
 
 void AssetManager::ResolveAll(std::optional<std::function<bool(Asset*)>> resolveCond) {

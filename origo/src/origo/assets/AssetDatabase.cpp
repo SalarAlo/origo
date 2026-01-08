@@ -23,19 +23,14 @@ void AssetDatabase::WriteImportFile(const UUID& id) {
 	const AssetMetadata& meta = metaIt->second;
 
 	auto& am = AssetManager::GetInstance();
-	AssetHandle handle = am.GetHandleByUUID(id);
+	OptionalAssetHandle handle = am.GetHandleByUUID(id);
 
-	if (!am.IsValid(handle)) {
+	if (!handle.has_value()) {
 		ORG_WARN("Skipping save: asset {} not loaded", id.ToString());
 		return;
 	}
 
-	Asset* asset = am.Get(handle);
-	if (!asset) {
-		ORG_WARN("Skipping save: asset {} invalid", id.ToString());
-		return;
-	}
-
+	Asset* asset = am.Get(*handle);
 	auto path = GetImportPath(meta);
 	JsonSerializer serializer { path.string() };
 

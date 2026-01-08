@@ -6,7 +6,6 @@
 #include "origo/core/ScreenWindow.h"
 
 namespace Origo {
-// TODO: Split WorkingDir and AssetDir
 struct ApplicationSettings {
 	std::string WorkingDirectory {};
 	ScreenWindowSettings WindowSettings {};

@@ -6,10 +6,10 @@
                 "source_path": "./resources/models/low_poly_tree.glb",
                 "source_time_stamp": "-4673479123115006689",
                 "type": "Model",
-                "uuid": "b4ac290169e168468b9a13f2fab0279f"
+                "uuid": "bcc761d4f01d817c3fedfed74c661e47"
         },
         "payload": {
                 "path": "./resources/models/low_poly_tree.glb",
-                "shader_id": "1f263d53bd919b10e537c1b7c2d93aeb"
+                "shader_id": "00000000000000000000000000000000"
         }
 }

@@ -2,6 +2,8 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/Material.h"
+#include "origo/assets/Shader.h"
 #include "origo/scene/Component.h"
 
 namespace OrigoEditor {
@@ -17,13 +19,15 @@ public:
 
 	static Origo::AssetHandle GetOutlineMaterial() {
 		using namespace Origo;
+		const static Origo::UUID outlineShaderID = Origo::UUID::FromArbitraryString("ENGINE_EDITOR_OUTLINE_SHADER");
+		const static Origo::UUID outlineMaterialID = Origo::UUID::FromArbitraryString("ENGINE_EDITOR_OUTLINE_MATERIAL");
 
 		static bool s_Initialised { false };
 		if (!s_Initialised) {
-			auto shader = AssetFactory::CreateAsset<Shader>("Outline Shader");
-			AssetManager::GetInstance().Get<Shader>(shader)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
+			auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>("Outline Shader", outlineShaderID);
+			AssetManager::GetInstance().Get<Shader>(shaderHandle)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
 
-			m_OutlineMaterial = AssetFactory::CreateAsset<Material2D>("Outline Shader", shader);
+			m_OutlineMaterial = AssetFactory::CreateSyntheticAsset<Material2D>("Outline Material", outlineMaterialID, shaderHandle);
 
 			s_Initialised = true;
 		}

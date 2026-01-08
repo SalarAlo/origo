@@ -1,14 +1,9 @@
 #pragma once
 
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/Mesh.h"
 #include "origo/assets/Metadata.h"
 #include "origo/assets/AssetManagerFast.h"
-#include "origo/assets/Material.h"
-#include "origo/assets/Model.h"
 #include "origo/assets/Script.h"
-#include "origo/assets/Shader.h"
-#include "origo/assets/Texture2D.h"
 #include "origo/core/UUID.h"
 
 namespace Origo {
@@ -18,22 +13,32 @@ public:
 	using AssetCreatedCallback = std::function<void(UUID, AssetType)>;
 
 public:
-	template <AssetConcept T, typename... Args>
-	static AssetHandle CreateAsset(const std::string& name, Args&&... args) {
-		UUID id { UUID::Generate() };
-		AssetType type = T::GetClassAssetType();
-
+	template <typename T, typename... Args>
+	static AssetHandle CreateRuntimeAsset(const std::string& name, Args&&... args) {
 		AssetMetadata meta {};
 		meta.Name = name;
-		meta.ID = id;
-		meta.Type = type;
-		meta.Origin = AssetOrigin::Generated;
+		meta.ID = UUID::Generate();
+		meta.Type = T::GetClassAssetType();
+		meta.Origin = AssetOrigin::Runtime;
 
 		AssetDatabase::RegisterMetadata(meta);
 
-		auto asset { MakeScope<T>(std::forward<Args>(args)...) };
+		auto asset = MakeScope<T>(std::forward<Args>(args)...);
+		return AssetManager::GetInstance().Register(std::move(asset), meta.ID);
+	}
 
-		return AssetManager::GetInstance().Register(std::move(asset), id);
+	template <typename T, typename... Args>
+	static AssetHandle CreateSyntheticAsset(const std::string& name, const UUID& uuid, Args&&... args) {
+		AssetMetadata meta {};
+		meta.Name = name;
+		meta.ID = uuid;
+		meta.Type = T::GetClassAssetType();
+		meta.Origin = AssetOrigin::Synthetic;
+
+		AssetDatabase::RegisterMetadata(meta);
+
+		auto asset = MakeScope<T>(std::forward<Args>(args)...);
+		return AssetManager::GetInstance().Register(std::move(asset), uuid);
 	}
 
 	static AssetHandle CreateImportedAsset(const AssetMetadata& meta, Scope<Asset>&& asset) {

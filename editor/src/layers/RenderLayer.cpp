@@ -1,10 +1,5 @@
 #include "layers/RenderLayer.h"
-#include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetManagerFast.h"
-#include "origo/assets/CubemapTexture.h"
-#include "origo/assets/Shader.h"
-#include "origo/assets/ShaderSource.h"
-#include "origo/assets/SkyboxMaterial.h"
+#include "origo/assets/SkyboxDefaults.h"
 #include "origo/scene/GamePhase.h"
 #include "origo/scene/SystemScheduler.h"
 
@@ -13,25 +8,7 @@ using namespace Origo;
 namespace OrigoEditor {
 
 void RenderLayer::OnAttach() {
-	CubemapDescription descr {};
-	descr.Right = "./resources/textures/skybox/Right.png";
-	descr.Left = "./resources/textures/skybox/Left.png";
-	descr.Top = "./resources/textures/skybox/Top.png";
-	descr.Bottom = "./resources/textures/skybox/Bottom.png";
-	descr.Front = "./resources/textures/skybox/Front.png";
-	descr.Back = "./resources/textures/skybox/Back.png";
-
-	auto cubemapHandle { AssetFactory::CreateAsset<CubemapTexture>("skybox_texture", descr) };
-	auto cubemap { AssetManager::GetInstance().Get<CubemapTexture>(cubemapHandle) };
-	cubemap->Load();
-
-	auto skyboxShaderHandle { AssetFactory::CreateAsset<Shader>("skybox_shader") };
-	auto skyboxShader { AssetManager::GetInstance().Get<Shader>(skyboxShaderHandle) };
-	skyboxShader->SetSource(MakeScope<ShaderSourceFile>("./resources/shaders/skybox.glsl"));
-
-	m_SkyboxMaterial = AssetFactory::CreateAsset<SkyboxMaterial>("skybox_material", skyboxShaderHandle, cubemapHandle);
-
-	m_RenderContext.SetSkyboxMaterial(m_SkyboxMaterial);
+	m_RenderContext.SetSkyboxMaterial(SkyboxDefaults::GetMaterial());
 }
 
 void RenderLayer::OnUpdate(double dt) {

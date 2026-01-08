@@ -241,10 +241,10 @@ void DrawBoolControl(std::string_view label, bool& value) {
 	ImGui::PopID();
 }
 
-void DrawAssetControl(std::string_view label, Origo::AssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
+void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
 	auto& am = Origo::AssetManager::GetInstance();
 
-	Origo::UUID uuid = !handle.IsNull() ? am.GetUUID(handle) : Origo::UUID {};
+	Origo::UUID uuid = handle.has_value() ? am.GetUUID(*handle) : Origo::UUID {};
 	auto md = !uuid.IsBad() ? Origo::AssetDatabase::GetMetadata(uuid)
 	                        : Origo::AssetMetadata {};
 
@@ -270,7 +270,7 @@ void DrawAssetControl(std::string_view label, Origo::AssetHandle& handle, std::o
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
-	std::string display = !handle.IsNull() ? md.Name : std::string { "None" };
+	std::string display = handle.has_value() ? md.Name : std::string { "None" };
 	ImGui::Button(display.c_str(), ImVec2(fieldWidth, fieldHeight));
 
 	ImGui::PopStyleColor(4);

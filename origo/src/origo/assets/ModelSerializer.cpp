@@ -11,13 +11,13 @@ void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const 
 
 	auto model { static_cast<const Model*>(asset) };
 
-	auto shaderHandle { model->GetShaderHandle() };
-	auto shaderID { AssetManager::GetInstance().GetUUID(shaderHandle) };
+	if (auto shaderHandle { model->GetShaderHandle() }; shaderHandle.has_value()) {
+		auto shaderID { AssetManager::GetInstance().GetUUID(*shaderHandle) };
+		backend.Write("shader_id", shaderID.ToString());
+	}
 
 	auto path { model->GetPath() };
-
 	backend.Write("path", path.c_str());
-	backend.Write("shader_id", shaderID.ToString());
 }
 
 void ModelSerializer::Deserialize(ISerializer& backend, Asset& asset) const {

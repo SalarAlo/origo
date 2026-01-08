@@ -1,11 +1,11 @@
 #pragma once
 
+#include <filesystem>
 namespace Origo {
 
 class ISerializer {
 public:
-	// TODO path should be of type std::filesystem::path
-	ISerializer(std::string_view path)
+	ISerializer(const std::filesystem::path& path)
 	    : m_Path(path) { }
 	virtual ~ISerializer() = default;
 
@@ -38,7 +38,7 @@ public:
 	virtual bool TryReadArrayElement(std::string& value) = 0;
 
 protected:
-	std::string m_Path;
+	std::filesystem::path m_Path;
 };
 
 #define SERIALIZER_FWD                                                     \

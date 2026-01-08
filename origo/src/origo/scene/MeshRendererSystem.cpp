@@ -10,13 +10,13 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 	    [&](RID entity,
 	        MeshRenderer& mr,
 	        Transform& transform) {
-		    if (mr.GetMesh().IsNull() || mr.GetMaterial().IsNull()) {
+		    if (!mr.GetMesh().has_value() || !mr.GetMaterial().has_value()) {
 			    return;
 		    }
 
 		    context.Submit(
-		        mr.GetMesh(),
-		        mr.GetMaterial(),
+		        *mr.GetMesh(),
+		        *mr.GetMaterial(),
 		        transform.GetModelMatrix(),
 		        RenderPass::Geometry);
 	    });

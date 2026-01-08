@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
+#include "origo/assets/AssetManagerFast.h"
 namespace Origo {
 
 struct CubemapDescription {
