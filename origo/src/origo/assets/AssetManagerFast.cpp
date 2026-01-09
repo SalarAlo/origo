@@ -64,14 +64,14 @@ OptionalUUID AssetManager::GetUUID(const AssetHandle& handle) const {
 OptionalAssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
 	auto it = m_UuidToHandle.find(id);
 	if (it == m_UuidToHandle.end()) {
-		ORG_ERROR("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
+		ORG_CORE_WARN("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
 		return std::nullopt;
 	}
 
 	const AssetHandle& handle = it->second;
 
 	if (!IsValid(handle)) {
-		ORG_ERROR("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.ToString());
+		ORG_CORE_WARN("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.ToString());
 		return std::nullopt;
 	}
 

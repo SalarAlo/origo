@@ -19,7 +19,7 @@ private:
 	void DrawBreadcrumbBar(float availableWidth);
 	void DrawFolderContents(FolderEntry* folder);
 	void DrawFolderTile(FolderEntry* folder, ImDrawList* drawList);
-	void DrawAssetTile(AssetEntry* asset, ImDrawList* drawList);
+	void DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList);
 
 private:
 	EditorContext& m_Context;

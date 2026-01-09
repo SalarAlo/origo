@@ -65,7 +65,7 @@ private:
 	std::vector<Node> m_Nodes {};
 	std::vector<int> m_AssimpMeshToSubMesh {};
 
-	OptionalAssetHandle m_ModelShaderHandle {};
+	OptionalAssetHandle m_ModelShaderHandle { std::nullopt };
 	OptionalUUID m_ShaderUUID { std::nullopt };
 };
 

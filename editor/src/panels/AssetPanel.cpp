@@ -199,8 +199,8 @@ void AssetPanel::DrawFolderContents(FolderEntry* folder) {
 		ImGui::NextColumn();
 	}
 
-	for (AssetEntry* asset : folder->assets) {
-		if (!ContainsCaseInsensitive(asset->name, m_Search))
+	for (AssetEntry*& asset : folder->assets) {
+		if (!ContainsCaseInsensitive(asset->Name, m_Search))
 			continue;
 		DrawAssetTile(asset, drawList);
 		ImGui::NextColumn();
@@ -264,7 +264,7 @@ void AssetPanel::DrawFolderTile(FolderEntry* folder, ImDrawList* drawList) {
 	ImGui::PopID();
 }
 
-void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
+void AssetPanel::DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList) {
 	constexpr float TILE_SIZE = 96.0f;
 	constexpr float TEXT_HEIGHT = 22.0f;
 
@@ -276,7 +276,7 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 	ImGui::InvisibleButton("asset_tile", tileSize);
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		m_Context.SetSelectedAsset(*asset->id);
+		m_Context.SetSelectedAsset(asset->id);
 
 	const bool hovered = ImGui::IsItemHovered();
 
@@ -292,15 +292,17 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 	ImVec2 thumbMin = cursor + ImVec2(10, 10);
 	ImVec2 thumbMax = thumbMin + ImVec2(TILE_SIZE - 20, TILE_SIZE - 20);
 
-	if (asset->icon)
-		drawList->AddImage(asset->icon, thumbMin, thumbMax);
-	else
+	if (asset->Icon) {
+		drawList->AddImage(asset->Icon, thumbMin, thumbMax);
+	} else {
 		drawList->AddRectFilled(thumbMin, thumbMax, IM_COL32(90, 90, 90, 255), 6.0f);
+		// asset->Icon = AssetThumbnailGenerator::GetThumbnailID(asset);
+	}
 
 	const float textPadding = 6.0f;
 	const float maxWidth = TILE_SIZE - textPadding * 2.0f;
 
-	std::string displayName = ClipTextToWidth(asset->name, maxWidth);
+	std::string displayName = ClipTextToWidth(asset->Name, maxWidth);
 	ImVec2 textSize = ImGui::CalcTextSize(displayName.c_str());
 	const float fontSize = ImGui::GetFontSize();
 
@@ -311,16 +313,16 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 
 	drawList->AddText(textPos, IM_COL32(230, 230, 230, 255), displayName.c_str());
 
-	if (hovered && displayName != asset->name) {
+	if (hovered && displayName != asset->Name) {
 		ImGui::BeginTooltip();
-		ImGui::TextUnformatted(asset->name.c_str());
+		ImGui::TextUnformatted(asset->Name.c_str());
 		ImGui::EndTooltip();
 	}
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		const std::string uuidStr = (*asset->id).ToString();
+		const std::string uuidStr = (asset->id).ToString();
 
-		ImGui::TextUnformatted(asset->name.c_str());
+		ImGui::TextUnformatted(asset->Name.c_str());
 		ImGui::SetDragDropPayload(
 		    "ORIGO_ASSET_UUID",
 		    uuidStr.c_str(),

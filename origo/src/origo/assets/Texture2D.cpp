@@ -34,6 +34,10 @@ void Texture2D::SetSource(Scope<TextureSource> src) {
 	m_Source = std::move(src);
 }
 
+void Texture2D::Resolve() {
+	Load();
+}
+
 void Texture2D::Load() {
 	if (!m_Source) {
 		ORG_ERROR("Texture::LoadCPU: No TextureSource assigned");
@@ -45,6 +49,9 @@ void Texture2D::Load() {
 }
 
 void Texture2D::InitTexture(const TextureInitialisationData& initData) {
+	if (m_TextureId)
+		return;
+
 	GLCall(glGenTextures(1, &m_TextureId));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 

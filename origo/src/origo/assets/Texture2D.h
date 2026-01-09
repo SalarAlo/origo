@@ -28,6 +28,8 @@ public:
 	void SetTextureType(TextureType type) { m_TextureType = type; }
 	GLuint GetRendererID() { return m_TextureId; }
 
+	void Resolve() override;
+
 	void Load();
 
 private:
