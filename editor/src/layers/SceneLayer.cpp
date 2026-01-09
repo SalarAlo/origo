@@ -10,6 +10,7 @@
 #include "origo/assets/PrimitiveShape.h"
 #include "origo/assets/Mesh.h"
 
+#include "origo/assets/PrimitiveShapeCache.h"
 #include "origo/core/Time.h"
 
 #include "origo/renderer/GeometryHeapRegistry.h"
@@ -72,23 +73,6 @@ void SceneLayer::CreateAssets() {
 	auto heap = GeometryHeapRegistry::GetHeap(m_HeapID);
 
 	{
-		MeshData data = GetDataFromShape(PrimitiveShape::Cube);
-
-		auto range = heap->Allocate(
-		    data.Vertices.data(),
-		    data.Vertices.size() * sizeof(float),
-		    m_VertexStride,
-		    data.Indices.data(),
-		    data.Indices.size());
-
-		m_CubeMesh = AssetFactory::CreateRuntimeAsset<Mesh>(
-		    "Grid_Cube_Mesh",
-		    m_VertexLayoutID,
-		    m_HeapID,
-		    range);
-	}
-
-	{
 		MeshData data = GetDataFromShape(PrimitiveShape::Sphere);
 
 		auto range = heap->Allocate(
@@ -132,7 +116,7 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			m_Context.EditorScene->AddNativeComponent<MeshRenderer>(
 			    entity,
 			    Material2D::DefaultMaterial2D(),
-			    m_CubeMesh);
+			    PrimitiveShapeCache::GetInstance().GetCubeMesh());
 
 			m_Context.EditorScene->AddNativeComponent<EditorOutline>(entity);
 

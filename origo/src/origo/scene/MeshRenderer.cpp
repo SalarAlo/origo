@@ -3,7 +3,7 @@
 
 namespace Origo {
 
-MeshRenderer::MeshRenderer(AssetHandle material, AssetHandle mesh)
+MeshRenderer::MeshRenderer(OptionalAssetHandle material, OptionalAssetHandle mesh)
     : m_Material(material)
     , m_Mesh(mesh) {
 }

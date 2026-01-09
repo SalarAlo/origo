@@ -27,7 +27,7 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 		existing.Name = descriptor.Name;
 
 		s_NameToScriptComponentID.erase(existing.Name);
-		s_NameToScriptComponentID[descriptor.Name] = descriptor.ID;
+		s_NameToScriptComponentID.emplace(descriptor.Name, descriptor.ID);
 
 		OnScriptComponentUpdated().Invoke(descriptor.ID);
 
@@ -50,7 +50,7 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 }
 
 ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& uuid, const std::string& name, sol::table fields) {
-	ScriptComponentDescriptor desc;
+	ScriptComponentDescriptor desc {};
 	desc.Name = name;
 	desc.ID = uuid;
 

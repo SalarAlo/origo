@@ -13,7 +13,8 @@ void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const 
 
 	if (auto shaderHandle { model->GetShaderHandle() }; shaderHandle.has_value()) {
 		auto shaderID { AssetManager::GetInstance().GetUUID(*shaderHandle) };
-		backend.Write("shader_id", shaderID.ToString());
+		if (shaderID.has_value())
+			backend.Write("shader_id", (*shaderID).ToString());
 	}
 
 	auto path { model->GetPath() };

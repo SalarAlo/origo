@@ -1,8 +1,6 @@
 #pragma once
 
-#include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Layer.h"
-
 #include "state/EditorContext.h"
 
 namespace OrigoEditor {
@@ -20,10 +18,6 @@ private:
 
 private:
 	EditorContext& m_Context;
-
-	Origo::AssetHandle m_CubeMesh;
-
-	Origo::AssetHandle m_Model;
 
 	uint32_t m_VertexLayoutID = 0;
 	uint32_t m_HeapID = 0;

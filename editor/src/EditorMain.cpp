@@ -59,6 +59,10 @@ public:
 		EditorIcons::Init();
 	}
 
+	void OnEndFrame() override {
+		m_Context.ActiveScene->EndFrame();
+	}
+
 private:
 	FrameBuffer m_RenderBuffer;
 	FrameBuffer m_ResolveBuffer;

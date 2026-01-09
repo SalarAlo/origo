@@ -76,7 +76,7 @@ void AssetImportPipeline::ImportAsset(const std::filesystem::path& path, IAssetI
 	meta.ImportedTimestamp = meta.SourceTimestamp;
 
 	AssetDatabase::RegisterMetadata(meta);
-	AssetDatabase::WriteImportFile(meta.ID);
+	AssetDatabase::WriteImportFile(*meta.ID);
 
 	importCount++;
 }

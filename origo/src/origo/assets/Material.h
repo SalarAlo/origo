@@ -54,8 +54,8 @@ private:
 	OptionalAssetHandle m_Shader { std::nullopt };
 	OptionalAssetHandle m_Albedo { std::nullopt };
 
-	UUID m_ShaderUUID {};
-	UUID m_AlbedoUUID {};
+	OptionalUUID m_ShaderUUID { std::nullopt };
+	OptionalUUID m_AlbedoUUID { std::nullopt };
 
 	UniformList m_UniformList {};
 };

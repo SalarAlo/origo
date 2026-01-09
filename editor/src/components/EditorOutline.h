@@ -32,11 +32,11 @@ public:
 			s_Initialised = true;
 		}
 
-		return m_OutlineMaterial;
+		return *m_OutlineMaterial;
 	}
 
 private:
-	inline static Origo::AssetHandle m_OutlineMaterial {};
+	inline static Origo::OptionalAssetHandle m_OutlineMaterial {};
 };
 
 }

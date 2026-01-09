@@ -11,12 +11,14 @@ void MaterialSerializer::Serialize(const Asset* asset, ISerializer& backend) con
 	};
 
 	auto& am { AssetManager::GetInstance() };
-	if (auto albedo { material->GetAlbedo() }; albedo.has_value()) {
-		backend.Write("albedo", am.GetUUID(*albedo).ToString());
-	}
+
+	if (auto albedo { material->GetAlbedo() }; albedo.has_value())
+		if (auto albedoUUID { am.GetUUID(*albedo) }; albedoUUID.has_value())
+			backend.Write("albedo", (*albedoUUID).ToString());
 
 	if (auto shader { material->GetShader() }; shader.has_value())
-		backend.Write("shader", am.GetUUID(*shader).ToString());
+		if (auto shaderUUID { am.GetUUID(*shader) }; shaderUUID.has_value())
+			backend.Write("shader", (*shaderUUID).ToString());
 
 	ORG_INFO("Serializing an asset of type material");
 }

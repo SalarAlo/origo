@@ -244,9 +244,9 @@ void DrawBoolControl(std::string_view label, bool& value) {
 void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
 	auto& am = Origo::AssetManager::GetInstance();
 
-	Origo::UUID uuid = handle.has_value() ? am.GetUUID(*handle) : Origo::UUID {};
-	auto md = !uuid.IsBad() ? Origo::AssetDatabase::GetMetadata(uuid)
-	                        : Origo::AssetMetadata {};
+	auto uuid = handle.has_value() ? am.GetUUID(*handle) : std::nullopt;
+	auto md = uuid.has_value() ? Origo::AssetDatabase::GetMetadata(*uuid)
+	                           : Origo::AssetMetadata {};
 
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });

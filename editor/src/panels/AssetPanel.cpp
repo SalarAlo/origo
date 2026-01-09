@@ -276,7 +276,7 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 	ImGui::InvisibleButton("asset_tile", tileSize);
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		m_Context.SetSelectedAsset(asset->id);
+		m_Context.SetSelectedAsset(*asset->id);
 
 	const bool hovered = ImGui::IsItemHovered();
 
@@ -318,7 +318,7 @@ void AssetPanel::DrawAssetTile(AssetEntry* asset, ImDrawList* drawList) {
 	}
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		const std::string uuidStr = asset->id.ToString();
+		const std::string uuidStr = (*asset->id).ToString();
 
 		ImGui::TextUnformatted(asset->name.c_str());
 		ImGui::SetDragDropPayload(

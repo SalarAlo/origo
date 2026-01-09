@@ -65,12 +65,12 @@ void Material2D::WriteModel(const glm::mat4& modelMatrix) {
 void Material2D::Resolve() {
 	auto& am = AssetManager::GetInstance();
 
-	m_Shader = m_ShaderUUID.IsBad() ? Shader::DefaultShader() : am.GetHandleByUUID(m_ShaderUUID);
+	m_Shader = !m_ShaderUUID.has_value() ? Shader::DefaultShader() : am.GetHandleByUUID(*m_ShaderUUID);
 	if (!m_Shader.has_value()) {
 		m_Shader = Shader::DefaultShader();
 	}
 
-	m_Albedo = m_AlbedoUUID.IsBad() ? Texture2D::DefaultTexture() : am.GetHandleByUUID(m_AlbedoUUID);
+	m_Albedo = !m_AlbedoUUID.has_value() ? Texture2D::DefaultTexture() : am.GetHandleByUUID(*m_AlbedoUUID);
 	if (!m_Albedo.has_value()) {
 		m_Albedo = Shader::DefaultShader();
 	}

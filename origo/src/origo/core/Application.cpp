@@ -71,6 +71,7 @@ void Application::Run() {
 		m_LastTimeStamp = Time::GetNow();
 
 		m_Window.OnUpdate();
+		OnEndFrame();
 	}
 
 	InternalShutdown();

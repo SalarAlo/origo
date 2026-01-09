@@ -11,7 +11,7 @@
 namespace OrigoEditor {
 
 struct AssetEntry {
-	Origo::UUID id;
+	OptionalUUID id {};
 	Origo::AssetType type;
 	std::string name;
 	std::filesystem::path path;

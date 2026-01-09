@@ -1,4 +1,3 @@
-// Model.h
 #pragma once
 
 #include <filesystem>
@@ -49,6 +48,7 @@ public:
 	void SetPath(const std::filesystem::path& path);
 
 	void Resolve() override;
+	void EnsureShader();
 
 private:
 	void LoadFromAssimp();
@@ -66,7 +66,7 @@ private:
 	std::vector<int> m_AssimpMeshToSubMesh {};
 
 	OptionalAssetHandle m_ModelShaderHandle {};
-	UUID m_ShaderUUID {};
+	OptionalUUID m_ShaderUUID { std::nullopt };
 };
 
 }

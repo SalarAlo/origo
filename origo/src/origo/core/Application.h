@@ -17,6 +17,7 @@ public:
 	virtual void Run();
 
 	virtual void OnAwake() { }
+	virtual void OnEndFrame() { };
 	virtual void OnShutdown() { }
 	void OnEvent(Event& event);
 

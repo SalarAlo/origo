@@ -7,9 +7,9 @@
 namespace Origo {
 
 struct ScriptComponentDescriptor {
-	ScriptComponentID ID;
-	std::string Name;
-	std::vector<ScriptFieldDescriptor> Fields;
+	ScriptComponentID ID { UUID::Generate() };
+	std::string Name { "" };
+	std::vector<ScriptFieldDescriptor> Fields {};
 };
 
 }

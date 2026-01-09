@@ -13,7 +13,7 @@ enum class AssetOrigin {
 
 struct AssetMetadata {
 	std::string Name {};
-	UUID ID { UUID::Bad() };
+	OptionalUUID ID { std::nullopt };
 	AssetType Type {};
 	AssetOrigin Origin {};
 

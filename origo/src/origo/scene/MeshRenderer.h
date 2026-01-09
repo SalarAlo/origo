@@ -7,7 +7,7 @@ namespace Origo {
 
 class MeshRenderer : public Component {
 public:
-	MeshRenderer(AssetHandle material = {}, AssetHandle mesh = {});
+	MeshRenderer(OptionalAssetHandle material = {}, OptionalAssetHandle mesh = {});
 
 	std::string GetName() const override { return "MeshRenderer"; }
 
@@ -18,8 +18,8 @@ public:
 	void SetMaterial(const AssetHandle& handle) { m_Material = handle; }
 
 private:
-	OptionalAssetHandle m_Material {};
-	OptionalAssetHandle m_Mesh {};
+	OptionalAssetHandle m_Material { std::nullopt };
+	OptionalAssetHandle m_Mesh { std::nullopt };
 };
 
 }

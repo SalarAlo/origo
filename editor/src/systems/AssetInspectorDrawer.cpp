@@ -9,7 +9,7 @@ namespace OrigoEditor {
 
 void AssetInspectorDrawer::DrawAsset(const Origo::AssetMetadata& md) {
 	auto& am { Origo::AssetManager::GetInstance() };
-	auto assetHandle { am.GetHandleByUUID(md.ID) };
+	auto assetHandle { am.GetHandleByUUID(*md.ID) };
 	if (!assetHandle) {
 		ORG_CORE_TRACE("Trying to draw invalid asset");
 		return;

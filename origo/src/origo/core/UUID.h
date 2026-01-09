@@ -8,11 +8,6 @@
 namespace Origo {
 
 struct UUID {
-	UUID()
-	    : m_Low(0)
-	    , m_High(0)
-	    , m_IsBad(true) { };
-
 	static UUID Generate() {
 		static std::random_device rd;
 		static std::mt19937_64 gen(rd());
@@ -21,10 +16,6 @@ struct UUID {
 		auto low = gen();
 
 		return UUID(low, high);
-	}
-
-	static UUID Bad() {
-		return UUID(0, 0, true);
 	}
 
 	bool operator==(const UUID& other) const noexcept {
@@ -80,21 +71,20 @@ struct UUID {
 
 	uint64_t GetHigh() const { return m_High; }
 	uint64_t GetLow() const { return m_Low; }
-	// TODO: remove and use std::optional instead
-	bool IsBad() const { return m_IsBad; }
 
 private:
-	UUID(uint64_t high, uint64_t low, bool isBad = false)
+	UUID() = default;
+	UUID(uint64_t high, uint64_t low)
 	    : m_High(high)
-	    , m_Low(low)
-	    , m_IsBad(isBad) { }
+	    , m_Low(low) { }
 
 private:
 	uint64_t m_High;
 	uint64_t m_Low;
-	bool m_IsBad;
 };
 }
+
+using OptionalUUID = std::optional<Origo::UUID>;
 
 namespace std {
 template <>
@@ -103,4 +93,5 @@ struct hash<Origo::UUID> {
 		return std::hash<uint64_t>()(id.GetHigh() ^ (id.GetLow() << 1));
 	}
 };
+
 }

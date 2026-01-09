@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include "origo/scene/NativeComponentManager.h"
+#include "origo/scene/SceneCommand.h"
 #include "origo/scripting/ScriptComponentManager.h"
 #include "origo/serialization/ISerializer.h"
 
@@ -24,9 +25,12 @@ public:
 	Scene& operator=(const Scene&) = delete;
 
 	RID CreateEntity(std::string_view name);
+	void ScheduleRemoveEntity(const RID&);
 
 	const std::vector<RID>& GetEntities() const { return m_Entities; }
 	const std::string& GetName() const { return m_Name; }
+
+	void EndFrame();
 
 #pragma region FORWARDING
 	template <ComponentType T, typename... Args>
@@ -106,10 +110,15 @@ public:
 #pragma endregion
 
 private:
+	void Flush();
+	void RemoveEntity(const RID&);
+
+private:
 	std::string m_Name;
 
 	NativeComponentManager m_NativeComponentManager;
 	ScriptComponentManager m_ScriptComponentManager;
+	std::vector<SceneCommand*> m_Commands;
 	std::vector<RID> m_Entities;
 };
 

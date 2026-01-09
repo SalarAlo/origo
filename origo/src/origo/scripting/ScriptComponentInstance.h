@@ -15,7 +15,7 @@ struct ScriptComponentFieldInstance {
 };
 
 struct ScriptComponentInstance {
-	ScriptComponentID ID;
+	ScriptComponentID ID { UUID::Generate() };
 	std::vector<ScriptComponentFieldInstance> Fields;
 };
 

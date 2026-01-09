@@ -16,14 +16,15 @@ Asset* AssetManager::Get(const AssetHandle& handle) const {
 	return m_AssetEntries[handle.Index].AssetPtr.get();
 }
 
-auto AssetManager::Register(Scope<Asset>&& assetPtr, UUID uuid, OptionalPath path) -> AssetHandle {
+auto AssetManager::Register(Scope<Asset>&& assetPtr, OptionalUUID uuid, OptionalPath path) -> AssetHandle {
 	auto handle { GetNextFreeHandle() };
 
 	m_AssetEntries[handle.Index].AssetPtr = std::move(assetPtr);
 	m_AssetEntries[handle.Index].Uuid = uuid;
 	m_AssetEntries[handle.Index].Path = path;
 
-	m_UuidToHandle[uuid] = handle;
+	if (uuid.has_value())
+		m_UuidToHandle.insert_or_assign(*uuid, handle);
 
 	return handle;
 }
@@ -53,16 +54,14 @@ bool AssetManager::IsValid(const AssetHandle& handle) const {
 	return isGenerationsMatch;
 }
 
-UUID AssetManager::GetUUID(const AssetHandle& handle) const {
+OptionalUUID AssetManager::GetUUID(const AssetHandle& handle) const {
 	if (!IsValid(handle))
-		return UUID::Bad();
+		return std::nullopt;
+
 	return m_AssetEntries[handle.Index].Uuid;
 }
 
 OptionalAssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
-	if (id == UUID::Bad())
-		return std::nullopt;
-
 	auto it = m_UuidToHandle.find(id);
 	if (it == m_UuidToHandle.end()) {
 		ORG_ERROR("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
@@ -81,10 +80,14 @@ OptionalAssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
 
 OptionalAssetHandle AssetManager::Load(const std::filesystem::path& path) {
 	for (const auto& assetEntry : m_AssetEntries) {
-		if (!assetEntry.Path || *assetEntry.Path != path)
+		if (!assetEntry.Path || *assetEntry.Path != path || !assetEntry.Uuid.has_value())
 			continue;
 
-		return m_UuidToHandle[assetEntry.Uuid];
+		auto it = m_UuidToHandle.find(*assetEntry.Uuid);
+		if (it == m_UuidToHandle.end())
+			return std::nullopt;
+
+		return it->second;
 	}
 
 	return std::nullopt;
@@ -100,8 +103,9 @@ void AssetManager::ResolveAll(std::optional<std::function<bool(Asset*)>> resolve
 
 		if (!entry.AssetPtr)
 			continue;
-		if (entry.Uuid.IsBad())
+		if (!entry.Uuid.has_value())
 			continue;
+
 		if (auto assetPtr = entry.AssetPtr.get(); resolveCond.has_value() && !((*resolveCond)(assetPtr)))
 			continue;
 

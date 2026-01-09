@@ -38,4 +38,17 @@ bool NativeComponentManager::AddComponentByType(const RID& entity, std::type_ind
 	return true;
 }
 
+std::size_t NativeComponentManager::RemoveAllComponents(const RID& entity) {
+	std::size_t removed = 0;
+	for (auto& [_, storage] : m_Storages) {
+		removed += storage->Remove(entity) ? 1 : 0;
+	}
+	return removed;
+}
+
+bool NativeComponentManager::HasComponent(const RID& entity, std::type_index type) const {
+	auto it = m_Storages.find(type);
+	return it != m_Storages.end() && it->second->Has(entity);
+}
+
 }

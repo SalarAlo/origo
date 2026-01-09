@@ -172,7 +172,7 @@ void Model::LoadFromAssimp() {
 		    heapId,
 		    range);
 
-		AssetHandle textureHandle {};
+		OptionalAssetHandle textureHandle {};
 		aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
 
 		aiString texPath;
@@ -183,7 +183,7 @@ void Model::LoadFromAssimp() {
 			    "ModelTex_" + std::to_string(i),
 			    TextureType::Albedo);
 
-			auto tex = AssetManager::GetInstance().Get<Texture2D>(textureHandle);
+			auto tex = AssetManager::GetInstance().Get<Texture2D>(*textureHandle);
 
 			if (!path.empty() && path[0] == '*') {
 				int idx = std::atoi(path.c_str() + 1);
@@ -268,20 +268,23 @@ void Model::Resolve() {
 		return;
 	}
 
-	if (!m_ModelShaderHandle.has_value()) {
-		auto shaderHandle = AssetManager::GetInstance().GetHandleByUUID(m_ShaderUUID);
-
-		if (!shaderHandle.has_value()) {
-			ORG_CORE_WARN("Shader UUID invalid for model '{}', using default shader", m_Path.c_str());
-			m_ModelShaderHandle = Shader::DefaultShader();
-		} else {
-			m_ModelShaderHandle = shaderHandle;
-		}
-	}
+	EnsureShader();
 
 	Load();
 }
 
-OptionalAssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
+void Model::EnsureShader() {
+	if (m_ModelShaderHandle.has_value())
+		return;
 
+	if (!m_ShaderUUID.has_value()) {
+		m_ModelShaderHandle = Shader::DefaultShader();
+		return;
+	}
+
+	auto shaderHandle = AssetManager::GetInstance().GetHandleByUUID(*m_ShaderUUID);
+	m_ModelShaderHandle = !shaderHandle.has_value() ? Shader::DefaultShader() : shaderHandle;
+}
+
+OptionalAssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
 }

@@ -3,7 +3,6 @@
 #include <typeindex>
 #include <unordered_map>
 #include <memory>
-#include <stdexcept>
 
 #include "origo/core/RID.h"
 #include "origo/scene/Component.h"
@@ -20,6 +19,7 @@ private:
 		virtual bool Has(const RID& entity) const = 0;
 		virtual void* GetRaw(const RID& entity) = 0;
 		virtual const void* GetRaw(const RID& entity) const = 0;
+		virtual bool Remove(const RID& entity) = 0;
 		virtual std::unique_ptr<IStorage> Clone() const = 0;
 	};
 
@@ -39,6 +39,10 @@ private:
 		const void* GetRaw(const RID& entity) const override {
 			auto it = Data.find(entity);
 			return it != Data.end() ? &it->second : nullptr;
+		}
+
+		bool Remove(const RID& entity) override {
+			return Data.erase(entity) > 0;
 		}
 
 		std::unique_ptr<IStorage> Clone() const override {
@@ -132,10 +136,8 @@ public:
 		}
 	}
 
-	bool HasComponent(const RID& entity, std::type_index type) const {
-		auto it = m_Storages.find(type);
-		return it != m_Storages.end() && it->second->Has(entity);
-	}
+	std::size_t RemoveAllComponents(const RID& entity);
+	bool HasComponent(const RID& entity, std::type_index type) const;
 
 	void* GetComponentByType(const RID& entity, std::type_index type) {
 		auto it = m_Storages.find(type);

@@ -56,7 +56,7 @@ struct EditorContext {
 
 private:
 	std::optional<Origo::RID> m_SelectedEntity { std::nullopt };
-	std::optional<Origo::UUID> m_SelectedAsset { std::nullopt };
+	OptionalUUID m_SelectedAsset { std::nullopt };
 };
 
 }

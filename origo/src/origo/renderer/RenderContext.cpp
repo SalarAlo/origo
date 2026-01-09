@@ -96,13 +96,13 @@ void RenderContext::ExecutePass(RenderPass pass) {
 	}
 
 	Material2D* currentMaterial {};
-	AssetHandle currentMaterialId {};
+	OptionalAssetHandle currentMaterialId {};
 
 	for (auto& cmd : m_DrawQueue) {
 		if (cmd.GetRenderPass() != pass)
 			continue;
 
-		if (cmd.GetMaterial() != currentMaterialId) {
+		if (!currentMaterialId.has_value() || cmd.GetMaterial() != currentMaterialId) {
 			auto material { AssetManager::GetInstance().Get<Material2D>(cmd.GetMaterial()) };
 			material->Bind();
 
