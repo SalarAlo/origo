@@ -5,8 +5,10 @@
 #include "origo/assets/AssetDatabase.h"
 #include "origo/scene/Name.h"
 #include "origo/scene/NativeComponentRegistry.h"
+#include "ui/InspectorComponentRenderer.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 #include "ui/InspectorDrawRegistry.h"
+#include <typeindex>
 
 using namespace Origo;
 
@@ -97,7 +99,7 @@ void EntityInspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo
 			continue;
 
 		void* componentPtr = activeScene->GetNativeComponentByType(selectedEntity, type);
-		InspectorDrawRegistry::DrawNativeComponent(componentPtr, type);
+		InspectorComponentRenderer::DrawNativeComponent(selectedEntity, componentPtr, type);
 	}
 }
 
@@ -106,8 +108,8 @@ void EntityInspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo
 		if (!activeScene->HasScriptComponent(selectedEntity, id))
 			continue;
 
-		auto* instance = activeScene->GetScriptComponent(selectedEntity, id);
-		InspectorDrawRegistry::DrawScriptComponent(*instance);
+		auto& instance = *activeScene->GetScriptComponent(selectedEntity, id);
+		InspectorComponentRenderer::DrawScriptComponent(instance);
 	}
 }
 

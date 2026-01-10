@@ -26,6 +26,7 @@ public:
 
 	RID CreateEntity(std::string_view name);
 	void ScheduleRemoveEntity(const RID&);
+	void ScheduleRemoveNativeComponent(const RID&, const std::type_index&);
 
 	const std::vector<RID>& GetEntities() const { return m_Entities; }
 	const std::string& GetName() const { return m_Name; }

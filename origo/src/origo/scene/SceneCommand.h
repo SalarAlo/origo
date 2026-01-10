@@ -4,7 +4,8 @@
 
 namespace Origo {
 enum class SceneCommandType {
-	Removal,
+	RemoveEntity,
+	RemoveEntityNativeComponent,
 };
 
 struct SceneCommand {
@@ -15,10 +16,20 @@ struct SceneCommand {
 
 struct RemoveEntityCommand : SceneCommand {
 	RemoveEntityCommand(const RID& rid)
-	    : SceneCommand(SceneCommandType::Removal)
+	    : SceneCommand(SceneCommandType::RemoveEntity)
 	    , EntityToRemove(rid) { };
 
 	RID EntityToRemove;
+};
+
+struct RemoveEntityNativeComponentCommand : SceneCommand {
+	RemoveEntityNativeComponentCommand(const RID& rid, const std::type_index& idx)
+	    : SceneCommand(SceneCommandType::RemoveEntityNativeComponent)
+	    , ComponentToRemove(idx)
+	    , EntityToRemoveComponent(rid) { };
+
+	RID EntityToRemoveComponent;
+	std::type_index ComponentToRemove;
 };
 
 }

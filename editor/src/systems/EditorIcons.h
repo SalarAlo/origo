@@ -25,7 +25,8 @@ enum class IconType {
 	Pause,
 	Resume,
 	Stop,
-	Step
+	Step,
+	Menu
 };
 
 class EditorIcons {

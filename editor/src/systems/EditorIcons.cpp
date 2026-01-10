@@ -34,6 +34,8 @@ void EditorIcons::Init() {
 	s_Icons[IconType::Mesh] = LoadSVG("icons/Mesh.svg", 18);
 	s_Icons[IconType::Shader] = LoadSVG("icons/Shader.svg", 18);
 
+	s_Icons[IconType::Menu] = LoadSVG("icons/Menu.svg", 18);
+
 	s_Initialized = true;
 }
 

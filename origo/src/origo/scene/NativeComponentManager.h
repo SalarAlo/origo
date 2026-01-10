@@ -73,6 +73,8 @@ public:
 		return it->second;
 	}
 
+	bool RemoveComponentByType(const RID& entity, std::type_index type);
+
 	template <ComponentType T>
 	bool HasComponent(const RID& entity) const {
 		auto* storage = GetStorage<T>();

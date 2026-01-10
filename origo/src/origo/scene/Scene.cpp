@@ -25,16 +25,26 @@ RID Scene::CreateEntity(std::string_view name) {
 	AddNativeComponent<Transform>(m_Entities.back());
 	return m_Entities.back();
 }
+
 void Scene::ScheduleRemoveEntity(const RID& rid) {
 	m_Commands.emplace_back(new RemoveEntityCommand { rid });
+}
+
+void Scene::ScheduleRemoveNativeComponent(const RID& entity, const std::type_index& type) {
+
+	m_Commands.emplace_back(new RemoveEntityNativeComponentCommand { entity, type });
 }
 
 void Scene::Flush() {
 	for (auto& cmd : m_Commands) {
 		switch (cmd->Type) {
-		case SceneCommandType::Removal: {
+		case SceneCommandType::RemoveEntity: {
 			auto removeCmd { static_cast<RemoveEntityCommand*>(cmd) };
 			RemoveEntity(removeCmd->EntityToRemove);
+		}
+		case SceneCommandType::RemoveEntityNativeComponent: {
+			auto removeCmd { static_cast<RemoveEntityNativeComponentCommand*>(cmd) };
+			m_NativeComponentManager.RemoveComponentByType(removeCmd->EntityToRemoveComponent, removeCmd->ComponentToRemove);
 		}
 		}
 

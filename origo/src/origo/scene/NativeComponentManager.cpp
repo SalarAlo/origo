@@ -51,4 +51,15 @@ bool NativeComponentManager::HasComponent(const RID& entity, std::type_index typ
 	return it != m_Storages.end() && it->second->Has(entity);
 }
 
+bool NativeComponentManager::RemoveComponentByType(
+    const RID& entity,
+    std::type_index type) {
+
+	auto it = m_Storages.find(type);
+	if (it == m_Storages.end())
+		return false;
+
+	return it->second->Remove(entity);
+}
+
 }

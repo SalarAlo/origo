@@ -2,13 +2,14 @@
 
 #include "state/EditorContext.h"
 #include "EditorPanel.h"
+#include "ui/InspectorComponentRenderer.h"
 
 namespace OrigoEditor {
 
 class EntityInspectorPanel : public EditorPanel {
 public:
 	EntityInspectorPanel(EditorContext& ctx)
-	    : m_Context(ctx) { }
+	    : m_Context(ctx) { InspectorComponentRenderer::Init(&ctx); }
 
 	const char* GetName() const override { return "Entity Inspector"; }
 	void OnImGuiRender() override;
