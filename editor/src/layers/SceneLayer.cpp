@@ -5,10 +5,7 @@
 #include "components/FallComponent.h"
 #include "components/EditorOutline.h"
 
-#include "origo/assets/AssetFactory.h"
 #include "origo/assets/Material.h"
-#include "origo/assets/PrimitiveShape.h"
-#include "origo/assets/Mesh.h"
 
 #include "origo/assets/PrimitiveShapeCache.h"
 #include "origo/core/Time.h"
@@ -18,7 +15,7 @@
 #include "origo/renderer/VertexLayoutRegistry.h"
 
 #include "origo/scene/CameraComponent.h"
-#include "origo/scene/Light.h"
+#include "origo/scene/DirectionalLight.h"
 #include "origo/scene/MeshRenderer.h"
 #include "origo/scene/Transform.h"
 
@@ -47,11 +44,10 @@ void SceneLayer::OnAttach() {
 
 	auto lightEntity { scene->CreateEntity("Light") };
 	auto lightTransformComponent { scene->GetNativeComponent<Transform>(lightEntity) };
-	auto lightComponent { scene->AddNativeComponent<Origo::Light>(lightEntity) };
+	auto lightComponent { scene->AddNativeComponent<Origo::DirectionalLight>(lightEntity) };
 	lightComponent->SetShaderTarget(Shader::DefaultShader());
-	lightTransformComponent->SetPosition({ 0, 4.0, 0.0 });
-
-	CreateAssets();
+	lightTransformComponent->SetPosition({ 4.0, 4.0, 3.0 });
+	lightTransformComponent->LookAt({ 0, 0, 0 });
 
 	SpawnGrid(4);
 }
@@ -67,27 +63,6 @@ void SceneLayer::OnUpdate(double) {
 	    glm::vec2(
 	        m_Context.RenderBuffer.GetWidth(),
 	        m_Context.RenderBuffer.GetHeight()));
-}
-
-void SceneLayer::CreateAssets() {
-	auto heap = GeometryHeapRegistry::GetHeap(m_HeapID);
-
-	{
-		MeshData data = GetDataFromShape(PrimitiveShape::Sphere);
-
-		auto range = heap->Allocate(
-		    data.Vertices.data(),
-		    data.Vertices.size() * sizeof(float),
-		    m_VertexStride,
-		    data.Indices.data(),
-		    data.Indices.size());
-
-		AssetFactory::CreateRuntimeAsset<Mesh>(
-		    "Grid_Sphere_Mesh",
-		    m_VertexLayoutID,
-		    m_HeapID,
-		    range);
-	}
 }
 
 void SceneLayer::SpawnGrid(int gridSize, float spacing) {

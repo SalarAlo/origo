@@ -1,4 +1,6 @@
 #include "panels/AssetPanel.h"
+#include "imgui_internal.h"
+#include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "systems/EditorIcons.h"
 #include <imgui.h>
@@ -264,6 +266,33 @@ void AssetPanel::DrawFolderTile(FolderEntry* folder, ImDrawList* drawList) {
 	ImGui::PopID();
 }
 
+static void AddImageRotated(ImDrawList* drawList, ImTextureID texture, ImVec2 center, ImVec2 size, float angleRad, ImU32 tint = IM_COL32_WHITE) {
+	const ImVec2 half = size * 0.5f;
+	const float c = cosf(angleRad);
+	const float s = sinf(angleRad);
+
+	auto rotate = [&](ImVec2 p) {
+		p -= half;
+		return ImVec2(
+		    center.x + p.x * c - p.y * s,
+		    center.y + p.x * s + p.y * c);
+	};
+
+	ImVec2 p0 = rotate({ 0, 0 });
+	ImVec2 p1 = rotate({ size.x, 0 });
+	ImVec2 p2 = rotate({ size.x, size.y });
+	ImVec2 p3 = rotate({ 0, size.y });
+
+	drawList->AddImageQuad(
+	    texture,
+	    p0, p1, p2, p3,
+	    ImVec2(0, 0),
+	    ImVec2(1, 0),
+	    ImVec2(1, 1),
+	    ImVec2(0, 1),
+	    tint);
+}
+
 void AssetPanel::DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList) {
 	constexpr float TILE_SIZE = 96.0f;
 	constexpr float TEXT_HEIGHT = 22.0f;
@@ -293,10 +322,16 @@ void AssetPanel::DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList) {
 	ImVec2 thumbMax = thumbMin + ImVec2(TILE_SIZE - 20, TILE_SIZE - 20);
 
 	if (asset->Icon) {
-		drawList->AddImage(asset->Icon, thumbMin, thumbMax);
+		ImVec2 size = thumbMax - thumbMin;
+		ImVec2 center = thumbMin + size * 0.5f;
+
+		if (asset->type == Origo::AssetType::Texture2D) {
+			AddImageRotated(drawList, asset->Icon, center, size, IM_PI);
+		} else {
+			AddImageRotated(drawList, asset->Icon, center, size, 0);
+		}
 	} else {
 		drawList->AddRectFilled(thumbMin, thumbMax, IM_COL32(90, 90, 90, 255), 6.0f);
-		// asset->Icon = AssetThumbnailGenerator::GetThumbnailID(asset);
 	}
 
 	const float textPadding = 6.0f;

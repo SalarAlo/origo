@@ -55,23 +55,33 @@ void Texture2D::InitTexture(const TextureInitialisationData& initData) {
 	GLCall(glGenTextures(1, &m_TextureId));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
-	GLenum format = (initData.Channels == 4 ? GL_RGBA : GL_RGB);
+	GLenum internalFormat;
+	GLenum dataFormat;
 
-	GLCall(glTexImage2D(
+	if (initData.Channels == 4) {
+		internalFormat = GL_RGBA8;
+		dataFormat = GL_RGBA;
+	} else {
+		internalFormat = GL_RGB8;
+		dataFormat = GL_RGB;
+	}
+
+	glTexImage2D(
 	    GL_TEXTURE_2D,
 	    0,
-	    format,
+	    internalFormat,
 	    initData.Width,
 	    initData.Height,
 	    0,
-	    format,
+	    dataFormat,
 	    GL_UNSIGNED_BYTE,
-	    initData.PixelData.data()));
+	    initData.PixelData.data());
 
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, initData.GenerateMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
 	if (initData.GenerateMipmaps)
 		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));

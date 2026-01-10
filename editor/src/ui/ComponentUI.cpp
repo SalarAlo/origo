@@ -5,48 +5,43 @@
 #include "origo/assets/AssetManagerFast.h"
 
 namespace ComponentUI {
+
 void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
 
 	const float fieldWidth = 65.0f;
-	const float spacingBetweenFields = 4.0f;
-
-	ImGui::BeginGroup();
+	const float spacing = 4.0f;
 
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label.data());
 
-	float totalFieldWidth = fieldWidth * 3.0f + spacingBetweenFields * 2.0f;
-
-	float rightMargin = 5.0f;
+	float totalWidth = fieldWidth * 3.0f + spacing * 2.0f;
 	float avail = ImGui::GetContentRegionAvail().x;
-	float nextX = ImGui::GetCursorPosX() + avail - totalFieldWidth - rightMargin;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float nextX = ImGui::GetCursorPosX() + avail - totalWidth;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
+
 	ImGui::SameLine(nextX);
 
 	auto DrawField = [&](const char* id, float& v) {
-		ImVec4 textColor(0.85f, 0.85f, 0.85f, 1.0f);
-
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
 		ImGui::SetNextItemWidth(fieldWidth);
-		ImGui::DragFloat(std::string("##").append(id).c_str(), &v, speed, 0.0f, 0.0f, "%.2f");
+		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
 
 		ImGui::PopStyleColor(4);
 	};
 
-	DrawField("X", values.x);
-	ImGui::SameLine(0.0f, spacingBetweenFields);
-	DrawField("Y", values.y);
-	ImGui::SameLine(0.0f, spacingBetweenFields);
-	DrawField("Z", values.z);
-
-	ImGui::EndGroup();
+	DrawField("##X", values.x);
+	ImGui::SameLine(0.0f, spacing);
+	DrawField("##Y", values.y);
+	ImGui::SameLine(0.0f, spacing);
+	DrawField("##Z", values.z);
 
 	ImGui::PopStyleVar();
 	ImGui::PopID();
@@ -58,15 +53,14 @@ void DrawFloatControl(std::string_view label, float& value, float speed) {
 
 	const float fieldWidth = 100.0f;
 
-	ImGui::BeginGroup();
-
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label.data());
 
 	float avail = ImGui::GetContentRegionAvail().x;
 	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
 
 	ImGui::SameLine(nextX);
 
@@ -79,8 +73,6 @@ void DrawFloatControl(std::string_view label, float& value, float speed) {
 	ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, "%.3f");
 
 	ImGui::PopStyleColor(4);
-
-	ImGui::EndGroup();
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
@@ -91,15 +83,14 @@ void DrawIntControl(std::string_view label, int& value, float speed) {
 
 	const float fieldWidth = 90.0f;
 
-	ImGui::BeginGroup();
-
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label.data());
 
 	float avail = ImGui::GetContentRegionAvail().x;
 	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
 
 	ImGui::SameLine(nextX);
 
@@ -112,8 +103,6 @@ void DrawIntControl(std::string_view label, int& value, float speed) {
 	ImGui::DragInt("##int", &value, speed);
 
 	ImGui::PopStyleColor(4);
-
-	ImGui::EndGroup();
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
@@ -124,15 +113,14 @@ void DrawStringControl(std::string_view label, std::string& value) {
 
 	const float fieldWidth = 180.0f;
 
-	ImGui::BeginGroup();
-
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label.data());
 
 	float avail = ImGui::GetContentRegionAvail().x;
 	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
 
 	ImGui::SameLine(nextX);
 
@@ -142,58 +130,20 @@ void DrawStringControl(std::string_view label, std::string& value) {
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
 	ImGui::SetNextItemWidth(fieldWidth);
-
 	ImGui::InputText(
 	    "##string",
 	    value.data(),
 	    value.capacity() + 1,
 	    ImGuiInputTextFlags_CallbackResize,
 	    [](ImGuiInputTextCallbackData* data) {
-		    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
-			    auto* str = static_cast<std::string*>(data->UserData);
-			    str->resize(data->BufTextLen);
-			    data->Buf = str->data();
-		    }
+		    auto* str = static_cast<std::string*>(data->UserData);
+		    str->resize(data->BufTextLen);
+		    data->Buf = str->data();
 		    return 0;
 	    },
 	    &value);
 
 	ImGui::PopStyleColor(4);
-
-	ImGui::EndGroup();
-	ImGui::PopStyleVar();
-	ImGui::PopID();
-}
-
-void DrawFloatControl(std::string_view label, float& value, float speed, const char* format) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float fieldWidth = 90.0f;
-
-	ImGui::BeginGroup();
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	if (nextX < ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f)
-		nextX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-
-	ImGui::SameLine(nextX);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::SetNextItemWidth(fieldWidth);
-	ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, format);
-
-	ImGui::PopStyleColor(4);
-
-	ImGui::EndGroup();
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
@@ -244,9 +194,8 @@ void DrawBoolControl(std::string_view label, bool& value) {
 void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
 	auto& am = Origo::AssetManager::GetInstance();
 
-	auto uuid = handle.has_value() ? am.GetUUID(*handle) : std::nullopt;
-	auto md = uuid.has_value() ? Origo::AssetDatabase::GetMetadata(*uuid)
-	                           : Origo::AssetMetadata {};
+	auto uuid = handle ? am.GetUUID(*handle) : std::nullopt;
+	auto md = uuid ? Origo::AssetDatabase::GetMetadata(*uuid) : Origo::AssetMetadata {};
 
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
@@ -270,30 +219,19 @@ void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
-	std::string display = handle.has_value() ? md.Name : std::string { "None" };
+	std::string display = handle ? md.Name : "None";
 	ImGui::Button(display.c_str(), ImVec2(fieldWidth, fieldHeight));
 
 	ImGui::PopStyleColor(4);
 
-	ImRect rect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-	ImGuiID id = ImGui::GetID("AssetDropTarget");
-
-	if (ImGui::BeginDragDropTargetCustom(rect, id)) {
+	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID")) {
 			const char* uuidStr = static_cast<const char*>(payload->Data);
 			Origo::UUID payloadID = Origo::UUID::FromString(uuidStr);
-			auto payloadMetadata { Origo::AssetDatabase::GetMetadata(payloadID) };
-			bool anyTypeValid { !assetValidationType.has_value() };
+			auto payloadMD = Origo::AssetDatabase::GetMetadata(payloadID);
 
-			if (anyTypeValid || payloadMetadata.Type == *assetValidationType) {
+			if (!assetValidationType || payloadMD.Type == *assetValidationType)
 				handle = am.GetHandleByUUID(payloadID);
-			} else {
-				if (assetValidationType) {
-					std::string assetValidationTypeStr { magic_enum::enum_name(*assetValidationType) };
-					std::string providedAssetTypeStr { magic_enum::enum_name(payloadMetadata.Type) };
-					ORG_CORE_WARN("Received {} while the asset control {} expects {}", providedAssetTypeStr, label, assetValidationTypeStr);
-				}
-			}
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -307,4 +245,44 @@ void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
+
+void DrawColorControl(std::string_view label, glm::vec3& value) {
+	ImGui::PushID(label.data());
+
+	ImVec4 col(value.r, value.g, value.b, 1.0f);
+
+	if (ImGui::BeginTable("ColorRow", 2, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_NoPadInnerX)) {
+		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 90.0f);
+		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(label.data());
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::SetNextItemWidth(-FLT_MIN);
+
+		if (ImGui::ColorButton(
+		        "##color",
+		        col,
+		        ImGuiColorEditFlags_NoTooltip,
+		        ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetFrameHeight()))) {
+			ImGui::OpenPopup("ColorPicker");
+		}
+
+		if (ImGui::BeginPopup("ColorPicker")) {
+			float c[3] = { value.r, value.g, value.b };
+			if (ImGui::ColorPicker3("##picker", c))
+				value = { c[0], c[1], c[2] };
+			ImGui::EndPopup();
+		}
+
+		ImGui::EndTable();
+	}
+
+	ImGui::PopID();
+}
+
 }

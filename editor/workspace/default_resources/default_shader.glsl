@@ -33,39 +33,161 @@ void main() {
 
 #version 430 core
 
+
+struct DirectionalLight {
+    vec3 direction;   
+    vec3 color;
+    float intensity;
+};
+
+struct PointLight {
+    vec3 position;
+    vec3 color;
+    float intensity;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+struct SpotLight {
+    vec3 position;
+    vec3 direction;   // world space, normalized on CPU
+    vec3 color;
+    float intensity;
+
+    float innerCutoff; // cos(innerAngle)
+    float outerCutoff; // cos(outerAngle)
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+
 in vec3 vNormal;
 in vec3 vFragPos;
 in vec2 vUv;
 
 out vec4 FragColor;
 
+
 uniform vec3 u_ViewPos;
 uniform sampler2D u_Texture_Albedo;
 
 uniform float u_Ambient = 0.2;
-uniform int u_ShinyFactor = 32;
-uniform vec3 u_LightColor = vec3(1.0);
+uniform int   u_ShinyFactor = 32;
 
-uniform vec3 u_LightPos = vec3(1.0, 8.0, 1.0);
+
+#define MAX_POINT_LIGHTS 8
+#define MAX_SPOT_LIGHTS  8
+
+uniform DirectionalLight u_DirLight;
+
+uniform int u_PointLightCount;
+uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
+
+uniform int u_SpotLightCount;
+uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS];
+
+/* =========================
+   Lighting helpers
+   ========================= */
+
+vec3 ApplyPhong(
+    vec3 lightDir,
+    vec3 lightColor,
+    float intensity,
+    vec3 normal,
+    vec3 viewDir
+) {
+    float diff = max(dot(normal, lightDir), 0.0);
+
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_ShinyFactor);
+
+    vec3 diffuse  = diff * lightColor;
+    vec3 specular = spec * lightColor * 0.5;
+
+    return intensity * (diffuse + specular);
+}
+
+vec3 ComputeDirectionalLight(
+    DirectionalLight light,
+    vec3 normal,
+    vec3 viewDir
+) {
+    vec3 lightDir = normalize(-light.direction);
+    return ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+}
+
+vec3 ComputePointLight(
+    PointLight light,
+    vec3 fragPos,
+    vec3 normal,
+    vec3 viewDir
+) {
+    vec3 lightDir = normalize(light.position - fragPos);
+    float distance = length(light.position - fragPos);
+
+    float attenuation =
+        1.0 / (light.constant +
+               light.linear * distance +
+               light.quadratic * distance * distance);
+
+    vec3 result = ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+    return result * attenuation;
+}
+
+vec3 ComputeSpotLight(
+    SpotLight light,
+    vec3 fragPos,
+    vec3 normal,
+    vec3 viewDir
+) {
+    vec3 lightDir = normalize(light.position - fragPos);
+    float distance = length(light.position - fragPos);
+
+    float attenuation =
+        1.0 / (light.constant +
+               light.linear * distance +
+               light.quadratic * distance * distance);
+
+    float theta = dot(lightDir, normalize(-light.direction));
+    float epsilon = light.innerCutoff - light.outerCutoff;
+    float coneIntensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
+
+    vec3 result = ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+    return result * attenuation * coneIntensity;
+}
 
 void main() {
-    vec3 objectColor = texture(u_Texture_Albedo, vUv).rgb;
+    vec3 albedo = texture(u_Texture_Albedo, vUv).rgb;
 
-    vec3 lightDir = normalize(u_LightPos - vFragPos);
-    vec3 norm = normalize(vNormal);
-
+    vec3 normal  = normalize(vNormal);
     vec3 viewDir = normalize(u_ViewPos - vFragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
 
-    vec3 ambientColor = u_Ambient * u_LightColor;
+    vec3 lighting = u_Ambient * albedo * u_DirLight.color;
 
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * u_LightColor;
+    lighting += ComputeDirectionalLight(u_DirLight, normal, viewDir) * albedo;
 
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_ShinyFactor);
-    vec3 specular = 0.5 * spec * u_LightColor;
+    for (int i = 0; i < u_PointLightCount; ++i) {
+        lighting += ComputePointLight(
+            u_PointLights[i],
+            vFragPos,
+            normal,
+            viewDir
+        ) * albedo;
+    }
 
-    vec3 litColor = (ambientColor + diffuse + specular) * objectColor;
-    FragColor = vec4(litColor, 1.0);
+    for (int i = 0; i < u_SpotLightCount; ++i) {
+        lighting += ComputeSpotLight(
+            u_SpotLights[i],
+            vFragPos,
+            normal,
+            viewDir
+        ) * albedo;
+    }
 
+    FragColor = vec4(lighting, 1.0);
 }

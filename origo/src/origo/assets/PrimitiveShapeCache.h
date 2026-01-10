@@ -12,14 +12,14 @@ public:
 	AssetHandle GetSphereMesh();
 	AssetHandle GetQuadMesh();
 
-	PrimitiveShapeCache(const PrimitiveShapeCache&) = delete;
-	void operator=(const PrimitiveShapeCache&) = delete;
-
-	PrimitiveShapeCache(PrimitiveShapeCache&&) = delete;
-	void operator=(PrimitiveShapeCache&&) = delete;
-
 private:
 	PrimitiveShapeCache() = default;
+
+	PrimitiveShapeCache(const PrimitiveShapeCache&) = default;
+	PrimitiveShapeCache& operator=(const PrimitiveShapeCache&) = default;
+
+	PrimitiveShapeCache(PrimitiveShapeCache&&) = default;
+	PrimitiveShapeCache& operator=(PrimitiveShapeCache&&) = default;
 };
 
 }

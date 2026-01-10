@@ -5,7 +5,7 @@
 
 namespace Origo {
 
-class LightSystem final : public Origo::IUpdateSystem {
+class DirectionalLightSystem final : public Origo::IUpdateSystem {
 public:
 	void Update(Origo::Scene* scene, float dt) override;
 };

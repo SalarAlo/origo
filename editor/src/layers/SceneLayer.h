@@ -14,7 +14,6 @@ public:
 
 private:
 	void SpawnGrid(int gridSize = 10, float spacing = 1.5f);
-	void CreateAssets();
 
 private:
 	EditorContext& m_Context;

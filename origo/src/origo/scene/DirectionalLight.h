@@ -5,21 +5,21 @@
 
 namespace Origo {
 
-class Light : public Component {
+class DirectionalLight : public Component {
 public:
-	Light() = default;
-	Light(int shinyFactor, glm::vec3 lightColor, float ambientFactor)
-	    : m_ShinyFactor(shinyFactor)
+	DirectionalLight() = default;
+	DirectionalLight(int shinyFactor, glm::vec3 lightColor, float ambientFactor)
+	    : m_Intensity(shinyFactor)
 	    , m_LightColor(lightColor)
 	    , m_AmbientFactor(ambientFactor) { }
 
-	std::string GetName() const override { return "Light"; };
+	std::string GetName() const override { return "Directional Light"; };
 
 	void SetShaderTarget(const AssetHandle& handle) { m_ShaderTarget = handle; }
 	OptionalAssetHandle GetShaderTarget() { return m_ShaderTarget; }
 
-	void SetShinyFactor(int factor) { m_ShinyFactor = factor; }
-	int GetShinyFactor() const { return m_ShinyFactor; }
+	void SetIntensity(float factor) { m_Intensity = factor; }
+	float GetIntensity() const { return m_Intensity; }
 
 	void SetLightColor(const glm::vec3& color) { m_LightColor = color; }
 	glm::vec3 GetLightColor() const { return m_LightColor; }
@@ -28,7 +28,7 @@ public:
 	float GetAmbientFactor() const { return m_AmbientFactor; }
 
 private:
-	int m_ShinyFactor { 32 };
+	float m_Intensity { 1.0f };
 	glm::vec3 m_LightColor { 1.0f };
 	float m_AmbientFactor { 0.2f };
 

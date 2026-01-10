@@ -70,7 +70,7 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 		ImGui::TableNextRow();
 
 		ImGui::TableSetColumnIndex(0);
-		float iconSize = 14.0f;
+		float iconSize = 18.0f;
 		float yOff = (ImGui::GetFrameHeight() - iconSize) * 0.5f;
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOff);
 
