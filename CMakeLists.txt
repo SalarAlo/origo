@@ -39,6 +39,7 @@ add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/json)
+add_subdirectory(vendor/jolt)
 
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)

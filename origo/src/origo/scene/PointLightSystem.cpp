@@ -1,5 +1,9 @@
 #include "PointLightSystem.h"
+
 #include "origo/scene/SystemScheduler.h"
+#include "origo/assets/Shader.h"
+#include "origo/scene/PointLight.h"
+#include "origo/scene/Transform.h"
 
 namespace Origo {
 void PointLightSystem::Update(Origo::Scene* scene, float dt) {

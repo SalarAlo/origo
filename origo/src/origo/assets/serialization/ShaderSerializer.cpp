@@ -1,5 +1,4 @@
-
-#include "origo/assets/ShaderSerializer.h"
+#include "origo/assets/serialization/ShaderSerializer.h"
 #include "origo/assets/Shader.h"
 
 namespace Origo {

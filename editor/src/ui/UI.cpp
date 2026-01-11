@@ -2,6 +2,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/serialization/SceneSerializer.h"
 #include "origo/scripting/ScriptSystem.h"
 #include "panels/PanelManager.h"
 
@@ -135,14 +136,19 @@ void EndDockspace() {
 	ImGui::End();
 }
 
-void DrawMenuBar(PanelManager& manager) {
+void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
 	if (!ImGui::BeginMenuBar())
 		return;
 
 	if (ImGui::BeginMenu("File")) {
 		ImGui::MenuItem("New Scene");
 		ImGui::MenuItem("Open Scene...");
-		ImGui::MenuItem("Save Scene");
+		if (ImGui::MenuItem("Save Scene")) {
+			std::string path { "./resources/scenes/" };
+			path += ctx.EditorScene->GetName();
+			path += ".scene.json";
+			Origo::SceneSerializer::SerializeToFile(*ctx.EditorScene, path);
+		}
 		if (ImGui::MenuItem("Save Generated Assets"))
 			Origo::AssetDatabase::SaveAll();
 

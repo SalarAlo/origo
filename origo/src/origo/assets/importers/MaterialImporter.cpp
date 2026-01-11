@@ -1,7 +1,7 @@
 #include "MaterialImporter.h"
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/renderer/Helpers.h"
 #include "origo/serialization/JsonSerializer.h"
 

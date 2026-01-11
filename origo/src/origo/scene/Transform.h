@@ -30,7 +30,10 @@ public:
 
 	const glm::mat4& GetModelMatrix();
 
-	std::string GetName() const override { return "Transform"; }
+	std::string GetComponentName() const override { return "Transform"; }
+
+	void Serialize(ISerializer& backend) const override;
+	void Deserialize(ISerializer& backend) override;
 
 private:
 	void RecalculateModel();

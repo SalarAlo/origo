@@ -62,4 +62,48 @@ bool NativeComponentManager::RemoveComponentByType(
 	return it->second->Remove(entity);
 }
 
+void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFn fn, void* user) {
+	for (const auto& [type, info] : NativeComponentRegistry::GetAll()) {
+		if (!info.Has(*this, entity))
+			continue;
+
+		void* ptr = info.Get(*this, entity);
+		if (!ptr)
+			continue;
+
+		fn(info, ptr, user);
+	}
+}
+
+void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFnConst fn, void* user) const {
+	for (const auto& [type, info] : NativeComponentRegistry::GetAll()) {
+		if (!info.Has(*this, entity))
+			continue;
+
+		const void* ptr = this->GetComponentByType(entity, type);
+		if (!ptr)
+			continue;
+
+		fn(info, ptr, user);
+	}
+}
+
+void NativeComponentManager::SerializeEntity(const RID& entity, ISerializer& backend) const {
+	backend.BeginArray("native_components");
+
+	ForEachComponentOnEntity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
+		backend.BeginArrayElement();
+
+		backend.Write("type", info.DisplayName);
+
+		backend.BeginObject("data");
+		info.Serialize(c, backend);
+		backend.EndObject();
+
+		backend.EndArrayElement();
+	});
+
+	backend.EndArray();
+}
+
 }

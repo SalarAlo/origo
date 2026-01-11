@@ -1,4 +1,3 @@
-#pragma
 #pragma once
 
 #include "EditorPanel.h"

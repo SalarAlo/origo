@@ -1,7 +1,7 @@
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManagerFast.h"
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
 #include "magic_enum/magic_enum.hpp"

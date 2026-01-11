@@ -1,5 +1,5 @@
 #include "origo/core/Init.h"
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/AssetPipeline.h"
 #include "origo/scripting/ScriptSystem.h"

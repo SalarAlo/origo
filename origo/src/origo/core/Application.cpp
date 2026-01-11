@@ -1,5 +1,5 @@
 #include "origo/core/Application.h"
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/core/Layer.h"
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"

@@ -1,4 +1,4 @@
-#include "origo/assets/ModelSerializer.h"
+#include "origo/assets/serialization/ModelSerializer.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Model.h"
 #include "origo/core/Logger.h"
@@ -15,6 +15,8 @@ void ModelSerializer::Serialize(const Asset* asset, ISerializer& backend) const 
 		auto shaderID { AssetManager::GetInstance().GetUUID(*shaderHandle) };
 		if (shaderID.has_value())
 			backend.Write("shader_id", (*shaderID).ToString());
+	} else {
+		backend.Write("shader_id", "0");
 	}
 
 	auto path { model->GetPath() };
@@ -26,6 +28,7 @@ void ModelSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
 	std::string shaderID {};
 
 	backend.TryRead("shader_id", shaderID);
+
 	if (!backend.TryRead("path", path)) {
 		ORG_CORE_WARN("No Path provided");
 	} else {

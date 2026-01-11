@@ -11,13 +11,16 @@ namespace Origo {
 
 AssetHandle Shader::DefaultShader() {
 	static AssetHandle handle = [] {
-		auto shader = AssetFactory::CreateSyntheticAsset<Shader>(
+		auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>(
 		    "Default Shader",
 		    UUID::FromHash("ENGINE_DEFAULT_SHADER"));
 
-		AssetManager::GetInstance().Get<Shader>(shader)->SetSource(MakeScope<ShaderSourceFile>("./default_resources/default_shader.glsl"));
+		auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
 
-		return shader;
+		shader->SetSource(MakeScope<ShaderSourceFile>("./default_resources/default_shader.glsl"));
+		shader->Resolve();
+
+		return shaderHandle;
 	}();
 
 	return handle;
@@ -45,7 +48,7 @@ static GLuint CompileShader(GLenum type, const char* src) {
 		std::string log(len, '\0');
 		GLCall(glGetShaderInfoLog(shader, len, &len, log.data()));
 		GLCall(glDeleteShader(shader));
-		ORG_CORE_ERROR("[Shader] Shader Compilation Failed!");
+		ORG_CORE_ERROR("Shader::CompileShader: Shader Compilation Failed!");
 		throw std::runtime_error(std::string("Shader compile failed: ") + log);
 	}
 
@@ -65,7 +68,7 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 		std::string log(len, '\0');
 		GLCall(glGetProgramInfoLog(program, len, &len, log.data()));
 		GLCall(glDeleteProgram(program));
-		ORG_CORE_ERROR("[Shader] Program Linkage failed!");
+		ORG_CORE_ERROR("Shader::LinkProgram: Program Linkage failed!");
 		throw std::runtime_error(std::string("Program link failed: ") + log);
 	}
 	return program;
@@ -73,7 +76,6 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 
 void Shader::SetSource(Scope<ShaderSource> source) {
 	m_Source = std::move(source);
-	Init();
 }
 
 void Shader::Init() {

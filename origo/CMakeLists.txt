@@ -30,6 +30,7 @@ target_link_libraries(OrigoEngine PUBLIC
     imgui
     lua
     sol2
+    jolt
 
     Threads::Threads
     spdlog_header_only

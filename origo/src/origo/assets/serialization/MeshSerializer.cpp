@@ -1,4 +1,4 @@
-#include "origo/assets/MeshSerializer.h"
+#include "origo/assets/serialization/MeshSerializer.h"
 #include "origo/assets/Mesh.h"
 #include "origo/serialization/ISerializer.h"
 

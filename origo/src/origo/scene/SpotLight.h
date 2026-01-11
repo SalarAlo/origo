@@ -7,7 +7,7 @@ namespace Origo {
 
 class SpotLight : public Component {
 public:
-	std::string GetName() const override { return "Spot Light"; }
+	std::string GetComponentName() const override { return "Spot Light"; }
 
 	void SetShaderTarget(const AssetHandle& handle) { m_ShaderTarget = handle; }
 	OptionalAssetHandle GetShaderTarget() const { return m_ShaderTarget; }

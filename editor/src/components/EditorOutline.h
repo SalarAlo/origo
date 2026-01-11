@@ -15,7 +15,7 @@ public:
 public:
 	EditorOutline() { }
 
-	std::string GetName() const override { return "EditorSelection"; }
+	std::string GetComponentName() const override { return "EditorSelection"; }
 
 	static Origo::AssetHandle GetOutlineMaterial() {
 		using namespace Origo;
@@ -25,7 +25,10 @@ public:
 		static bool s_Initialised { false };
 		if (!s_Initialised) {
 			auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>("Outline Shader", outlineShaderID);
-			AssetManager::GetInstance().Get<Shader>(shaderHandle)->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
+			auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
+
+			shader->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
+			shader->Resolve();
 
 			m_OutlineMaterial = AssetFactory::CreateSyntheticAsset<Material2D>("Outline Material", outlineMaterialID, shaderHandle);
 

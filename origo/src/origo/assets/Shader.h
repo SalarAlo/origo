@@ -26,6 +26,10 @@ public:
 
 	GLuint GetProgramID() const { return m_ProgramId; }
 
+	void Resolve() override {
+		Init();
+	}
+
 	Shader(const Shader&) = delete;
 	Shader& operator=(const Shader&) = delete;
 	Shader(Shader&&) = delete;

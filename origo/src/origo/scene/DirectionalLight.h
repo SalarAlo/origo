@@ -13,7 +13,7 @@ public:
 	    , m_LightColor(lightColor)
 	    , m_AmbientFactor(ambientFactor) { }
 
-	std::string GetName() const override { return "Directional Light"; };
+	std::string GetComponentName() const override { return "Directional Light"; };
 
 	void SetShaderTarget(const AssetHandle& handle) { m_ShaderTarget = handle; }
 	OptionalAssetHandle GetShaderTarget() { return m_ShaderTarget; }
@@ -26,6 +26,9 @@ public:
 
 	void SetAmbientFactor(float ambientFactor) { m_AmbientFactor = ambientFactor; }
 	float GetAmbientFactor() const { return m_AmbientFactor; }
+
+	void Serialize(ISerializer& backend) const override;
+	void Deserialize(ISerializer& backend) override;
 
 private:
 	float m_Intensity { 1.0f };

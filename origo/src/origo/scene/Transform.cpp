@@ -125,4 +125,40 @@ glm::vec3 Transform::GetUp() const {
 	const glm::mat4& m = const_cast<Transform*>(this)->GetModelMatrix();
 	return glm::normalize(glm::vec3(m[1]));
 }
+
+void Transform::Serialize(ISerializer& backend) const {
+	backend.Write("pos_x", m_Position.x);
+	backend.Write("pos_y", m_Position.y);
+	backend.Write("pos_z", m_Position.z);
+
+	backend.Write("rot_x", m_Rotation.x);
+	backend.Write("rot_y", m_Rotation.y);
+	backend.Write("rot_z", m_Rotation.z);
+
+	backend.Write("scale_x", m_Scale.x);
+	backend.Write("scale_y", m_Scale.y);
+	backend.Write("scale_z", m_Scale.z);
+}
+
+void Transform::Deserialize(ISerializer& backend) {
+	glm::vec3 position = m_Position;
+	glm::vec3 rotation = m_Rotation;
+	glm::vec3 scale = m_Scale;
+
+	backend.TryRead("pos_x", position.x);
+	backend.TryRead("pos_y", position.y);
+	backend.TryRead("pos_z", position.z);
+
+	backend.TryRead("rot_x", rotation.x);
+	backend.TryRead("rot_y", rotation.y);
+	backend.TryRead("rot_z", rotation.z);
+
+	backend.TryRead("scale_x", scale.x);
+	backend.TryRead("scale_y", scale.y);
+	backend.TryRead("scale_z", scale.z);
+
+	SetPosition(position);
+	SetRotation(rotation);
+	SetScale(scale);
+}
 }

@@ -1,8 +1,7 @@
+#pragma once
+
 #include "origo/scene/IUpdateSystem.h"
-#include "origo/scene/PointLight.h"
 #include "origo/scene/Scene.h"
-#include "origo/assets/Shader.h"
-#include "origo/scene/Transform.h"
 
 namespace Origo {
 

@@ -1,4 +1,4 @@
-#include "origo/assets/ScriptSerializer.h"
+#include "origo/assets/serialization/ScriptSerializer.h"
 #include "origo/assets/Script.h"
 
 namespace Origo {

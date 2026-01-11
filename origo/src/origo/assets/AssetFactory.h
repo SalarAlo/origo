@@ -51,6 +51,10 @@ public:
 	}
 
 	static Scope<Asset> AllocateHollowAsset(AssetType type);
+	template <AssetConcept T>
+	static Scope<T> AllocateHollowAsset() {
+		return MakeScope<T>();
+	}
 };
 
 }

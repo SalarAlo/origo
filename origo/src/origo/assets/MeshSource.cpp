@@ -21,7 +21,7 @@ void MeshSourceRaw::Serialize(ISerializer& backend) const {
 }
 
 MeshSource* MeshSourceRaw::Deserialize(ISerializer& backend) const {
-	// TODO:
+	// Left empty on purpose
 	return nullptr;
 }
 
@@ -35,7 +35,7 @@ void MeshSourcePrimitiveShape::Serialize(ISerializer& backend) const {
 }
 
 MeshSource* MeshSourcePrimitiveShape::Deserialize(ISerializer& backend) const {
-	// TODO:
+	// Left empty on purpose (rebuilt everytime anyways (see PrimitiveShapeCache.h))
 	return nullptr;
 }
 
@@ -50,7 +50,7 @@ void MeshSourceExternal::Serialize(ISerializer& backend) const {
 }
 
 MeshSource* MeshSourceExternal::Deserialize(ISerializer& backend) const {
-	// TODO:
+	// Left empty on purpose (should not serialize)
 	return nullptr;
 }
 

@@ -1,6 +1,5 @@
 #include "origo/assets/Asset.h"
 #include "origo/scene/PointLight.h"
-#include "origo/scene/SystemScheduler.h"
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>

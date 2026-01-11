@@ -1,8 +1,5 @@
 #include "layers/SceneLayer.h"
 
-#include <random>
-
-#include "components/FallComponent.h"
 #include "components/EditorOutline.h"
 
 #include "origo/assets/Material.h"
@@ -66,10 +63,6 @@ void SceneLayer::OnUpdate(double) {
 }
 
 void SceneLayer::SpawnGrid(int gridSize, float spacing) {
-	std::mt19937 rng { std::random_device {}() };
-	std::uniform_int_distribution<int> chance { 0, 3 };
-	std::uniform_real_distribution<float> speed { 1.0f, 10.0f };
-
 	const float half = (gridSize - 1) * spacing * 0.5f;
 
 	int id = 0;
@@ -94,12 +87,6 @@ void SceneLayer::SpawnGrid(int gridSize, float spacing) {
 			    PrimitiveShapeCache::GetInstance().GetCubeMesh());
 
 			m_Context.EditorScene->AddNativeComponent<EditorOutline>(entity);
-
-			if (!chance(rng)) {
-				m_Context.EditorScene->AddNativeComponent<FallComponent>(
-				    entity,
-				    speed(rng));
-			}
 		}
 	}
 }

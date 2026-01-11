@@ -34,6 +34,8 @@ void DirectionalLightSystem::Update(Origo::Scene* scene, float dt) {
 		    shader->SetUniform<float>(
 		        "u_DirLight.intensity",
 		        light.GetIntensity());
+
+		    shader->SetUniform("u_Ambient", light.GetAmbientFactor());
 	    });
 }
 

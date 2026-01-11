@@ -38,16 +38,17 @@ AssetHandle SkyboxDefaults::GetCubemap() {
 
 AssetHandle SkyboxDefaults::GetShader() {
 	static AssetHandle handle = [] {
-		auto shader = AssetFactory::CreateSyntheticAsset<Shader>(
+		auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>(
 		    "Default Skybox Shader",
 		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_SHADER"));
 
-		AssetManager::GetInstance()
-		    .Get<Shader>(shader)
-		    ->SetSource(MakeScope<ShaderSourceFile>(
-		        "./resources/shaders/skybox.glsl"));
+		auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
 
-		return shader;
+		shader->SetSource(MakeScope<ShaderSourceFile>(
+		    "./resources/shaders/skybox.glsl"));
+		shader->Resolve();
+
+		return shaderHandle;
 	}();
 
 	return handle;

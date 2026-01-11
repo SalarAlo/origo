@@ -11,10 +11,13 @@ public:
 	Camera(float aspect, float nearPlane = 0.1f, float farPlane = 400.0f);
 
 	void SetFOV(float fov);
-	float GetFOV() { return m_FOV; }
+	float GetFOV() const { return m_FOV; }
+
 	void SetAspect(float aspect);
 	float GetAspect() const { return m_Aspect; }
+
 	void SetClipping(float nearPlane, float farPlane);
+	glm::vec2 GetClipping() const { return { m_Near, m_Far }; };
 
 	void UpdateFromTransform(Transform& transform);
 

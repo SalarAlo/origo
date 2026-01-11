@@ -40,7 +40,7 @@ void EditorUILayer::OnUpdate(double dt) {
 	m_ImGuiController.Begin();
 
 	UI::BeginDockspace();
-	UI::DrawMenuBar(m_PanelManager);
+	UI::DrawMenuBar(m_PanelManager, m_Context);
 
 	m_PanelManager.RenderPanels();
 

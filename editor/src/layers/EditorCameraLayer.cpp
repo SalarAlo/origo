@@ -1,4 +1,5 @@
 #include "layers/EditorCameraLayer.h"
+#include "origo/assets/serialization/SceneSerializer.h"
 #include "origo/input/Input.h"
 #include "origo/scene/Transform.h"
 

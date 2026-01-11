@@ -1,12 +1,13 @@
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 
-#include "origo/assets/AssetSerializer.h"
-#include "origo/assets/MaterialSerializer.h"
-#include "origo/assets/MeshSerializer.h"
-#include "origo/assets/ModelSerializer.h"
-#include "origo/assets/ScriptSerializer.h"
-#include "origo/assets/ShaderSerializer.h"
-#include "origo/assets/TextureSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
+#include "origo/assets/serialization/MaterialSerializer.h"
+#include "origo/assets/serialization/MeshSerializer.h"
+#include "origo/assets/serialization/ModelSerializer.h"
+#include "origo/assets/serialization/SceneAssetSerializer.h"
+#include "origo/assets/serialization/ScriptSerializer.h"
+#include "origo/assets/serialization/ShaderSerializer.h"
+#include "origo/assets/serialization/TextureSerializer.h"
 
 namespace Origo::AssetSerializationSystem {
 
@@ -43,6 +44,7 @@ void RegisterAllAssetSerializers() {
 	Register(AssetType::Model, new ModelSerializer());
 	Register(AssetType::Shader, new ShaderSerializer());
 	Register(AssetType::Script, new ScriptSerializer());
+	Register(AssetType::Scene, new SceneAssetSerializer());
 }
 
 }

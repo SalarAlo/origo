@@ -1,5 +1,6 @@
 #include "origo/assets/importers/ModelImporter.h"
 #include "origo/assets/Model.h"
+#include "origo/assets/AssetFactory.h"
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
@@ -15,7 +16,7 @@ AssetType ModelImporter::GetAssetType() const {
 }
 
 Scope<Asset> ModelImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto asset = MakeScope<Model>();
+	auto asset = AssetFactory::AllocateHollowAsset<Model>();
 
 	asset->SetPath(path);
 

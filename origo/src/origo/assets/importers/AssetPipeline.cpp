@@ -1,7 +1,7 @@
 #include "origo/assets/importers/AssetPipeline.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetSerializer.h"
+#include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/core/Logger.h"
@@ -40,8 +40,6 @@ void AssetImportPipeline::RunInitialImport() {
 	}
 
 	ORG_CORE_TRACE("Initial import complete. {} assets imported.", importCount);
-
-	s_InitialImportComplete = true;
 
 	AssetManager::GetInstance().ResolveAll();
 }

@@ -1,4 +1,4 @@
-#include "origo/assets/MaterialSerializer.h"
+#include "origo/assets/serialization/MaterialSerializer.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/serialization/ISerializer.h"

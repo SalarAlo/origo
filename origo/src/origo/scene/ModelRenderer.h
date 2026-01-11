@@ -14,7 +14,10 @@ public:
 	OptionalAssetHandle GetModel() const { return m_Model; }
 	void SetModel(const AssetHandle& model) { m_Model = model; }
 
-	std::string GetName() const override { return "ModelRenderer"; }
+	std::string GetComponentName() const override { return "ModelRenderer"; }
+
+	void Serialize(ISerializer& backend) const override;
+	void Deserialize(ISerializer& backend) override;
 
 private:
 	OptionalAssetHandle m_Model {};

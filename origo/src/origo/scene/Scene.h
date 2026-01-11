@@ -6,17 +6,16 @@
 #include "origo/scene/NativeComponentManager.h"
 #include "origo/scene/SceneCommand.h"
 #include "origo/scripting/ScriptComponentManager.h"
-#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 class Scene;
 
-namespace SceneSerialization {
-	void Serialize(const Scene& scene, ISerializer& backend);
+namespace SceneSerializer {
+	void SerializeToFile(Scene& scene, const std::filesystem::path& out);
 }
 
 class Scene {
-	friend void SceneSerialization::Serialize(const Scene& scene, ISerializer& backend);
+	friend void SceneSerializer::SerializeToFile(Scene& scene, const std::filesystem::path& out);
 
 public:
 	Scene(std::string_view name = "SampleScene");

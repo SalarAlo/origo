@@ -7,6 +7,6 @@ void ApplyEditorStyle(const EditorPalette& p);
 void LoadEditorFont();
 
 void BeginDockspace();
-void DrawMenuBar(PanelManager& manager);
+void DrawMenuBar(PanelManager& manager, EditorContext& ctx);
 void EndDockspace();
 }

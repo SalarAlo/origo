@@ -1,11 +1,13 @@
 #pragma once
 
 #include <typeindex>
-#include <unordered_map>
-#include <memory>
 
 #include "origo/core/RID.h"
 #include "origo/scene/Component.h"
+
+namespace Origo {
+struct NativeComponentTypeInfo;
+}
 
 namespace Origo {
 
@@ -13,44 +15,9 @@ template <typename T>
 concept ComponentType = std::derived_from<T, Component>;
 
 class NativeComponentManager {
-private:
-	struct IStorage {
-		virtual ~IStorage() = default;
-		virtual bool Has(const RID& entity) const = 0;
-		virtual void* GetRaw(const RID& entity) = 0;
-		virtual const void* GetRaw(const RID& entity) const = 0;
-		virtual bool Remove(const RID& entity) = 0;
-		virtual std::unique_ptr<IStorage> Clone() const = 0;
-	};
-
-	template <ComponentType T>
-	struct Storage final : IStorage {
-		std::unordered_map<RID, T> Data;
-
-		bool Has(const RID& entity) const override {
-			return Data.find(entity) != Data.end();
-		}
-
-		void* GetRaw(const RID& entity) override {
-			auto it = Data.find(entity);
-			return it != Data.end() ? &it->second : nullptr;
-		}
-
-		const void* GetRaw(const RID& entity) const override {
-			auto it = Data.find(entity);
-			return it != Data.end() ? &it->second : nullptr;
-		}
-
-		bool Remove(const RID& entity) override {
-			return Data.erase(entity) > 0;
-		}
-
-		std::unique_ptr<IStorage> Clone() const override {
-			auto cloned = std::make_unique<Storage<T>>();
-			cloned->Data = Data;
-			return cloned;
-		}
-	};
+public:
+	using VisitFn = void (*)(const NativeComponentTypeInfo&, void* component, void* user);
+	using VisitFnConst = void (*)(const NativeComponentTypeInfo&, const void* component, void* user);
 
 public:
 	NativeComponentManager() = default;
@@ -150,6 +117,67 @@ public:
 		auto it = m_Storages.find(type);
 		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
 	}
+
+	template <typename Func>
+	void ForEachComponentOnEntity(const RID& entity, Func&& func) {
+		auto thunk = [](const NativeComponentTypeInfo& info, void* c, void* u) {
+			(*static_cast<std::remove_reference_t<Func>*>(u))(info, c);
+		};
+		this->ForEachComponentOnEntity(entity, thunk, &func);
+	}
+
+	template <typename Func>
+	void ForEachComponentOnEntity(const RID& entity, Func&& func) const {
+		auto thunk = [](const NativeComponentTypeInfo& info, const void* c, void* u) {
+			(*static_cast<std::remove_reference_t<Func>*>(u))(info, c);
+		};
+		this->ForEachComponentOnEntity(entity, thunk, &func);
+	}
+
+	void ForEachComponentOnEntity(const RID& entity, VisitFn fn, void* user);
+	void ForEachComponentOnEntity(const RID& entity, VisitFnConst fn, void* user) const;
+
+	void SerializeEntity(const RID& entity, ISerializer& backend) const;
+	void DeserializeEntity(const RID& entity, ISerializer& backend);
+
+private:
+	struct IStorage {
+		virtual ~IStorage() = default;
+		virtual bool Has(const RID& entity) const = 0;
+		virtual void* GetRaw(const RID& entity) = 0;
+		virtual const void* GetRaw(const RID& entity) const = 0;
+		virtual bool Remove(const RID& entity) = 0;
+		virtual std::unique_ptr<IStorage> Clone() const = 0;
+	};
+
+	template <ComponentType T>
+	struct Storage final : IStorage {
+		std::unordered_map<RID, T> Data;
+
+		bool Has(const RID& entity) const override {
+			return Data.find(entity) != Data.end();
+		}
+
+		void* GetRaw(const RID& entity) override {
+			auto it = Data.find(entity);
+			return it != Data.end() ? &it->second : nullptr;
+		}
+
+		const void* GetRaw(const RID& entity) const override {
+			auto it = Data.find(entity);
+			return it != Data.end() ? &it->second : nullptr;
+		}
+
+		bool Remove(const RID& entity) override {
+			return Data.erase(entity) > 0;
+		}
+
+		std::unique_ptr<IStorage> Clone() const override {
+			auto cloned = std::make_unique<Storage<T>>();
+			cloned->Data = Data;
+			return cloned;
+		}
+	};
 
 private:
 	template <ComponentType T>
