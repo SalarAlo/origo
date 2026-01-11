@@ -1,4 +1,3 @@
-// Model.cpp
 #include "Model.h"
 
 #include "origo/assets/AssetFactory.h"

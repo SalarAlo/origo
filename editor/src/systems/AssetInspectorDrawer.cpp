@@ -16,6 +16,7 @@ void AssetInspectorDrawer::DrawAsset(const Origo::AssetMetadata& md) {
 	}
 
 	auto assetPtr { am.Get(*assetHandle) };
+	ImGui::Text("%s", (*md.ID).ToString().c_str());
 	DrawSpecific(assetPtr, md.Type);
 }
 

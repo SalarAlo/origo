@@ -65,6 +65,10 @@ void Scene::RemoveEntity(const RID& rid) {
 	m_Entities.erase(it, m_Entities.end());
 }
 
-Scene::~Scene() { };
+Scene::~Scene() {
+	for (const auto& e : m_Entities) {
+		RemoveEntity(e);
+	}
+};
 
 }

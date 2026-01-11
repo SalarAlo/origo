@@ -208,6 +208,24 @@ bool JsonSerializer::TryReadArrayElement(std::string& value) {
 	return TryReadArrayElementImpl(m_ObjectsStack, value);
 }
 
+bool JsonSerializer::TryBeginArrayElementRead() {
+	if (m_ObjectsStack.empty())
+		return false;
+
+	JsonStackEntry& entry = m_ObjectsStack.top();
+	nlohmann::json* j = entry.Json;
+
+	if (!j || !j->is_array())
+		return false;
+
+	if (entry.Index >= j->size())
+		return false;
+
+	nlohmann::json& elem = (*j)[entry.Index++];
+	m_ObjectsStack.push({ &elem, true, 0 });
+	return true;
+}
+
 JSON_DEF_WRITE_SERIALIZATION_FN(std::string_view)
 JSON_DEF_WRITE_SERIALIZATION_FN(int)
 JSON_DEF_WRITE_SERIALIZATION_FN(float)

@@ -4,6 +4,26 @@
                         "native_components": [
                                 {
                                         "data": {
+                                                "pos_x": -3.5,
+                                                "pos_y": 4.0,
+                                                "pos_z": 5.0,
+                                                "rot_x": -33.0,
+                                                "rot_y": -33.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Main Camera"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "aspect": 1.0,
                                                 "far": 400.0,
                                                 "fov": 90.0,
@@ -17,6 +37,26 @@
                 },
                 {
                         "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 4.0,
+                                                "pos_y": 4.0,
+                                                "pos_z": 3.0,
+                                                "rot_x": -38.65980911254883,
+                                                "rot_y": -53.130104064941406,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Light"
+                                        },
+                                        "type": "Name"
+                                },
                                 {
                                         "data": {
                                                 "ambient": 0.20000000298023224,
@@ -39,6 +79,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": 1.8000000715255737,
+                                                "pos_y": 0.0,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_0"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -52,6 +112,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.2727922201156616,
+                                                "pos_y": 0.30000001192092896,
+                                                "pos_z": 1.2727922201156616,
+                                                "rot_x": 0.0,
+                                                "rot_y": 45.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_1"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -71,6 +151,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": -7.868050033721374e-08,
+                                                "pos_y": 0.6000000238418579,
+                                                "pos_z": 1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 90.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_2"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -84,6 +184,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727922201156616,
+                                                "pos_y": 0.8999999761581421,
+                                                "pos_z": 1.2727922201156616,
+                                                "rot_x": 0.0,
+                                                "rot_y": 135.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_3"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -103,6 +223,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": -1.8000000715255737,
+                                                "pos_y": 1.2000000476837158,
+                                                "pos_z": -1.573610006744275e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 180.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_4"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -116,6 +256,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727923393249512,
+                                                "pos_y": 1.4999998807907104,
+                                                "pos_z": -1.2727922201156616,
+                                                "rot_x": 0.0,
+                                                "rot_y": 225.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_5"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -135,6 +295,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": 2.1464785504576867e-08,
+                                                "pos_y": 1.7999999523162842,
+                                                "pos_z": -1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 270.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_6"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -148,6 +328,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.272792100906372,
+                                                "pos_y": 2.0999999046325684,
+                                                "pos_z": -1.2727924585342407,
+                                                "rot_x": 0.0,
+                                                "rot_y": 315.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_7"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -167,6 +367,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": 1.8000000715255737,
+                                                "pos_y": 2.4000000953674316,
+                                                "pos_z": 3.14722001348855e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 360.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_8"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -180,6 +400,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.2727922201156616,
+                                                "pos_y": 2.6999998092651367,
+                                                "pos_z": 1.2727922201156616,
+                                                "rot_x": 0.0,
+                                                "rot_y": 405.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_9"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -199,6 +439,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": 2.503276732568338e-07,
+                                                "pos_y": 2.999999761581421,
+                                                "pos_z": 1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 450.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_10"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -212,6 +472,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727930545806885,
+                                                "pos_y": 3.299999952316284,
+                                                "pos_z": 1.2727913856506348,
+                                                "rot_x": 0.0,
+                                                "rot_y": 495.0000305175781,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_11"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -231,6 +511,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": -1.8000000715255737,
+                                                "pos_y": 3.5999999046325684,
+                                                "pos_z": -4.292957100915373e-08,
+                                                "rot_x": 0.0,
+                                                "rot_y": 540.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_12"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -244,6 +544,26 @@
                                 {
                                         "data": {},
                                         "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727917432785034,
+                                                "pos_y": 3.9000000953674316,
+                                                "pos_z": -1.2727925777435303,
+                                                "rot_x": 0.0,
+                                                "rot_y": 585.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_13"
+                                        },
+                                        "type": "Name"
                                 },
                                 {
                                         "data": {
@@ -263,6 +583,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": -5.22120103596535e-07,
+                                                "pos_y": 4.199999809265137,
+                                                "pos_z": -1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 630.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_14"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -279,6 +619,26 @@
                                 },
                                 {
                                         "data": {
+                                                "pos_x": 1.2727935314178467,
+                                                "pos_y": 4.5,
+                                                "pos_z": -1.2727909088134766,
+                                                "rot_x": 0.0,
+                                                "rot_y": 675.0000610351563,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_15"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
                                                 "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
                                                 "mesh": "01a45b138323f9feea5e07b3825bc29b"
                                         },
@@ -286,6 +646,2886 @@
                                 }
                         ],
                         "rid": "17"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.8000000715255737,
+                                                "pos_y": 4.800000190734863,
+                                                "pos_z": 6.2944400269771e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 720.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_16"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "18"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.2727925777435303,
+                                                "pos_y": 5.099999904632568,
+                                                "pos_z": 1.272791862487793,
+                                                "rot_x": 0.0,
+                                                "rot_y": 765.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_17"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "19"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -6.43943565137306e-08,
+                                                "pos_y": 5.399999618530273,
+                                                "pos_z": 1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 810.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_18"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "20"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727938890457153,
+                                                "pos_y": 5.699999809265137,
+                                                "pos_z": 1.2727906703948975,
+                                                "rot_x": 0.0,
+                                                "rot_y": 855.0000610351563,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_19"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "21"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.8000000715255737,
+                                                "pos_y": 5.999999523162842,
+                                                "pos_z": 5.006553465136676e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 900.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_20"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "22"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2727909088134766,
+                                                "pos_y": 6.299999713897705,
+                                                "pos_z": -1.2727935314178467,
+                                                "rot_x": 0.0,
+                                                "rot_y": 945.0000610351563,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_21"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "23"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.3675227112107677e-06,
+                                                "pos_y": 6.599999904632568,
+                                                "pos_z": -1.8000000715255737,
+                                                "rot_x": 0.0,
+                                                "rot_y": 990.0000610351563,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_22"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "24"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.2727943658828735,
+                                                "pos_y": 6.899999618530273,
+                                                "pos_z": -1.2727901935577393,
+                                                "rot_x": 0.0,
+                                                "rot_y": 1035.0001220703125,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Spiral_23"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "25"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.2000000476837158,
+                                                "pos_y": 3.0933096408843994,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_24"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "26"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.1086554527282715,
+                                                "pos_y": 3.047680377960205,
+                                                "pos_z": 0.45922017097473145,
+                                                "rot_x": 0.0,
+                                                "rot_y": 22.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_25"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "27"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.8485281467437744,
+                                                "pos_y": 0.7208436131477356,
+                                                "pos_z": 0.8485281467437744,
+                                                "rot_x": 0.0,
+                                                "rot_y": 45.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_26"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "28"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.45922014117240906,
+                                                "pos_y": -1.0144107341766357,
+                                                "pos_z": 1.1086554527282715,
+                                                "rot_x": 0.0,
+                                                "rot_y": 67.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_27"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "29"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -5.245366807571372e-08,
+                                                "pos_y": -0.01568007469177246,
+                                                "pos_z": 1.2000000476837158,
+                                                "rot_x": 0.0,
+                                                "rot_y": 90.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_28"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "30"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.4592202305793762,
+                                                "pos_y": 2.4839704036712646,
+                                                "pos_z": 1.1086554527282715,
+                                                "rot_x": 0.0,
+                                                "rot_y": 112.50000762939453,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_29"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "31"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.8485281467437744,
+                                                "pos_y": 3.398387908935547,
+                                                "pos_z": 0.8485281467437744,
+                                                "rot_x": 0.0,
+                                                "rot_y": 135.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_30"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "32"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.108655571937561,
+                                                "pos_y": 1.5986027717590332,
+                                                "pos_z": 0.45921996235847473,
+                                                "rot_x": 0.0,
+                                                "rot_y": 157.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_31"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "33"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.2000000476837158,
+                                                "pos_y": -0.6933097839355469,
+                                                "pos_z": -1.0490733615142744e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 180.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_32"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "34"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.1086554527282715,
+                                                "pos_y": -0.6476807594299316,
+                                                "pos_z": -0.45922014117240906,
+                                                "rot_x": 0.0,
+                                                "rot_y": 202.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_33"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "35"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.8485280275344849,
+                                                "pos_y": 1.6791586875915527,
+                                                "pos_z": -0.8485283255577087,
+                                                "rot_x": 0.0,
+                                                "rot_y": 225.00001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_34"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "36"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.4592197835445404,
+                                                "pos_y": 3.4144110679626465,
+                                                "pos_z": -1.1086556911468506,
+                                                "rot_x": 0.0,
+                                                "rot_y": 247.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_35"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "37"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.4309857299110718e-08,
+                                                "pos_y": 2.415680170059204,
+                                                "pos_z": -1.2000000476837158,
+                                                "rot_x": 0.0,
+                                                "rot_y": 270.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_36"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "38"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.45922034978866577,
+                                                "pos_y": -0.08397209644317627,
+                                                "pos_z": -1.108655333518982,
+                                                "rot_x": 0.0,
+                                                "rot_y": 292.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_37"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "39"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.8485284447669983,
+                                                "pos_y": -0.998387336730957,
+                                                "pos_z": -0.8485278487205505,
+                                                "rot_x": 0.0,
+                                                "rot_y": 315.0000305175781,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_38"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "40"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.108655571937561,
+                                                "pos_y": 0.801397442817688,
+                                                "pos_z": -0.45922014117240906,
+                                                "rot_x": 0.0,
+                                                "rot_y": 337.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_39"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "41"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.4000000953674316,
+                                                "pos_y": 4.445919036865234,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_40"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "42"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.217310905456543,
+                                                "pos_y": 2.317883014678955,
+                                                "pos_z": 0.9184403419494629,
+                                                "rot_x": 0.0,
+                                                "rot_y": 22.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_41"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "43"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.6970562934875488,
+                                                "pos_y": 0.2912311553955078,
+                                                "pos_z": 1.6970562934875488,
+                                                "rot_x": 0.0,
+                                                "rot_y": 45.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_42"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "44"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.9184402823448181,
+                                                "pos_y": 0.8681354522705078,
+                                                "pos_z": 2.217310905456543,
+                                                "rot_x": 0.0,
+                                                "rot_y": 67.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_43"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "45"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.0490733615142744e-07,
+                                                "pos_y": 3.3363304138183594,
+                                                "pos_z": 2.4000000953674316,
+                                                "rot_x": 0.0,
+                                                "rot_y": 90.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_44"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "46"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.9184404611587524,
+                                                "pos_y": 4.648500919342041,
+                                                "pos_z": 2.217310905456543,
+                                                "rot_x": 0.0,
+                                                "rot_y": 112.50000762939453,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_45"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "47"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.6970562934875488,
+                                                "pos_y": 3.184597969055176,
+                                                "pos_z": 1.6970562934875488,
+                                                "rot_x": 0.0,
+                                                "rot_y": 135.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_46"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "48"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -2.217311143875122,
+                                                "pos_y": 0.7520034313201904,
+                                                "pos_z": 0.9184399247169495,
+                                                "rot_x": 0.0,
+                                                "rot_y": 157.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_47"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "49"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -2.4000000953674316,
+                                                "pos_y": 0.3540809154510498,
+                                                "pos_z": -2.098146723028549e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 180.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_48"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "50"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -2.217310905456543,
+                                                "pos_y": 2.482116222381592,
+                                                "pos_z": -0.9184402823448181,
+                                                "rot_x": 0.0,
+                                                "rot_y": 202.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_49"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "51"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.6970560550689697,
+                                                "pos_y": 4.508769512176514,
+                                                "pos_z": -1.6970566511154175,
+                                                "rot_x": 0.0,
+                                                "rot_y": 225.00001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_50"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "52"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -0.9184395670890808,
+                                                "pos_y": 3.931864023208618,
+                                                "pos_z": -2.217311382293701,
+                                                "rot_x": 0.0,
+                                                "rot_y": 247.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_51"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "53"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.8619714598221435e-08,
+                                                "pos_y": 1.4636696577072144,
+                                                "pos_z": -2.4000000953674316,
+                                                "rot_x": 0.0,
+                                                "rot_y": 270.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_52"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "54"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.9184406995773315,
+                                                "pos_y": 0.15149927139282227,
+                                                "pos_z": -2.217310667037964,
+                                                "rot_x": 0.0,
+                                                "rot_y": 292.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_53"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "55"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.6970568895339966,
+                                                "pos_y": 1.6154043674468994,
+                                                "pos_z": -1.697055697441101,
+                                                "rot_x": 0.0,
+                                                "rot_y": 315.0000305175781,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_54"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "56"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.217311143875122,
+                                                "pos_y": 4.047996997833252,
+                                                "pos_z": -0.9184402823448181,
+                                                "rot_x": 0.0,
+                                                "rot_y": 337.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_55"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "57"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 3.6000001430511475,
+                                                "pos_y": 3.917520046234131,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_56"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "58"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 3.3259663581848145,
+                                                "pos_y": 1.663583755493164,
+                                                "pos_z": 1.3776605129241943,
+                                                "rot_x": 0.0,
+                                                "rot_y": 22.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_57"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "59"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.5455844402313232,
+                                                "pos_y": 1.8004112243652344,
+                                                "pos_z": 2.5455844402313232,
+                                                "rot_x": 0.0,
+                                                "rot_y": 45.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_58"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "60"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.3776603937149048,
+                                                "pos_y": 4.15907096862793,
+                                                "pos_z": 3.3259663581848145,
+                                                "rot_x": 0.0,
+                                                "rot_y": 67.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_59"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "61"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.573610006744275e-07,
+                                                "pos_y": 5.827483177185059,
+                                                "pos_z": 3.6000001430511475,
+                                                "rot_x": 0.0,
+                                                "rot_y": 90.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_60"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "62"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.3776607513427734,
+                                                "pos_y": 4.745770454406738,
+                                                "pos_z": 3.3259663581848145,
+                                                "rot_x": 0.0,
+                                                "rot_y": 112.50000762939453,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_61"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "63"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -2.5455844402313232,
+                                                "pos_y": 2.2494523525238037,
+                                                "pos_z": 2.5455844402313232,
+                                                "rot_x": 0.0,
+                                                "rot_y": 135.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_62"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "64"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -3.3259668350219727,
+                                                "pos_y": 1.420564889907837,
+                                                "pos_z": 1.377659797668457,
+                                                "rot_x": 0.0,
+                                                "rot_y": 157.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_63"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "65"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -3.6000001430511475,
+                                                "pos_y": 3.282480239868164,
+                                                "pos_z": -3.14722001348855e-07,
+                                                "rot_x": 0.0,
+                                                "rot_y": 180.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_64"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "66"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -3.3259663581848145,
+                                                "pos_y": 5.536416053771973,
+                                                "pos_z": -1.3776603937149048,
+                                                "rot_x": 0.0,
+                                                "rot_y": 202.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_65"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "67"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -2.545583963394165,
+                                                "pos_y": 5.399587631225586,
+                                                "pos_z": -2.5455849170684814,
+                                                "rot_x": 0.0,
+                                                "rot_y": 225.00001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_66"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "68"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": -1.3776593208312988,
+                                                "pos_y": 3.040928363800049,
+                                                "pos_z": -3.3259670734405518,
+                                                "rot_x": 0.0,
+                                                "rot_y": 247.50001525878906,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_67"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "69"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 4.292957100915373e-08,
+                                                "pos_y": 1.3725171089172363,
+                                                "pos_z": -3.6000001430511475,
+                                                "rot_x": 0.0,
+                                                "rot_y": 270.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_68"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "70"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 1.3776609897613525,
+                                                "pos_y": 2.4542317390441895,
+                                                "pos_z": -3.3259661197662354,
+                                                "rot_x": 0.0,
+                                                "rot_y": 292.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_69"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "71"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 2.5455853939056396,
+                                                "pos_y": 4.950550079345703,
+                                                "pos_z": -2.545583724975586,
+                                                "rot_x": 0.0,
+                                                "rot_y": 315.0000305175781,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_70"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "72"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 3.3259665966033936,
+                                                "pos_y": 5.779435157775879,
+                                                "pos_z": -1.3776603937149048,
+                                                "rot_x": 0.0,
+                                                "rot_y": 337.5,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.6000000238418579,
+                                                "scale_y": 1.399999976158142,
+                                                "scale_z": 0.6000000238418579
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Ring_71"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "73"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_72"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "74"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_73"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "75"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_74"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "76"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_75"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "77"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_76"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "78"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_77"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "79"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_78"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "80"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_79"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "81"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_80"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "82"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_81"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "83"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_82"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "84"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": -1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_83"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "85"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_84"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "86"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_85"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "87"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_86"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "88"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_87"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "89"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_88"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "90"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 1.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_89"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "91"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_90"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "92"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_91"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "93"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 3.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_92"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "94"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_93"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "95"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_94"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "96"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 4.5,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 4.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_95"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "97"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -6.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_96"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "98"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": -1.5,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_97"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "99"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 6.0,
+                                                "pos_y": -0.800000011920929,
+                                                "pos_z": 3.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 0.800000011920929,
+                                                "scale_y": 0.20000000298023224,
+                                                "scale_z": 0.800000011920929
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Anchor_98"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
+                                }
+                        ],
+                        "rid": "100"
                 }
         ],
         "name": "Sample Scene"

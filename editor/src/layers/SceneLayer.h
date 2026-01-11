@@ -13,9 +13,6 @@ public:
 	void OnUpdate(double dt) override;
 
 private:
-	void SpawnGrid(int gridSize = 10, float spacing = 1.5f);
-
-private:
 	EditorContext& m_Context;
 
 	uint32_t m_VertexLayoutID = 0;

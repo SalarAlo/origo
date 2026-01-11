@@ -5,6 +5,7 @@
 #include "origo/assets/serialization/SceneSerializer.h"
 #include "origo/scripting/ScriptSystem.h"
 #include "panels/PanelManager.h"
+#include "systems/EditorRuntimeController.h"
 
 namespace OrigoEditor::UI {
 
@@ -137,12 +138,18 @@ void EndDockspace() {
 }
 
 void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
+	static bool openSceneDialog = false;
+	static std::filesystem::path selectedScenePath {};
+	static EditorRuntimeController m_Controller { ctx };
+
 	if (!ImGui::BeginMenuBar())
 		return;
 
 	if (ImGui::BeginMenu("File")) {
 		ImGui::MenuItem("New Scene");
-		ImGui::MenuItem("Open Scene...");
+		if (ImGui::MenuItem("Open Scene...")) {
+			openSceneDialog = true;
+		}
 		if (ImGui::MenuItem("Save Scene")) {
 			std::string path { "./resources/scenes/" };
 			path += ctx.EditorScene->GetName();
@@ -160,9 +167,43 @@ void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
 		ImGui::EndMenu();
 	}
 
+	static char scenePathBuffer[512] = "./resources/scenes/";
+
+	if (openSceneDialog) {
+		ImGui::OpenPopup("Open Scene");
+		openSceneDialog = false;
+	}
+
+	if (ImGui::BeginPopupModal("Open Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		ImGui::Text("Scene file path:");
+		ImGui::InputText("##ScenePath", scenePathBuffer, sizeof(scenePathBuffer));
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		if (ImGui::Button("Open")) {
+			selectedScenePath = scenePathBuffer;
+
+			if (!std::filesystem::exists(selectedScenePath)) {
+				ORG_CORE_INFO("Scene File does not exist!");
+			}
+
+			ctx.PendingScene = std::move(Origo::SceneSerializer::DeserializeFromFile(selectedScenePath));
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
 	manager.RenderMenuItems();
 
 	ImGui::EndMenuBar();
 }
-
 }

@@ -36,6 +36,7 @@ public:
 	virtual bool TryReadArrayElement(int& value) = 0;
 	virtual bool TryReadArrayElement(float& value) = 0;
 	virtual bool TryReadArrayElement(std::string& value) = 0;
+	virtual bool TryBeginArrayElementRead() = 0;
 
 protected:
 	std::filesystem::path m_Path;
@@ -68,6 +69,7 @@ protected:
                                                                            \
 	bool TryReadArrayElement(int& value) override;                     \
 	bool TryReadArrayElement(float& value) override;                   \
-	bool TryReadArrayElement(std::string& value) override;
+	bool TryReadArrayElement(std::string& value) override;             \
+	bool TryBeginArrayElementRead() override;
 
 }

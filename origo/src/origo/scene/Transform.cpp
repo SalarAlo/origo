@@ -1,5 +1,6 @@
 #include "origo/scene/Transform.h"
 #include "glm/gtc/quaternion.hpp"
+#include "origo/scene/NativeComponentRegistry.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -161,4 +162,7 @@ void Transform::Deserialize(ISerializer& backend) {
 	SetRotation(rotation);
 	SetScale(scale);
 }
+
+ORIGO_REGISTER_NATIVE_COMPONENT(Origo::Transform)
+
 }

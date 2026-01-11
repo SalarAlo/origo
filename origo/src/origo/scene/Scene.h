@@ -12,10 +12,12 @@ class Scene;
 
 namespace SceneSerializer {
 	void SerializeToFile(Scene& scene, const std::filesystem::path& out);
+	Scope<Scene> DeserializeFromFile(const std::filesystem::path& path);
 }
 
 class Scene {
 	friend void SceneSerializer::SerializeToFile(Scene& scene, const std::filesystem::path& out);
+	friend Scope<Scene> SceneSerializer::DeserializeFromFile(const std::filesystem::path& path);
 
 public:
 	Scene(std::string_view name = "SampleScene");

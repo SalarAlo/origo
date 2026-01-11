@@ -11,7 +11,6 @@ bool EditorRuntimeController::CanStep() const { return CanResume(); }
 void EditorRuntimeController::Step() {
 	if (!CanStep())
 		return;
-
 	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY, [&]() { ORG_CORE_TRACE("Step made"); });
 }
 
@@ -20,8 +19,8 @@ void EditorRuntimeController::Play() {
 	if (!CanPlay())
 		return;
 
-	m_Context.RuntimeScene = new Origo::Scene(*m_Context.EditorScene);
-	m_Context.ActiveScene = m_Context.RuntimeScene;
+	m_Context.RuntimeScene = MakeScope<Origo::Scene>(*m_Context.EditorScene);
+	m_Context.ActiveScene = m_Context.RuntimeScene.get();
 	m_Context.RuntimeState = EditorRuntimeState::Running;
 	m_Context.ViewMode = EditorViewMode::Game;
 
@@ -34,10 +33,8 @@ void EditorRuntimeController::Play() {
 
 bool EditorRuntimeController::CanPause() const { return m_Context.RuntimeState == EditorRuntimeState::Running && m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
 void EditorRuntimeController::Pause(bool changeToEditorView) {
-	if (!CanPause()) {
+	if (!CanPause())
 		return;
-	}
-
 	m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
 	if (changeToEditorView)
 		m_Context.ViewMode = EditorViewMode::Editor;
@@ -47,9 +44,8 @@ void EditorRuntimeController::Pause(bool changeToEditorView) {
 
 bool EditorRuntimeController::CanResume() const { return m_Context.RuntimeState == EditorRuntimeState::Running && !m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
 void EditorRuntimeController::Resume() {
-	if (!CanResume()) {
+	if (!CanResume())
 		return;
-	}
 
 	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
 	m_Context.ViewMode = EditorViewMode::Game;
@@ -62,10 +58,9 @@ void EditorRuntimeController::Stop() {
 	if (!CanStop())
 		return;
 
-	delete m_Context.RuntimeScene;
+	m_Context.RuntimeScene.reset();
+	m_Context.ActiveScene = m_Context.EditorScene.get();
 
-	m_Context.RuntimeScene = nullptr;
-	m_Context.ActiveScene = m_Context.EditorScene;
 	m_Context.RuntimeState = EditorRuntimeState::Editing;
 	m_Context.ViewMode = EditorViewMode::Editor;
 

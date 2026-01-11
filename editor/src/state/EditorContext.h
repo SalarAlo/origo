@@ -22,8 +22,9 @@ struct EditorContext {
 	    , ViewportController(*this)
 	    , ColorPalette(palette) { }
 
-	Origo::Scene* EditorScene;
-	Origo::Scene* RuntimeScene { nullptr };
+	Origo::Scope<Origo::Scene> EditorScene;
+	Origo::Scope<Origo::Scene> RuntimeScene { nullptr };
+	Origo::Scope<Origo::Scene> PendingScene { nullptr };
 
 	Origo::Scene* ActiveScene;
 
