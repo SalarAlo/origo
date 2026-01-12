@@ -1,6 +1,8 @@
 # root CMakeLists.txt
 
 cmake_minimum_required(VERSION 3.16)
+cmake_policy(VERSION 3.16)
+
 project(Origo LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -60,6 +62,34 @@ include_directories(
     vendor/nanosvg/src
     vendor/magic_enum/include
 )
+
+# ------------------------------------------------------------------------------
+# Testing
+# ------------------------------------------------------------------------------
+
+option(ORIGO_ENABLE_TESTS "Build Origo tests" ON)
+
+if (ORIGO_ENABLE_TESTS)
+    include(FetchContent)
+
+    FetchContent_Declare(
+        doctest
+        GIT_REPOSITORY https://github.com/doctest/doctest.git
+        GIT_TAG v2.4.11
+    )
+
+    FetchContent_Populate(doctest)
+
+    add_library(doctest INTERFACE)
+    target_include_directories(doctest INTERFACE
+        ${doctest_SOURCE_DIR}
+    )
+
+    add_library(doctest::doctest ALIAS doctest)
+
+    add_subdirectory(tests)
+endif()
+
 
 # ------------------------------------------------------------------------------
 # Engine, Editor

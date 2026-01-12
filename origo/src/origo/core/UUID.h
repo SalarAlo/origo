@@ -31,7 +31,6 @@ struct UUID {
 
 	static UUID FromString(const std::string& str) {
 		if (str.size() != 32) {
-			ORG_CORE_WARN("UUID length must be exactly 32 hex characters: {}", str);
 			return UUID(0, 0);
 		}
 		for (char c : str) {
