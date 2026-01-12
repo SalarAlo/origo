@@ -52,12 +52,12 @@ struct PointLight {
 
 struct SpotLight {
     vec3 position;
-    vec3 direction;   // world space, normalized on CPU
+    vec3 direction;   
     vec3 color;
     float intensity;
 
-    float innerCutoff; // cos(innerAngle)
-    float outerCutoff; // cos(outerAngle)
+    float innerCutoff; 
+    float outerCutoff; 
 
     float constant;
     float linear;
@@ -90,9 +90,6 @@ uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
 uniform int u_SpotLightCount;
 uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS];
 
-/* =========================
-   Lighting helpers
-   ========================= */
 
 vec3 ApplyPhong(
     vec3 lightDir,

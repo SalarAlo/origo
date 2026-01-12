@@ -31,7 +31,6 @@ void Scene::ScheduleRemoveEntity(const RID& rid) {
 }
 
 void Scene::ScheduleRemoveNativeComponent(const RID& entity, const std::type_index& type) {
-
 	m_Commands.emplace_back(new RemoveEntityNativeComponentCommand { entity, type });
 }
 
@@ -41,10 +40,12 @@ void Scene::Flush() {
 		case SceneCommandType::RemoveEntity: {
 			auto removeCmd { static_cast<RemoveEntityCommand*>(cmd) };
 			RemoveEntity(removeCmd->EntityToRemove);
+			break;
 		}
 		case SceneCommandType::RemoveEntityNativeComponent: {
 			auto removeCmd { static_cast<RemoveEntityNativeComponentCommand*>(cmd) };
 			m_NativeComponentManager.RemoveComponentByType(removeCmd->EntityToRemoveComponent, removeCmd->ComponentToRemove);
+			break;
 		}
 		}
 

@@ -40,6 +40,7 @@ add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/jolt)
+add_subdirectory(vendor/nativefiledialog)
 
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)

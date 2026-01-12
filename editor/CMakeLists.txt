@@ -19,6 +19,7 @@ target_include_directories(OrigoEditor PRIVATE
 
 target_link_libraries(OrigoEditor PRIVATE
     OrigoEngine
+    nfd
     imgui
 )
 

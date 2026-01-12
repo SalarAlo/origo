@@ -33,21 +33,21 @@
                                         "type": "Camera"
                                 }
                         ],
-                        "rid": "0"
+                        "rid": "2"
                 },
                 {
                         "native_components": [
                                 {
                                         "data": {
-                                                "pos_x": 4.0,
-                                                "pos_y": 4.0,
-                                                "pos_z": 3.0,
-                                                "rot_x": -38.65980911254883,
+                                                "pos_x": 8.635536193847656,
+                                                "pos_y": 2.0710244178771973,
+                                                "pos_z": 5.162053108215332,
+                                                "rot_x": -38.65979766845703,
                                                 "rot_y": -53.130104064941406,
-                                                "rot_z": 0.0,
+                                                "rot_z": -7.114780146366684e-06,
                                                 "scale_x": 1.0,
-                                                "scale_y": 1.0,
-                                                "scale_z": 1.0
+                                                "scale_y": 0.9999999403953552,
+                                                "scale_z": 0.9999999403953552
                                         },
                                         "type": "Transform"
                                 },
@@ -61,15 +61,15 @@
                                         "data": {
                                                 "ambient": 0.20000000298023224,
                                                 "color_b": 1.0,
-                                                "color_g": 1.0,
-                                                "color_r": 1.0,
-                                                "intensity": 1.0,
+                                                "color_g": 0.15702462196350098,
+                                                "color_r": 0.0,
+                                                "intensity": 0.4000000059604645,
                                                 "target": "e1beba6e7aa762f38a0720983812e54a"
                                         },
                                         "type": "Directional Light"
                                 }
                         ],
-                        "rid": "1"
+                        "rid": "3"
                 },
                 {
                         "native_components": [
@@ -105,7 +105,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "2"
+                        "rid": "4"
                 },
                 {
                         "native_components": [
@@ -141,7 +141,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "3"
+                        "rid": "5"
                 },
                 {
                         "native_components": [
@@ -177,7 +177,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "4"
+                        "rid": "6"
                 },
                 {
                         "native_components": [
@@ -213,7 +213,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "5"
+                        "rid": "7"
                 },
                 {
                         "native_components": [
@@ -249,7 +249,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "6"
+                        "rid": "8"
                 },
                 {
                         "native_components": [
@@ -285,7 +285,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "7"
+                        "rid": "9"
                 },
                 {
                         "native_components": [
@@ -321,7 +321,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "8"
+                        "rid": "10"
                 },
                 {
                         "native_components": [
@@ -357,7 +357,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "9"
+                        "rid": "11"
                 },
                 {
                         "native_components": [
@@ -393,7 +393,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "10"
+                        "rid": "12"
                 },
                 {
                         "native_components": [
@@ -429,7 +429,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "11"
+                        "rid": "13"
                 },
                 {
                         "native_components": [
@@ -465,7 +465,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "12"
+                        "rid": "14"
                 },
                 {
                         "native_components": [
@@ -501,7 +501,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "13"
+                        "rid": "15"
                 },
                 {
                         "native_components": [
@@ -537,7 +537,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "14"
+                        "rid": "16"
                 },
                 {
                         "native_components": [
@@ -573,7 +573,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "15"
+                        "rid": "17"
                 },
                 {
                         "native_components": [
@@ -609,7 +609,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "16"
+                        "rid": "18"
                 },
                 {
                         "native_components": [
@@ -645,7 +645,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "17"
+                        "rid": "19"
                 },
                 {
                         "native_components": [
@@ -681,7 +681,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "18"
+                        "rid": "20"
                 },
                 {
                         "native_components": [
@@ -717,7 +717,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "19"
+                        "rid": "21"
                 },
                 {
                         "native_components": [
@@ -753,7 +753,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "20"
+                        "rid": "22"
                 },
                 {
                         "native_components": [
@@ -789,7 +789,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "21"
+                        "rid": "23"
                 },
                 {
                         "native_components": [
@@ -825,7 +825,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "22"
+                        "rid": "24"
                 },
                 {
                         "native_components": [
@@ -861,7 +861,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "23"
+                        "rid": "25"
                 },
                 {
                         "native_components": [
@@ -897,7 +897,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "24"
+                        "rid": "26"
                 },
                 {
                         "native_components": [
@@ -933,7 +933,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "25"
+                        "rid": "27"
                 },
                 {
                         "native_components": [
@@ -969,7 +969,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "26"
+                        "rid": "28"
                 },
                 {
                         "native_components": [
@@ -1005,7 +1005,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "27"
+                        "rid": "29"
                 },
                 {
                         "native_components": [
@@ -1041,7 +1041,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "28"
+                        "rid": "30"
                 },
                 {
                         "native_components": [
@@ -1077,7 +1077,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "29"
+                        "rid": "31"
                 },
                 {
                         "native_components": [
@@ -1113,7 +1113,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "30"
+                        "rid": "32"
                 },
                 {
                         "native_components": [
@@ -1149,7 +1149,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "31"
+                        "rid": "33"
                 },
                 {
                         "native_components": [
@@ -1185,7 +1185,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "32"
+                        "rid": "34"
                 },
                 {
                         "native_components": [
@@ -1221,7 +1221,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "33"
+                        "rid": "35"
                 },
                 {
                         "native_components": [
@@ -1257,7 +1257,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "34"
+                        "rid": "36"
                 },
                 {
                         "native_components": [
@@ -1293,7 +1293,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "35"
+                        "rid": "37"
                 },
                 {
                         "native_components": [
@@ -1329,7 +1329,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "36"
+                        "rid": "38"
                 },
                 {
                         "native_components": [
@@ -1365,7 +1365,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "37"
+                        "rid": "39"
                 },
                 {
                         "native_components": [
@@ -1401,7 +1401,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "38"
+                        "rid": "40"
                 },
                 {
                         "native_components": [
@@ -1437,7 +1437,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "39"
+                        "rid": "41"
                 },
                 {
                         "native_components": [
@@ -1473,7 +1473,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "40"
+                        "rid": "42"
                 },
                 {
                         "native_components": [
@@ -1509,7 +1509,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "41"
+                        "rid": "43"
                 },
                 {
                         "native_components": [
@@ -1545,7 +1545,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "42"
+                        "rid": "44"
                 },
                 {
                         "native_components": [
@@ -1581,7 +1581,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "43"
+                        "rid": "45"
                 },
                 {
                         "native_components": [
@@ -1617,7 +1617,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "44"
+                        "rid": "46"
                 },
                 {
                         "native_components": [
@@ -1653,7 +1653,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "45"
+                        "rid": "47"
                 },
                 {
                         "native_components": [
@@ -1689,7 +1689,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "46"
+                        "rid": "48"
                 },
                 {
                         "native_components": [
@@ -1725,7 +1725,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "47"
+                        "rid": "49"
                 },
                 {
                         "native_components": [
@@ -1761,7 +1761,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "48"
+                        "rid": "50"
                 },
                 {
                         "native_components": [
@@ -1797,7 +1797,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "49"
+                        "rid": "51"
                 },
                 {
                         "native_components": [
@@ -1833,7 +1833,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "50"
+                        "rid": "52"
                 },
                 {
                         "native_components": [
@@ -1869,7 +1869,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "51"
+                        "rid": "53"
                 },
                 {
                         "native_components": [
@@ -1905,7 +1905,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "52"
+                        "rid": "54"
                 },
                 {
                         "native_components": [
@@ -1941,7 +1941,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "53"
+                        "rid": "55"
                 },
                 {
                         "native_components": [
@@ -1977,7 +1977,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "54"
+                        "rid": "56"
                 },
                 {
                         "native_components": [
@@ -2013,7 +2013,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "55"
+                        "rid": "57"
                 },
                 {
                         "native_components": [
@@ -2049,7 +2049,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "56"
+                        "rid": "58"
                 },
                 {
                         "native_components": [
@@ -2085,7 +2085,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "57"
+                        "rid": "59"
                 },
                 {
                         "native_components": [
@@ -2121,7 +2121,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "58"
+                        "rid": "60"
                 },
                 {
                         "native_components": [
@@ -2157,7 +2157,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "59"
+                        "rid": "61"
                 },
                 {
                         "native_components": [
@@ -2193,7 +2193,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "60"
+                        "rid": "62"
                 },
                 {
                         "native_components": [
@@ -2229,7 +2229,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "61"
+                        "rid": "63"
                 },
                 {
                         "native_components": [
@@ -2265,7 +2265,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "62"
+                        "rid": "64"
                 },
                 {
                         "native_components": [
@@ -2301,7 +2301,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "63"
+                        "rid": "65"
                 },
                 {
                         "native_components": [
@@ -2337,7 +2337,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "64"
+                        "rid": "66"
                 },
                 {
                         "native_components": [
@@ -2373,7 +2373,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "65"
+                        "rid": "67"
                 },
                 {
                         "native_components": [
@@ -2409,7 +2409,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "66"
+                        "rid": "68"
                 },
                 {
                         "native_components": [
@@ -2445,7 +2445,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "67"
+                        "rid": "69"
                 },
                 {
                         "native_components": [
@@ -2481,7 +2481,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "68"
+                        "rid": "70"
                 },
                 {
                         "native_components": [
@@ -2517,7 +2517,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "69"
+                        "rid": "71"
                 },
                 {
                         "native_components": [
@@ -2553,7 +2553,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "70"
+                        "rid": "72"
                 },
                 {
                         "native_components": [
@@ -2589,7 +2589,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "71"
+                        "rid": "73"
                 },
                 {
                         "native_components": [
@@ -2625,7 +2625,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "72"
+                        "rid": "74"
                 },
                 {
                         "native_components": [
@@ -2661,7 +2661,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "73"
+                        "rid": "75"
                 },
                 {
                         "native_components": [
@@ -2693,7 +2693,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "74"
+                        "rid": "76"
                 },
                 {
                         "native_components": [
@@ -2725,7 +2725,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "75"
+                        "rid": "77"
                 },
                 {
                         "native_components": [
@@ -2757,7 +2757,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "76"
+                        "rid": "78"
                 },
                 {
                         "native_components": [
@@ -2789,7 +2789,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "77"
+                        "rid": "79"
                 },
                 {
                         "native_components": [
@@ -2821,7 +2821,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "78"
+                        "rid": "80"
                 },
                 {
                         "native_components": [
@@ -2853,7 +2853,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "79"
+                        "rid": "81"
                 },
                 {
                         "native_components": [
@@ -2885,7 +2885,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "80"
+                        "rid": "82"
                 },
                 {
                         "native_components": [
@@ -2917,7 +2917,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "81"
+                        "rid": "83"
                 },
                 {
                         "native_components": [
@@ -2949,7 +2949,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "82"
+                        "rid": "84"
                 },
                 {
                         "native_components": [
@@ -2981,7 +2981,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "83"
+                        "rid": "85"
                 },
                 {
                         "native_components": [
@@ -3013,7 +3013,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "84"
+                        "rid": "86"
                 },
                 {
                         "native_components": [
@@ -3045,7 +3045,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "85"
+                        "rid": "87"
                 },
                 {
                         "native_components": [
@@ -3077,7 +3077,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "86"
+                        "rid": "88"
                 },
                 {
                         "native_components": [
@@ -3109,7 +3109,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "87"
+                        "rid": "89"
                 },
                 {
                         "native_components": [
@@ -3141,7 +3141,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "88"
+                        "rid": "90"
                 },
                 {
                         "native_components": [
@@ -3173,7 +3173,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "89"
+                        "rid": "91"
                 },
                 {
                         "native_components": [
@@ -3205,7 +3205,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "90"
+                        "rid": "92"
                 },
                 {
                         "native_components": [
@@ -3237,7 +3237,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "91"
+                        "rid": "93"
                 },
                 {
                         "native_components": [
@@ -3269,7 +3269,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "92"
+                        "rid": "94"
                 },
                 {
                         "native_components": [
@@ -3301,7 +3301,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "93"
+                        "rid": "95"
                 },
                 {
                         "native_components": [
@@ -3333,7 +3333,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "94"
+                        "rid": "96"
                 },
                 {
                         "native_components": [
@@ -3365,7 +3365,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "95"
+                        "rid": "97"
                 },
                 {
                         "native_components": [
@@ -3397,7 +3397,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "96"
+                        "rid": "98"
                 },
                 {
                         "native_components": [
@@ -3429,7 +3429,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "97"
+                        "rid": "99"
                 },
                 {
                         "native_components": [
@@ -3461,7 +3461,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "98"
+                        "rid": "100"
                 },
                 {
                         "native_components": [
@@ -3493,7 +3493,7 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "99"
+                        "rid": "101"
                 },
                 {
                         "native_components": [
@@ -3525,7 +3525,49 @@
                                         "type": "MeshRenderer"
                                 }
                         ],
-                        "rid": "100"
+                        "rid": "102"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {},
+                                        "type": "EditorSelection"
+                                },
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": 4.487569332122803,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": -0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "atten_constant": 1.0,
+                                                "atten_linear": 0.09000000357627869,
+                                                "atten_quadratic": 0.03200000151991844,
+                                                "color_b": 0.0,
+                                                "color_g": 0.0,
+                                                "color_r": 1.0,
+                                                "intensity": 3.700000047683716,
+                                                "shader_target": "e1beba6e7aa762f38a0720983812e54a"
+                                        },
+                                        "type": "Point Light"
+                                },
+                                {
+                                        "data": {
+                                                "name": "entity_0"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "103"
                 }
         ],
         "name": "Sample Scene"

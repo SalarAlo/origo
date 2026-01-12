@@ -1,11 +1,15 @@
 #include "ui/UI.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/serialization/SceneSerializer.h"
 #include "origo/scripting/ScriptSystem.h"
+
 #include "panels/PanelManager.h"
 #include "systems/EditorRuntimeController.h"
+
+#include <nfd.h>
 
 namespace OrigoEditor::UI {
 
@@ -138,72 +142,67 @@ void EndDockspace() {
 }
 
 void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
-	static bool openSceneDialog = false;
-	static std::filesystem::path selectedScenePath {};
-	static EditorRuntimeController m_Controller { ctx };
+	static EditorRuntimeController controller { ctx };
 
 	if (!ImGui::BeginMenuBar())
 		return;
 
 	if (ImGui::BeginMenu("File")) {
+
 		ImGui::MenuItem("New Scene");
+
 		if (ImGui::MenuItem("Open Scene...")) {
-			openSceneDialog = true;
+
+			nfdchar_t* outPath = nullptr;
+
+			nfdfilteritem_t filters[] = {
+				{ "Origo Scene", "scene.json" }
+			};
+
+			nfdresult_t result = NFD_OpenDialog(
+			    &outPath,
+			    filters,
+			    1,
+			    "./resources/scenes");
+
+			if (result == NFD_OKAY) {
+				std::filesystem::path scenePath = outPath;
+				NFD_FreePath(outPath);
+
+				if (std::filesystem::exists(scenePath)) {
+					ctx.PendingScene = Origo::SceneSerializer::DeserializeFromFile(scenePath);
+				} else {
+					ORG_CORE_ERROR("Scene file does not exist: {}", scenePath.string());
+				}
+			} else if (result == NFD_ERROR) {
+				ORG_CORE_ERROR("NFD error: {}", NFD_GetError());
+			}
 		}
+
 		if (ImGui::MenuItem("Save Scene")) {
-			std::string path { "./resources/scenes/" };
+			std::string path = "./resources/scenes/";
 			path += ctx.EditorScene->GetName();
 			path += ".scene.json";
 			Origo::SceneSerializer::SerializeToFile(*ctx.EditorScene, path);
 		}
+
 		if (ImGui::MenuItem("Save Generated Assets"))
 			Origo::AssetDatabase::SaveAll();
 
 		if (ImGui::MenuItem("Reload Scripts")) {
-			Origo::AssetManager::GetInstance().ResolveAll([](Origo::Asset* a) { return a->GetAssetType() == Origo::AssetType::Script; });
+			Origo::AssetManager::GetInstance().ResolveAll(
+			    [](Origo::Asset* a) {
+				    return a->GetAssetType() == Origo::AssetType::Script;
+			    });
 			Origo::ScriptSystem::ReloadAll();
 		}
+
 		ImGui::Separator();
 		ImGui::EndMenu();
 	}
 
-	static char scenePathBuffer[512] = "./resources/scenes/";
-
-	if (openSceneDialog) {
-		ImGui::OpenPopup("Open Scene");
-		openSceneDialog = false;
-	}
-
-	if (ImGui::BeginPopupModal("Open Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-
-		ImGui::Text("Scene file path:");
-		ImGui::InputText("##ScenePath", scenePathBuffer, sizeof(scenePathBuffer));
-
-		ImGui::Spacing();
-		ImGui::Separator();
-		ImGui::Spacing();
-
-		if (ImGui::Button("Open")) {
-			selectedScenePath = scenePathBuffer;
-
-			if (!std::filesystem::exists(selectedScenePath)) {
-				ORG_CORE_INFO("Scene File does not exist!");
-			}
-
-			ctx.PendingScene = std::move(Origo::SceneSerializer::DeserializeFromFile(selectedScenePath));
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Cancel")) {
-			ImGui::CloseCurrentPopup();
-		}
-
-		ImGui::EndPopup();
-	}
-
 	manager.RenderMenuItems();
-
 	ImGui::EndMenuBar();
 }
+
 }
