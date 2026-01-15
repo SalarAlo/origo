@@ -1,6 +1,6 @@
 
 #include "origo/scene/DirectionalLightSystem.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Shader.h"
 #include "origo/scene/GamePhase.h"
 #include "origo/scene/DirectionalLight.h"

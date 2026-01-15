@@ -31,4 +31,5 @@ void CameraComponent::Deserialize(ISerializer& backend) {
 	m_Camera.SetFOV(fov);
 	m_Camera.SetAspect(aspect);
 }
+
 }

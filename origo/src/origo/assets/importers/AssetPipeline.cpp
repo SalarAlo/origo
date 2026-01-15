@@ -3,7 +3,7 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/core/Logger.h"
 #include "origo/serialization/JsonSerializer.h"
 #include <filesystem>

@@ -21,6 +21,7 @@ public:
 		m_View = view;
 		m_HasView = true;
 	}
+
 	void ClearView() { m_HasView = false; }
 
 	FrameBuffer* GetTarget() const { return m_Target; }

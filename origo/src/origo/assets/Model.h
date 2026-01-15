@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 
 struct aiNode;
 

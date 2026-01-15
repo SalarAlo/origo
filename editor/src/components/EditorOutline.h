@@ -1,7 +1,7 @@
 #pragma once
 
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetManagerFast.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/Shader.h"
 #include "origo/scene/Component.h"

@@ -1,7 +1,7 @@
 #include "Model.h"
 
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Shader.h"

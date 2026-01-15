@@ -2,7 +2,7 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/serialization/SceneSerializer.h"
 #include "origo/scripting/ScriptSystem.h"
 

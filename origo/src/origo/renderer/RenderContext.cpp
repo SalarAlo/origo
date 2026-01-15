@@ -1,5 +1,5 @@
 #include "origo/renderer/RenderContext.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Material.h"
 #include "origo/assets/SkyboxMaterial.h"
 #include "origo/renderer/GlDebug.h"

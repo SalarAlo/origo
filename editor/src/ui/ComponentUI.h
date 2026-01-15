@@ -6,7 +6,7 @@
 
 #include "glm/fwd.hpp"
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 
 namespace ComponentUI {
 

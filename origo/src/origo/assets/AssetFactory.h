@@ -2,9 +2,9 @@
 
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/Metadata.h"
-#include "origo/assets/AssetManagerFast.h"
-#include "origo/assets/Script.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/core/UUID.h"
+#include "origo/assets/Script.h"
 
 namespace Origo {
 

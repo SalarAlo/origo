@@ -1,8 +1,8 @@
 #pragma once
 
-#include "origo/assets/Shader.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/UniformList.hpp"
+#include "origo/assets/Shader.h"
 #include <optional>
 
 namespace Origo {

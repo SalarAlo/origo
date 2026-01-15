@@ -2,7 +2,7 @@
 #include "origo/assets/Material.h"
 #include "systems/AssetInspectorDrawer.h"
 #include "imgui.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "ui/ComponentUI.h"
 
 namespace OrigoEditor {

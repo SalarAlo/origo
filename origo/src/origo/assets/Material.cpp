@@ -1,6 +1,6 @@
 #include "origo/assets/Material.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/UniformList.hpp"
 #include "origo/core/Logger.h"

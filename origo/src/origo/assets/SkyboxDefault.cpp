@@ -1,7 +1,7 @@
 
 #include "SkyboxDefaults.h"
 
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/CubemapTexture.h"
 #include "origo/assets/Shader.h"

@@ -1,5 +1,5 @@
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/scene/ModelRenderer.h"
 #include "origo/scene/ModelRenderer.h"
 #include "ui/ComponentUI.h"

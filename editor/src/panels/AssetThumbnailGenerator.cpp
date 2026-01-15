@@ -1,7 +1,7 @@
 #include "AssetThumbnailGenerator.h"
 #include "imgui.h"
 #include "origo/assets/Asset.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/core/Logger.h"
 #include "systems/EditorIcons.h"
 

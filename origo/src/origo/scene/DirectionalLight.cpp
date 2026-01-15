@@ -1,6 +1,6 @@
 #include "DirectionalLight.h"
 #include "origo/assets/AssetDatabase.h"
-#include "origo/assets/AssetManagerFast.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/scene/NativeComponentRegistry.h"
 
 ORIGO_REGISTER_NATIVE_COMPONENT(Origo::DirectionalLight)
