@@ -1,6 +1,6 @@
 #pragma once
 
-#include "origo/scene/Transform.h"
+#include "origo/components/Transform.h"
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
@@ -19,13 +19,13 @@ public:
 	void SetClipping(float nearPlane, float farPlane);
 	glm::vec2 GetClipping() const { return { m_Near, m_Far }; };
 
-	void UpdateFromTransform(Transform& transform);
+	void UpdateFromTransform(TransformComponent& transform);
 
 	const glm::mat4& GetView() const { return m_ViewMatrix; }
 	const glm::mat4& GetProjection() const { return m_ProjectionMatrix; }
 
 private:
-	void RecalculateView(const Transform&);
+	void RecalculateView(const TransformComponent&);
 	void RecalculateProjection();
 
 	glm::mat4 m_ViewMatrix;

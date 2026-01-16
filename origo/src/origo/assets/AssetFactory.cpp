@@ -1,5 +1,5 @@
 #include "AssetFactory.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "origo/assets/Model.h"
 #include "origo/assets/SceneAsset.h"
 #include "origo/assets/Shader.h"

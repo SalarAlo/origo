@@ -1,7 +1,7 @@
 #pragma once
 
 #include "origo/Camera.h"
-#include "origo/scene/Transform.h"
+#include "origo/components/Transform.h"
 
 namespace OrigoEditor {
 
@@ -15,14 +15,14 @@ public:
 	const Origo::Camera& GetCamera() const { return m_Camera; }
 	Origo::Camera& GetCamera() { return m_Camera; }
 
-	const Origo::Transform& GetTransform() const { return m_Transform; }
-	Origo::Transform& GetTransform() { return m_Transform; }
+	const Origo::TransformComponent& GetTransform() const { return m_Transform; }
+	Origo::TransformComponent& GetTransform() { return m_Transform; }
 
 	void UpdateCamera();
 
 private:
 	Origo::Camera m_Camera;
-	Origo::Transform m_Transform;
+	Origo::TransformComponent m_Transform;
 
 	float m_Yaw { 90.0f };
 	float m_Pitch { 0.0f };

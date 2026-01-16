@@ -2,9 +2,9 @@
 
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "origo/assets/Shader.h"
-#include "origo/scene/Component.h"
+#include "origo/components/Component.h"
 
 namespace OrigoEditor {
 

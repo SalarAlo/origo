@@ -2,9 +2,9 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/DefaultAssetCache.h"
+#include "origo/assets/Material2D.h"
 #include "origo/assets/Mesh.h"
-#include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
@@ -276,13 +276,16 @@ void Model::EnsureShader() {
 	if (m_ModelShaderHandle.has_value())
 		return;
 
+	auto defaultShader { DefaultAssetCache::GetInstance().GetShader() };
+
 	if (!m_ShaderUUID.has_value()) {
-		m_ModelShaderHandle = Shader::DefaultShader();
+		m_ModelShaderHandle = defaultShader;
 		return;
 	}
 
 	auto shaderHandle = AssetManager::GetInstance().GetHandleByUUID(*m_ShaderUUID);
-	m_ModelShaderHandle = !shaderHandle.has_value() ? Shader::DefaultShader() : shaderHandle;
+
+	m_ModelShaderHandle = !shaderHandle.has_value() ? defaultShader : shaderHandle;
 }
 
 OptionalAssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }

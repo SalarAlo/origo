@@ -1,7 +1,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/scene/ModelRenderer.h"
-#include "origo/scene/ModelRenderer.h"
+#include "origo/components/ModelRenderer.h"
+#include "origo/components/ModelRenderer.h"
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>
@@ -9,7 +9,7 @@
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::ModelRenderer>("Model Renderer", "icons/Paint.svg", [](Origo::ModelRenderer& renderer) {
+	InspectorDrawRegistry::RegisterNativeDrawer<Origo::ModelRendererComponent>("Model Renderer", "icons/Paint.svg", [](Origo::ModelRendererComponent& renderer) {
 		auto& am { Origo::AssetManager::GetInstance() };
 
 		auto mesh { renderer.GetModel() };

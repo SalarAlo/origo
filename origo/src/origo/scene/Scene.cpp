@@ -1,7 +1,7 @@
 #include "origo/scene/Scene.h"
 #include "origo/scene/SceneCommand.h"
-#include "origo/scene/Transform.h"
-#include "origo/scene/Name.h"
+#include "origo/components/Transform.h"
+#include "origo/components/Name.h"
 #include <algorithm>
 
 namespace Origo {
@@ -21,8 +21,8 @@ Scene::Scene(const Scene& other)
 
 RID Scene::CreateEntity(std::string_view name) {
 	m_Entities.push_back(RID::New());
-	AddNativeComponent<Name>(m_Entities.back())->SetName(name);
-	AddNativeComponent<Transform>(m_Entities.back());
+	AddNativeComponent<NameComponent>(m_Entities.back())->SetName(name);
+	AddNativeComponent<TransformComponent>(m_Entities.back());
 	return m_Entities.back();
 }
 

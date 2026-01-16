@@ -1,0 +1,13 @@
+#pragma once
+
+#include "origo/scene/IRenderSystem.h"
+#include "origo/scene/Scene.h"
+
+namespace Origo {
+
+class DirectionalLightSystem final : public Origo::IRenderSystem {
+public:
+	void Render(Scene*, RenderContext&) override;
+};
+
+}

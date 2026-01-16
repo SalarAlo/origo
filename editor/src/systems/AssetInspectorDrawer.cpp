@@ -1,5 +1,5 @@
 #include "origo/assets/Asset.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "systems/AssetInspectorDrawer.h"
 #include "imgui.h"
 #include "origo/assets/AssetManager.h"

@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include "panels/HierarchyPanel.h"
 
-#include "origo/scene/Name.h"
+#include "origo/components/Name.h"
 #include "state/EditorContext.h"
 #include "systems/EditorIcons.h"
 #include <optional>
@@ -68,7 +68,7 @@ void HierarchyPanel::OnImGuiRender() {
 
 		ImGui::SameLine(0.0f, 6.0f);
 
-		auto* nameComp = m_Context.ActiveScene->GetNativeComponent<Origo::Name>(entityID);
+		auto* nameComp = m_Context.ActiveScene->GetNativeComponent<Origo::NameComponent>(entityID);
 		ImGui::TextUnformatted(nameComp->GetName().c_str());
 
 		ImGui::PopID();

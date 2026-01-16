@@ -1,6 +1,6 @@
 #include "origo/assets/serialization/MaterialSerializer.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {

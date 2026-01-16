@@ -1,5 +1,5 @@
 #include "SceneSerializer.h"
-#include "origo/scene/NativeComponentRegistry.h"
+#include "origo/components/NativeComponentRegistry.h"
 #include "origo/serialization/JsonSerializer.h"
 
 namespace Origo::SceneSerializer {
@@ -78,7 +78,7 @@ Scope<Scene> DeserializeFromFile(const std::filesystem::path& path) {
 
 			backend.BeginObject("data");
 
-			info->Deserialize(component, backend);
+			info->Serializer->Deserialize(static_cast<Component*>(component), backend);
 
 			backend.EndObject();
 

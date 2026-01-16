@@ -3,8 +3,8 @@
 #include "imgui.h"
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
-#include "origo/scene/Name.h"
-#include "origo/scene/NativeComponentRegistry.h"
+#include "origo/components/Name.h"
+#include "origo/components/NativeComponentRegistry.h"
 #include "ui/InspectorComponentRenderer.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 #include "ui/InspectorDrawRegistry.h"
@@ -48,7 +48,7 @@ void EntityInspectorPanel::DrawEntityName() {
 	auto scene = m_Context.ActiveScene;
 
 	const Origo::RID entity = selectedEntity.value();
-	auto* nameComp = scene->GetNativeComponent<Origo::Name>(entity);
+	auto* nameComp = scene->GetNativeComponent<Origo::NameComponent>(entity);
 	const std::string& name = nameComp->GetComponentName();
 
 	static Origo::RID editingEntity {};

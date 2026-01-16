@@ -1,7 +1,7 @@
 #include "panels/SceneViewport.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
-#include "origo/scene/Transform.h"
+#include "origo/components/Transform.h"
 #include "state/EditorViewMode.h"
 
 using namespace Origo;
@@ -189,7 +189,7 @@ void SceneViewport::OnImGuiRender() {
 
 	if (editingView && m_Context.GetSelectedEntity().has_value()) {
 		auto entity = *m_Context.GetSelectedEntity();
-		auto transform = activeScene->GetNativeComponent<Transform>(entity);
+		auto transform = activeScene->GetNativeComponent<TransformComponent>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();
 		glm::mat4 view = m_Context.ViewportController.GetActiveRenderView().View;

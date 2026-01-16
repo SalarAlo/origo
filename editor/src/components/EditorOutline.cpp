@@ -1,4 +1,4 @@
 #include "EditorOutline.h"
-#include "origo/scene/NativeComponentRegistry.h"
+#include "origo/components/NativeComponentRegistry.h"
 
-ORIGO_REGISTER_NATIVE_COMPONENT(OrigoEditor::EditorOutline);
+ORIGO_REGISTER_NATIVE_COMPONENT_NO_SERIALIZE(OrigoEditor::EditorOutline);

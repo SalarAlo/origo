@@ -2,7 +2,7 @@
 #include "components/EditorOutline.h"
 #include "state/EditorContext.h"
 #include "imgui.h"
-#include "origo/scene/Transform.h"
+#include "origo/components/Transform.h"
 #include "ui/UI.h"
 
 namespace OrigoEditor {

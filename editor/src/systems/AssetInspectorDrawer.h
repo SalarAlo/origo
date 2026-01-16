@@ -1,7 +1,7 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "origo/assets/Metadata.h"
 
 namespace OrigoEditor {

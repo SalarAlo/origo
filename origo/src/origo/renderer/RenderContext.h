@@ -1,5 +1,7 @@
 #pragma once
 
+#include "origo/components/DirectionalLightData.h"
+#include "origo/components/PointLightData.h"
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/RenderView.h"
 #include "origo/renderer/RenderCommand.h"
@@ -16,6 +18,9 @@ public:
 	void SetTarget(FrameBuffer* target) { m_Target = target; }
 	void SetResolveTarget(FrameBuffer* resolveTarget) { m_ResolveTarget = resolveTarget; }
 	void SetSkyboxMaterial(AssetHandle skyboxMaterial);
+
+	void PushPointLight(const PointLightData& data);
+	void PushDirectionalLight(const DirectionalLightData& data);
 
 	void SetView(const RenderView& view) {
 		m_View = view;
@@ -41,11 +46,13 @@ private:
 	void BindFB();
 	void ExecutePass(RenderPass pass);
 	void ConfigureState(RenderPass pass);
-	void Resolve();
 
 private:
 	FrameBuffer* m_Target {};
 	FrameBuffer* m_ResolveTarget {};
+
+	std::optional<DirectionalLightData> m_DirectionalLightData;
+	std::vector<PointLightData> m_PointLights;
 
 	OptionalAssetHandle m_SkyboxMaterial { std::nullopt };
 	GLuint m_SkyboxVAO {};

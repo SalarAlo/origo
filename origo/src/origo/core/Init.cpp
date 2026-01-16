@@ -1,4 +1,5 @@
 #include "origo/core/Init.h"
+#include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/serialization/AssetSerializer.h"
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/AssetPipeline.h"
@@ -11,6 +12,9 @@ void Init() {
 	AssetSerializationSystem::RegisterAllAssetSerializers();
 	AssetImporterRegistry::InitialiseDefaultImporters();
 	AssetImportPipeline::RunInitialImport();
+
+	DefaultAssetCache::GetInstance().CreateAllDefaults();
+
 	ScriptSystem::ReloadAll();
 
 	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));

@@ -1,6 +1,4 @@
 #include "origo/assets/Shader.h"
-#include "origo/assets/AssetManager.h"
-#include "origo/assets/AssetFactory.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/core/Logger.h"
 
@@ -8,23 +6,6 @@
 #include <stdexcept>
 
 namespace Origo {
-
-AssetHandle Shader::DefaultShader() {
-	static AssetHandle handle = [] {
-		auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>(
-		    "Default Shader",
-		    UUID::FromHash("ENGINE_DEFAULT_SHADER"));
-
-		auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
-
-		shader->SetSource(MakeScope<ShaderSourceFile>("./default_resources/default_shader.glsl"));
-		shader->Resolve();
-
-		return shaderHandle;
-	}();
-
-	return handle;
-}
 
 GLint Shader::GetUniformLocation(std::string_view name) const {
 	auto it = m_UniformCache.find(std::string(name));

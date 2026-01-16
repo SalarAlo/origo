@@ -1,5 +1,5 @@
 #include "origo/Camera.h"
-#include "origo/scene/Transform.h"
+#include "origo/components/Transform.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -12,7 +12,7 @@ Camera::Camera(float aspect, float nearPlane, float farPlane)
 	RecalculateProjection();
 }
 
-void Camera::UpdateFromTransform(Transform& transform) {
+void Camera::UpdateFromTransform(TransformComponent& transform) {
 	m_ViewMatrix = glm::inverse(transform.GetModelMatrix());
 }
 

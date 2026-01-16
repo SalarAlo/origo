@@ -1,6 +1,6 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/scene/MeshRenderer.h"
+#include "origo/components/MeshRenderer.h"
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>
@@ -8,7 +8,7 @@
 namespace OrigoEditor {
 
 static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::MeshRenderer>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRenderer& renderer) {
+	InspectorDrawRegistry::RegisterNativeDrawer<Origo::MeshRendererComponent>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRendererComponent& renderer) {
 		auto& am { Origo::AssetManager::GetInstance() };
 
 		auto material { renderer.GetMaterial() };

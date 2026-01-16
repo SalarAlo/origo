@@ -1,7 +1,6 @@
 #include "origo/assets/Texture2D.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/AssetFactory.h"
 #include "origo/assets/TextureSource.h"
 #include "origo/assets/Shader.h"
 
@@ -9,21 +8,6 @@
 #include "origo/core/Logger.h"
 
 namespace Origo {
-
-AssetHandle Texture2D::DefaultTexture() {
-	static AssetHandle handle { [] {
-		std::vector<unsigned char> whitePixel = { 255, 255, 255, 255 };
-
-		auto handle { AssetFactory::CreateSyntheticAsset<Texture2D>("Default White Texture", UUID::FromArbitraryString("DEFAULT_TEXTURE_2D")) };
-		auto tex = AssetManager::GetInstance().Get<Texture2D>(handle);
-		tex->SetSource(MakeScope<TextureSourceRaw>(1, 1, 4, std::move(whitePixel), false));
-		tex->Load();
-
-		return handle;
-	}() };
-
-	return handle;
-}
 
 Texture2D::Texture2D(TextureType type)
     : m_TextureType(type)

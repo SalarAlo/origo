@@ -1,7 +1,8 @@
 #include "origo/renderer/RenderContext.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material.h"
+#include "origo/assets/Material2D.h"
 #include "origo/assets/SkyboxMaterial.h"
+#include "origo/components/DirectionalLightData.h"
 #include "origo/renderer/GlDebug.h"
 #include "origo/assets/Mesh.h"
 #include "origo/renderer/RenderCommand.h"
@@ -62,11 +63,21 @@ void RenderContext::Flush() {
 	ExecutePass(RenderPass::Skybox);
 	ExecutePass(RenderPass::Geometry);
 	ExecutePass(RenderPass::Outline);
-
-	Resolve();
 }
 
 void RenderContext::EndFrame() {
+	m_Target->Unbind();
+
+	if (m_Target->IsMSAA()) {
+		if (!m_ResolveTarget)
+			throw std::runtime_error("MSAA target requires a resolve target");
+
+		m_Target->ResolveTo(*m_ResolveTarget);
+	}
+
+	m_DirectionalLightData.reset();
+	m_PointLights.clear();
+	m_DrawQueue.clear();
 }
 
 void RenderContext::Clear() {
@@ -114,10 +125,46 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			    .SetShaderDirectly("u_ViewMatrix", m_View.View)
 			    .SetShaderDirectly("u_CameraForward", m_View.CameraForward)
 			    .SetShaderDirectly("u_ViewPos", m_View.CameraPosition);
+
+			if (!m_DirectionalLightData)
+				m_DirectionalLightData = DirectionalLightData {};
+
+			auto l { *m_DirectionalLightData };
+
+			currentMaterial
+			    ->SetShaderDirectly("u_DirLight.direction", l.Direction)
+			    .SetShaderDirectly("u_DirLight.color", l.Color)
+			    .SetShaderDirectly("u_DirLight.intensity", l.Intensity)
+			    .SetShaderDirectly("u_Ambient", l.Ambient);
+
+			const int count = std::min<int>(m_PointLights.size(), 8);
+
+			currentMaterial->SetShaderDirectly("u_PointLightCount", count);
+
+			for (int i = 0; i < count; ++i) {
+				const auto& l = m_PointLights[i];
+				const std::string base = "u_PointLights[" + std::to_string(i) + "]";
+
+				currentMaterial
+				    ->SetShaderDirectly(base + ".position", l.position)
+				    .SetShaderDirectly(base + ".color", l.color)
+				    .SetShaderDirectly(base + ".intensity", l.intensity)
+				    .SetShaderDirectly(base + ".constant", l.constant)
+				    .SetShaderDirectly(base + ".linear", l.linear)
+				    .SetShaderDirectly(base + ".quadratic", l.quadratic);
+			}
 		}
 
 		DrawMesh(cmd, m_DrawMethod);
 	}
+}
+
+void RenderContext::PushDirectionalLight(const DirectionalLightData& directionalLightData) {
+	m_DirectionalLightData = directionalLightData;
+}
+
+void RenderContext::PushPointLight(const PointLightData& data) {
+	m_PointLights.push_back(data);
 }
 
 void RenderContext::ConfigureState(RenderPass pass) {
@@ -165,19 +212,6 @@ void RenderContext::ConfigureState(RenderPass pass) {
 		break;
 	}
 	}
-}
-
-void RenderContext::Resolve() {
-	m_Target->Unbind();
-
-	if (m_Target->IsMSAA()) {
-		if (!m_ResolveTarget)
-			throw std::runtime_error("MSAA target requires a resolve target");
-
-		m_Target->ResolveTo(*m_ResolveTarget);
-	}
-
-	m_DrawQueue.clear();
 }
 
 void RenderContext::SetSkyboxMaterial(AssetHandle skyboxMaterial) {

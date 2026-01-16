@@ -3,9 +3,9 @@
 #include <typeindex>
 #include <string_view>
 
-#include "origo/scene/NativeComponentManager.h"
-#include "origo/scene/SceneCommand.h"
+#include "origo/components/NativeComponentManager.h"
 #include "origo/scripting/ScriptComponentManager.h"
+#include "origo/scene/SceneCommand.h"
 
 namespace Origo {
 class Scene;

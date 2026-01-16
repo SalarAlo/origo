@@ -1,7 +1,7 @@
 #include "viewport/EditorViewportController.h"
 #include "origo/renderer/RenderView.h"
-#include "origo/scene/CameraComponent.h"
-#include "origo/scene/Transform.h"
+#include "origo/components/CameraComponent.h"
+#include "origo/components/Transform.h"
 #include "state/EditorViewMode.h"
 #include "state/EditorContext.h"
 
@@ -13,10 +13,10 @@ EditorViewportController::EditorViewportController(EditorContext& ctx)
 
 RenderView EditorViewportController::GetActiveRenderView() {
 	Camera* cam { nullptr };
-	Transform* transf { nullptr };
+	TransformComponent* transf { nullptr };
 
 	if (m_Context.ViewMode == EditorViewMode::Game) {
-		m_Context.ActiveScene->View<CameraComponent, Transform>([&](RID e, CameraComponent& cc, Transform& tr) {
+		m_Context.ActiveScene->View<CameraComponent, TransformComponent>([&](RID e, CameraComponent& cc, TransformComponent& tr) {
 			if (cam != nullptr)
 				return;
 
