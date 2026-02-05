@@ -92,6 +92,8 @@ void NativeComponentManager::SerializeEntity(const RID& entity, ISerializer& bac
 	backend.BeginArray("native_components");
 
 	ForEachComponentOnEntity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
+		if (!info.Serializer)
+			return;
 		backend.BeginArrayElement();
 
 		backend.Write("type", info.DisplayName);

@@ -14,7 +14,7 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 			    return;
 		    }
 
-		    context.Submit(
+		    context.SubmitMesh(
 		        *mr.GetMesh(),
 		        *mr.GetMaterial(),
 		        transform.GetModelMatrix(),

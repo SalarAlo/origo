@@ -1,8 +1,10 @@
 #include "origo/assets/Material2D.h"
+
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/UniformList.hpp"
+
 #include "origo/core/Logger.h"
 
 namespace Origo {

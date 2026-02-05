@@ -1,10 +1,14 @@
 #include "origo/renderer/RenderContext.h"
+
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Material2D.h"
-#include "origo/assets/SkyboxMaterial.h"
-#include "origo/components/DirectionalLightData.h"
-#include "origo/renderer/GlDebug.h"
 #include "origo/assets/Mesh.h"
+#include "origo/assets/Model.h"
+#include "origo/assets/SkyboxMaterial.h"
+
+#include "origo/components/DirectionalLightData.h"
+
+#include "origo/renderer/GlDebug.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/VaoCache.h"
 
@@ -52,7 +56,12 @@ void RenderContext::BeginFrame() {
 	glViewport(0, 0, fb->GetWidth(), fb->GetHeight());
 }
 
-void RenderContext::Submit(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass) {
+void RenderContext::SetView(const RenderView& view) {
+	m_View = view;
+	m_HasView = true;
+}
+
+void RenderContext::SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass) {
 	m_DrawQueue.emplace_back(mesh, material, modelMatrix, pass);
 }
 
@@ -180,7 +189,7 @@ void RenderContext::ConfigureState(RenderPass pass) {
 
 		glStencilMask(0xFF);
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glDepthMask(GL_TRUE);
 
 		break;
@@ -214,8 +223,38 @@ void RenderContext::ConfigureState(RenderPass pass) {
 	}
 }
 
+void RenderContext::SubmitModel(const AssetHandle& modelHandle, const glm::mat4& modelMatrix, RenderPass pass, const std::optional<AssetHandle>& material) {
+	auto model = AssetManager::GetInstance().Get<Model>(modelHandle);
+	if (!model)
+		return;
+
+	const auto& nodes = model->GetNodes();
+	const auto& subMeshes = model->GetSubMeshes();
+
+	std::vector<glm::mat4> worldMatrices(nodes.size());
+
+	worldMatrices[model->GetRootNode()] = modelMatrix * nodes[model->GetRootNode()].LocalTransform;
+
+	for (size_t i = 0; i < nodes.size(); ++i) {
+		const auto& node = nodes[i];
+
+		if (node.Parent != -1) {
+			worldMatrices[i] = worldMatrices[node.Parent] * node.LocalTransform;
+		}
+
+		if (node.SubMeshIndex != -1) {
+			const auto& sub = subMeshes[node.SubMeshIndex];
+
+			SubmitMesh(
+			    sub.Mesh,
+			    material.has_value() ? *material : sub.Material,
+			    worldMatrices[i],
+			    pass);
+		}
+	}
+}
+
 void RenderContext::SetSkyboxMaterial(AssetHandle skyboxMaterial) {
 	m_SkyboxMaterial = skyboxMaterial;
 }
-
 }

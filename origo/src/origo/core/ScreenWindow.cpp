@@ -53,6 +53,7 @@ void ScreenWindow::InitGlfw() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHintString(GLFW_WAYLAND_APP_ID, "origo");
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 }

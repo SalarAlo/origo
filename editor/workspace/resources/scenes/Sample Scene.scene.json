@@ -33,7 +33,7 @@
                                         "type": "Camera"
                                 }
                         ],
-                        "rid": "2"
+                        "rid": "3"
                 },
                 {
                         "native_components": [
@@ -63,13 +63,12 @@
                                                 "color_b": 1.0,
                                                 "color_g": 1.0,
                                                 "color_r": 1.0,
-                                                "intensity": 1.0,
-                                                "target": "e1beba6e7aa762f38a0720983812e54a"
+                                                "intensity": 1.0
                                         },
                                         "type": "Directional Light"
                                 }
                         ],
-                        "rid": "3"
+                        "rid": "4"
                 },
                 {
                         "native_components": [
@@ -95,13 +94,12 @@
                                 },
                                 {
                                         "data": {
-                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
-                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                                "material": "3bfeaf6581e63aef31d877626757ba5e"
                                         },
-                                        "type": "MeshRenderer"
+                                        "type": "ModelRenderer"
                                 }
                         ],
-                        "rid": "4"
+                        "rid": "5"
                 }
         ],
         "name": "Sample Scene"

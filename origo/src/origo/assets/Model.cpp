@@ -1,3 +1,9 @@
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <optional>
+
 #include "Model.h"
 
 #include "origo/assets/AssetFactory.h"
@@ -7,14 +13,9 @@
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
+
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/VertexLayout.h"
-
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-
-#include <optional>
 
 namespace Origo {
 

@@ -22,12 +22,10 @@ public:
 	void PushPointLight(const PointLightData& data);
 	void PushDirectionalLight(const DirectionalLightData& data);
 
-	void SetView(const RenderView& view) {
-		m_View = view;
-		m_HasView = true;
-	}
+	void SetView(const RenderView& view);
 
 	void ClearView() { m_HasView = false; }
+	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }
 
 	FrameBuffer* GetTarget() const { return m_Target; }
 	FrameBuffer* GetResolveTarget() const { return m_ResolveTarget; }
@@ -36,10 +34,9 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void Submit(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry);
+	void SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry);
+	void SubmitModel(const AssetHandle& mesh, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry, const std::optional<AssetHandle>& optionalMaterial = std::nullopt);
 	void Flush();
-
-	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }
 
 private:
 	void Clear();

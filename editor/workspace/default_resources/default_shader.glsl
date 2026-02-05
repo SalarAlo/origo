@@ -91,7 +91,7 @@ uniform int u_SpotLightCount;
 uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS];
 
 
-vec3 ApplyPhong(
+vec3 ApplyBlinnPhong(
     vec3 lightDir,
     vec3 lightColor,
     float intensity,
@@ -100,8 +100,8 @@ vec3 ApplyPhong(
 ) {
     float diff = max(dot(normal, lightDir), 0.0);
 
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_ShinyFactor);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), u_ShinyFactor);
 
     vec3 diffuse  = diff * lightColor;
     vec3 specular = spec * lightColor * 0.5;
@@ -115,7 +115,7 @@ vec3 ComputeDirectionalLight(
     vec3 viewDir
 ) {
     vec3 lightDir = normalize(-light.direction);
-    return ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+    return ApplyBlinnPhong(lightDir, light.color, light.intensity, normal, viewDir);
 }
 
 vec3 ComputePointLight(
@@ -132,7 +132,7 @@ vec3 ComputePointLight(
                light.linear * distance +
                light.quadratic * distance * distance);
 
-    vec3 result = ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+    vec3 result = ApplyBlinnPhong(lightDir, light.color, light.intensity, normal, viewDir);
     return result * attenuation;
 }
 
@@ -154,21 +154,29 @@ vec3 ComputeSpotLight(
     float epsilon = light.innerCutoff - light.outerCutoff;
     float coneIntensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
 
-    vec3 result = ApplyPhong(lightDir, light.color, light.intensity, normal, viewDir);
+    vec3 result = ApplyBlinnPhong(lightDir, light.color, light.intensity, normal, viewDir);
     return result * attenuation * coneIntensity;
 }
 
-void main() {
-    vec3 albedo = texture(u_Texture_Albedo, vUv).rgb;
+void main()
+{
+    vec3 albedo = pow(texture(u_Texture_Albedo, vUv).rgb, vec3(2.2));
 
     vec3 normal  = normalize(vNormal);
     vec3 viewDir = normalize(u_ViewPos - vFragPos);
 
-    vec3 lighting = u_Ambient * albedo * u_DirLight.color;
+    vec3 lighting = vec3(0.0);
 
-    lighting += ComputeDirectionalLight(u_DirLight, normal, viewDir) * albedo;
+    lighting += u_Ambient * albedo;
 
-    for (int i = 0; i < u_PointLightCount; ++i) {
+    lighting += ComputeDirectionalLight(
+        u_DirLight,
+        normal,
+        viewDir
+    ) * albedo;
+
+    for (int i = 0; i < u_PointLightCount; ++i)
+    {
         lighting += ComputePointLight(
             u_PointLights[i],
             vFragPos,
@@ -177,7 +185,8 @@ void main() {
         ) * albedo;
     }
 
-    for (int i = 0; i < u_SpotLightCount; ++i) {
+    for (int i = 0; i < u_SpotLightCount; ++i)
+    {
         lighting += ComputeSpotLight(
             u_SpotLights[i],
             vFragPos,
@@ -186,5 +195,5 @@ void main() {
         ) * albedo;
     }
 
-    FragColor = vec4(lighting, 1.0);
+    FragColor = vec4(pow(lighting, vec3(1.0 / 2.2)), 1.0);
 }

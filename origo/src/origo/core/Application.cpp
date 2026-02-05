@@ -68,9 +68,9 @@ void Application::Run() {
 			m_Running = false;
 		}
 
-		m_LastTimeStamp = Time::GetNow();
-
 		m_Window.OnUpdate();
+
+		m_LastTimeStamp = Time::GetNow();
 		OnEndFrame();
 	}
 

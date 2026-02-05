@@ -1,10 +1,20 @@
+#include <optional>
+
 #include "imgui.h"
+
+#include "components/EditorOutline.h"
+
+#include "origo/assets/DefaultAssetCache.h"
+#include "origo/assets/PrimitiveShapeCache.h"
+
+#include "origo/components/MeshRenderer.h"
+#include "origo/components/Name.h"
+
 #include "panels/HierarchyPanel.h"
 
-#include "origo/components/Name.h"
 #include "state/EditorContext.h"
+
 #include "systems/EditorIcons.h"
-#include <optional>
 
 namespace OrigoEditor {
 
@@ -23,21 +33,29 @@ void HierarchyPanel::OnImGuiRender() {
 	if (ImGui::BeginPopupContextWindow("HierarchyCreatePopup", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 		ImGui::MenuItem("Empty");
 		if (ImGui::IsItemClicked()) {
-			m_Context.ActiveScene->CreateEntity("Entity");
+			auto ent { m_Context.ActiveScene->CreateEntity("Entity") };
+			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(ent);
 		}
 
 		ImGui::Separator();
 
 		ImGui::MenuItem("Cube");
 		if (ImGui::IsItemClicked()) {
-			m_Context.ActiveScene->CreateEntity("Entity");
+			auto cube { m_Context.ActiveScene->CreateEntity("Cube") };
+			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
+			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
+			meshRenderer->SetMesh(Origo::PrimitiveShapeCache::GetInstance().GetCubeMesh());
+			meshRenderer->SetMaterial(Origo::DefaultAssetCache::GetInstance().GetMaterial());
 		}
 
 		ImGui::MenuItem("Sphere");
-		if (ImGui::IsItemClicked()) { }
-
-		ImGui::MenuItem("Model");
-		if (ImGui::IsItemClicked()) { }
+		if (ImGui::IsItemClicked()) {
+			auto cube { m_Context.ActiveScene->CreateEntity("Sphere") };
+			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
+			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
+			meshRenderer->SetMesh(Origo::PrimitiveShapeCache::GetInstance().GetSphereMesh());
+			meshRenderer->SetMaterial(Origo::DefaultAssetCache::GetInstance().GetMaterial());
+		}
 
 		ImGui::EndPopup();
 	}

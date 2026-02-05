@@ -49,7 +49,7 @@ void EntityInspectorPanel::DrawEntityName() {
 
 	const Origo::RID entity = selectedEntity.value();
 	auto* nameComp = scene->GetNativeComponent<Origo::NameComponent>(entity);
-	const std::string& name = nameComp->GetComponentName();
+	const std::string& name = nameComp->GetName();
 
 	static Origo::RID editingEntity {};
 	static bool isEditingName = false;

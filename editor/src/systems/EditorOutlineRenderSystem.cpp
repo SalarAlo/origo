@@ -13,29 +13,32 @@ namespace OrigoEditor {
 using namespace Origo;
 
 void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
-	scene->View<EditorOutline, TransformComponent, MeshRendererComponent>(
+	scene->View<EditorOutlineComponent, TransformComponent, MeshRendererComponent>(
 	    [&](RID entity,
-	        EditorOutline& selection,
+	        EditorOutlineComponent& selection,
 	        TransformComponent& transform,
 	        MeshRendererComponent& mr) {
 		    if (!selection.ShouldOutline || !mr.GetMesh().has_value())
 			    return;
 
-		    context.Submit(
+		    context.SubmitMesh(
 		        *mr.GetMesh(),
-		        EditorOutline::GetOutlineMaterial(),
+		        EditorOutlineComponent::GetOutlineMaterial(),
 		        transform.GetModelMatrix(),
 		        RenderPass::Outline);
 	    });
 
-	scene->View<EditorOutline, TransformComponent, ModelRendererComponent>(
+	scene->View<EditorOutlineComponent, TransformComponent, ModelRendererComponent>(
 	    [&](RID entity,
-	        EditorOutline& selection,
+	        EditorOutlineComponent& selection,
 	        TransformComponent& transform,
 	        ModelRendererComponent& mr) {
-		    if (!selection.ShouldOutline || !mr.GetModel().has_value())
-			    return;
-		    // TODO: Make models outline work
+		    // FIXME: This right here does not work because stencil buffer are reset
+		    // for each mesh render iteration, thus the models of the mesh get rendered
+		    // seperately
+		    //
+		    // if (selection.ShouldOutline && mr.GetModel().has_value())
+		    //  context.SubmitModel(*mr.GetModel(), transform.GetModelMatrix(), RenderPass::Outline, EditorOutlineComponent::GetOutlineMaterial());
 	    });
 }
 

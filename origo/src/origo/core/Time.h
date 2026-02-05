@@ -2,7 +2,7 @@
 
 namespace Origo::Time {
 
-using SystemClock = std::chrono::high_resolution_clock;
+using SystemClock = std::chrono::steady_clock;
 using TimePoint = SystemClock::time_point;
 using Duration = std::chrono::duration<double>;
 using DurationFloat = std::chrono::duration<float>;

@@ -5,7 +5,7 @@ namespace OrigoEditor::EditorSelectionSystem {
 
 void Apply(EditorContext& ctx) {
 	for (auto entity : ctx.ActiveScene->GetEntities()) {
-		auto outline = ctx.ActiveScene->GetNativeComponent<EditorOutline>(entity);
+		auto outline = ctx.ActiveScene->GetNativeComponent<EditorOutlineComponent>(entity);
 
 		if (!outline)
 			continue;

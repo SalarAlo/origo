@@ -1,7 +1,7 @@
 #pragma once
 
-#include "origo/assets/ShaderSource.h"
 #include "origo/assets/Asset.h"
+#include "origo/assets/ShaderSource.h"
 
 namespace Origo {
 

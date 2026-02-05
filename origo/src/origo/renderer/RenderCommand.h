@@ -26,7 +26,7 @@ public:
 private:
 	AssetHandle m_Mesh;
 	AssetHandle m_Material;
-	const glm::mat4& m_ModelMatrix;
+	glm::mat4 m_ModelMatrix;
 	RenderPass m_RenderPass;
 };
 }

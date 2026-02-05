@@ -1,8 +1,13 @@
 #include "panels/PanelManager.h"
-#include "components/EditorOutline.h"
-#include "state/EditorContext.h"
+
 #include "imgui.h"
+
+#include "components/EditorOutline.h"
+
 #include "origo/components/Transform.h"
+
+#include "state/EditorContext.h"
+
 #include "ui/UI.h"
 
 namespace OrigoEditor {
@@ -38,7 +43,7 @@ void PanelManager::RenderMenuItems() {
 		static int i {};
 		if (ImGui::MenuItem("Create Entity")) {
 			auto e = m_Context.ActiveScene->CreateEntity("entity_" + std::to_string(i++));
-			m_Context.ActiveScene->AddNativeComponent<OrigoEditor::EditorOutline>(e);
+			m_Context.ActiveScene->AddNativeComponent<OrigoEditor::EditorOutlineComponent>(e);
 		}
 
 		if (ImGui::MenuItem("Delete Entity")) {
