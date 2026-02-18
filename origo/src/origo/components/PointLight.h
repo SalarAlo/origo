@@ -1,7 +1,8 @@
 #pragma once
 
-#include "origo/assets/AssetManager.h"
 #include "Component.h"
+
+#include "origo/assets/AssetManager.h"
 
 namespace Origo {
 

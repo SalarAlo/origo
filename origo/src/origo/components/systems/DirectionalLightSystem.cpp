@@ -1,10 +1,12 @@
 
 #include "DirectionalLightSystem.h"
-#include "origo/components/DirectionalLightData.h"
-#include "origo/scene/GamePhase.h"
+
 #include "origo/components/DirectionalLight.h"
-#include "origo/scene/SystemScheduler.h"
+#include "origo/components/DirectionalLightData.h"
 #include "origo/components/Transform.h"
+
+#include "origo/scene/GamePhase.h"
+#include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
 
@@ -27,5 +29,5 @@ void DirectionalLightSystem::Render(Scene* scene, RenderContext& rCtx) {
 }
 
 REGISTER_RENDER_SYSTEM(
-    Origo::GamePhase::RenderGeometry,
+    Origo::GamePhase::RenderAlways,
     Origo::DirectionalLightSystem);

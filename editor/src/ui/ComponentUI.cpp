@@ -1,5 +1,7 @@
 #include "ui/ComponentUI.h"
+
 #include "imgui.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"

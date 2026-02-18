@@ -1,7 +1,9 @@
+#include <glm/vec3.hpp>
+
 #include "origo/components/CameraComponent.h"
+
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
-#include <glm/vec3.hpp>
 
 namespace OrigoEditor {
 

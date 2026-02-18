@@ -18,5 +18,5 @@ void ModelRenderSystem::Render(Scene* scene, RenderContext& context) {
 }
 
 REGISTER_RENDER_SYSTEM(
-    Origo::GamePhase::RenderGeometry,
+    Origo::GamePhase::RenderAlways,
     Origo::ModelRenderSystem)

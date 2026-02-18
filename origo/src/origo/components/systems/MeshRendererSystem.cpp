@@ -1,7 +1,9 @@
 #include "MeshRenderSystem.h"
+
 #include "origo/components/MeshRenderer.h"
-#include "origo/scene/SystemScheduler.h"
 #include "origo/components/Transform.h"
+
+#include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
 
@@ -25,5 +27,5 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 }
 
 REGISTER_RENDER_SYSTEM(
-    Origo::GamePhase::RenderGeometry,
+    Origo::GamePhase::RenderAlways,
     Origo::MeshRenderSystem)

@@ -33,7 +33,7 @@
                                         "type": "Camera"
                                 }
                         ],
-                        "rid": "2"
+                        "rid": "3"
                 },
                 {
                         "native_components": [
@@ -68,7 +68,7 @@
                                         "type": "Directional Light"
                                 }
                         ],
-                        "rid": "3"
+                        "rid": "4"
                 },
                 {
                         "native_components": [
@@ -88,14 +88,46 @@
                                 },
                                 {
                                         "data": {
-                                                "duration": 7.099999904632568,
-                                                "is_looping": 0,
-                                                "spawn_speed": -3.700000047683716,
-                                                "start_size_x": 1.0,
-                                                "start_size_y": 7.900000095367432,
-                                                "start_size_z": -9.899999618530273
+                                                "name": "Entity"
                                         },
-                                        "type": "ParticleSystem"
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "3bfeaf6581e63aef31d877626757ba5e"
+                                        },
+                                        "type": "ModelRenderer"
+                                }
+                        ],
+                        "rid": "5"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": 9.521406173706055,
+                                                "pos_z": 2.874401330947876,
+                                                "rot_x": 0.0,
+                                                "rot_y": -0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "atten_constant": 1.0,
+                                                "atten_linear": 0.09000000357627869,
+                                                "atten_quadratic": 0.03200000151991844,
+                                                "color_b": 0.0,
+                                                "color_g": 1.0,
+                                                "color_r": 0.0,
+                                                "intensity": 7.300000190734863
+                                        },
+                                        "type": "Point Light"
                                 },
                                 {
                                         "data": {
@@ -104,7 +136,7 @@
                                         "type": "Name"
                                 }
                         ],
-                        "rid": "4"
+                        "rid": "6"
                 }
         ],
         "name": "Sample Scene"

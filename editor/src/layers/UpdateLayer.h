@@ -1,19 +1,24 @@
 #pragma once
 
-#include "state/EditorContext.h"
 #include "origo/core/Layer.h"
+
+#include "origo/renderer/RenderContext.h"
+
+#include "state/EditorContext.h"
 
 namespace OrigoEditor {
 
 class UpdateLayer : public Origo::Layer {
 public:
-	UpdateLayer(EditorContext& ctx)
-	    : m_Context(ctx) { };
+	UpdateLayer(EditorContext& ctx, Origo::RenderContext& rCtx)
+	    : m_Context(ctx)
+	    , m_RenderContext(rCtx) { };
 
 	void OnUpdate(double dt) override;
 
 private:
 	EditorContext& m_Context;
+	Origo::RenderContext& m_RenderContext;
 };
 
 }

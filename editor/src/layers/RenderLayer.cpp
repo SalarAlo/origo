@@ -1,5 +1,7 @@
 #include "layers/RenderLayer.h"
+
 #include "origo/assets/SkyboxDefaults.h"
+
 #include "origo/scene/GamePhase.h"
 #include "origo/scene/SystemScheduler.h"
 
@@ -20,8 +22,8 @@ void RenderLayer::OnUpdate(double dt) {
 
 	auto activeScenePtr = m_Context.ActiveScene;
 
-	SystemScheduler::Get().RunPhase(GamePhase::RenderGeometry, activeScenePtr, m_RenderContext);
-	SystemScheduler::Get().RunPhase(GamePhase::UpdatePresentation, activeScenePtr, dt);
+	SystemScheduler::Get().RunPhase(GamePhase::RenderAlways, activeScenePtr, m_RenderContext);
+	SystemScheduler::Get().RunPhase(GamePhase::UpdateAlways, activeScenePtr, dt);
 
 	if (editingView) {
 		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, activeScenePtr, m_RenderContext);

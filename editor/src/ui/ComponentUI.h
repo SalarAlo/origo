@@ -1,10 +1,11 @@
 #pragma once
 
-#include <string_view>
-#include <string>
 #include <optional>
+#include <string>
+#include <string_view>
 
 #include "glm/fwd.hpp"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
 

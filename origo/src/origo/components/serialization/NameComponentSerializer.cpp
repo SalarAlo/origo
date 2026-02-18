@@ -1,4 +1,5 @@
 #include "NameComponentSerializer.h"
+
 #include "origo/components/Name.h"
 
 namespace Origo {

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "nlohmann/json.hpp"
-#include "origo/serialization/ISerializer.h"
 #include <filesystem>
 #include <stack>
+
+#include "nlohmann/json.hpp"
+
+#include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 struct JsonStackEntry {

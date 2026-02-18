@@ -4,6 +4,7 @@ namespace Origo {
 
 void SystemScheduler::RunPhase(GamePhase phase, Scene* scene, float dt) {
 	auto it = m_UpdateSystems.find(phase);
+
 	if (it == m_UpdateSystems.end())
 		return;
 
@@ -13,6 +14,7 @@ void SystemScheduler::RunPhase(GamePhase phase, Scene* scene, float dt) {
 
 void SystemScheduler::RunPhase(GamePhase phase, Scene* scene, RenderContext& ctx) {
 	auto it = m_RenderSystems.find(phase);
+
 	if (it == m_RenderSystems.end())
 		return;
 

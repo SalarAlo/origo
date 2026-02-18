@@ -1,11 +1,13 @@
 #include "layers/UpdateLayer.h"
+
 #include "origo/scene/SystemScheduler.h"
 
 namespace OrigoEditor {
 
 void UpdateLayer::OnUpdate(double dt) {
 	auto scenePtr = m_Context.ActiveScene;
-	Origo::SystemScheduler::Get().RunPhase(Origo::GamePhase::Update, scenePtr, dt);
+	Origo::SystemScheduler::Get().RunPhase(Origo::GamePhase::UpdateGame, scenePtr, dt);
+	Origo::SystemScheduler::Get().RunPhase(Origo::GamePhase::RenderGame, scenePtr, m_RenderContext);
 }
 
 }

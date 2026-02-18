@@ -1,20 +1,24 @@
 #include "layers/EditorCameraLayer.h"
+#include "layers/EditorUILayer.h"
 #include "layers/LayerType.h"
 #include "layers/RenderLayer.h"
 #include "layers/SceneLayer.h"
 #include "layers/UpdateLayer.h"
-#include "origo/core/EntryPoint.h"
-#include "origo/core/Application.h"
-#include "origo/renderer/FrameBuffer.h"
 
-#include "layers/EditorUILayer.h"
+#include "origo/core/Application.h"
+#include "origo/core/EntryPoint.h"
+
+#include "origo/renderer/FrameBuffer.h"
+#include "origo/renderer/RenderContext.h"
+
+#include "origo/scene/Scene.h"
+
 #include "state/EditorContext.h"
+
 #include "systems/EditorIcons.h"
 #include "systems/EditorRuntimeController.h"
-#include "ui/EditorPalette.h"
 
-#include "origo/renderer/RenderContext.h"
-#include "origo/scene/Scene.h"
+#include "ui/EditorPalette.h"
 
 using namespace Origo;
 
@@ -50,7 +54,7 @@ public:
 		PushLayer(new SceneLayer(m_Context), static_cast<size_t>(LayerType::SceneLayer));
 		PushLayer(new EditorUILayer(m_Context, m_ImGuiController), static_cast<size_t>(LayerType::EditorUILayer));
 		PushLayer(new RenderLayer(m_Context, m_RenderContext), static_cast<size_t>(LayerType::RenderLayer));
-		PushLayer(new UpdateLayer(m_Context), static_cast<size_t>(LayerType::UpdateLayer), true);
+		PushLayer(new UpdateLayer(m_Context, m_RenderContext), static_cast<size_t>(LayerType::UpdateLayer), true);
 
 		m_RenderContext.SetTarget(&m_RenderBuffer);
 		m_RenderContext.SetResolveTarget(&m_ResolveBuffer);

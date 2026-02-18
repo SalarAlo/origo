@@ -1,12 +1,18 @@
 #pragma once
 
 #include "origo/core/LayerSystem.h"
+
 #include "origo/renderer/FrameBuffer.h"
+
 #include "origo/scene/Scene.h"
+
 #include "state/EditorRuntimeState.h"
 #include "state/EditorViewMode.h"
+
 #include "systems/EditorCamera.h"
+
 #include "ui/EditorPalette.h"
+
 #include "viewport/EditorViewportController.h"
 
 namespace OrigoEditor {
