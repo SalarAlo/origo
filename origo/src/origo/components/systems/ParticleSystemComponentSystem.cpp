@@ -1,44 +1,78 @@
 #include "origo/components/systems/ParticleSystemComponentSystem.h"
 
-#include "glm/ext/matrix_transform.hpp"
-
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
 
-#include "origo/components/ParticleSystemComponent.h"
+#include "origo/components/EditorHiddenComponent.h"
+#include "origo/components/MeshRenderer.h"
+#include "origo/components/Name.h"
 #include "origo/components/Transform.h"
+
+#include "origo/components/particle_system/ParticleComponent.h"
+#include "origo/components/particle_system/ParticleEmissionShapePositionVisitor.h"
+#include "origo/components/particle_system/ParticleEmissionShapeSpawnPositionVisitor.h"
+#include "origo/components/particle_system/ParticleEmissionShapeSpawnVelocityVisitor.h"
+#include "origo/components/particle_system/ParticleSystemComponent.h"
+
+#include "origo/core/Random.h"
 
 #include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
 
-static inline float RandomRange(float min, float max) {
-	return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
-}
+void ParticleSystemComponentSystem::Render(Scene* scene, RenderContext& rCtx) {
+	scene->View<ParticleSystemComponent, TransformComponent, NameComponent>(
+	    [&](RID emitterRID,
+	        ParticleSystemComponent& particleSystem,
+	        TransformComponent& particleSystemTransf,
+	        NameComponent& nc) {
+		    auto positionSetterVisitor = ParticleEmissionShapePositionVisitor { particleSystemTransf.GetPosition() };
+		    std::visit(positionSetterVisitor, particleSystem.Shape);
 
-void ParticleSystemComponentSystem::Render(Origo::Scene* scene, RenderContext& rCtx) {
-	scene->View<ParticleSystemComponent, TransformComponent>([&](RID, ParticleSystemComponent& ps, TransformComponent& tr) {
-		for (auto i { 0uz }; i < ps.SpawnSpeed; i++) {
+		    for (size_t i = 0; i < particleSystem.SpawnRate; i++) {
+			    auto particle = scene->CreateEntity(
+			        nc.GetName() + "_particle_" + std::to_string(i));
 
-			glm::mat4 model = tr.GetModelMatrix();
+			    scene->AddNativeComponent<EditorHiddenComponent>(particle);
 
-			glm::vec3 randomOffset = glm::vec3(
-			    RandomRange(-1.0f, 1.0f),
-			    RandomRange(-1.0f, 1.0f),
-			    RandomRange(-1.0f, 1.0f));
+			    auto* particleTransf = scene->GetNativeComponent<TransformComponent>(particle);
+			    particleTransf->SetPosition(std::visit(ParticleEmissionShapeSpawnPositionVisitor {}, particleSystem.Shape));
+			    particleTransf->SetScale(Vec3 { particleSystem.StartSize });
 
-			glm::mat4 offset = glm::translate(glm::mat4(1.0f), randomOffset);
-			glm::mat4 scale = glm::scale(glm::mat4(1.0f), ps.StartSize);
-			offset *= scale;
+			    auto* pc = scene->AddNativeComponent<ParticleComponent>(particle);
 
-			glm::mat4 finalModel = model * offset;
+			    pc->StartSize = particleSystem.StartSize;
+			    pc->EndSize = particleSystem.EndSize;
 
-			rCtx.SubmitMesh(
-			    PrimitiveShapeCache::GetInstance().GetCubeMesh(),
-			    DefaultAssetCache::GetInstance().GetMaterial(),
-			    finalModel);
-		}
-	});
+			    pc->OwnerEmitter = emitterRID;
+			    pc->SimulatePhysics = true;
+
+			    pc->UseGravity = particleSystem.UseGravity;
+			    pc->Mass = particleSystem.Mass;
+			    pc->Drag = particleSystem.Drag;
+
+			    pc->Lifetime = Random::Range(
+			        particleSystem.LifetimeMin,
+			        particleSystem.LifetimeMax);
+
+			    pc->MaxLifetime = pc->Lifetime;
+
+			    float speed = Random::Range(
+			        particleSystem.InitialSpeedMin,
+			        particleSystem.InitialSpeedMax);
+
+			    pc->Velocity = std::visit(ParticleEmissionShapeSpawnVelocityVisitor {}, particleSystem.Shape) * speed;
+
+			    auto mesh = particleSystem.ParticleMesh.has_value()
+			        ? *particleSystem.ParticleMesh
+			        : PrimitiveShapeCache::GetInstance().GetSphereMesh();
+
+			    scene->AddNativeComponent<MeshRendererComponent>(
+			        particle,
+			        DefaultAssetCache::GetInstance().GetMaterial(),
+			        mesh);
+		    }
+	    });
 }
 
 REGISTER_RENDER_SYSTEM(

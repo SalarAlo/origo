@@ -1,5 +1,7 @@
 #include "origo/assets/AssetManager.h"
+
 #include "origo/components/DirectionalLight.h"
+
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
 

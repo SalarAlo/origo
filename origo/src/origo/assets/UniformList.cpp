@@ -13,10 +13,10 @@ template <>
 UniformType Uniform<unsigned int>::GetUniformType() const { return UniformType::UnsignedInt; }
 
 template <>
-UniformType Uniform<glm::vec2>::GetUniformType() const { return UniformType::Vec2; }
+UniformType Uniform<Vec2>::GetUniformType() const { return UniformType::Vec2; }
 
 template <>
-UniformType Uniform<glm::vec3>::GetUniformType() const { return UniformType::Vec3; }
+UniformType Uniform<Vec3>::GetUniformType() const { return UniformType::Vec3; }
 
 template <>
 UniformType Uniform<glm::mat4>::GetUniformType() const { return UniformType::Mat4; }
@@ -34,14 +34,14 @@ void Uniform<float>::Serialize(ISerializer& backend) const {
 }
 
 template <>
-void Uniform<glm::vec2>::Serialize(ISerializer& backend) const {
+void Uniform<Vec2>::Serialize(ISerializer& backend) const {
 	backend.Write("type", "vec2");
 	backend.Write("x", m_Value.x);
 	backend.Write("y", m_Value.y);
 }
 
 template <>
-void Uniform<glm::vec3>::Serialize(ISerializer& backend) const {
+void Uniform<Vec3>::Serialize(ISerializer& backend) const {
 	backend.Write("type", "vec3");
 	backend.Write("x", m_Value.x);
 	backend.Write("y", m_Value.y);

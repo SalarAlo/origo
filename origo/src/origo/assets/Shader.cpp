@@ -94,8 +94,8 @@ void Shader::SetUniform<glm::mat4>(
 }
 
 template <>
-void Shader::SetUniform<glm::vec3>(
-    std::string_view name, const glm::vec3& v) const {
+void Shader::SetUniform<Vec3>(
+    std::string_view name, const Vec3& v) const {
 	GLint loc = GetUniformLocation(name);
 	if (loc == -1)
 		return;
@@ -105,8 +105,8 @@ void Shader::SetUniform<glm::vec3>(
 }
 
 template <>
-void Shader::SetUniform<glm::vec2>(
-    std::string_view name, const glm::vec2& v) const {
+void Shader::SetUniform<Vec2>(
+    std::string_view name, const Vec2& v) const {
 	GLint loc = GetUniformLocation(name);
 	if (loc == -1)
 		return;

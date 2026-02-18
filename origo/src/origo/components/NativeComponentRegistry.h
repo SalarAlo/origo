@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NativeComponentManager.h"
+
 #include "origo/components/serialization/IComponentSerializer.h"
 
 namespace Origo {
@@ -38,7 +39,7 @@ public:
 
 		auto& nameMap = GetNameMap();
 		if (nameMap.contains(name))
-			throw std::runtime_error("Component name already registered");
+			throw std::runtime_error("Component with name '" + name + "' already registered");
 		nameMap.emplace(name, type);
 	}
 

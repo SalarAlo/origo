@@ -22,7 +22,7 @@ void PointLightComponentSerializer::Deserialize(Component* comp, ISerializer& s)
 	auto light = static_cast<PointLightComponent*>(comp);
 
 	float intensity = light->GetIntensity();
-	glm::vec3 color = light->GetLightColor();
+	Vec3 color = light->GetLightColor();
 	float c = light->GetConstant();
 	float l = light->GetLinear();
 	float q = light->GetQuadratic();

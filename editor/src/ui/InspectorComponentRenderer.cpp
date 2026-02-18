@@ -1,12 +1,16 @@
 #include "InspectorComponentRenderer.h"
 
 #include "imgui.h"
-#include "state/EditorContext.h"
-#include "systems/EditorIcons.h"
-#include "ui/ComponentUI.h"
 
 #include "origo/assets/Texture2D.h"
+
 #include "origo/scripting/ScriptComponentRegistry.h"
+
+#include "state/EditorContext.h"
+
+#include "systems/EditorIcons.h"
+
+#include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
 void InspectorComponentRenderer::Init(EditorContext* ctx) {
@@ -15,6 +19,7 @@ void InspectorComponentRenderer::Init(EditorContext* ctx) {
 
 void InspectorComponentRenderer::DrawNativeComponent(const Origo::RID& entity, void* componentPtr, std::type_index type) {
 	auto* entry = InspectorDrawRegistry::Get(type);
+
 	if (!entry) {
 		DrawUnknown(componentPtr);
 		return;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ScreenWindowSettings.h"
+
 #include "origo/events/Event.h"
 
 namespace Origo {

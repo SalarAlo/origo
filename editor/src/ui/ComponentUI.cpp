@@ -6,6 +6,21 @@
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"
 
+static bool BeginInspectorRegion(const char* label, bool defaultOpen = true) {
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
+	ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.18f, 0.18f, 0.18f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.24f, 0.24f, 0.24f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.0f));
+
+	bool open = ImGui::CollapsingHeader(label,
+	    defaultOpen ? ImGuiTreeNodeFlags_DefaultOpen : 0);
+
+	ImGui::PopStyleColor(3);
+	ImGui::PopStyleVar();
+
+	return open;
+}
+
 namespace ComponentUI {
 
 void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
@@ -44,6 +59,54 @@ void DrawVec3Control(std::string_view label, glm::vec3& values, float speed) {
 	DrawField("##Y", values.y);
 	ImGui::SameLine(0.0f, spacing);
 	DrawField("##Z", values.z);
+
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
+
+void DrawMinMaxRangeControl(std::string_view label, glm::vec2& values, float speed) {
+	glm::vec2 original { values };
+
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 65.0f;
+	const float spacing = 4.0f;
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float totalWidth = fieldWidth * 2.0f + spacing;
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - totalWidth;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+
+	if (nextX < minX)
+		nextX = minX;
+
+	ImGui::SameLine(nextX);
+
+	auto DrawField = [&](const char* id, float& v) {
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+		ImGui::SetNextItemWidth(fieldWidth);
+		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
+
+		ImGui::PopStyleColor(4);
+	};
+
+	DrawField("##X", values.x);
+	ImGui::SameLine(0.0f, spacing);
+	DrawField("##Y", values.y);
+
+	if (values.x > values.y) {
+		values = original;
+	} else if (values.y < values.x) {
+		values = original;
+	}
 
 	ImGui::PopStyleVar();
 	ImGui::PopID();
@@ -151,33 +214,22 @@ void DrawStringControl(std::string_view label, std::string& value) {
 }
 
 void DrawBoolControl(std::string_view label, bool& value) {
-	ImGui::PushID(label.data(), label.data() + label.size());
+	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
 
-	const float fieldWidth = 180.0f;
-
-	ImGui::BeginGroup();
-
-	ImVec2 lineStart = ImGui::GetCursorScreenPos();
-
 	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data(), label.data() + label.size());
-
-	float right = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-
-	float labelWidth = ImGui::CalcTextSize(label.data(), label.data() + label.size()).x;
-
-	float fieldX = right - fieldWidth;
-
-	float minX = lineStart.x + labelWidth + 8.0f;
-	if (fieldX < minX)
-		fieldX = minX;
+	ImGui::TextUnformatted(label.data());
 
 	float checkboxSize = ImGui::GetFrameHeight();
 
-	ImGui::SameLine();
-	ImGui::SetCursorScreenPos(
-	    ImVec2(fieldX + fieldWidth - checkboxSize, lineStart.y));
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - checkboxSize;
+
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (nextX < minX)
+		nextX = minX;
+
+	ImGui::SameLine(nextX);
 
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
@@ -187,8 +239,6 @@ void DrawBoolControl(std::string_view label, bool& value) {
 	ImGui::Checkbox("##bool", &value);
 
 	ImGui::PopStyleColor(4);
-
-	ImGui::EndGroup();
 	ImGui::PopStyleVar();
 	ImGui::PopID();
 }
@@ -287,4 +337,63 @@ void DrawColorControl(std::string_view label, glm::vec3& value) {
 	ImGui::PopID();
 }
 
+bool StartRegion(std::string_view label, bool defaultOpen) {
+	ImGui::PushID(label.data());
+
+	bool open = BeginInspectorRegion(label.data(), defaultOpen);
+
+	if (open) {
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 6.0f });
+	}
+
+	return open;
+}
+
+void EndRegion(bool open) {
+	if (open) {
+		ImGui::PopStyleVar();
+	}
+
+	ImGui::PopID();
+}
+
+void DrawVec2Control(std::string_view label, glm::vec2& values, float speed) {
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float fieldWidth = 65.0f;
+	const float spacing = 4.0f;
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float totalWidth = fieldWidth * 2.0f + spacing;
+	float avail = ImGui::GetContentRegionAvail().x;
+	float nextX = ImGui::GetCursorPosX() + avail - totalWidth;
+	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+
+	if (nextX < minX)
+		nextX = minX;
+
+	ImGui::SameLine(nextX);
+
+	auto DrawField = [&](const char* id, float& v) {
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+		ImGui::SetNextItemWidth(fieldWidth);
+		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
+
+		ImGui::PopStyleColor(4);
+	};
+
+	DrawField("##X", values.x);
+	ImGui::SameLine(0.0f, spacing);
+	DrawField("##Y", values.y);
+
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
 }

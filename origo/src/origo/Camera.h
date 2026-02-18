@@ -17,7 +17,7 @@ public:
 	float GetAspect() const { return m_Aspect; }
 
 	void SetClipping(float nearPlane, float farPlane);
-	glm::vec2 GetClipping() const { return { m_Near, m_Far }; };
+	Vec2 GetClipping() const { return { m_Near, m_Far }; };
 
 	void UpdateFromTransform(TransformComponent& transform);
 

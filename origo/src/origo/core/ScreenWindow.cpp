@@ -1,10 +1,13 @@
 #include "origo/core/ScreenWindow.h"
+
 #include "origo/events/Event.h"
 #include "origo/events/EventTypes.h"
 #include "origo/events/KeyEvent.h"
 #include "origo/events/MouseEvent.h"
 #include "origo/events/WindowEvent.h"
+
 #include "origo/input/Input.h"
+
 #include "origo/renderer/GlDebug.h"
 
 static void APIENTRY MyCallback(
@@ -55,6 +58,8 @@ void ScreenWindow::InitGlfw() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHintString(GLFW_WAYLAND_APP_ID, "origo");
 
+	glfwSwapInterval(1);
+
 	glfwWindowHint(GLFW_SAMPLES, 4);
 }
 
@@ -78,6 +83,8 @@ void ScreenWindow::InitGlad() {
 	GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 	GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
 	GLCall(glStencilMask(0xFF));
+
+	GLCall(glPointSize(3.0f));
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
@@ -122,7 +129,7 @@ void ScreenWindow::InitCallback() {
 #pragma region MOUSE_MOVE
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
 		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		MouseMoveEvent mouseMoveEvent { glm::vec2(static_cast<int>(xpos), static_cast<int>(ypos)) };
+		MouseMoveEvent mouseMoveEvent { Vec2(static_cast<int>(xpos), static_cast<int>(ypos)) };
 		windowSettings->EventCallback(mouseMoveEvent);
 	});
 #pragma endregion
@@ -174,7 +181,7 @@ void ScreenWindow::InitCallback() {
 		windowSettings->Height = height;
 		windowSettings->Width = width;
 
-		WindowResizeEvent windowResizeEvent { glm::vec2(width, height) };
+		WindowResizeEvent windowResizeEvent { Vec2(width, height) };
 		windowSettings->EventCallback(windowResizeEvent);
 	});
 

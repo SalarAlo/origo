@@ -1,4 +1,4 @@
-#include "origo/components/ParticleSystemComponent.h"
+#include "origo/components/particle_system/ParticleSystemComponent.h"
 
 #include "origo/components/NativeComponentRegistry.h"
 

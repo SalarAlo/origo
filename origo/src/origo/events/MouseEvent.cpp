@@ -9,10 +9,10 @@ EventType MouseMoveEvent::GetEventType() const {
 	return GetStaticType();
 }
 
-MouseMoveEvent::MouseMoveEvent(const glm::vec2& coordinate)
+MouseMoveEvent::MouseMoveEvent(const Vec2& coordinate)
     : m_Coordinate(coordinate) {
 }
-glm::vec2 MouseMoveEvent::GetCoordinate() const {
+Vec2 MouseMoveEvent::GetCoordinate() const {
 	return m_Coordinate;
 }
 

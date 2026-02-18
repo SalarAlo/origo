@@ -14,7 +14,7 @@
 
 namespace Origo {
 
-static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
+static void DrawMesh(const RenderCommand& cmd) {
 	auto& am { AssetManager::GetInstance() };
 	auto material { am.Get<Material2D>(cmd.GetMaterial()) };
 	auto mesh { am.Get<Mesh>(cmd.GetMesh()) };
@@ -22,7 +22,7 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 	constexpr float outlineThickness { 0.1f };
 	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetModelMatrix();
 	if (cmd.GetRenderPass() == RenderPass::Outline)
-		model = glm::scale(model, glm::vec3(1.0f + outlineThickness));
+		model = glm::scale(model, Vec3(1.0f + outlineThickness));
 
 	material->WriteModel(model);
 
@@ -32,7 +32,7 @@ static void DrawMesh(const RenderCommand& cmd, GLenum drawMethod) {
 
 	const MeshRange& r = mesh->Range;
 	GLCall(glDrawElementsBaseVertex(
-	    drawMethod,
+	    cmd.GetDrawMethod(),
 	    r.IndexCount,
 	    GL_UNSIGNED_INT,
 	    reinterpret_cast<void*>(r.FirstIndex * sizeof(unsigned int)),
@@ -61,8 +61,8 @@ void RenderContext::SetView(const RenderView& view) {
 	m_HasView = true;
 }
 
-void RenderContext::SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass) {
-	m_DrawQueue.emplace_back(mesh, material, modelMatrix, pass);
+void RenderContext::SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass, GLenum drawMethod) {
+	m_DrawQueue.emplace_back(mesh, material, modelMatrix, pass, drawMethod);
 }
 
 void RenderContext::Flush() {
@@ -164,7 +164,7 @@ void RenderContext::ExecutePass(RenderPass pass) {
 			}
 		}
 
-		DrawMesh(cmd, m_DrawMethod);
+		DrawMesh(cmd);
 	}
 }
 

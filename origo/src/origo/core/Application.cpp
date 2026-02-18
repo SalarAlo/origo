@@ -1,10 +1,13 @@
 #include "origo/core/Application.h"
+
 #include "origo/assets/serialization/AssetSerializer.h"
+
+#include "origo/core/Init.h"
 #include "origo/core/Layer.h"
 #include "origo/core/Logger.h"
 #include "origo/core/Time.h"
+
 #include "origo/input/Input.h"
-#include "origo/core/Init.h"
 
 namespace Origo {
 
@@ -60,7 +63,9 @@ void Application::Run() {
 	m_LastTimeStamp = Time::GetNow();
 
 	while (m_Running) {
-		double dt { static_cast<Time::Duration>(Time::GetNow() - m_LastTimeStamp).count() };
+		const auto now = Time::GetNow();
+		const double dt = std::chrono::duration<double>(now - m_LastTimeStamp).count();
+		m_LastTimeStamp = now;
 
 		InternalUpdate(dt);
 
@@ -70,7 +75,6 @@ void Application::Run() {
 
 		m_Window.OnUpdate();
 
-		m_LastTimeStamp = Time::GetNow();
 		OnEndFrame();
 	}
 

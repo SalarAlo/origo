@@ -6,9 +6,9 @@ namespace Origo {
 void TransformComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
 	auto transform = static_cast<TransformComponent*>(comp);
 
-	const glm::vec3& position = transform->GetPosition();
-	const glm::vec3& rotation = transform->GetRotation();
-	const glm::vec3& scale = transform->GetScale();
+	const Vec3& position = transform->GetPosition();
+	const Vec3& rotation = transform->GetRotation();
+	const Vec3& scale = transform->GetScale();
 
 	backend.Write("pos_x", position.x);
 	backend.Write("pos_y", position.y);
@@ -26,9 +26,9 @@ void TransformComponentSerializer::Serialize(Component* comp, ISerializer& backe
 void TransformComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
 	auto transform = static_cast<TransformComponent*>(comp);
 
-	glm::vec3 position = transform->GetPosition();
-	glm::vec3 rotation = transform->GetRotation();
-	glm::vec3 scale = transform->GetScale();
+	Vec3 position = transform->GetPosition();
+	Vec3 rotation = transform->GetRotation();
+	Vec3 scale = transform->GetScale();
 
 	backend.TryRead("pos_x", position.x);
 	backend.TryRead("pos_y", position.y);

@@ -7,6 +7,7 @@
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
 
+#include "origo/components/EditorHiddenComponent.h"
 #include "origo/components/MeshRenderer.h"
 #include "origo/components/Name.h"
 
@@ -32,6 +33,7 @@ void HierarchyPanel::OnImGuiRender() {
 
 	if (ImGui::BeginPopupContextWindow("HierarchyCreatePopup", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 		ImGui::MenuItem("Empty");
+
 		if (ImGui::IsItemClicked()) {
 			auto ent { m_Context.ActiveScene->CreateEntity("Entity") };
 			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(ent);
@@ -61,6 +63,10 @@ void HierarchyPanel::OnImGuiRender() {
 	}
 
 	for (const auto& entityID : m_Context.ActiveScene->GetEntities()) {
+		if (m_Context.ActiveScene->HasNativeComponent<Origo::EditorHiddenComponent>(entityID)) {
+			continue;
+		}
+
 		ImGui::PushID(entityID.GetId());
 
 		bool selected = selectedEntityID && selectedEntityID == entityID;

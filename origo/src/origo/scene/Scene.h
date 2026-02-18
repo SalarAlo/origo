@@ -1,11 +1,13 @@
 #pragma once
 
-#include <typeindex>
 #include <string_view>
+#include <typeindex>
 
 #include "origo/components/NativeComponentManager.h"
-#include "origo/scripting/ScriptComponentManager.h"
+
 #include "origo/scene/SceneCommand.h"
+
+#include "origo/scripting/ScriptComponentManager.h"
 
 namespace Origo {
 class Scene;
@@ -26,6 +28,7 @@ public:
 	Scene& operator=(const Scene&) = delete;
 
 	RID CreateEntity(std::string_view name);
+
 	void ScheduleRemoveEntity(const RID&);
 	void ScheduleRemoveNativeComponent(const RID&, const std::type_index&);
 

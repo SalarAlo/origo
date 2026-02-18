@@ -1,10 +1,12 @@
 #pragma once
 
-#include "ui/IInspectorDrawable.h"
-#include "ui/InspectorDrawable.h"
 #include <bits/utility.h>
+
 #include <typeindex>
 #include <unordered_map>
+
+#include "ui/IInspectorDrawable.h"
+#include "ui/InspectorDrawable.h"
 
 namespace Origo {
 class Texture2D;

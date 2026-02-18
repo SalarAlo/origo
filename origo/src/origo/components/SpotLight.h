@@ -15,8 +15,8 @@ public:
 	void SetIntensity(float intensity) { m_Intensity = intensity; }
 	float GetIntensity() const { return m_Intensity; }
 
-	void SetLightColor(const glm::vec3& color) { m_LightColor = color; }
-	glm::vec3 GetLightColor() const { return m_LightColor; }
+	void SetLightColor(const Vec3& color) { m_LightColor = color; }
+	Vec3 GetLightColor() const { return m_LightColor; }
 
 	void SetCutoffs(float inner, float outer) {
 		m_InnerCutoff = inner;
@@ -38,7 +38,7 @@ public:
 
 private:
 	float m_Intensity { 1.0f };
-	glm::vec3 m_LightColor { 1.0f };
+	Vec3 m_LightColor { 1.0f };
 
 	float m_InnerCutoff { 0.9f };
 	float m_OuterCutoff { 0.85f };

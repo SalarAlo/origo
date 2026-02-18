@@ -24,14 +24,14 @@ EventType WindowFocusChangeEvent::GetStaticType() {
 
 #pragma region WINDOW_RESIZE
 
-WindowResizeEvent::WindowResizeEvent(glm::vec2 size)
+WindowResizeEvent::WindowResizeEvent(Vec2 size)
     : m_Size(size) { };
 
 EventType WindowResizeEvent::GetEventType() const {
 	return GetStaticType();
 }
 
-glm::vec2 WindowResizeEvent::GetSize() const {
+Vec2 WindowResizeEvent::GetSize() const {
 	return m_Size;
 }
 

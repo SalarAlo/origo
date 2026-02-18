@@ -18,13 +18,13 @@ private:
 
 class WindowResizeEvent : public Event {
 public:
-	WindowResizeEvent(glm::vec2 size);
+	WindowResizeEvent(Vec2 size);
 	static EventType GetStaticType();
 	EventType GetEventType() const override;
-	glm::vec2 GetSize() const;
+	Vec2 GetSize() const;
 
 private:
-	glm::vec2 m_Size {};
+	Vec2 m_Size {};
 };
 
 }

@@ -11,6 +11,7 @@ public:
 	AssetHandle GetCubeMesh();
 	AssetHandle GetSphereMesh();
 	AssetHandle GetQuadMesh();
+	AssetHandle GetConeMesh();
 
 private:
 	PrimitiveShapeCache() = default;

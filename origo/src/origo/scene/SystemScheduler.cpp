@@ -29,4 +29,5 @@ void SystemScheduler::AddUpdateSystem(GamePhase phase, Scope<IUpdateSystem> syst
 void SystemScheduler::AddRenderSystem(GamePhase phase, Scope<IRenderSystem> system) {
 	m_RenderSystems[phase].push_back(std::move(system));
 }
+
 }

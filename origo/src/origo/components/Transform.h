@@ -8,25 +8,25 @@ class TransformComponent : public Component {
 public:
 	TransformComponent();
 
-	void Translate(const glm::vec3& delta);
-	void SetPosition(const glm::vec3& position);
+	void Translate(const Vec3& delta);
+	void SetPosition(const Vec3& position);
 
-	void Scale(const glm::vec3& factor);
-	void SetScale(const glm::vec3& scale);
+	void Scale(const Vec3& factor);
+	void SetScale(const Vec3& scale);
 
-	void Rotate(const glm::vec3& eulerDegrees);
-	void SetRotation(const glm::vec3& eulerDegrees);
-	void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f));
+	void Rotate(const Vec3& eulerDegrees);
+	void SetRotation(const Vec3& eulerDegrees);
+	void LookAt(const Vec3& target, const Vec3& up = Vec3(0.0f, 1.0f, 0.0f));
 
-	glm::vec3 GetForward() const;
-	glm::vec3 GetRight() const;
-	glm::vec3 GetUp() const;
+	Vec3 GetForward() const;
+	Vec3 GetRight() const;
+	Vec3 GetUp() const;
 
 	void SetFromMatrix(const glm::mat4&);
 
-	const glm::vec3& GetPosition() const;
-	const glm::vec3& GetRotation() const;
-	const glm::vec3& GetScale() const;
+	const Vec3& GetPosition() const;
+	const Vec3& GetRotation() const;
+	const Vec3& GetScale() const;
 
 	const glm::mat4& GetModelMatrix();
 
@@ -35,9 +35,9 @@ public:
 private:
 	void RecalculateModel();
 
-	glm::vec3 m_Position;
-	glm::vec3 m_Rotation;
-	glm::vec3 m_Scale;
+	Vec3 m_Position;
+	Vec3 m_Rotation;
+	Vec3 m_Scale;
 	glm::mat4 m_ModelMatrix;
 	bool m_Dirty;
 };

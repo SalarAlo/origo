@@ -8,6 +8,7 @@ enum class PrimitiveShape {
 	Sphere,
 	Triangle,
 	Quad,
+	Cone
 };
 
 MeshData GetDataFromShape(PrimitiveShape shape);

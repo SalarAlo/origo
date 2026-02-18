@@ -6,13 +6,13 @@
 namespace Origo {
 class MouseMoveEvent : public Event {
 public:
-	MouseMoveEvent(const glm::vec2& coordinate);
+	MouseMoveEvent(const Vec2& coordinate);
 	EventType GetEventType() const override;
-	glm::vec2 GetCoordinate() const;
+	Vec2 GetCoordinate() const;
 	static EventType GetStaticType();
 
 private:
-	glm::vec2 m_Coordinate;
+	Vec2 m_Coordinate;
 };
 
 class MouseScrollEvent : public Event {

@@ -20,7 +20,7 @@ public:
 private:
 	OptionalAssetHandle m_Material { std::nullopt };
 	OptionalAssetHandle m_Mesh { std::nullopt };
-	glm::vec3 m_Color {};
+	Vec3 m_Color {};
 };
 
 }

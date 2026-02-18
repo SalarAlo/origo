@@ -15,46 +15,46 @@ TransformComponent::TransformComponent()
     , m_Scale(1.0f)
     , m_Dirty(true) { }
 
-void TransformComponent::Translate(const glm::vec3& delta) {
+void TransformComponent::Translate(const Vec3& delta) {
 	m_Position += delta;
 	m_Dirty = true;
 }
 
-void TransformComponent::SetPosition(const glm::vec3& position) {
+void TransformComponent::SetPosition(const Vec3& position) {
 	m_Position = position;
 	m_Dirty = true;
 }
 
-void TransformComponent::Scale(const glm::vec3& factor) {
+void TransformComponent::Scale(const Vec3& factor) {
 	m_Scale *= factor;
 	m_Dirty = true;
 }
 
-void TransformComponent::SetScale(const glm::vec3& scale) {
+void TransformComponent::SetScale(const Vec3& scale) {
 	m_Scale = scale;
 	m_Dirty = true;
 }
 
-void TransformComponent::Rotate(const glm::vec3& eulerDegrees) {
+void TransformComponent::Rotate(const Vec3& eulerDegrees) {
 	m_Rotation += eulerDegrees;
 	m_Dirty = true;
 }
 
-void TransformComponent::SetRotation(const glm::vec3& eulerDegrees) {
+void TransformComponent::SetRotation(const Vec3& eulerDegrees) {
 	m_Rotation = eulerDegrees;
 	m_Dirty = true;
 }
 
-const glm::vec3& TransformComponent::GetPosition() const { return m_Position; }
-const glm::vec3& TransformComponent::GetRotation() const { return m_Rotation; }
-const glm::vec3& TransformComponent::GetScale() const { return m_Scale; }
+const Vec3& TransformComponent::GetPosition() const { return m_Position; }
+const Vec3& TransformComponent::GetRotation() const { return m_Rotation; }
+const Vec3& TransformComponent::GetScale() const { return m_Scale; }
 
 void TransformComponent::SetFromMatrix(const glm::mat4& m) {
-	m_Position = glm::vec3(m[3]);
+	m_Position = Vec3(m[3]);
 
-	glm::vec3 col0 = glm::vec3(m[0]);
-	glm::vec3 col1 = glm::vec3(m[1]);
-	glm::vec3 col2 = glm::vec3(m[2]);
+	Vec3 col0 = Vec3(m[0]);
+	Vec3 col1 = Vec3(m[1]);
+	Vec3 col2 = Vec3(m[2]);
 
 	m_Scale.x = glm::length(col0);
 	m_Scale.y = glm::length(col1);
@@ -95,8 +95,8 @@ void TransformComponent::RecalculateModel() {
 	m_Dirty = false;
 }
 
-void TransformComponent::LookAt(const glm::vec3& target, const glm::vec3&) {
-	glm::vec3 dir = target - m_Position;
+void TransformComponent::LookAt(const Vec3& target, const Vec3&) {
+	Vec3 dir = target - m_Position;
 	float len = glm::length(dir);
 	if (len < 0.0001f)
 		return;
@@ -113,19 +113,19 @@ void TransformComponent::LookAt(const glm::vec3& target, const glm::vec3&) {
 	m_Dirty = true;
 }
 
-glm::vec3 TransformComponent::GetForward() const {
+Vec3 TransformComponent::GetForward() const {
 	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
-	return -glm::normalize(glm::vec3(m[2]));
+	return -glm::normalize(Vec3(m[2]));
 }
 
-glm::vec3 TransformComponent::GetRight() const {
+Vec3 TransformComponent::GetRight() const {
 	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
-	return glm::normalize(glm::vec3(m[0]));
+	return glm::normalize(Vec3(m[0]));
 }
 
-glm::vec3 TransformComponent::GetUp() const {
+Vec3 TransformComponent::GetUp() const {
 	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
-	return glm::normalize(glm::vec3(m[1]));
+	return glm::normalize(Vec3(m[1]));
 }
 
 ORIGO_REGISTER_NATIVE_COMPONENT(Origo::TransformComponent, Origo::TransformComponentSerializer)

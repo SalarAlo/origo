@@ -1,11 +1,13 @@
 #pragma once
 
+#include <optional>
+
 #include "origo/components/DirectionalLightData.h"
 #include "origo/components/PointLightData.h"
+
 #include "origo/renderer/FrameBuffer.h"
-#include "origo/renderer/RenderView.h"
 #include "origo/renderer/RenderCommand.h"
-#include <optional>
+#include "origo/renderer/RenderView.h"
 
 namespace Origo {
 
@@ -25,7 +27,6 @@ public:
 	void SetView(const RenderView& view);
 
 	void ClearView() { m_HasView = false; }
-	void SetDrawMethod(GLenum drawMethod) { m_DrawMethod = drawMethod; }
 
 	FrameBuffer* GetTarget() const { return m_Target; }
 	FrameBuffer* GetResolveTarget() const { return m_ResolveTarget; }
@@ -34,8 +35,17 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
-	void SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry);
-	void SubmitModel(const AssetHandle& mesh, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry, const std::optional<AssetHandle>& optionalMaterial = std::nullopt);
+	void SubmitMesh(
+	    const AssetHandle& mesh,
+	    const AssetHandle& material,
+	    const glm::mat4& modelMatrix,
+	    RenderPass pass = RenderPass::Geometry,
+	    GLenum drawMethod = GL_TRIANGLES);
+	void SubmitModel(
+	    const AssetHandle& mesh,
+	    const glm::mat4& modelMatrix,
+	    RenderPass pass = RenderPass::Geometry,
+	    const std::optional<AssetHandle>& optionalMaterial = std::nullopt);
 	void Flush();
 
 private:
@@ -58,7 +68,6 @@ private:
 	bool m_HasView {};
 
 	std::vector<RenderCommand> m_DrawQueue {};
-	GLenum m_DrawMethod { GL_TRIANGLES };
 };
 
 }

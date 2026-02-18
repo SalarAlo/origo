@@ -20,4 +20,7 @@ Scope<T> MakeScope(Args&&... args) {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 };
 
+using Vec3 = glm::vec3;
+using Vec2 = glm::vec2;
+
 };

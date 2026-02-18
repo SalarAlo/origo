@@ -21,7 +21,7 @@ void DirectionalLightComponentSerializer::Deserialize(Component* comp, ISerializ
 
 	float ambient = light->GetAmbientFactor();
 	float intensity = light->GetIntensity();
-	glm::vec3 color = light->GetLightColor();
+	Vec3 color = light->GetLightColor();
 
 	backend.TryRead("ambient", ambient);
 	backend.TryRead("intensity", intensity);
