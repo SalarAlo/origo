@@ -7,7 +7,7 @@ namespace OrigoEditor {
 class EditorViewportController {
 public:
 	explicit EditorViewportController(class EditorContext& ctx);
-	Origo::RenderView GetActiveRenderView();
+	Origo::RenderView GetAndUpdateActiveRenderView();
 
 private:
 	EditorContext& m_Context;

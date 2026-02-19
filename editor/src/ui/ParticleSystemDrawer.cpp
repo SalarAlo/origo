@@ -1,8 +1,8 @@
 
 #include <glm/vec3.hpp>
 
-#include "origo/components/particle_system/ParticleEmissionShapeDefault.h"
-#include "origo/components/particle_system/ParticleEmissionShapeKindVisitor.h"
+#include "origo/components/particle_system/ParticleEmissionShapeFactory.h"
+#include "origo/components/particle_system/ParticleEmissionShapeKindOf.h"
 #include "origo/components/particle_system/ParticleSystemComponent.h"
 
 #include "ui/ComponentUI.h"
@@ -72,9 +72,9 @@ static bool s_Registered = []() {
 		    bool emissionOpen = ComponentUI::StartRegion("Emission");
 
 		    if (emissionOpen) {
-			    auto kind = std::visit(Origo::ParticleEmissionShapeKindVisitor {}, ps.Shape);
+			    auto kind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
 			    ComponentUI::DrawEnumControl("Shape", kind);
-			    ps.Shape = Origo::ParticleEmissionShapeDefault::DefaultShape(kind);
+			    ps.Shape = Origo::ParticleEmissionShapeFactory::CreateDefault(kind);
 		    }
 
 		    ComponentUI::EndRegion(emissionOpen);
@@ -84,9 +84,12 @@ static bool s_Registered = []() {
 		    if (physicsOpen) {
 			    ComponentUI::DrawBoolControl("Use Gravity", ps.UseGravity);
 
-			    if (ps.UseGravity || ps.Drag > 0.0f || ps.Mass != 1.0f) {
-				    ComponentUI::DrawFloatControl("Mass", ps.Mass);
+			    if (ps.UseGravity) {
+				    ComponentUI::DrawFloatControl("Gravity Force Factor", ps.GravityForceFactor);
 				    ComponentUI::DrawFloatControl("Drag", ps.Drag);
+			    } else {
+				    ps.Drag = .0f;
+				    ps.GravityForceFactor = 1.0f;
 			    }
 		    }
 

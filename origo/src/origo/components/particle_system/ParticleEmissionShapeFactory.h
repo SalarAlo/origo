@@ -8,8 +8,8 @@
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
 namespace Origo {
-struct ParticleEmissionShapeDefault {
-	static ParticleEmissionShape DefaultShape(ParticleEmissionShapeKind kind) {
+struct ParticleEmissionShapeFactory {
+	static ParticleEmissionShape CreateDefault(ParticleEmissionShapeKind kind) {
 		switch (kind) {
 		case ParticleEmissionShapeKind::Point:
 			return PointEmissionShape {};
@@ -21,6 +21,8 @@ struct ParticleEmissionShapeDefault {
 		case ParticleEmissionShapeKind::Box:
 			return BoxEmissionShape { .Position = Vec3(0.0f), .Size = 1.0f };
 		}
+
+		return PointEmissionShape {};
 	}
 };
 

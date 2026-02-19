@@ -16,7 +16,7 @@ struct ParticleComponent : public Component {
 	float StartSize {};
 	float EndSize {};
 
-	float Mass = 1.0f;
+	float GravityForceFactor = 1.0f;
 	float Drag = 0.0f;
 
 	bool UseGravity = true;

@@ -1,16 +1,16 @@
 #include "DirectionalLightComponentSerializer.h"
+
 #include "origo/components/DirectionalLight.h"
-#include "origo/assets/AssetManager.h"
 
 namespace Origo {
 
 void DirectionalLightComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
 	auto light = static_cast<DirectionalLightComponent*>(comp);
 
-	backend.Write("ambient", light->GetAmbientFactor());
-	backend.Write("intensity", light->GetIntensity());
+	backend.Write("ambient", light->AmbientFactor);
+	backend.Write("intensity", light->Intensity);
 
-	auto color = light->GetLightColor();
+	const auto& color = light->LightColor;
 	backend.Write("color_r", color.r);
 	backend.Write("color_g", color.g);
 	backend.Write("color_b", color.b);
@@ -19,20 +19,13 @@ void DirectionalLightComponentSerializer::Serialize(Component* comp, ISerializer
 void DirectionalLightComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
 	auto light = static_cast<DirectionalLightComponent*>(comp);
 
-	float ambient = light->GetAmbientFactor();
-	float intensity = light->GetIntensity();
-	Vec3 color = light->GetLightColor();
+	backend.TryRead("ambient", light->AmbientFactor);
+	backend.TryRead("intensity", light->Intensity);
 
-	backend.TryRead("ambient", ambient);
-	backend.TryRead("intensity", intensity);
-
+	auto& color = light->LightColor;
 	backend.TryRead("color_r", color.r);
 	backend.TryRead("color_g", color.g);
 	backend.TryRead("color_b", color.b);
-
-	light->SetAmbientFactor(ambient);
-	light->SetIntensity(intensity);
-	light->SetLightColor(color);
 }
 
 }

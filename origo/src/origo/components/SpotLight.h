@@ -1,7 +1,8 @@
 #pragma once
 
-#include "origo/assets/AssetManager.h"
 #include "Component.h"
+
+#include "origo/assets/AssetManager.h"
 
 namespace Origo {
 
@@ -9,45 +10,28 @@ class SpotLight : public Component {
 public:
 	std::string GetComponentName() const override { return "Spot Light"; }
 
-	void SetShaderTarget(const AssetHandle& handle) { m_ShaderTarget = handle; }
-	OptionalAssetHandle GetShaderTarget() const { return m_ShaderTarget; }
-
-	void SetIntensity(float intensity) { m_Intensity = intensity; }
-	float GetIntensity() const { return m_Intensity; }
-
-	void SetLightColor(const Vec3& color) { m_LightColor = color; }
-	Vec3 GetLightColor() const { return m_LightColor; }
-
 	void SetCutoffs(float inner, float outer) {
-		m_InnerCutoff = inner;
-		m_OuterCutoff = outer;
+		InnerCutoff = inner;
+		OuterCutoff = outer;
 	}
-
-	float InnerCutoff() const { return m_InnerCutoff; }
-	float OuterCutoff() const { return m_OuterCutoff; }
 
 	void SetAttenuation(float c, float l, float q) {
-		m_Constant = c;
-		m_Linear = l;
-		m_Quadratic = q;
+		Constant = c;
+		Linear = l;
+		Quadratic = q;
 	}
 
-	float Constant() const { return m_Constant; }
-	float Linear() const { return m_Linear; }
-	float Quadratic() const { return m_Quadratic; }
+	float Intensity { 1.0f };
+	Vec3 LightColor { 1.0f };
 
-private:
-	float m_Intensity { 1.0f };
-	Vec3 m_LightColor { 1.0f };
+	float InnerCutoff { 0.9f };
+	float OuterCutoff { 0.85f };
 
-	float m_InnerCutoff { 0.9f };
-	float m_OuterCutoff { 0.85f };
+	float Constant { 1.0f };
+	float Linear { 0.09f };
+	float Quadratic { 0.032f };
 
-	float m_Constant { 1.0f };
-	float m_Linear { 0.09f };
-	float m_Quadratic { 0.032f };
-
-	OptionalAssetHandle m_ShaderTarget {};
+	OptionalAssetHandle ShaderTarget {};
 };
 
 }

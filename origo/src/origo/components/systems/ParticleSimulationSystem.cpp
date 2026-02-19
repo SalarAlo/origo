@@ -1,4 +1,4 @@
-#include "ParticleComponentSystem.h"
+#include "ParticleSimulationSystem.h"
 
 #include "origo/components/Transform.h"
 
@@ -9,7 +9,7 @@
 
 namespace Origo {
 
-void ParticleComponentSystem::Update(Scene* scene, float dt) {
+void ParticleSimulationSystem::Update(Scene* scene, float dt) {
 	scene->View<ParticleComponent, TransformComponent>(
 	    [&](RID entity, ParticleComponent& pc, TransformComponent& tr) {
 		    if (pc.Lifetime <= 0.0f) {
@@ -19,9 +19,9 @@ void ParticleComponentSystem::Update(Scene* scene, float dt) {
 
 		    if (pc.SimulatePhysics) {
 			    if (pc.UseGravity)
-				    pc.ForceAccum += Vec3(0.0f, -9.81f * pc.Mass, 0.0f);
+				    pc.ForceAccum += Vec3(0.0f, -9.81f * pc.GravityForceFactor, 0.0f);
 
-			    Vec3 acceleration = pc.ForceAccum / pc.Mass;
+			    Vec3 acceleration = pc.ForceAccum;
 
 			    pc.Velocity += acceleration * dt;
 
@@ -42,4 +42,4 @@ void ParticleComponentSystem::Update(Scene* scene, float dt) {
 
 REGISTER_UPDATE_SYSTEM(
     Origo::GamePhase::UpdateAlways,
-    Origo::ParticleComponentSystem)
+    Origo::ParticleSimulationSystem)

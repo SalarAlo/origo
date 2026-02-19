@@ -5,8 +5,8 @@
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
 namespace Origo {
-struct ParticleEmissionShapePositionVisitor {
-	ParticleEmissionShapePositionVisitor(const Vec3& position)
+struct SetParticleEmissionShapePosition {
+	SetParticleEmissionShapePosition(const Vec3& position)
 	    : Position(position) { }
 
 	void operator()(PointEmissionShape& p) {

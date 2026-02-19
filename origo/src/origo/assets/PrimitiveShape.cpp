@@ -101,9 +101,9 @@ static const std::vector<float> SPHERE_VERTICES = [] {
             float u = (float)j / sectors;
             float vCoord = (float)i / stacks;
 
-            v.push_back( x);
-	    v.push_back( y);
-	    v.push_back( z);
+            v.push_back( x * 0.5f);
+	    v.push_back( y * 0.5f);
+	    v.push_back( z * 0.5f);
 
             v.push_back(x);
             v.push_back(y);

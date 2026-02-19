@@ -16,11 +16,11 @@ void PointLightSystem::Render(Origo::Scene* scene, RenderContext& rCtx) {
 			        PointLightData data;
 
 			        data.position = transform.GetPosition();
-			        data.color = light.GetLightColor();
-			        data.intensity = light.GetIntensity();
-			        data.constant = light.GetConstant();
-			        data.linear = light.GetLinear();
-			        data.quadratic = light.GetQuadratic();
+			        data.color = light.Color;
+			        data.intensity = light.Intensity;
+			        data.constant = light.Constant;
+			        data.linear = light.Linear;
+			        data.quadratic = light.Quadratic;
 
 			        rCtx.PushPointLight(data);
 		        });

@@ -1,7 +1,10 @@
 #include "panels/SceneViewport.h"
+
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
+
 #include "origo/components/Transform.h"
+
 #include "state/EditorViewMode.h"
 
 using namespace Origo;
@@ -192,8 +195,9 @@ void SceneViewport::OnImGuiRender() {
 		auto transform = activeScene->GetNativeComponent<TransformComponent>(entity);
 
 		glm::mat4 model = transform->GetModelMatrix();
-		glm::mat4 view = m_Context.ViewportController.GetActiveRenderView().View;
-		glm::mat4 proj = m_Context.ViewportController.GetActiveRenderView().Projection;
+		auto renderView = m_Context.ViewportController.GetAndUpdateActiveRenderView();
+		glm::mat4 view = renderView.View;
+		glm::mat4 proj = renderView.Projection;
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(

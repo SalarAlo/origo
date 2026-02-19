@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/Camera.h"
+
 #include "origo/components/Transform.h"
 
 namespace OrigoEditor {

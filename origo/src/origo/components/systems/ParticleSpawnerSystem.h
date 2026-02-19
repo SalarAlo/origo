@@ -7,7 +7,7 @@
 
 namespace Origo {
 
-class ParticleSystemComponentSystem final : public Origo::IRenderSystem {
+class ParticleSpawnerSystem final : public Origo::IRenderSystem {
 public:
 	void Render(Origo::Scene* scene, RenderContext& rCtx) override;
 };

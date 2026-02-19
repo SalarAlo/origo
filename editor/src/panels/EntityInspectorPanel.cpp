@@ -1,14 +1,19 @@
+#include <typeindex>
+
 #include "panels/EntityInspectorPanel.h"
 
 #include "imgui.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
+
 #include "origo/components/Name.h"
 #include "origo/components/NativeComponentRegistry.h"
-#include "ui/InspectorComponentRenderer.h"
+
 #include "origo/scripting/ScriptComponentRegistry.h"
+
+#include "ui/InspectorComponentRenderer.h"
 #include "ui/InspectorDrawRegistry.h"
-#include <typeindex>
 
 using namespace Origo;
 
@@ -49,7 +54,7 @@ void EntityInspectorPanel::DrawEntityName() {
 
 	const Origo::RID entity = selectedEntity.value();
 	auto* nameComp = scene->GetNativeComponent<Origo::NameComponent>(entity);
-	const std::string& name = nameComp->GetName();
+	const std::string& name = nameComp->Name;
 
 	static Origo::RID editingEntity {};
 	static bool isEditingName = false;
@@ -82,7 +87,7 @@ void EntityInspectorPanel::DrawEntityName() {
 		const bool deactivated = ImGui::IsItemDeactivatedAfterEdit();
 
 		if (enterPressed || deactivated) {
-			nameComp->SetName(nameBuffer);
+			nameComp->Name = nameBuffer;
 			isEditingName = false;
 		}
 

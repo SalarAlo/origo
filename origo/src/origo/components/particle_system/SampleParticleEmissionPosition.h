@@ -7,7 +7,7 @@
 #include "origo/core/Random.h"
 
 namespace Origo {
-struct ParticleEmissionShapeSpawnPositionVisitor {
+struct SampleParticleEmissionPosition {
 	Vec3 operator()(PointEmissionShape shape) {
 		return shape.Position;
 	}

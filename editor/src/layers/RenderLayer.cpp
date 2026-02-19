@@ -16,7 +16,7 @@ void RenderLayer::OnAttach() {
 void RenderLayer::OnUpdate(double dt) {
 	const bool editingView = (m_Context.ViewMode == EditorViewMode::Editor);
 
-	m_RenderContext.SetView(m_Context.ViewportController.GetActiveRenderView());
+	m_RenderContext.SetView(m_Context.ViewportController.GetAndUpdateActiveRenderView());
 
 	m_RenderContext.BeginFrame();
 

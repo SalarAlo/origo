@@ -1,8 +1,9 @@
-#include "origo/assets/Asset.h"
+#include <glm/vec3.hpp>
+
 #include "origo/components/PointLight.h"
+
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
-#include <glm/vec3.hpp>
 
 namespace OrigoEditor {
 
@@ -11,23 +12,12 @@ static bool s_Registered = []() {
 	    "PointLight",
 	    "icons/Light.svg",
 	    [](Origo::PointLightComponent& light) {
-		    float intensity { light.GetIntensity() };
-		    auto color { light.GetLightColor() };
+		    ComponentUI::DrawFloatControl("Intensity", light.Intensity);
+		    ComponentUI::DrawColorControl("Color", light.Color);
 
-		    float constant { light.GetConstant() };
-		    float linear { light.GetLinear() };
-		    float quadratic { light.GetQuadratic() };
-
-		    ComponentUI::DrawFloatControl("Intensity", intensity);
-		    ComponentUI::DrawColorControl("Color", color);
-
-		    ComponentUI::DrawFloatControl("Attenuation (Constant)", constant);
-		    ComponentUI::DrawFloatControl("Attenuation (Linear)", linear);
-		    ComponentUI::DrawFloatControl("Attenuation (Quadratic)", quadratic);
-
-		    light.SetIntensity(intensity);
-		    light.SetLightColor(color);
-		    light.SetAttenuation(constant, linear, quadratic);
+		    ComponentUI::DrawFloatControl("Attenuation (Constant)", light.Constant);
+		    ComponentUI::DrawFloatControl("Attenuation (Linear)", light.Linear);
+		    ComponentUI::DrawFloatControl("Attenuation (Quadratic)", light.Quadratic);
 	    });
 
 	return true;

@@ -1,13 +1,13 @@
 #include "systems/EditorOutlineRenderSystem.h"
 
-#include "origo/scene/SystemScheduler.h"
-#include "origo/scene/GamePhase.h"
+#include "components/EditorOutline.h"
 
 #include "origo/components/MeshRenderer.h"
-#include "origo/components/Transform.h"
 #include "origo/components/ModelRenderer.h"
+#include "origo/components/Transform.h"
 
-#include "components/EditorOutline.h"
+#include "origo/scene/GamePhase.h"
+#include "origo/scene/SystemScheduler.h"
 
 namespace OrigoEditor {
 using namespace Origo;
@@ -18,11 +18,11 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 	        EditorOutlineComponent& selection,
 	        TransformComponent& transform,
 	        MeshRendererComponent& mr) {
-		    if (!selection.ShouldOutline || !mr.GetMesh().has_value())
+		    if (!selection.ShouldOutline || !mr.MeshHandle.has_value())
 			    return;
 
 		    context.SubmitMesh(
-		        *mr.GetMesh(),
+		        *mr.MeshHandle,
 		        EditorOutlineComponent::GetOutlineMaterial(),
 		        transform.GetModelMatrix(),
 		        RenderPass::Outline);

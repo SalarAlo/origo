@@ -18,9 +18,9 @@ void DirectionalLightSystem::Render(Scene* scene, RenderContext& rCtx) {
 		    DirectionalLightData data {};
 
 		    data.Direction = transform.GetForward();
-		    data.Ambient = light.GetAmbientFactor();
-		    data.Color = light.GetLightColor();
-		    data.Intensity = light.GetIntensity();
+		    data.Ambient = light.AmbientFactor;
+		    data.Color = light.LightColor;
+		    data.Intensity = light.Intensity;
 
 		    rCtx.PushDirectionalLight(data);
 	    });

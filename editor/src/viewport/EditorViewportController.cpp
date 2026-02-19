@@ -1,9 +1,12 @@
 #include "viewport/EditorViewportController.h"
-#include "origo/renderer/RenderView.h"
+
 #include "origo/components/CameraComponent.h"
 #include "origo/components/Transform.h"
-#include "state/EditorViewMode.h"
+
+#include "origo/renderer/RenderView.h"
+
 #include "state/EditorContext.h"
+#include "state/EditorViewMode.h"
 
 using namespace Origo;
 namespace OrigoEditor {
@@ -11,7 +14,7 @@ namespace OrigoEditor {
 EditorViewportController::EditorViewportController(EditorContext& ctx)
     : m_Context(ctx) { }
 
-RenderView EditorViewportController::GetActiveRenderView() {
+RenderView EditorViewportController::GetAndUpdateActiveRenderView() {
 	Camera* cam { nullptr };
 	TransformComponent* transf { nullptr };
 
@@ -21,7 +24,7 @@ RenderView EditorViewportController::GetActiveRenderView() {
 				return;
 
 			if (cc.IsPrimary) {
-				cam = &cc.GetCamera();
+				cam = &cc.CameraObj;
 				cam->UpdateFromTransform(tr);
 				transf = &tr;
 			}
@@ -33,9 +36,9 @@ RenderView EditorViewportController::GetActiveRenderView() {
 		transf = &m_Context.EditorViewportCamera.GetTransform();
 	}
 
-	cam->SetAspect(
-	    static_cast<float>(m_Context.RenderBuffer.GetWidth())
-	    / static_cast<float>(m_Context.RenderBuffer.GetHeight()));
+	float width { static_cast<float>(m_Context.RenderBuffer.GetWidth()) };
+	float height { static_cast<float>(m_Context.RenderBuffer.GetHeight()) };
+	cam->SetAspect(width / height);
 
 	RenderView view {
 		.Projection = cam->GetProjection(),

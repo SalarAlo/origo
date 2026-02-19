@@ -1,5 +1,7 @@
 #include "ModelRendererComponentSerializer.h"
+
 #include "origo/assets/AssetManager.h"
+
 #include "origo/components/ModelRenderer.h"
 
 namespace Origo {
@@ -7,7 +9,7 @@ namespace Origo {
 void ModelRendererComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
 	auto renderer = static_cast<ModelRendererComponent*>(comp);
 
-	auto model = renderer->GetModel();
+	auto model = renderer->ModelHandle;
 	if (!model.has_value())
 		return;
 
@@ -26,11 +28,7 @@ void ModelRendererComponentSerializer::Deserialize(Component* comp, ISerializer&
 		return;
 
 	auto uuid = UUID::FromString(modelId);
-	auto handle = AssetManager::GetInstance().GetHandleByUUID(uuid);
-	if (!handle.has_value())
-		return;
-
-	renderer->SetModel(*handle);
+	renderer->ModelHandle = AssetManager::GetInstance().GetHandleByUUID(uuid);
 }
 
 }

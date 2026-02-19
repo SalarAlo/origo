@@ -1,4 +1,4 @@
-#include "origo/components/systems/ParticleSystemComponentSystem.h"
+#include "origo/components/systems/ParticleSpawnerSystem.h"
 
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
@@ -9,10 +9,10 @@
 #include "origo/components/Transform.h"
 
 #include "origo/components/particle_system/ParticleComponent.h"
-#include "origo/components/particle_system/ParticleEmissionShapePositionVisitor.h"
-#include "origo/components/particle_system/ParticleEmissionShapeSpawnPositionVisitor.h"
-#include "origo/components/particle_system/ParticleEmissionShapeSpawnVelocityVisitor.h"
 #include "origo/components/particle_system/ParticleSystemComponent.h"
+#include "origo/components/particle_system/SampleParticleEmissionDirection.h"
+#include "origo/components/particle_system/SampleParticleEmissionPosition.h"
+#include "origo/components/particle_system/SetParticleEmissionShapePosition.h"
 
 #include "origo/core/Random.h"
 
@@ -20,23 +20,23 @@
 
 namespace Origo {
 
-void ParticleSystemComponentSystem::Render(Scene* scene, RenderContext& rCtx) {
+void ParticleSpawnerSystem::Render(Scene* scene, RenderContext& rCtx) {
 	scene->View<ParticleSystemComponent, TransformComponent, NameComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf,
 	        NameComponent& nc) {
-		    auto positionSetterVisitor = ParticleEmissionShapePositionVisitor { particleSystemTransf.GetPosition() };
+		    auto positionSetterVisitor = SetParticleEmissionShapePosition { particleSystemTransf.GetPosition() };
 		    std::visit(positionSetterVisitor, particleSystem.Shape);
 
 		    for (size_t i = 0; i < particleSystem.SpawnRate; i++) {
 			    auto particle = scene->CreateEntity(
-			        nc.GetName() + "_particle_" + std::to_string(i));
+			        nc.Name + "_particle_" + std::to_string(i));
 
 			    scene->AddNativeComponent<EditorHiddenComponent>(particle);
 
 			    auto* particleTransf = scene->GetNativeComponent<TransformComponent>(particle);
-			    particleTransf->SetPosition(std::visit(ParticleEmissionShapeSpawnPositionVisitor {}, particleSystem.Shape));
+			    particleTransf->SetPosition(std::visit(SampleParticleEmissionPosition {}, particleSystem.Shape));
 			    particleTransf->SetScale(Vec3 { particleSystem.StartSize });
 
 			    auto* pc = scene->AddNativeComponent<ParticleComponent>(particle);
@@ -48,7 +48,7 @@ void ParticleSystemComponentSystem::Render(Scene* scene, RenderContext& rCtx) {
 			    pc->SimulatePhysics = true;
 
 			    pc->UseGravity = particleSystem.UseGravity;
-			    pc->Mass = particleSystem.Mass;
+			    pc->GravityForceFactor = particleSystem.GravityForceFactor;
 			    pc->Drag = particleSystem.Drag;
 
 			    pc->Lifetime = Random::Range(
@@ -61,7 +61,7 @@ void ParticleSystemComponentSystem::Render(Scene* scene, RenderContext& rCtx) {
 			        particleSystem.InitialSpeedMin,
 			        particleSystem.InitialSpeedMax);
 
-			    pc->Velocity = std::visit(ParticleEmissionShapeSpawnVelocityVisitor {}, particleSystem.Shape) * speed;
+			    pc->Velocity = std::visit(SampleParticleEmissionDirection {}, particleSystem.Shape) * speed;
 
 			    auto mesh = particleSystem.ParticleMesh.has_value()
 			        ? *particleSystem.ParticleMesh
@@ -77,6 +77,6 @@ void ParticleSystemComponentSystem::Render(Scene* scene, RenderContext& rCtx) {
 
 REGISTER_RENDER_SYSTEM(
     Origo::GamePhase::RenderGame,
-    Origo::ParticleSystemComponentSystem);
+    Origo::ParticleSpawnerSystem);
 
 }

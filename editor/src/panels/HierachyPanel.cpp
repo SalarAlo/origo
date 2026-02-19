@@ -46,8 +46,8 @@ void HierarchyPanel::OnImGuiRender() {
 			auto cube { m_Context.ActiveScene->CreateEntity("Cube") };
 			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
 			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
-			meshRenderer->SetMesh(Origo::PrimitiveShapeCache::GetInstance().GetCubeMesh());
-			meshRenderer->SetMaterial(Origo::DefaultAssetCache::GetInstance().GetMaterial());
+			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetCubeMesh();
+			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
 		}
 
 		ImGui::MenuItem("Sphere");
@@ -55,8 +55,8 @@ void HierarchyPanel::OnImGuiRender() {
 			auto cube { m_Context.ActiveScene->CreateEntity("Sphere") };
 			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
 			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
-			meshRenderer->SetMesh(Origo::PrimitiveShapeCache::GetInstance().GetSphereMesh());
-			meshRenderer->SetMaterial(Origo::DefaultAssetCache::GetInstance().GetMaterial());
+			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetSphereMesh();
+			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
 		}
 
 		ImGui::EndPopup();
@@ -93,7 +93,7 @@ void HierarchyPanel::OnImGuiRender() {
 		ImGui::SameLine(0.0f, 6.0f);
 
 		auto* nameComp = m_Context.ActiveScene->GetNativeComponent<Origo::NameComponent>(entityID);
-		ImGui::TextUnformatted(nameComp->GetName().c_str());
+		ImGui::TextUnformatted(nameComp->Name.c_str());
 
 		ImGui::PopID();
 	}

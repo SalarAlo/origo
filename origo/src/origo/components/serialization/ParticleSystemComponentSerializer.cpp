@@ -20,7 +20,7 @@ void ParticleSystemComponentSerializer::Serialize(Component* comp, ISerializer& 
 	s.Write("initial_speed_max", ps->InitialSpeedMax);
 
 	s.Write("use_gravity", ps->UseGravity ? 1 : 0);
-	s.Write("mass", ps->Mass);
+	s.Write("gravity_force_factor", ps->GravityForceFactor);
 	s.Write("drag", ps->Drag);
 
 	if (ps->ParticleMesh.has_value()) {
@@ -54,7 +54,7 @@ void ParticleSystemComponentSerializer::Deserialize(Component* comp, ISerializer
 	s.TryRead("use_gravity", useGravity);
 	ps->UseGravity = useGravity;
 
-	s.TryRead("mass", ps->Mass);
+	s.TryRead("gravity_force_factor", ps->GravityForceFactor);
 	s.TryRead("drag", ps->Drag);
 
 	if (std::string meshID; s.TryRead("particle_mesh", meshID)) {

@@ -1,7 +1,8 @@
-#include "origo/Camera.h"
-#include "origo/components/Transform.h"
-
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "origo/Camera.h"
+
+#include "origo/components/Transform.h"
 
 namespace Origo {
 
@@ -16,28 +17,27 @@ void Camera::UpdateFromTransform(TransformComponent& transform) {
 	m_ViewMatrix = glm::inverse(transform.GetModelMatrix());
 }
 
-void Camera::SetFOV(float fov) {
-	m_FOV = fov;
-	RecalculateProjection();
-}
-
-void Camera::SetAspect(float aspect) {
-	m_Aspect = aspect;
-	RecalculateProjection();
-}
-
-void Camera::SetClipping(float nearPlane, float farPlane) {
-	m_Near = nearPlane;
-	m_Far = farPlane;
-	RecalculateProjection();
-}
-
 void Camera::RecalculateProjection() {
 	m_ProjectionMatrix = glm::perspective(
-	    glm::radians(m_FOV),
+	    glm::radians(FOV),
 	    m_Aspect,
 	    m_Near,
 	    m_Far);
+}
+
+void Camera::SetNear(float near) {
+	m_Near = near;
+	RecalculateProjection();
+}
+
+void Camera::SetFar(float far) {
+	m_Far = far;
+	RecalculateProjection();
+}
+
+void Camera::SetAspect(float ar) {
+	m_Aspect = ar;
+	RecalculateProjection();
 }
 
 }

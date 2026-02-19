@@ -6,7 +6,7 @@
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
 namespace Origo {
-struct ParticleEmissionShapeKindVisitor {
+struct ParticleEmissionShapeKindOf {
 	ParticleEmissionShapeKind operator()(PointEmissionShape _) {
 		return ParticleEmissionShapeKind::Point;
 	}

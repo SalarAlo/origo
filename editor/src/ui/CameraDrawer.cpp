@@ -9,14 +9,8 @@ namespace OrigoEditor {
 
 static bool s_Registered = []() {
 	InspectorDrawRegistry::RegisterNativeDrawer<Origo::CameraComponent>("Camera", "./icons/Camera.svg", [](Origo::CameraComponent& cam) {
-		float fov { cam.GetCamera().GetFOV() };
-		bool isPrimary { cam.IsPrimary };
-
-		ComponentUI::DrawFloatControl("FOV", fov);
-		ComponentUI::DrawBoolControl("Is Primary", isPrimary);
-
-		cam.IsPrimary = isPrimary;
-		cam.GetCamera().SetFOV(fov);
+		ComponentUI::DrawFloatControl("FOV", cam.CameraObj.FOV);
+		ComponentUI::DrawBoolControl("Is Primary", cam.IsPrimary);
 	});
 
 	return true;
