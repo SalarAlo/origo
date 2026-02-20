@@ -20,7 +20,7 @@
 
 namespace Origo {
 
-void ParticleSpawnerSystem::Render(Scene* scene, RenderContext& rCtx) {
+void ParticleSpawnerSystem::Update(Origo::Scene* scene, float dt) {
 	scene->View<ParticleSystemComponent, TransformComponent, NameComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
@@ -29,7 +29,12 @@ void ParticleSpawnerSystem::Render(Scene* scene, RenderContext& rCtx) {
 		    auto positionSetterVisitor = SetParticleEmissionShapePosition { particleSystemTransf.GetPosition() };
 		    std::visit(positionSetterVisitor, particleSystem.Shape);
 
-		    for (size_t i = 0; i < particleSystem.SpawnRate; i++) {
+		    particleSystem.SpawnAccumulator += particleSystem.SpawnRate * dt;
+
+		    int spawnCount = (int)particleSystem.SpawnAccumulator;
+		    particleSystem.SpawnAccumulator -= spawnCount;
+
+		    for (size_t i = 0; i < spawnCount; i++) {
 			    auto particle = scene->CreateEntity(
 			        nc.Name + "_particle_" + std::to_string(i));
 
@@ -63,20 +68,21 @@ void ParticleSpawnerSystem::Render(Scene* scene, RenderContext& rCtx) {
 
 			    pc->Velocity = std::visit(SampleParticleEmissionDirection {}, particleSystem.Shape) * speed;
 
-			    auto mesh = particleSystem.ParticleMesh.has_value()
-			        ? *particleSystem.ParticleMesh
-			        : PrimitiveShapeCache::GetInstance().GetSphereMesh();
+			    if (!particleSystem.ParticleMesh.has_value()) {
+				    particleSystem.ParticleMesh = PrimitiveShapeCache::GetInstance().GetSphereMesh();
+			    }
+			    auto mesh = *particleSystem.ParticleMesh;
 
 			    scene->AddNativeComponent<MeshRendererComponent>(
 			        particle,
-			        DefaultAssetCache::GetInstance().GetMaterial(),
+			        DefaultAssetCache::GetInstance().GetParticleMaterial(),
 			        mesh);
 		    }
 	    });
 }
 
-REGISTER_RENDER_SYSTEM(
-    Origo::GamePhase::RenderGame,
+REGISTER_UPDATE_SYSTEM(
+    Origo::GamePhase::UpdateGame,
     Origo::ParticleSpawnerSystem);
 
 }

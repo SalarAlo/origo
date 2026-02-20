@@ -1,14 +1,12 @@
 #pragma once
 
-#include "origo/renderer/RenderContext.h"
-
-#include "origo/scene/IRenderSystem.h"
+#include "origo/scene/IUpdateSystem.h"
 #include "origo/scene/Scene.h"
 
 namespace Origo {
 
-class ParticleSpawnerSystem final : public Origo::IRenderSystem {
+class ParticleSpawnerSystem final : public Origo::IUpdateSystem {
 public:
-	void Render(Origo::Scene* scene, RenderContext& rCtx) override;
+	void Update(Origo::Scene* scene, float dt) override;
 };
 }

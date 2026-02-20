@@ -1,8 +1,11 @@
-#include "origo/assets/Asset.h"
-#include "origo/assets/Material2D.h"
 #include "systems/AssetInspectorDrawer.h"
+
 #include "imgui.h"
+
+#include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Material2D.h"
+
 #include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
@@ -41,8 +44,13 @@ void AssetInspectorDrawer::DrawMaterial(Origo::Material2D* material) {
 
 	if (albedoHandle.has_value())
 		material->SetAlbedo(*albedoHandle);
+
 	if (shaderHandle.has_value())
 		material->SetShader(*shaderHandle);
+
+	Origo::Vec3 color { material->GetColor() };
+	ComponentUI::DrawColorControl("Color", color);
+	material->SetColor(color);
 }
 
 }

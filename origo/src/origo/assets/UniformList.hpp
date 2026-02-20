@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/assets/Shader.h"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -11,7 +12,8 @@ enum class UniformType {
 	Float,
 	Vec2,
 	Vec3,
-	Mat4
+	Mat4,
+	Bool
 };
 
 class UniformBase {

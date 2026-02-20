@@ -1,5 +1,7 @@
 #include "panels/AssetInspectorPanel.h"
+
 #include "origo/assets/AssetDatabase.h"
+
 #include "systems/AssetInspectorDrawer.h"
 
 namespace OrigoEditor {

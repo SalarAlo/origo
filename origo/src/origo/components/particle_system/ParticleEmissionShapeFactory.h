@@ -19,7 +19,7 @@ struct ParticleEmissionShapeFactory {
 			// TODO
 			return SphereEmissionShape { .Position = Vec3(0.0f), .Radius = 1.0f };
 		case ParticleEmissionShapeKind::Box:
-			return BoxEmissionShape { .Position = Vec3(0.0f), .Size = 1.0f };
+			return BoxEmissionShape { .Position = Vec3(0.0f), .Size = Vec3 { 1.0f } };
 		}
 
 		return PointEmissionShape {};

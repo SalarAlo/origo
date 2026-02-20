@@ -69,8 +69,12 @@ in vec3 vNormal;
 in vec3 vFragPos;
 in vec2 vUv;
 
+
 out vec4 FragColor;
 
+uniform vec3 u_Color = vec3(1.0);
+uniform bool u_UseTexture = true;
+uniform bool u_UseLight = true;
 
 uniform vec3 u_ViewPos;
 uniform sampler2D u_Texture_Albedo;
@@ -160,39 +164,45 @@ vec3 ComputeSpotLight(
 
 void main()
 {
-    vec3 albedo = pow(texture(u_Texture_Albedo, vUv).rgb, vec3(2.2));
+    vec3 albedo = u_Color;
+
+    if (u_UseTexture) {
+        vec3 tex = pow(texture(u_Texture_Albedo, vUv).rgb, vec3(2.2));
+        albedo *= tex;
+    }
 
     vec3 normal  = normalize(vNormal);
     vec3 viewDir = normalize(u_ViewPos - vFragPos);
 
-    vec3 lighting = vec3(0.0);
+    vec3 lighting = albedo;
+    if (u_UseLight) {
+	    lighting *= u_Ambient;
 
-    lighting += u_Ambient * albedo;
+	    lighting += ComputeDirectionalLight(
+		u_DirLight,
+		normal,
+		viewDir
+	    ) * albedo;
 
-    lighting += ComputeDirectionalLight(
-        u_DirLight,
-        normal,
-        viewDir
-    ) * albedo;
+	    for (int i = 0; i < u_PointLightCount; ++i)
+	    {
+		lighting += ComputePointLight(
+		    u_PointLights[i],
+		    vFragPos,
+		    normal,
+		    viewDir
+		) * albedo;
+	    }
 
-    for (int i = 0; i < u_PointLightCount; ++i)
-    {
-        lighting += ComputePointLight(
-            u_PointLights[i],
-            vFragPos,
-            normal,
-            viewDir
-        ) * albedo;
-    }
-
-    for (int i = 0; i < u_SpotLightCount; ++i)
-    {
-        lighting += ComputeSpotLight(
-            u_SpotLights[i],
-            vFragPos,
-            normal,
-            viewDir
-        ) * albedo;
+	    for (int i = 0; i < u_SpotLightCount; ++i)
+	    {
+		lighting += ComputeSpotLight(
+		    u_SpotLights[i],
+		    vFragPos,
+		    normal,
+		    viewDir
+		) * albedo;
+	    }
     }
 
     FragColor = vec4(pow(lighting, vec3(1.0 / 2.2)), 1.0);

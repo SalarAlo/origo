@@ -33,6 +33,7 @@ void Material2D::Bind() {
 	auto& am { AssetManager::GetInstance() };
 	auto shader { am.Get<Shader>(*m_Shader) };
 	shader->UseProgram();
+	shader->SetUniform("u_Color", m_Color);
 	m_UniformList.UploadAll(shader);
 
 	if (m_Albedo.has_value()) {
@@ -64,6 +65,11 @@ void Material2D::Resolve() {
 	if (!m_Albedo.has_value()) {
 		m_Albedo = ac.GetTexture();
 	}
+}
+
+void Material2D::SetColor(Vec3 color) {
+	m_Color = color;
+	m_UniformList.AddUniform("m_Color", color);
 }
 
 }

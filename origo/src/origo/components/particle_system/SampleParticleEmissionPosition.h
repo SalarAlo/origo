@@ -17,12 +17,12 @@ struct SampleParticleEmissionPosition {
 	}
 
 	Vec3 operator()(BoxEmissionShape shape) {
-		float halfSize = shape.Size / 2.0f;
+		auto halfSize = shape.Size / 2.0f;
 
 		auto offset = Vec3 {
-			Random::Range(-halfSize, halfSize),
-			Random::Range(-halfSize, halfSize),
-			Random::Range(-halfSize, halfSize)
+			Random::Range(-halfSize.x, halfSize.x),
+			Random::Range(-halfSize.y, halfSize.y),
+			Random::Range(-halfSize.z, halfSize.z)
 		};
 
 		return shape.Position + offset;

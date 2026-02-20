@@ -1,8 +1,13 @@
 #include "origo/assets/UniformList.hpp"
+
 #include "origo/core/Logger.h"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
+
+template <>
+UniformType Uniform<bool>::GetUniformType() const { return UniformType::Bool; }
 
 template <>
 UniformType Uniform<int>::GetUniformType() const { return UniformType::Int; }
@@ -25,6 +30,12 @@ template <>
 void Uniform<int>::Serialize(ISerializer& backend) const {
 	backend.Write("type", "int");
 	backend.Write("value", m_Value);
+};
+
+template <>
+void Uniform<bool>::Serialize(ISerializer& backend) const {
+	backend.Write("type", "bool");
+	backend.Write("value", m_Value ? 1 : 0);
 };
 
 template <>

@@ -1,9 +1,12 @@
 #include "DefaultAssetCache.h"
-#include "origo/assets/AssetManager.h"
+
 #include "origo/assets/AssetFactory.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Material2D.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
+
+#include "origo/core/Typedefs.h"
 
 namespace Origo {
 
@@ -16,6 +19,8 @@ void DefaultAssetCache::CreateAllDefaults() {
 	GetShader();
 	GetTexture();
 	GetMaterial();
+	GetParticleMaterial();
+	GetParticleEmissionDebugMaterial();
 }
 
 AssetHandle DefaultAssetCache::GetShader() {
@@ -63,6 +68,47 @@ AssetHandle DefaultAssetCache::GetMaterial() {
 	auto material = AssetManager::GetInstance().Get<Material2D>(*m_Material);
 	material->SetShader(GetShader());
 	material->SetAlbedo(GetTexture());
+
+	material->SetUniform("u_UseTexture", true);
+	material->SetUniform("u_UseLight", true);
+
+	return *m_Material;
+}
+
+AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
+	constexpr Vec3 PARTICLE_COLOR = Vec3 { .1f, .9f, .05f };
+
+	if (m_ParticleEmissionDebugMaterial.has_value())
+		return *m_ParticleEmissionDebugMaterial;
+
+	m_ParticleEmissionDebugMaterial = AssetFactory::CreateSyntheticAsset<Material2D>(
+	    "Default Particle Material",
+	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
+
+	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleEmissionDebugMaterial);
+	material->SetShader(GetShader());
+	material->SetColor(PARTICLE_COLOR);
+	material->SetUniform("u_UseTexture", false);
+	material->SetUniform("u_UseLight", false);
+
+	return *m_Material;
+}
+
+AssetHandle DefaultAssetCache::GetParticleMaterial() {
+	constexpr Vec3 PARTICLE_COLOR = Vec3 { 1.0f, 0.0f, 0.0f };
+
+	if (m_ParticleMaterial.has_value())
+		return *m_ParticleMaterial;
+
+	m_ParticleMaterial = AssetFactory::CreateSyntheticAsset<Material2D>(
+	    "Default Particle Material",
+	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
+
+	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleMaterial);
+	material->SetShader(GetShader());
+	material->SetColor(PARTICLE_COLOR);
+	material->SetUniform("u_UseTexture", true);
+	material->SetUniform("u_UseLight", true);
 
 	return *m_Material;
 }

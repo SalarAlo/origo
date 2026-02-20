@@ -1,9 +1,10 @@
 #pragma once
 
-#include "origo/assets/AssetManager.h"
-#include "origo/assets/UniformList.hpp"
-#include "origo/assets/Shader.h"
 #include <optional>
+
+#include "origo/assets/AssetManager.h"
+#include "origo/assets/Shader.h"
+#include "origo/assets/UniformList.hpp"
 
 namespace Origo {
 
@@ -14,6 +15,10 @@ public:
 	Material2D(UUID shader, UUID material);
 
 	void Resolve() override;
+
+	void SetColor(Vec3 color);
+	Vec3 GetColor() const { return m_Color; }
+
 	OptionalAssetHandle GetShader() const { return m_Shader; }
 	void SetShader(const AssetHandle& handle) { m_Shader = handle; }
 	void SetShaderUUID(const UUID& uuid) { m_ShaderUUID = uuid; };
@@ -54,6 +59,8 @@ private:
 
 	OptionalUUID m_ShaderUUID { std::nullopt };
 	OptionalUUID m_AlbedoUUID { std::nullopt };
+
+	Vec3 m_Color { 1.0f };
 
 	UniformList m_UniformList {};
 };

@@ -1,10 +1,12 @@
 #pragma once
 
 #include <ankerl/unordered_dense.h>
+
 #include <limits>
 #include <optional>
 
 #include "origo/assets/Asset.h"
+
 #include "origo/core/UUID.h"
 
 namespace Origo {
@@ -27,6 +29,7 @@ struct AssetHandle {
 	bool operator==(const AssetHandle& other) const { return other.Index == Index && other.Generation == Generation; }
 	bool operator!=(const AssetHandle& other) const { return !(other == *this); }
 };
+
 using OptionalAssetHandle = std::optional<AssetHandle>;
 
 struct AssetEntry {

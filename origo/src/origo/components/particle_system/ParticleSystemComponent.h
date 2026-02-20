@@ -3,6 +3,7 @@
 #include "ParticleEmissionShape.h"
 
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/PrimitiveShapeCache.h"
 
 #include "origo/components/Component.h"
 
@@ -27,9 +28,13 @@ struct ParticleSystemComponent : public Component {
 	float GravityForceFactor { 1.0f };
 	float Drag { 0.0f };
 
-	Origo::OptionalAssetHandle ParticleMesh;
+	Origo::OptionalAssetHandle ParticleMesh {};
+	Origo::OptionalAssetHandle ParticleMaterial {};
 
+	// TODO: SERIALIZE
 	ParticleEmissionShape Shape {};
+
+	float SpawnAccumulator = 0.0f;
 };
 
 }

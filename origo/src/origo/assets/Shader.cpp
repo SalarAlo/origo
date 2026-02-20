@@ -1,9 +1,12 @@
-#include "origo/assets/Shader.h"
-#include "origo/assets/ShaderSource.h"
-#include "origo/core/Logger.h"
-
 #include <glm/gtc/type_ptr.hpp>
+
 #include <stdexcept>
+
+#include "origo/assets/Shader.h"
+
+#include "origo/assets/ShaderSource.h"
+
+#include "origo/core/Logger.h"
 
 namespace Origo {
 
@@ -83,6 +86,15 @@ void Shader::UseProgram() const {
 #pragma region TEMPLATE_UNIFORM_SPECIALIZATIONS
 
 template <>
+void Shader::SetUniform<bool>(std::string_view name, const bool& value) const {
+	GLint loc = GetUniformLocation(name);
+	if (loc == -1)
+		return;
+
+	GLCall(glProgramUniform1i(m_ProgramId, loc, value));
+}
+
+template <>
 void Shader::SetUniform<glm::mat4>(
     std::string_view name, const glm::mat4& mat) const {
 	GLint loc = GetUniformLocation(name);
@@ -148,5 +160,4 @@ void Shader::SetUniform<unsigned int>(
 	    m_ProgramId, loc, v));
 }
 #pragma endregion
-
 }

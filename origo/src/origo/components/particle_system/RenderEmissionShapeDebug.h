@@ -13,6 +13,7 @@
 
 namespace Origo {
 
+// TODO: Ensure depth buffer always wins some different kind of pass
 struct RenderEmissionShapeDebug {
 	RenderEmissionShapeDebug(RenderContext& rCtx, const Vec3& position)
 	    : RenderCtx(rCtx)
@@ -23,6 +24,18 @@ struct RenderEmissionShapeDebug {
 	const Vec3& Position;
 
 	void operator()(const PointEmissionShape&) const {
+		constexpr float POINT_SIZE = 0.05f;
+
+		TransformComponent t;
+		t.SetPosition(Position);
+		t.SetScale(Vec3 { POINT_SIZE });
+
+		RenderCtx.SubmitMesh(
+		    PrimitiveShapeCache::GetInstance().GetSphereMesh(),
+		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
+		    t.GetModelMatrix(),
+		    RenderPass::Geometry,
+		    GL_TRIANGLES);
 	}
 
 	void operator()(const SphereEmissionShape& s) const {
@@ -32,7 +45,7 @@ struct RenderEmissionShapeDebug {
 
 		RenderCtx.SubmitMesh(
 		    PrimitiveShapeCache::GetInstance().GetSphereMesh(),
-		    DefaultAssetCache::GetInstance().GetMaterial(),
+		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
 		    t.GetModelMatrix(),
 		    RenderPass::Geometry,
 		    GL_LINES);
@@ -45,7 +58,7 @@ struct RenderEmissionShapeDebug {
 
 		RenderCtx.SubmitMesh(
 		    PrimitiveShapeCache::GetInstance().GetCubeMesh(),
-		    DefaultAssetCache::GetInstance().GetMaterial(),
+		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
 		    t.GetModelMatrix(),
 		    RenderPass::Geometry,
 		    GL_LINE_LOOP);

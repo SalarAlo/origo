@@ -1,6 +1,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "components/DrawEmissionShapeGUIControl.h"
+
 #include "origo/components/particle_system/ParticleEmissionShapeFactory.h"
 #include "origo/components/particle_system/ParticleEmissionShapeKindOf.h"
 #include "origo/components/particle_system/ParticleSystemComponent.h"
@@ -72,9 +74,15 @@ static bool s_Registered = []() {
 		    bool emissionOpen = ComponentUI::StartRegion("Emission");
 
 		    if (emissionOpen) {
-			    auto kind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
-			    ComponentUI::DrawEnumControl("Shape", kind);
-			    ps.Shape = Origo::ParticleEmissionShapeFactory::CreateDefault(kind);
+			    auto newKind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
+			    auto orignalKind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
+			    ComponentUI::DrawEnumControl("Shape", newKind);
+
+			    if (orignalKind != newKind) {
+				    ps.Shape = Origo::ParticleEmissionShapeFactory::CreateDefault(newKind);
+			    }
+
+			    std::visit(OrigoEditor::DrawEmissionShapeGUIControls {}, ps.Shape);
 		    }
 
 		    ComponentUI::EndRegion(emissionOpen);

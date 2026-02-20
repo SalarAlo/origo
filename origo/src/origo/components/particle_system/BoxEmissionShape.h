@@ -5,7 +5,7 @@ namespace Origo {
 
 struct BoxEmissionShape {
 	Vec3 Position;
-	float Size;
+	Vec3 Size;
 };
 
 }
