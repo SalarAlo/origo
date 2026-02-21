@@ -3,11 +3,12 @@
 #include <variant>
 
 #include "origo/components/particle_system/BoxEmissionShape.h"
+#include "origo/components/particle_system/ConeEmissionShape.h"
 #include "origo/components/particle_system/PointEmissionShape.h"
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
 namespace Origo {
 
-using ParticleEmissionShape = std::variant<PointEmissionShape, SphereEmissionShape, BoxEmissionShape>;
+using ParticleEmissionShape = std::variant<PointEmissionShape, SphereEmissionShape, BoxEmissionShape, ConeEmissionShape>;
 
 }

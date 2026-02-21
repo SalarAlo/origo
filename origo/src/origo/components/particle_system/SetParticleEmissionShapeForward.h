@@ -6,27 +6,25 @@
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
 namespace Origo {
-struct SetParticleEmissionShapePosition {
-	SetParticleEmissionShapePosition(const Vec3& position)
-	    : Position(position) { }
+
+struct SetParticleEmissionShapeForward {
+	SetParticleEmissionShapeForward(const Vec3& forward)
+	    : Forward(forward) { }
 
 	void operator()(PointEmissionShape& p) {
-		p.Position = Position;
 	}
 
 	void operator()(SphereEmissionShape& sp) {
-		sp.Position = Position;
 	}
 
 	void operator()(BoxEmissionShape& b) {
-		b.Position = Position;
 	}
 
 	void operator()(ConeEmissionShape& b) {
-		b.Position = Position;
+		b.Direction = Forward;
 	}
 
-	const Vec3 Position;
+	const Vec3 Forward;
 };
 
 }

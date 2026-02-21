@@ -3,7 +3,6 @@
 #include "ParticleEmissionShape.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/PrimitiveShapeCache.h"
 
 #include "origo/components/Component.h"
 

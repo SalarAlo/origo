@@ -18,6 +18,10 @@ float Range(float min, float max) {
 	return dist(rng);
 }
 
+float Float01() {
+	return Range(0.0f, 1.0f);
+}
+
 int Range(int min, int max) {
 	min = std::min(min, max);
 	max = std::max(min, max);

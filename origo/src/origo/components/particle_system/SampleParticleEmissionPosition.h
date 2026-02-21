@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/components/particle_system/BoxEmissionShape.h"
+#include "origo/components/particle_system/ConeEmissionShape.h"
 #include "origo/components/particle_system/PointEmissionShape.h"
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
@@ -9,6 +10,10 @@
 namespace Origo {
 struct SampleParticleEmissionPosition {
 	Vec3 operator()(PointEmissionShape shape) {
+		return shape.Position;
+	}
+
+	Vec3 operator()(ConeEmissionShape shape) {
 		return shape.Position;
 	}
 

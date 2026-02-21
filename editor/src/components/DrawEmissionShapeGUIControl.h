@@ -2,6 +2,7 @@
 #pragma once
 
 #include "origo/components/particle_system/BoxEmissionShape.h"
+#include "origo/components/particle_system/ConeEmissionShape.h"
 #include "origo/components/particle_system/PointEmissionShape.h"
 #include "origo/components/particle_system/SphereEmissionShape.h"
 
@@ -18,6 +19,11 @@ struct DrawEmissionShapeGUIControls {
 
 	void operator()(Origo::BoxEmissionShape& b) {
 		ComponentUI::DrawVec3Control("size", b.Size);
+	}
+
+	void operator()(Origo::ConeEmissionShape& c) {
+		ComponentUI::DrawFloatControl("length", c.Length);
+		ComponentUI::DrawFloatControl("angle", c.Angle);
 	}
 };
 

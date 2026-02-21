@@ -76,18 +76,18 @@ AssetHandle DefaultAssetCache::GetMaterial() {
 }
 
 AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
-	constexpr Vec3 PARTICLE_COLOR = Vec3 { .1f, .9f, .05f };
+	constexpr Vec3 DEBUG_EMISSION_PARTICLE_COLOR = Vec3 { .1f, .9f, .05f };
 
 	if (m_ParticleEmissionDebugMaterial.has_value())
 		return *m_ParticleEmissionDebugMaterial;
 
 	m_ParticleEmissionDebugMaterial = AssetFactory::CreateSyntheticAsset<Material2D>(
 	    "Default Particle Material",
-	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
+	    UUID::FromArbitraryString("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
 	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleEmissionDebugMaterial);
 	material->SetShader(GetShader());
-	material->SetColor(PARTICLE_COLOR);
+	material->SetColor(DEBUG_EMISSION_PARTICLE_COLOR);
 	material->SetUniform("u_UseTexture", false);
 	material->SetUniform("u_UseLight", false);
 

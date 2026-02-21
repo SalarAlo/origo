@@ -12,7 +12,6 @@
 #include "origo/components/particle_system/ParticleSystemComponent.h"
 #include "origo/components/particle_system/SampleParticleEmissionDirection.h"
 #include "origo/components/particle_system/SampleParticleEmissionPosition.h"
-#include "origo/components/particle_system/SetParticleEmissionShapePosition.h"
 
 #include "origo/core/Random.h"
 
@@ -26,9 +25,6 @@ void ParticleSpawnerSystem::Update(Origo::Scene* scene, float dt) {
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf,
 	        NameComponent& nc) {
-		    auto positionSetterVisitor = SetParticleEmissionShapePosition { particleSystemTransf.GetPosition() };
-		    std::visit(positionSetterVisitor, particleSystem.Shape);
-
 		    particleSystem.SpawnAccumulator += particleSystem.SpawnRate * dt;
 
 		    int spawnCount = (int)particleSystem.SpawnAccumulator;

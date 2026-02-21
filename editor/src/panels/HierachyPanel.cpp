@@ -50,6 +50,15 @@ void HierarchyPanel::OnImGuiRender() {
 			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
 		}
 
+		ImGui::MenuItem("Cone");
+		if (ImGui::IsItemClicked()) {
+			auto cube { m_Context.ActiveScene->CreateEntity("Cube") };
+			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
+			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
+			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetConeMesh();
+			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
+		}
+
 		ImGui::MenuItem("Sphere");
 		if (ImGui::IsItemClicked()) {
 			auto cube { m_Context.ActiveScene->CreateEntity("Sphere") };
