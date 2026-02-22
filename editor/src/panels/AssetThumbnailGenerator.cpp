@@ -1,8 +1,12 @@
 #include "AssetThumbnailGenerator.h"
+
 #include "imgui.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
+
 #include "origo/core/Logger.h"
+
 #include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
@@ -24,7 +28,7 @@ ImTextureID AssetThumbnailGenerator::GetThumbnailID(const AssetEntry* entry) {
 	case Origo::AssetType::Texture2D:
 		return GetTextureID(entry);
 	default:
-		return EditorIcons::Get(entry->type);
+		return EditorIcons::GetInstance().Get(entry->type);
 	}
 }
 

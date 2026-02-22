@@ -2,12 +2,12 @@
 
 #include "AssetManager.h"
 
+#include "origo/utils/Singleton.h"
+
 namespace Origo {
 
-class DefaultAssetCache {
+class DefaultAssetCache : public Singleton<DefaultAssetCache> {
 public:
-	static DefaultAssetCache& GetInstance();
-
 	void CreateAllDefaults();
 
 	AssetHandle GetShader();
@@ -18,8 +18,6 @@ public:
 	AssetHandle GetParticleMaterial();
 
 private:
-	DefaultAssetCache() = default;
-
 	std::optional<AssetHandle> m_Shader;
 	std::optional<AssetHandle> m_Texture;
 	std::optional<AssetHandle> m_Material;

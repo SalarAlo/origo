@@ -4,23 +4,12 @@
 
 namespace Origo {
 
-class PrimitiveShapeCache {
+class PrimitiveShapeCache : public Singleton<PrimitiveShapeCache> {
 public:
-	static PrimitiveShapeCache& GetInstance();
-
 	AssetHandle GetCubeMesh();
 	AssetHandle GetSphereMesh();
 	AssetHandle GetQuadMesh();
 	AssetHandle GetConeMesh();
-
-private:
-	PrimitiveShapeCache() = default;
-
-	PrimitiveShapeCache(const PrimitiveShapeCache&) = default;
-	PrimitiveShapeCache& operator=(const PrimitiveShapeCache&) = default;
-
-	PrimitiveShapeCache(PrimitiveShapeCache&&) = default;
-	PrimitiveShapeCache& operator=(PrimitiveShapeCache&&) = default;
 };
 
 }

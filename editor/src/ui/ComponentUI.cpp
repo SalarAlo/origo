@@ -247,7 +247,7 @@ void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle
 	auto& am = Origo::AssetManager::GetInstance();
 
 	auto uuid = handle ? am.GetUUID(*handle) : std::nullopt;
-	auto md = uuid ? Origo::AssetDatabase::GetMetadata(*uuid) : Origo::AssetMetadata {};
+	auto md = uuid ? Origo::AssetDatabase::GetInstance().GetMetadata(*uuid) : Origo::AssetMetadata {};
 
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
@@ -280,7 +280,7 @@ void DrawAssetControl(std::string_view label, Origo::OptionalAssetHandle& handle
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID")) {
 			const char* uuidStr = static_cast<const char*>(payload->Data);
 			Origo::UUID payloadID = Origo::UUID::FromString(uuidStr);
-			auto payloadMD = Origo::AssetDatabase::GetMetadata(payloadID);
+			auto payloadMD = Origo::AssetDatabase::GetInstance().GetMetadata(payloadID);
 
 			if (!assetValidationType || payloadMD.Type == *assetValidationType)
 				handle = am.GetHandleByUUID(payloadID);

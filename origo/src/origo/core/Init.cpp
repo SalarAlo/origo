@@ -1,8 +1,12 @@
 #include "origo/core/Init.h"
+
 #include "origo/assets/DefaultAssetCache.h"
-#include "origo/assets/serialization/AssetSerializer.h"
+
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/AssetPipeline.h"
+
+#include "origo/assets/serialization/AssetSerializer.h"
+
 #include "origo/scripting/ScriptSystem.h"
 
 namespace Origo {
@@ -10,7 +14,7 @@ void Init() {
 	Origo::Logger::Init();
 
 	AssetSerializationSystem::RegisterAllAssetSerializers();
-	AssetImporterRegistry::InitialiseDefaultImporters();
+	AssetImporterRegistry::GetInstance().InitialiseDefaultImporters();
 	AssetImportPipeline::RunInitialImport();
 
 	DefaultAssetCache::GetInstance().CreateAllDefaults();

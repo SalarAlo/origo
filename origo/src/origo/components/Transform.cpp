@@ -1,9 +1,14 @@
-#include "Transform.h"
-#include "glm/gtc/quaternion.hpp"
-#include "NativeComponentRegistry.h"
-#include "origo/components/serialization/TransformComponentSerializer.h"
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Transform.h"
+
+#include "NativeComponentRegistry.h"
+
+#include "glm/gtc/quaternion.hpp"
+
+#include "origo/components/serialization/TransformComponentSerializer.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 

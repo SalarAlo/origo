@@ -1,12 +1,13 @@
 
 #include "SkyboxDefaults.h"
 
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetFactory.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/CubemapTexture.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/ShaderSource.h"
 #include "origo/assets/SkyboxMaterial.h"
+
 #include "origo/core/UUID.h"
 
 namespace Origo {
@@ -21,7 +22,7 @@ AssetHandle SkyboxDefaults::GetCubemap() {
 		descr.Front = "./resources/textures/skybox/Front.png";
 		descr.Back = "./resources/textures/skybox/Back.png";
 
-		auto cubemap = AssetFactory::CreateSyntheticAsset<CubemapTexture>(
+		auto cubemap = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<CubemapTexture>(
 		    "Default Skybox Cubemap",
 		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_CUBEMAP"),
 		    descr);
@@ -38,7 +39,7 @@ AssetHandle SkyboxDefaults::GetCubemap() {
 
 AssetHandle SkyboxDefaults::GetShader() {
 	static AssetHandle handle = [] {
-		auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>(
+		auto shaderHandle = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Shader>(
 		    "Default Skybox Shader",
 		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_SHADER"));
 
@@ -56,7 +57,7 @@ AssetHandle SkyboxDefaults::GetShader() {
 
 AssetHandle SkyboxDefaults::GetMaterial() {
 	static AssetHandle handle = [] {
-		auto material = AssetFactory::CreateSyntheticAsset<SkyboxMaterial>(
+		auto material = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<SkyboxMaterial>(
 		    "Default Skybox Material",
 		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_MATERIAL"),
 		    GetShader(),

@@ -12,19 +12,6 @@
 
 namespace Origo {
 
-PrimitiveShapeCache& PrimitiveShapeCache::GetInstance() {
-	static PrimitiveShapeCache instance = ([] {
-		static PrimitiveShapeCache instance;
-
-		instance.GetCubeMesh();
-		instance.GetSphereMesh();
-		instance.GetConeMesh();
-
-		return instance;
-	}());
-	return instance;
-}
-
 AssetHandle PrimitiveShapeCache::GetCubeMesh() {
 	static auto cubeHandle = ([] {
 		auto vertexLayoutID { VertexLayout::GetStaticMeshLayout() };
@@ -42,7 +29,7 @@ AssetHandle PrimitiveShapeCache::GetCubeMesh() {
 		    data.Indices.size());
 
 		UUID meshID { UUID::FromArbitraryString("DEFAULT_CUBE_MESH") };
-		auto cubeHandle = AssetFactory::CreateSyntheticAsset<Mesh>(
+		auto cubeHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
 		    "Default Cube",
 		    meshID,
 		    vertexLayoutID,
@@ -71,7 +58,7 @@ AssetHandle PrimitiveShapeCache::GetSphereMesh() {
 		    data.Indices.size());
 
 		UUID meshID { UUID::FromArbitraryString("DEFAULT_SPHERE_MESH") };
-		auto cubeHandle = AssetFactory::CreateSyntheticAsset<Mesh>(
+		auto cubeHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
 		    "Default Sphere", meshID, vertexLayoutID,
 		    heapID,
 		    range);
@@ -98,7 +85,7 @@ AssetHandle PrimitiveShapeCache::GetConeMesh() {
 		    data.Indices.size());
 
 		UUID meshID { UUID::FromArbitraryString("DEFAULT_CONE_MESH") };
-		auto coneHandle = AssetFactory::CreateSyntheticAsset<Mesh>(
+		auto coneHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
 		    "Default Cone",
 		    meshID,
 		    vertexLayoutID,

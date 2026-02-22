@@ -61,7 +61,7 @@ public:
 	}
 
 	void OnAwake() override {
-		EditorIcons::Init();
+		EditorIcons::GetInstance().Init();
 	}
 
 	void OnEndFrame() override {

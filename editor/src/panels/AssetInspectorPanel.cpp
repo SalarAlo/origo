@@ -17,7 +17,7 @@ void AssetInspectorPanel::OnImGuiRender() {
 	}
 
 	auto& selectedAssetID { *selectedAssetIDOptional };
-	auto md { Origo::AssetDatabase::GetMetadata(selectedAssetID) };
+	auto md { Origo::AssetDatabase::GetInstance().GetMetadata(selectedAssetID) };
 	const std::string& name = md.Name;
 
 	ImGui::SetWindowFontScale(1.1f);

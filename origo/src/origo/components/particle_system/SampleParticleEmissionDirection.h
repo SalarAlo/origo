@@ -48,7 +48,8 @@ struct SampleParticleEmissionDirection {
 		Vec3 forward = cross(axis, right);
 
 		return normalize(
-		    right * localDir.x + axis * localDir.y + forward * localDir.z);
+		           right * localDir.x + axis * localDir.y + forward * localDir.z)
+		    * shape.Length;
 	}
 };
 

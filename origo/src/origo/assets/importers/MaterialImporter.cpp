@@ -1,8 +1,12 @@
 #include "MaterialImporter.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetFactory.h"
+
 #include "origo/assets/serialization/AssetSerializer.h"
+
 #include "origo/renderer/Helpers.h"
+
 #include "origo/serialization/JsonSerializer.h"
 
 namespace Origo {
@@ -21,7 +25,7 @@ Scope<Asset> MaterialImporter::Import(const std::filesystem::path& path, const A
 	JsonSerializer backend { meta.SourcePath.c_str() };
 	backend.LoadFile();
 	auto serializer { AssetSerializationSystem::Get(AssetType::Material2D) };
-	auto material { AssetFactory::AllocateHollowAsset(AssetType::Material2D) };
+	auto material { AssetFactory::GetInstance().AllocateHollowAsset(AssetType::Material2D) };
 	serializer->Deserialize(backend, *material.get());
 	return material;
 }

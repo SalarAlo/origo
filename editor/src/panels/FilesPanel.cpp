@@ -57,12 +57,12 @@ ImTextureID FilesPanel::GetIconForFile(
 	const auto ext = p.extension();
 
 	if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga")
-		return EditorIcons::Get(IconType::Image);
+		return EditorIcons::GetInstance().Get(IconType::Image);
 
 	if (ext == ".cs" || ext == ".cpp" || ext == ".c" || ext == ".h" || ext == ".hpp" || ext == ".gd" || ext == ".glsl")
-		return EditorIcons::Get(IconType::Script);
+		return EditorIcons::GetInstance().Get(IconType::Script);
 
-	return EditorIcons::Get(IconType::File);
+	return EditorIcons::GetInstance().Get(IconType::File);
 }
 
 bool FilesPanel::IsInsideProject(
@@ -96,7 +96,7 @@ void FilesPanel::DrawFileSystemRecursive(
 
 			bool open = TreeNodeWithIcon(
 			    name.c_str(),
-			    EditorIcons::Get(IconType::Folder),
+			    EditorIcons::GetInstance().Get(IconType::Folder),
 			    flags);
 
 			if (ImGui::BeginDragDropSource(
@@ -153,7 +153,7 @@ void FilesPanel::OnImGuiRender() {
 
 	bool open = TreeNodeWithIcon(
 	    m_State.ProjectRoot.filename().string().c_str(),
-	    EditorIcons::Get(IconType::Folder),
+	    EditorIcons::GetInstance().Get(IconType::Folder),
 	    rootFlags);
 
 	if (open) {

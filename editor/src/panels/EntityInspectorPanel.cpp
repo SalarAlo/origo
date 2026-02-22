@@ -228,7 +228,7 @@ void EntityInspectorPanel::DrawScriptDropTarget(
 	const char* uuidStr = static_cast<const char*>(payload->Data);
 	Origo::UUID uuid = Origo::UUID::FromString(uuidStr);
 
-	auto metadata = Origo::AssetDatabase::GetMetadata(uuid);
+	auto metadata = Origo::AssetDatabase::GetInstance().GetMetadata(uuid);
 	if (metadata.Type == Origo::AssetType::Script) {
 
 		auto scriptID = Origo::ScriptComponentRegistry::Get(uuid);

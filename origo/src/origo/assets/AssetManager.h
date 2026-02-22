@@ -9,6 +9,8 @@
 
 #include "origo/core/UUID.h"
 
+#include "origo/utils/Singleton.h"
+
 namespace Origo {
 
 template <typename T>
@@ -42,11 +44,8 @@ struct AssetEntry {
 	OptionalPath Path { std::nullopt };
 };
 
-class AssetManager {
-
+class AssetManager : public Singleton<AssetManager> {
 public:
-	static AssetManager& GetInstance();
-
 	template <AssetConcept T>
 	T* Get(const AssetHandle& handle) {
 		if (!IsValid(handle))
@@ -69,13 +68,7 @@ public:
 	const ankerl::unordered_dense::map<UUID, AssetHandle>& GetUuidMap() { return m_UuidToHandle; }
 	OptionalAssetHandle Load(const std::filesystem::path& path);
 
-	AssetManager(const AssetManager&) = delete;
-	AssetManager& operator=(const AssetManager&) = delete;
-	AssetManager(AssetManager&&) = delete;
-	AssetManager& operator=(AssetManager&&) = delete;
-
 private:
-	AssetManager() = default;
 	AssetHandle GetNextFreeHandle();
 
 private:

@@ -1,13 +1,10 @@
-#include "origo/assets/AssetManager.h"
-#include "origo/assets/Asset.h"
 #include <optional>
 
-namespace Origo {
+#include "origo/assets/AssetManager.h"
 
-AssetManager& AssetManager::GetInstance() {
-	static AssetManager s_Instance {};
-	return s_Instance;
-}
+#include "origo/assets/Asset.h"
+
+namespace Origo {
 
 Asset* AssetManager::Get(const AssetHandle& handle) const {
 	if (!IsValid(handle))
@@ -46,12 +43,18 @@ void AssetManager::Destroy(const AssetHandle& handle) {
 };
 
 bool AssetManager::IsValid(const AssetHandle& handle) const {
-	bool isInBounds { m_AssetEntries.size() > handle.Index };
-	if (!isInBounds)
+	if (handle.Index >= m_AssetEntries.size())
 		return false;
 
-	bool isGenerationsMatch { m_AssetEntries[handle.Index].Generation == handle.Generation };
-	return isGenerationsMatch;
+	const auto& entry = m_AssetEntries[handle.Index];
+
+	if (entry.Generation != handle.Generation)
+		return false;
+
+	if (!entry.AssetPtr)
+		return false;
+
+	return true;
 }
 
 OptionalUUID AssetManager::GetUUID(const AssetHandle& handle) const {

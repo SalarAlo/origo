@@ -1,4 +1,5 @@
 #include "origo/assets/importers/AssetImporterRegistry.h"
+
 #include "origo/assets/importers/IAssetImporter.h"
 #include "origo/assets/importers/MaterialImporter.h"
 #include "origo/assets/importers/ModelImporter.h"
@@ -9,11 +10,11 @@
 
 namespace Origo {
 void AssetImporterRegistry::Register(Scope<IAssetImporter> importer) {
-	s_Importers.emplace_back(std::move(importer));
+	m_Importers.emplace_back(std::move(importer));
 }
 
 IAssetImporter* AssetImporterRegistry::GetImporter(const std::filesystem::path& file) {
-	for (const auto& importer : s_Importers) {
+	for (const auto& importer : m_Importers) {
 		if (importer->CanImport(file))
 			return importer.get();
 	}

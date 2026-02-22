@@ -1,11 +1,13 @@
 #pragma once
 
+#include <imgui.h>
+
 #include <string>
 #include <unordered_map>
 
-#include <imgui.h>
-
 #include "origo/assets/Texture2D.h"
+
+#include "origo/utils/Singleton.h"
 
 namespace OrigoEditor {
 
@@ -29,22 +31,20 @@ enum class IconType {
 	Menu
 };
 
-class EditorIcons {
+class EditorIcons : public Origo::Singleton<EditorIcons> {
 public:
-	static void Init();
-	static void Shutdown();
+	void Init();
+	void Shutdown();
 
-	static ImTextureID Get(Origo::AssetType type);
-	static ImTextureID Get(IconType type);
-	static Origo::Ref<Origo::Texture2D> GetTexture(IconType type);
-
-private:
-	static Origo::Ref<Origo::Texture2D> LoadSVG(
-	    const std::string& path,
-	    int size = 16);
+	ImTextureID Get(Origo::AssetType type);
+	ImTextureID Get(IconType type);
+	Origo::Ref<Origo::Texture2D> GetTexture(IconType type);
 
 private:
-	static std::unordered_map<IconType, Origo::Ref<Origo::Texture2D>> s_Icons;
-	static bool s_Initialized;
+	Origo::Ref<Origo::Texture2D> LoadSVG(const std::string& path, int size = 16);
+
+private:
+	std::unordered_map<IconType, Origo::Ref<Origo::Texture2D>> m_Icons {};
+	bool m_Initialized {};
 };
 }

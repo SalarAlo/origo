@@ -1,11 +1,17 @@
+#include <filesystem>
+
 #include "origo/assets/AssetDatabase.h"
+
+#include "magic_enum/magic_enum.hpp"
+
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManager.h"
+
 #include "origo/assets/serialization/AssetSerializer.h"
+
 #include "origo/core/Logger.h"
+
 #include "origo/serialization/JsonSerializer.h"
-#include "magic_enum/magic_enum.hpp"
-#include <filesystem>
 
 namespace Origo {
 
@@ -123,7 +129,7 @@ Asset* AssetDatabase::LoadAsset(const UUID& id) {
 	backend.BeginObject("payload");
 
 	auto serializer = AssetSerializationSystem::Get(meta.Type);
-	auto asset { AssetFactory::AllocateHollowAsset(meta.Type) };
+	auto asset { AssetFactory::GetInstance().AllocateHollowAsset(meta.Type) };
 	serializer->Deserialize(backend, *asset);
 
 	backend.EndObject();

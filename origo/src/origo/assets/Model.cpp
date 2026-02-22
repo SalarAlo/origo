@@ -166,7 +166,7 @@ void Model::LoadFromAssimp() {
 		    indices.data(),
 		    indices.size());
 
-		AssetHandle meshHandle = AssetFactory::CreateRuntimeAsset<Mesh>(
+		AssetHandle meshHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Mesh>(
 		    "ModelMesh_" + std::to_string(i),
 		    layoutId,
 		    heapId,
@@ -179,7 +179,7 @@ void Model::LoadFromAssimp() {
 		if (aiMat && aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 			std::string path = texPath.C_Str();
 
-			textureHandle = AssetFactory::CreateRuntimeAsset<Texture2D>(
+			textureHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Texture2D>(
 			    "ModelTex_" + std::to_string(i),
 			    TextureType::Albedo);
 
@@ -220,7 +220,7 @@ void Model::LoadFromAssimp() {
 			tex->Load();
 		}
 
-		AssetHandle materialHandle = AssetFactory::CreateRuntimeAsset<Material2D>(
+		AssetHandle materialHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Material2D>(
 		    "ModelMat_" + std::to_string(i),
 		    *m_ModelShaderHandle,
 		    textureHandle);

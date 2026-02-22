@@ -1,12 +1,18 @@
+#include <filesystem>
+
 #include "origo/assets/importers/AssetPipeline.h"
+
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/serialization/AssetSerializer.h"
-#include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/AssetManager.h"
+
+#include "origo/assets/importers/AssetImporterRegistry.h"
+
+#include "origo/assets/serialization/AssetSerializer.h"
+
 #include "origo/core/Logger.h"
+
 #include "origo/serialization/JsonSerializer.h"
-#include <filesystem>
 
 namespace Origo {
 
@@ -52,7 +58,7 @@ bool AssetImportPipeline::IsImportCandidate(const std::filesystem::directory_ent
 }
 
 IAssetImporter* AssetImportPipeline::ResolveImporter(const std::filesystem::path& path) {
-	return AssetImporterRegistry::GetImporter(path);
+	return AssetImporterRegistry::GetInstance().GetImporter(path);
 }
 
 bool AssetImportPipeline::IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta) {
@@ -73,8 +79,8 @@ void AssetImportPipeline::ImportAsset(const std::filesystem::path& path, IAssetI
 	AssetManager::GetInstance().Register(std::move(asset), meta.ID);
 	meta.ImportedTimestamp = meta.SourceTimestamp;
 
-	AssetDatabase::RegisterMetadata(meta);
-	AssetDatabase::WriteImportFile(*meta.ID);
+	AssetDatabase::GetInstance().RegisterMetadata(meta);
+	AssetDatabase::GetInstance().WriteImportFile(*meta.ID);
 
 	importCount++;
 }
@@ -85,7 +91,7 @@ void AssetImportPipeline::LoadCachedAsset(const std::filesystem::path& importFil
 	JsonSerializer serializer { importFile.c_str() };
 	serializer.LoadFile();
 
-	auto asset = AssetFactory::AllocateHollowAsset(meta.Type);
+	auto asset = AssetFactory::GetInstance().AllocateHollowAsset(meta.Type);
 
 	ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta.Name, magic_enum::enum_name(meta.Type), meta.SourcePath.c_str());
 
@@ -93,8 +99,8 @@ void AssetImportPipeline::LoadCachedAsset(const std::filesystem::path& importFil
 	assetSerializer->Deserialize(serializer, *asset.get());
 	serializer.EndObject();
 
-	AssetFactory::CreateImportedAsset(meta, std::move(asset));
-	AssetDatabase::RegisterMetadata(meta);
+	AssetFactory::GetInstance().CreateImportedAsset(meta, std::move(asset));
+	AssetDatabase::GetInstance().RegisterMetadata(meta);
 }
 
 Scope<AssetMetadata> AssetImportPipeline::LoadOrCreateMetadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
@@ -102,7 +108,7 @@ Scope<AssetMetadata> AssetImportPipeline::LoadOrCreateMetadata(const std::filesy
 	Scope<AssetMetadata> meta;
 
 	if (std::filesystem::exists(importPath)) {
-		meta = MakeScope<AssetMetadata>(AssetDatabase::LoadImportHeader(importPath));
+		meta = MakeScope<AssetMetadata>(AssetDatabase::GetInstance().LoadImportHeader(importPath));
 	} else {
 		meta = MakeScope<AssetMetadata>();
 		meta->ID = UUID::Generate();

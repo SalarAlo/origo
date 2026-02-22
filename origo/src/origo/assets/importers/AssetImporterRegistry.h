@@ -2,15 +2,17 @@
 
 #include "origo/assets/importers/IAssetImporter.h"
 
+#include "origo/utils/Singleton.h"
+
 namespace Origo {
-class AssetImporterRegistry {
+class AssetImporterRegistry : public Singleton<AssetImporterRegistry> {
 public:
-	static void Register(Scope<IAssetImporter> importer);
-	static IAssetImporter* GetImporter(const std::filesystem::path& file);
-	static void InitialiseDefaultImporters();
+	void Register(Scope<IAssetImporter> importer);
+	IAssetImporter* GetImporter(const std::filesystem::path& file);
+	void InitialiseDefaultImporters();
 
 private:
-	inline static std::vector<Scope<IAssetImporter>> s_Importers {};
+	std::vector<Scope<IAssetImporter>> m_Importers {};
 };
 
 }

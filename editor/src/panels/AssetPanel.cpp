@@ -1,13 +1,18 @@
-#include "panels/AssetPanel.h"
-#include "imgui_internal.h"
-#include "origo/assets/Asset.h"
-#include "origo/assets/AssetDatabase.h"
-#include "systems/EditorIcons.h"
+#include <cctype>
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+
 #include <algorithm>
 #include <string>
-#include <cctype>
-#include <misc/cpp/imgui_stdlib.h>
+
+#include "panels/AssetPanel.h"
+
+#include "imgui_internal.h"
+
+#include "origo/assets/Asset.h"
+#include "origo/assets/AssetDatabase.h"
+
+#include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
 
@@ -46,7 +51,7 @@ static bool ContainsCaseInsensitive(const std::string& haystack, const std::stri
 
 AssetPanel::AssetPanel(EditorContext& ctx)
     : m_Context(ctx) {
-	const auto& metadataMap = Origo::AssetDatabase::GetAllMetadata();
+	const auto& metadataMap = Origo::AssetDatabase::GetInstance().GetAllMetadata();
 
 	std::vector<Origo::AssetMetadata> snapshot;
 	snapshot.reserve(metadataMap.size());
@@ -232,7 +237,7 @@ void AssetPanel::DrawFolderTile(FolderEntry* folder, ImDrawList* drawList) {
 	ImVec2 thumbMin = cursor + ImVec2(10, 10);
 	ImVec2 thumbMax = thumbMin + ImVec2(TILE_SIZE - 20, TILE_SIZE - 20);
 
-	ImTextureID icon = EditorIcons::Get(IconType::Folder);
+	ImTextureID icon = EditorIcons::GetInstance().Get(IconType::Folder);
 	if (icon)
 		drawList->AddImage(icon, thumbMin, thumbMax);
 	else

@@ -1,7 +1,9 @@
 #include "SceneAssetImporter.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/SceneAsset.h"
+
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
@@ -19,7 +21,7 @@ AssetType SceneAssetImporter::GetAssetType() const {
 }
 
 Scope<Asset> SceneAssetImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto scene { AssetFactory::AllocateHollowAsset<SceneAsset>() };
+	auto scene { AssetFactory::GetInstance().AllocateHollowAsset<SceneAsset>() };
 	scene->SetPath(path);
 	return scene;
 }

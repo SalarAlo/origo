@@ -109,7 +109,7 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 		ImGui::SetCursorScreenPos(ImVec2(x, y));
 		ImGui::SetNextItemAllowOverlap();
 
-		ImTextureID menuIcon = EditorIcons::Get(IconType::Menu);
+		ImTextureID menuIcon = EditorIcons::GetInstance().Get(IconType::Menu);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);

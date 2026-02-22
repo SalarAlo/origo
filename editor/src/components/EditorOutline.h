@@ -1,9 +1,10 @@
 #pragma once
 
-#include "origo/assets/AssetManager.h"
 #include "origo/assets/AssetFactory.h"
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/Material2D.h"
 #include "origo/assets/Shader.h"
+
 #include "origo/components/Component.h"
 
 namespace OrigoEditor {
@@ -17,6 +18,7 @@ public:
 
 	std::string GetComponentName() const override { return "EditorSelection"; }
 
+	// TODO: move to default asset cache
 	static Origo::AssetHandle GetOutlineMaterial() {
 		using namespace Origo;
 		const static Origo::UUID outlineShaderID = Origo::UUID::FromArbitraryString("ENGINE_EDITOR_OUTLINE_SHADER");
@@ -24,13 +26,14 @@ public:
 
 		static bool s_Initialised { false };
 		if (!s_Initialised) {
-			auto shaderHandle = AssetFactory::CreateSyntheticAsset<Shader>("Outline Shader", outlineShaderID);
+			auto& assetFactory { AssetFactory::GetInstance() };
+			auto shaderHandle = assetFactory.CreateSyntheticAsset<Shader>("Outline Shader", outlineShaderID);
 			auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
 
 			shader->SetSource(MakeScope<ShaderSourceFile>("resources/shaders/outline.glsl"));
 			shader->Resolve();
 
-			m_OutlineMaterial = AssetFactory::CreateSyntheticAsset<Material2D>("Outline Material", outlineMaterialID, shaderHandle);
+			m_OutlineMaterial = assetFactory.CreateSyntheticAsset<Material2D>("Outline Material", outlineMaterialID, shaderHandle);
 
 			s_Initialised = true;
 		}

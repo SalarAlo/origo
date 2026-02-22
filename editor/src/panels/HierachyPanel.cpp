@@ -27,7 +27,7 @@ void HierarchyPanel::OnImGuiRender() {
 	ImGui::Separator();
 
 	auto selectedEntityID { m_Context.GetSelectedEntity() };
-	ImTextureID entityIcon { EditorIcons::Get(IconType::Entity) };
+	ImTextureID entityIcon { EditorIcons::GetInstance().Get(IconType::Entity) };
 
 	ImGui::BeginChild("HierarchyList", ImVec2(0, 0), false);
 

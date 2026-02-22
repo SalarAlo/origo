@@ -1,5 +1,6 @@
 #pragma once
 #include "origo/assets/Asset.h"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {

@@ -1,6 +1,7 @@
 #include "panels/RuntimeStatePanel.h"
 
 #include "state/EditorContext.h"
+
 #include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
@@ -14,11 +15,11 @@ void RuntimeStatePanel::OnImGuiRender() {
 	const ImVec2 buttonSize { 24.0f, 24.0f };
 	const auto& style = ImGui::GetStyle();
 
-	ImTextureID playIcon = EditorIcons::Get(IconType::Play);
-	ImTextureID resumeIcon = EditorIcons::Get(IconType::Resume);
-	ImTextureID pauseIcon = EditorIcons::Get(IconType::Pause);
-	ImTextureID stopIcon = EditorIcons::Get(IconType::Stop);
-	ImTextureID stepIcon = EditorIcons::Get(IconType::Step);
+	ImTextureID playIcon = EditorIcons::GetInstance().Get(IconType::Play);
+	ImTextureID resumeIcon = EditorIcons::GetInstance().Get(IconType::Resume);
+	ImTextureID pauseIcon = EditorIcons::GetInstance().Get(IconType::Pause);
+	ImTextureID stopIcon = EditorIcons::GetInstance().Get(IconType::Stop);
+	ImTextureID stepIcon = EditorIcons::GetInstance().Get(IconType::Step);
 
 	int buttonCount = 2;
 

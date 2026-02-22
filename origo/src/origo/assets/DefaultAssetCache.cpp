@@ -10,11 +10,6 @@
 
 namespace Origo {
 
-DefaultAssetCache& DefaultAssetCache::GetInstance() {
-	static DefaultAssetCache instance;
-	return instance;
-}
-
 void DefaultAssetCache::CreateAllDefaults() {
 	GetShader();
 	GetTexture();
@@ -27,7 +22,7 @@ AssetHandle DefaultAssetCache::GetShader() {
 	if (m_Shader.has_value())
 		return *m_Shader;
 
-	m_Shader = AssetFactory::CreateSyntheticAsset<Shader>(
+	m_Shader = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Shader>(
 	    "Default Shader",
 	    UUID::FromHash("ENGINE_DEFAULT_SHADER"));
 
@@ -45,7 +40,7 @@ AssetHandle DefaultAssetCache::GetTexture() {
 
 	std::vector<unsigned char> whitePixel = { 255, 255, 255, 255 };
 
-	m_Texture = AssetFactory::CreateSyntheticAsset<Texture2D>(
+	m_Texture = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Texture2D>(
 	    "Default White Texture",
 	    UUID::FromArbitraryString("DEFAULT_TEXTURE_2D"));
 
@@ -61,7 +56,7 @@ AssetHandle DefaultAssetCache::GetMaterial() {
 	if (m_Material.has_value())
 		return *m_Material;
 
-	m_Material = AssetFactory::CreateSyntheticAsset<Material2D>(
+	m_Material = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
 	    "Default Material",
 	    UUID::FromArbitraryString("DEFAULT_MATERIAL_2D"));
 
@@ -81,7 +76,7 @@ AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
 	if (m_ParticleEmissionDebugMaterial.has_value())
 		return *m_ParticleEmissionDebugMaterial;
 
-	m_ParticleEmissionDebugMaterial = AssetFactory::CreateSyntheticAsset<Material2D>(
+	m_ParticleEmissionDebugMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
 	    "Default Particle Material",
 	    UUID::FromArbitraryString("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
@@ -100,7 +95,7 @@ AssetHandle DefaultAssetCache::GetParticleMaterial() {
 	if (m_ParticleMaterial.has_value())
 		return *m_ParticleMaterial;
 
-	m_ParticleMaterial = AssetFactory::CreateSyntheticAsset<Material2D>(
+	m_ParticleMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
 	    "Default Particle Material",
 	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
 

@@ -3,47 +3,48 @@
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Metadata.h"
-#include "origo/assets/Script.h"
 
 #include "origo/core/UUID.h"
 
+#include "origo/utils/Singleton.h"
+
 namespace Origo {
 
-class AssetFactory {
+class AssetFactory : public Singleton<AssetFactory> {
 public:
 	using AssetCreatedCallback = std::function<void(UUID, AssetType)>;
 
 public:
 	template <typename T, typename... Args>
-	static AssetHandle CreateRuntimeAsset(const std::string& name, Args&&... args) {
+	AssetHandle CreateRuntimeAsset(const std::string& name, Args&&... args) {
 		AssetMetadata meta {};
 		meta.Name = name;
 		meta.ID = UUID::Generate();
 		meta.Type = T::GetClassAssetType();
 		meta.Origin = AssetOrigin::Runtime;
 
-		AssetDatabase::RegisterMetadata(meta);
+		AssetDatabase::GetInstance().RegisterMetadata(meta);
 
 		auto asset = MakeScope<T>(std::forward<Args>(args)...);
 		return AssetManager::GetInstance().Register(std::move(asset), meta.ID);
 	}
 
 	template <typename T, typename... Args>
-	static AssetHandle CreateSyntheticAsset(const std::string& name, const UUID& uuid, Args&&... args) {
+	AssetHandle CreateSyntheticAsset(const std::string& name, const UUID& uuid, Args&&... args) {
 		AssetMetadata meta {};
 		meta.Name = name;
 		meta.ID = uuid;
 		meta.Type = T::GetClassAssetType();
 		meta.Origin = AssetOrigin::Synthetic;
 
-		AssetDatabase::RegisterMetadata(meta);
+		AssetDatabase::GetInstance().RegisterMetadata(meta);
 
 		auto asset = MakeScope<T>(std::forward<Args>(args)...);
 		return AssetManager::GetInstance().Register(std::move(asset), uuid);
 	}
 
-	static AssetHandle CreateImportedAsset(const AssetMetadata& meta, Scope<Asset>&& asset) {
-		AssetDatabase::RegisterMetadata(meta);
+	AssetHandle CreateImportedAsset(const AssetMetadata& meta, Scope<Asset>&& asset) {
+		AssetDatabase::GetInstance().RegisterMetadata(meta);
 
 		return AssetManager::GetInstance().Register(
 		    std::move(asset),
@@ -51,9 +52,10 @@ public:
 		    meta.SourcePath);
 	}
 
-	static Scope<Asset> AllocateHollowAsset(AssetType type);
+	Scope<Asset> AllocateHollowAsset(AssetType type);
+
 	template <AssetConcept T>
-	static Scope<T> AllocateHollowAsset() {
+	Scope<T> AllocateHollowAsset() {
 		return MakeScope<T>();
 	}
 };

@@ -15,7 +15,7 @@ void ParticleEmitterShapeDebugRenderSystem::Render(Origo::Scene* scene, RenderCo
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf) {
-		    std::visit(RenderEmissionShapeDebug { rCtx, particleSystemTransf.GetPosition() }, particleSystem.Shape);
+		    std::visit(RenderEmissionShapeDebug { rCtx, particleSystemTransf }, particleSystem.Shape);
 	    });
 }
 }

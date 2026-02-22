@@ -1,15 +1,18 @@
+#include <nfd.h>
+
 #include "ui/UI.h"
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"
+
 #include "origo/assets/serialization/SceneSerializer.h"
+
 #include "origo/scripting/ScriptSystem.h"
 
 #include "panels/PanelManager.h"
-#include "systems/EditorRuntimeController.h"
 
-#include <nfd.h>
+#include "systems/EditorRuntimeController.h"
 
 namespace OrigoEditor::UI {
 
@@ -187,7 +190,7 @@ void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
 		}
 
 		if (ImGui::MenuItem("Save Generated Assets"))
-			Origo::AssetDatabase::SaveAll();
+			Origo::AssetDatabase::GetInstance().SaveAll();
 
 		if (ImGui::MenuItem("Reload Scripts")) {
 			Origo::AssetManager::GetInstance().ResolveAll(
