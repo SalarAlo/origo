@@ -14,6 +14,7 @@ void DefaultAssetCache::CreateAllDefaults() {
 	GetShader();
 	GetTexture();
 	GetMaterial();
+	GetOutlineMaterial();
 	GetParticleMaterial();
 	GetParticleEmissionDebugMaterial();
 }
@@ -77,7 +78,7 @@ AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
 		return *m_ParticleEmissionDebugMaterial;
 
 	m_ParticleEmissionDebugMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
-	    "Default Particle Material",
+	    "Emission Shape Material",
 	    UUID::FromArbitraryString("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
 	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleEmissionDebugMaterial);
@@ -89,6 +90,26 @@ AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
 	return *m_Material;
 }
 
+Origo::AssetHandle DefaultAssetCache::GetOutlineMaterial() {
+	constexpr Vec3 ORANGE_COLOR = Vec3 { 1.0f, (125.0f / 255.0f), 0.0f };
+
+	if (m_OutlineMaterial.has_value())
+		return *m_OutlineMaterial;
+
+	m_OutlineMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
+	    "Outline Material",
+	    UUID::FromArbitraryString("DEFAULT_MATERIAL_OUTLINE_2D"));
+
+	auto material = AssetManager::GetInstance().Get<Material2D>(*m_OutlineMaterial);
+	material->SetShader(GetShader());
+	material->SetColor(ORANGE_COLOR);
+
+	material->SetUniform("u_UseTexture", false);
+	material->SetUniform("u_UseLight", false);
+
+	return *m_OutlineMaterial;
+}
+
 AssetHandle DefaultAssetCache::GetParticleMaterial() {
 	constexpr Vec3 PARTICLE_COLOR = Vec3 { 1.0f, 0.0f, 0.0f };
 
@@ -96,7 +117,7 @@ AssetHandle DefaultAssetCache::GetParticleMaterial() {
 		return *m_ParticleMaterial;
 
 	m_ParticleMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
-	    "Default Particle Material",
+	    "Particle Material",
 	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
 
 	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleMaterial);

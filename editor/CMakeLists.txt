@@ -21,6 +21,7 @@ target_link_libraries(OrigoEditor PRIVATE
     OrigoEngine
     nfd
     imgui
+    imgui_textedit
 )
 
 target_precompile_headers(OrigoEditor PRIVATE

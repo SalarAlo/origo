@@ -2,6 +2,8 @@
 
 #include "components/EditorOutline.h"
 
+#include "origo/assets/DefaultAssetCache.h"
+
 #include "origo/components/MeshRenderer.h"
 #include "origo/components/ModelRenderer.h"
 #include "origo/components/Transform.h"
@@ -23,7 +25,7 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 
 		    context.SubmitMesh(
 		        *mr.MeshHandle,
-		        EditorOutlineComponent::GetOutlineMaterial(),
+		        DefaultAssetCache::GetInstance().GetOutlineMaterial(),
 		        transform.GetModelMatrix(),
 		        RenderPass::Outline);
 	    });

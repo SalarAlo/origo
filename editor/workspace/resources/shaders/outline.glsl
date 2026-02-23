@@ -37,7 +37,6 @@ out vec4 FragColor;
 uniform float u_Time;
 
 void main() {
-    vec3 outline_color = vec3(1.0, 165.0f/255.0f, 0.0f);
-
-    FragColor = vec4(outline_color, 1.0);
+    FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 }
+

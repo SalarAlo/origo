@@ -1,6 +1,7 @@
 #include "origo/core/Init.h"
 
 #include "origo/assets/DefaultAssetCache.h"
+#include "origo/assets/PrimitiveShapeCache.h"
 
 #include "origo/assets/importers/AssetImporterRegistry.h"
 #include "origo/assets/importers/AssetPipeline.h"
@@ -18,6 +19,7 @@ void Init() {
 	AssetImportPipeline::RunInitialImport();
 
 	DefaultAssetCache::GetInstance().CreateAllDefaults();
+	PrimitiveShapeCache::GetInstance().CreateAllPrimitiveShapes();
 
 	ScriptSystem::ReloadAll();
 

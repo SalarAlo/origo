@@ -6,6 +6,8 @@ namespace Origo {
 
 class PrimitiveShapeCache : public Singleton<PrimitiveShapeCache> {
 public:
+	void CreateAllPrimitiveShapes();
+
 	AssetHandle GetCubeMesh();
 	AssetHandle GetSphereMesh();
 	AssetHandle GetQuadMesh();

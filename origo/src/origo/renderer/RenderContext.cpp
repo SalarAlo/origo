@@ -37,8 +37,6 @@ static void DrawMesh(const RenderCommand& cmd) {
 	    GL_UNSIGNED_INT,
 	    reinterpret_cast<void*>(r.FirstIndex * sizeof(unsigned int)),
 	    r.FirstVertex));
-
-	GLCall(glBindVertexArray(0));
 }
 
 void RenderContext::BeginFrame() {

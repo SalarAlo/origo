@@ -37,3 +37,4 @@ void main()
 {
     FragColor = texture(skybox, normalize(v_Dir));
 }
+

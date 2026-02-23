@@ -21,6 +21,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${output_dir})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+set(BUILD_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_QT OFF CACHE BOOL "" FORCE)
+set(BUILD_IMGUI ON CACHE BOOL "" FORCE) 
+
 # ------------------------------------------------------------------------------
 # Dependencies
 # ------------------------------------------------------------------------------
@@ -39,6 +44,13 @@ add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/imgui)
+add_library(imgui_textedit
+    vendor/ImGuiColorTextEdit/TextEditor.cpp
+)
+target_include_directories(imgui_textedit PUBLIC
+    vendor/ImGuiColorTextEdit
+)
+target_link_libraries(imgui_textedit PUBLIC imgui)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/jolt)

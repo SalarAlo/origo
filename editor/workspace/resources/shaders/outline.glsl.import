@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4671700900239740575",
+                "imported_time_stamp": "-4665805171141996465",
                 "name": "outline",
                 "origin": "Imported",
                 "source_path": "./resources/shaders/outline.glsl",
-                "source_time_stamp": "-4671700900239740575",
+                "source_time_stamp": "-4665805171141996465",
                 "type": "Shader",
                 "uuid": "1edbc46b8015ac7bc3f728b33437102d"
         },

@@ -1,5 +1,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
+#include <memory>
 #include <stdexcept>
 
 #include "origo/assets/Shader.h"
@@ -7,6 +8,8 @@
 #include "origo/assets/ShaderSource.h"
 
 #include "origo/core/Logger.h"
+
+#include "origo/renderer/GlDebug.h"
 
 namespace Origo {
 
@@ -46,6 +49,7 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 	GLCall(glLinkProgram(program));
 	GLint linked = 0;
 	GLCall(glGetProgramiv(program, GL_LINK_STATUS, &linked));
+
 	if (!linked) {
 		GLint len = 0;
 		GLCall(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len));
@@ -60,12 +64,25 @@ static GLuint LinkProgram(GLuint vs, GLuint fs) {
 
 void Shader::SetSource(Scope<ShaderSource> source) {
 	m_Source = std::move(source);
+	m_UniformCache.clear();
 }
 
-void Shader::Init() {
+void Shader::Resolve() {
+	UnuseProgram();
+	glBindVertexArray(0);
+
+	if (m_ProgramId) {
+		GLCall(glDeleteProgram(m_ProgramId));
+		m_ProgramId = 0;
+	}
+
+	m_UniformCache.clear();
+
 	auto shaderData { m_Source->GetShaderData() };
+
 	auto vertexId { CompileShader(GL_VERTEX_SHADER, shaderData.VertexShader) };
 	auto fragmentId { CompileShader(GL_FRAGMENT_SHADER, shaderData.FragmentShader) };
+
 	m_ProgramId = LinkProgram(vertexId, fragmentId);
 
 	GLCall(glDetachShader(m_ProgramId, vertexId));
@@ -81,6 +98,10 @@ Shader::~Shader() {
 
 void Shader::UseProgram() const {
 	GLCall(glUseProgram(m_ProgramId));
+}
+
+void Shader::UnuseProgram() const {
+	GLCall(glUseProgram(0));
 }
 
 #pragma region TEMPLATE_UNIFORM_SPECIALIZATIONS

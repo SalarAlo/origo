@@ -14,6 +14,7 @@ public:
 	AssetHandle GetTexture();
 
 	AssetHandle GetMaterial();
+	AssetHandle GetOutlineMaterial();
 	AssetHandle GetParticleEmissionDebugMaterial();
 	AssetHandle GetParticleMaterial();
 
@@ -21,6 +22,7 @@ private:
 	std::optional<AssetHandle> m_Shader;
 	std::optional<AssetHandle> m_Texture;
 	std::optional<AssetHandle> m_Material;
+	std::optional<AssetHandle> m_OutlineMaterial;
 	std::optional<AssetHandle> m_ParticleEmissionDebugMaterial;
 	std::optional<AssetHandle> m_ParticleMaterial;
 };

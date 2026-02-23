@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/assets/ShaderData.h"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {

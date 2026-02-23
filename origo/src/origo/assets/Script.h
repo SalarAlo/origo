@@ -1,8 +1,11 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
+
 #include "origo/core/UUID.h"
+
 #include "origo/renderer/Helpers.h"
+
 #include "origo/scripting/ScriptSystem.h"
 
 namespace Origo {

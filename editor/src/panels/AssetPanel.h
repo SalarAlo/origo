@@ -1,10 +1,13 @@
 #pragma once
 
-#include "EditorPanel.h"
-#include "panels/EditorAssetTree.h"
-#include "state/EditorContext.h"
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "EditorPanel.h"
+
+#include "panels/EditorAssetTree.h"
+
+#include "state/EditorContext.h"
 
 namespace OrigoEditor {
 

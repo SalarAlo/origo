@@ -1,7 +1,10 @@
-#include "origo/scripting/ScriptSystem.h"
-#include "origo/scripting/ScriptComponentRegistry.h"
-#include "sol/error.hpp"
 #include <stdexcept>
+
+#include "origo/scripting/ScriptSystem.h"
+
+#include "origo/scripting/ScriptComponentRegistry.h"
+
+#include "sol/error.hpp"
 
 namespace Origo {
 

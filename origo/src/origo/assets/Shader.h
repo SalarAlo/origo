@@ -11,6 +11,7 @@ public:
 	~Shader();
 
 	void UseProgram() const;
+	void UnuseProgram() const;
 
 	template <typename T>
 	void SetUniform(std::string_view name, const T& value) const;
@@ -23,9 +24,7 @@ public:
 
 	GLuint GetProgramID() const { return m_ProgramId; }
 
-	void Resolve() override {
-		Init();
-	}
+	void Resolve() override;
 
 	Shader(const Shader&) = delete;
 	Shader& operator=(const Shader&) = delete;
@@ -33,7 +32,6 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 private:
-	void Init();
 	GLint GetUniformLocation(std::string_view name) const;
 
 private:

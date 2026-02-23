@@ -12,6 +12,12 @@
 
 namespace Origo {
 
+void PrimitiveShapeCache::CreateAllPrimitiveShapes() {
+	GetCubeMesh();
+	GetSphereMesh();
+	GetConeMesh();
+}
+
 AssetHandle PrimitiveShapeCache::GetCubeMesh() {
 	static auto cubeHandle = ([] {
 		auto vertexLayoutID { VertexLayout::GetStaticMeshLayout() };

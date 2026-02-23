@@ -1,11 +1,14 @@
 #include "layers/EditorUILayer.h"
+
 #include "panels/AssetInspectorPanel.h"
 #include "panels/AssetPanel.h"
 #include "panels/ConsolePanel.h"
-#include "panels/HierarchyPanel.h"
 #include "panels/EntityInspectorPanel.h"
+#include "panels/HierarchyPanel.h"
 #include "panels/RuntimeStatePanel.h"
 #include "panels/SceneViewport.h"
+#include "panels/TextEditorPanel.h"
+
 #include "ui/UI.h"
 
 namespace OrigoEditor {
@@ -32,6 +35,7 @@ void EditorUILayer::OnAttach() {
 	m_PanelManager.AddPanel<ConsolePanel>();
 	m_PanelManager.AddPanel<AssetInspectorPanel>(m_Context);
 	m_PanelManager.AddPanel<AssetPanel>(m_Context);
+	m_PanelManager.AddPanel<TextEditorPanel>(m_Context);
 	m_PanelManager.AddPanel<RuntimeStatePanel>(m_Context);
 	// m_PanelManager.AddPanel<FilesPanel>();
 }

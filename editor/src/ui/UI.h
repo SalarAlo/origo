@@ -1,5 +1,6 @@
 #pragma once
 #include "panels/PanelManager.h"
+
 #include "ui/EditorPalette.h"
 
 namespace OrigoEditor::UI {
@@ -9,4 +10,7 @@ void LoadEditorFont();
 void BeginDockspace();
 void DrawMenuBar(PanelManager& manager, EditorContext& ctx);
 void EndDockspace();
+
+extern ImFont* UIFont;
+extern ImFont* CodeFont;
 }

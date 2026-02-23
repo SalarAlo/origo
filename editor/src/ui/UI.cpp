@@ -16,6 +16,9 @@
 
 namespace OrigoEditor::UI {
 
+ImFont* UIFont = nullptr;
+ImFont* CodeFont = nullptr;
+
 void ApplyEditorStyle(const EditorPalette& p) {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* c = style.Colors;
@@ -105,9 +108,18 @@ void ApplyEditorStyle(const EditorPalette& p) {
 
 void LoadEditorFont() {
 	ImGuiIO& io = ImGui::GetIO();
-	io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/Inter.ttf", 17.0f);
-	io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 17.0f);
-	IM_ASSERT(io.FontDefault);
+
+	UIFont = io.Fonts->AddFontFromFileTTF(
+	    "resources/fonts/Inter.ttf",
+	    17.0f);
+
+	CodeFont = io.Fonts->AddFontFromFileTTF(
+	    "resources/fonts/JetBrainsMono-Regular.ttf",
+	    17.0f);
+
+	io.FontDefault = UIFont;
+
+	IM_ASSERT(UIFont && CodeFont);
 }
 
 void BeginDockspace() {
