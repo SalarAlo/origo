@@ -56,7 +56,13 @@ void PanelManager::RenderMenuItems() {
 void PanelManager::RenderPanels() {
 	for (const auto& panel : m_Panels) {
 		if (panel->IsOpen()) {
-			ImGui::Begin(panel->GetName());
+
+			ImGuiWindowFlags flags = 0;
+
+			if (!panel->IsCollapsable())
+				flags |= ImGuiWindowFlags_NoCollapse;
+
+			ImGui::Begin(panel->GetName(), nullptr, flags);
 			panel->OnImGuiRender();
 			ImGui::End();
 		}

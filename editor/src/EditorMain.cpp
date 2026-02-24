@@ -64,7 +64,8 @@ public:
 		EditorIcons::GetInstance().Init();
 	}
 
-	void OnEndFrame() override {
+	void OnEndFrame(float dt) override {
+		m_Context.DeltaTime = dt;
 
 		if (m_Context.ActiveScene)
 			m_Context.ActiveScene->EndFrame();

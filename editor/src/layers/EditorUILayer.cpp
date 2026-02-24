@@ -3,6 +3,7 @@
 #include "panels/AssetInspectorPanel.h"
 #include "panels/AssetPanel.h"
 #include "panels/ConsolePanel.h"
+#include "panels/DebugStatsPanel.h"
 #include "panels/EntityInspectorPanel.h"
 #include "panels/HierarchyPanel.h"
 #include "panels/RuntimeStatePanel.h"
@@ -37,6 +38,7 @@ void EditorUILayer::OnAttach() {
 	m_PanelManager.AddPanel<AssetPanel>(m_Context);
 	m_PanelManager.AddPanel<TextEditorPanel>(m_Context);
 	m_PanelManager.AddPanel<RuntimeStatePanel>(m_Context);
+	m_PanelManager.AddPanel<DebugStatsPanel>(m_Context);
 	// m_PanelManager.AddPanel<FilesPanel>();
 }
 

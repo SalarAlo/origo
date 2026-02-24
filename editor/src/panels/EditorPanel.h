@@ -12,6 +12,8 @@ public:
 	virtual bool& IsOpenRef() { return m_Open; }
 	virtual void SetOpen(bool open) { m_Open = open; }
 
+	virtual bool IsCollapsable() const { return false; }
+
 protected:
 	bool m_Open = true;
 };

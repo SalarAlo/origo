@@ -34,6 +34,8 @@ struct EditorContext {
 
 	Origo::Scene* ActiveScene;
 
+	float DeltaTime;
+
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
 

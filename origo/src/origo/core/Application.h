@@ -1,9 +1,10 @@
 #pragma once
 
 #include "origo/core/LayerSystem.h"
-#include "origo/core/Time.h"
-#include "origo/events/Event.h"
 #include "origo/core/ScreenWindow.h"
+#include "origo/core/Time.h"
+
+#include "origo/events/Event.h"
 
 namespace Origo {
 struct ApplicationSettings {
@@ -17,7 +18,7 @@ public:
 	virtual void Run();
 
 	virtual void OnAwake() { }
-	virtual void OnEndFrame() { };
+	virtual void OnEndFrame(float dt) { };
 	virtual void OnShutdown() { }
 	void OnEvent(Event& event);
 

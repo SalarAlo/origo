@@ -75,7 +75,7 @@ void Application::Run() {
 
 		m_Window.OnUpdate();
 
-		OnEndFrame();
+		OnEndFrame(dt);
 	}
 
 	InternalShutdown();
