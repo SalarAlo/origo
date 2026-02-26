@@ -12,20 +12,20 @@ namespace Origo {
 
 class ScriptComponentRegistry {
 public:
-	static ScriptComponentID RegisterOrUpdate(ScriptComponentDescriptor descriptor);
-	static ScriptComponentID RegisterComponentFromLua(const UUID& uuid, const std::string& name, sol::table fields);
+	static ScriptComponentID register_or_update(ScriptComponentDescriptor descriptor);
+	static ScriptComponentID register_component_from_lua(const UUID& uuid, const std::string& name, sol::table fields);
 
-	static const ScriptComponentDescriptor& Get(ScriptComponentID id);
+	static const ScriptComponentDescriptor& get(ScriptComponentID id);
 
-	static std::optional<ScriptComponentID> TryFindByName(const std::string& name);
-	static bool Exists(ScriptComponentID id);
+	static std::optional<ScriptComponentID> try_find_by_name(const std::string& name);
+	static bool exists(ScriptComponentID id);
 
-	static const std::unordered_map<ScriptComponentID, ScriptComponentDescriptor>& GetAll() { return s_Descriptors; }
-	static Action<void, ScriptComponentID> OnScriptComponentUpdated();
+	static const std::unordered_map<ScriptComponentID, ScriptComponentDescriptor>& get_all() { return s_descriptors; }
+	static Action<void, ScriptComponentID> on_script_component_updated();
 
 private:
-	inline static std::unordered_map<ScriptComponentID, ScriptComponentDescriptor> s_Descriptors {};
-	inline static std::unordered_map<std::string, ScriptComponentID> s_NameToScriptComponentID {};
+	inline static std::unordered_map<ScriptComponentID, ScriptComponentDescriptor> s_descriptors {};
+	inline static std::unordered_map<std::string, ScriptComponentID> s_name_to_script_component_id {};
 };
 
 }

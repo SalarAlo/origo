@@ -3,7 +3,7 @@
 #include <sstream>
 
 namespace Origo {
-int Glsizeof(GLuint type) {
+int glsizeof(GLuint type) {
 	switch (type) {
 	case GL_FLOAT:
 		return sizeof(float);
@@ -14,14 +14,14 @@ int Glsizeof(GLuint type) {
 	}
 }
 
-void ToLowerInPlace(std::string& s) {
+void to_lower_in_place(std::string& s) {
 
 	std::ranges::transform(
 	    s, s.begin(),
 	    [](unsigned char c) { return std::tolower(c); });
 }
 
-std::string ReadFile(const std::filesystem::path& path) {
+std::string read_file(const std::filesystem::path& path) {
 	std::ifstream file(path, std::ios::in | std::ios::binary);
 	if (!file)
 		throw std::runtime_error("Failed to open file: " + path.string());

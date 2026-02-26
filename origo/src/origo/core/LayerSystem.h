@@ -28,35 +28,35 @@ public:
 	LayerSystem();
 	~LayerSystem();
 
-	void FlushCommands();
+	void flush_commands();
 
-	void RequestPushLayer(Layer* layer, size_t key, bool frozen = false);
-	void RequestRemoveLayer(size_t key);
-	void RequestFreezeLayer(size_t key);
-	void RequestActivateLayer(size_t key, std::optional<std::function<void()>> runOnce = std::nullopt);
+	void request_push_layer(Layer* layer, size_t key, bool frozen = false);
+	void request_remove_layer(size_t key);
+	void request_freeze_layer(size_t key);
+	void request_activate_layer(size_t key, std::optional<std::function<void()>> runOnce = std::nullopt);
 
-	void UpdateAll(float dt);
+	void update_all(float dt);
 
-	bool HasActiveLayer(size_t key) const;
+	bool has_active_layer(size_t key) const;
 
-	std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
-	std::vector<Layer*>::iterator end() { return m_Layers.end(); }
-
-private:
-	void PushLayer(Layer* layer, size_t key, bool frozen = false);
-	void RemoveLayer(size_t key);
-	void FreezeLayer(size_t key);
-	void ActivateLayer(size_t key, std::optional<std::function<void()>> runOnc);
+	std::vector<Layer*>::iterator begin() { return m_layers.begin(); }
+	std::vector<Layer*>::iterator end() { return m_layers.end(); }
 
 private:
-	std::vector<Layer*> m_Layers {};
-	std::vector<size_t> m_Keys {};
+	void push_layer(Layer* layer, size_t key, bool frozen = false);
+	void remove_layer(size_t key);
+	void freeze_layer(size_t key);
+	void activate_layer(size_t key, std::optional<std::function<void()>> runOnc);
 
-	std::vector<Layer*> m_FrozenLayers {};
-	std::vector<size_t> m_FrozenKeys {};
-	std::stack<std::pair<size_t, std::function<void()>>> m_OneRunners {};
+private:
+	std::vector<Layer*> m_layers {};
+	std::vector<size_t> m_keys {};
 
-	std::vector<LayerCommand> m_Commands {};
+	std::vector<Layer*> m_frozen_layers {};
+	std::vector<size_t> m_frozen_keys {};
+	std::stack<std::pair<size_t, std::function<void()>>> m_one_runners {};
+
+	std::vector<LayerCommand> m_commands {};
 };
 
 }

@@ -10,8 +10,8 @@
 #include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
-void ParticleEmitterShapeDebugRenderSystem::Render(Origo::Scene* scene, RenderContext& rCtx) {
-	scene->View<ParticleSystemComponent, TransformComponent>(
+void ParticleEmitterShapeDebugRenderSystem::render(Origo::Scene* scene, RenderContext& rCtx) {
+	scene->view<ParticleSystemComponent, TransformComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf) {

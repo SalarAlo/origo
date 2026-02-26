@@ -11,56 +11,56 @@
 
 namespace ComponentUI {
 
-void DrawVec3Control(std::string_view label, glm::vec3& values, float speed = 0.1f);
-void DrawVec2Control(std::string_view label, glm::vec2& values, float speed = 0.1f);
-void DrawMinMaxRangeControl(std::string_view label, glm::vec2& values, float speed = 0.1f);
+void draw_vec3_control(std::string_view label, glm::vec3& values, float speed = 0.1f);
+void draw_vec2_control(std::string_view label, glm::vec2& values, float speed = 0.1f);
+void draw_min_max_range_control(std::string_view label, glm::vec2& values, float speed = 0.1f);
 
-void DrawFloatControl(std::string_view label, float& value, float speed = 0.1f);
-void DrawFloatControl(std::string_view label, float& value, float speed, const char* format);
+void draw_float_control(std::string_view label, float& value, float speed = 0.1f);
+void draw_float_control(std::string_view label, float& value, float speed, const char* format);
 
-void DrawIntControl(std::string_view label, int& value, float speed = 0.1f);
+void draw_int_control(std::string_view label, int& value, float speed = 0.1f);
 
-void DrawStringControl(std::string_view label, std::string& value);
+void draw_string_control(std::string_view label, std::string& value);
 
-void DrawBoolControl(std::string_view label, bool& value);
+void draw_bool_control(std::string_view label, bool& value);
 
-void DrawAssetControl(
+void draw_asset_control(
     std::string_view label,
     Origo::OptionalAssetHandle& handle,
     std::optional<Origo::AssetType> assetValidationType = std::nullopt);
 
-void DrawColorControl(std::string_view label, glm::vec3& value);
+void draw_color_control(std::string_view label, glm::vec3& value);
 
-bool StartRegion(std::string_view label, bool defaultOpen = true);
-void EndRegion(bool open);
+bool start_region(std::string_view label, bool defaultOpen = true);
+void end_region(bool open);
 
 template <typename T>
-void DrawEnumControl(std::string_view label, T& value) {
+void draw_enum_control(std::string_view label, T& value) {
 	static_assert(std::is_enum_v<T>, "DrawEnumControl requires an enum type");
 
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
 
-	const float fieldWidth = 140.0f;
+	const float field_width = 140.0f;
 
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label.data());
 
 	float avail = ImGui::GetContentRegionAvail().x;
-	float nextX = ImGui::GetCursorPosX() + avail - fieldWidth;
-	float minX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	float next_x = ImGui::GetCursorPosX() + avail - field_width;
+	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
 
-	if (nextX < minX)
-		nextX = minX;
+	if (next_x < min_x)
+		next_x = min_x;
 
-	ImGui::SameLine(nextX);
+	ImGui::SameLine(next_x);
 
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
-	ImGui::SetNextItemWidth(fieldWidth);
+	ImGui::SetNextItemWidth(field_width);
 
 	const char* preview = magic_enum::enum_name(value).data();
 

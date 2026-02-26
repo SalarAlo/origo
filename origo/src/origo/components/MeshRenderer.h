@@ -11,7 +11,7 @@ public:
 	MeshRendererComponent() = default;
 	MeshRendererComponent(OptionalAssetHandle material, OptionalAssetHandle mesh);
 
-	std::string GetComponentName() const override { return "MeshRenderer"; }
+	std::string get_component_name() const override { return "MeshRenderer"; }
 
 	OptionalAssetHandle MaterialHandle { std::nullopt };
 	OptionalAssetHandle MeshHandle { std::nullopt };

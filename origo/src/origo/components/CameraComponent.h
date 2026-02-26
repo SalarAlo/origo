@@ -12,7 +12,7 @@ public:
 	Camera CameraObj { 1.0f };
 
 public:
-	std::string GetComponentName() const override { return "Camera"; }
+	std::string get_component_name() const override { return "Camera"; }
 };
 
 }

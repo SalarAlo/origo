@@ -7,17 +7,17 @@
 namespace OrigoEditor {
 struct TextEditablePathVisitor {
 	std::optional<std::filesystem::path> operator()(Origo::Script* script) const {
-		return script->GetPath();
+		return script->get_path();
 	}
 
 	std::optional<std::filesystem::path> operator()(Origo::Shader* shader) const {
-		auto* source { shader->GetSource() };
-		auto* fileSource { dynamic_cast<Origo::ShaderSourceFile*>(source) };
+		auto* source { shader->get_source() };
+		auto* file_source { dynamic_cast<Origo::ShaderSourceFile*>(source) };
 
-		if (!fileSource)
+		if (!file_source)
 			return std::nullopt;
 
-		return fileSource->GetPath();
+		return file_source->get_path();
 	}
 };
 }

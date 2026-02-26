@@ -6,11 +6,11 @@ static std::mt19937_64 rng;
 
 namespace Origo::Random {
 
-void Seed(int seed) {
+void seed(int seed) {
 	rng.seed(seed);
 }
 
-float Range(float min, float max) {
+float range(float min, float max) {
 	min = std::min(min, max);
 	max = std::max(min, max);
 
@@ -18,11 +18,11 @@ float Range(float min, float max) {
 	return dist(rng);
 }
 
-float Float01() {
-	return Range(0.0f, 1.0f);
+float float01() {
+	return range(0.0f, 1.0f);
 }
 
-int Range(int min, int max) {
+int range(int min, int max) {
 	min = std::min(min, max);
 	max = std::max(min, max);
 
@@ -30,15 +30,15 @@ int Range(int min, int max) {
 	return dist(rng);
 }
 
-Vec3 RandomUnitVector() {
-	float u = Range(-1.0f, 1.0f);
-	float theta = Range(0.0f, 2.0f * 3.14159265358979323846f);
+Vec3 random_unit_vector() {
+	float u = range(-1.0f, 1.0f);
+	float theta = range(0.0f, 2.0f * 3.14159265358979323846f);
 
-	float sqrtTerm = std::sqrt(1.0f - u * u);
+	float sqrt_term = std::sqrt(1.0f - u * u);
 
 	auto out = Vec3(
-	    sqrtTerm * std::cos(theta),
-	    sqrtTerm * std::sin(theta),
+	    sqrt_term * std::cos(theta),
+	    sqrt_term * std::sin(theta),
 	    u);
 	out = glm::normalize(out);
 	return out;

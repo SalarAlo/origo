@@ -3,7 +3,7 @@
 #pragma region SHAPE_DEFS
 // clang-format off
 
-static const std::vector<float> CUBE_VERTICES {
+static const std::vector<float> cube_vertices {
     // Front face (0, 0, 1)
     -0.5f, -0.5f,  0.5f,  0, 0, 1,  0.0f, 0.0f,  // bottom-left
      0.5f, -0.5f,  0.5f,  0, 0, 1,  1.0f, 0.0f,  // bottom-right
@@ -42,7 +42,7 @@ static const std::vector<float> CUBE_VERTICES {
 };
 
 
-static const std::vector<unsigned int> CUBE_INDICES = {
+static const std::vector<unsigned int> cube_indices = {
     // Front face (CCW from outside)
     0, 1, 2, 
     2, 3, 0,
@@ -68,38 +68,38 @@ static const std::vector<unsigned int> CUBE_INDICES = {
     20, 23, 22
 };
 
-static const std::vector<float> TRIANGLE_VERTICES {
+static const std::vector<float> triangle_vertices {
     0.0f,  0.5f, 0.0f,   0, 0, 1,  0.5f, 1.0f,
    -0.5f, -0.5f, 0.0f,   0, 0, 1,  0.0f, 0.0f,
     0.5f, -0.5f, 0.0f,   0, 0, 1,  1.0f, 0.0f
 };
 
-static const std::vector<unsigned int> TRIANGLE_INDICES {
+static const std::vector<unsigned int> triangle_indices {
     0, 1, 2
 };
 
-static const std::vector<float> SPHERE_VERTICES = [] {
+static const std::vector<float> sphere_vertices = [] {
     const int stacks  = 32;
     const int sectors = 32;
 
-    const float PI = 3.14159265359f;
+    const float pi = 3.14159265359f;
 
     std::vector<float> v;
     v.reserve(stacks * sectors * 8);
 
     for (int i = 0; i <= stacks; i++) {
-        float stackAngle = PI/2 - (float)i / stacks * PI;   
-        float xy = cosf(stackAngle);
-        float y  = sinf(stackAngle);
+        float stack_angle = pi/2 - (float)i / stacks * pi;   
+        float xy = cosf(stack_angle);
+        float y  = sinf(stack_angle);
 
         for (int j = 0; j <= sectors; j++) {
-            float sectorAngle = (float)j / sectors * 2 * PI; 
+            float sector_angle = (float)j / sectors * 2 * pi; 
 
-            float x = xy * cosf(sectorAngle);
-            float z = xy * sinf(sectorAngle);
+            float x = xy * cosf(sector_angle);
+            float z = xy * sinf(sector_angle);
 
             float u = (float)j / sectors;
-            float vCoord = (float)i / stacks;
+            float v_coord = (float)i / stacks;
 
             v.push_back( x * 0.5f);
 	    v.push_back( y * 0.5f);
@@ -110,14 +110,14 @@ static const std::vector<float> SPHERE_VERTICES = [] {
             v.push_back(z);
 
             v.push_back(u);
-            v.push_back(vCoord);
+            v.push_back(v_coord);
         }
     }
 
     return v;
 }();
 
-static const std::vector<unsigned int> SPHERE_INDICES = [] {
+static const std::vector<unsigned int> sphere_indices = [] {
     const int stacks  = 32;
     const int sectors = 32;
 
@@ -147,7 +147,7 @@ static const std::vector<unsigned int> SPHERE_INDICES = [] {
     return idx;
 }();
 
-static const std::vector<float> QUAD_VERTICES {
+static const std::vector<float> quad_vertices {
     // X,     Y,    Z,     NX, NY, NZ,   U,    V
     -0.5f,  0.0f, -0.5f,  0,  1,  0,    0.0f, 0.0f, // bottom-left
      0.5f,  0.0f, -0.5f,  0,  1,  0,    1.0f, 0.0f, // bottom-right
@@ -155,18 +155,18 @@ static const std::vector<float> QUAD_VERTICES {
     -0.5f,  0.0f,  0.5f,  0,  1,  0,    0.0f, 1.0f  // top-left
 };
 
-static const std::vector<unsigned int> QUAD_INDICES {
+static const std::vector<unsigned int> quad_indices {
     0, 1, 2,
     2, 3, 0
 };
 
-static const std::vector<float> CONE_VERTICES = [] {
+static const std::vector<float> cone_vertices = [] {
     const int sectors = 32;
-    const float PI = 3.14159265359f;
+    const float pi = 3.14159265359f;
 
     const float radius     = 0.5f;
-    const float halfHeight = 0.5f;
-    const float height     = 2.0f * halfHeight;
+    const float half_height = 0.5f;
+    const float height     = 2.0f * half_height;
 
     auto normalize3 = [](float x, float y, float z) {
         float len = sqrtf(x*x + y*y + z*z);
@@ -182,14 +182,14 @@ static const std::vector<float> CONE_VERTICES = [] {
 
     // --- Tip vertex (index 0) ---
     v.insert(v.end(), {
-        0.0f,  halfHeight, 0.0f,
+        0.0f,  half_height, 0.0f,
         0.0f,  1.0f,       0.0f,
         0.5f,  1.0f
     });
 
     // --- Base center (index 1) ---
     v.insert(v.end(), {
-        0.0f, -halfHeight, 0.0f,
+        0.0f, -half_height, 0.0f,
         0.0f, -1.0f,       0.0f,
         0.5f,  0.5f
     });
@@ -200,7 +200,7 @@ static const std::vector<float> CONE_VERTICES = [] {
 
     for (int i = 0; i <= sectors; i++) {
         float t = (float)i / (float)sectors;
-        float a = t * 2.0f * PI;
+        float a = t * 2.0f * pi;
 
         float x = radius * cosf(a);
         float z = radius * sinf(a);
@@ -208,7 +208,7 @@ static const std::vector<float> CONE_VERTICES = [] {
         auto n = normalize3(x, ny, z);
 
         v.push_back(x);
-        v.push_back(-halfHeight);
+        v.push_back(-half_height);
         v.push_back(z);
 
         v.push_back(n[0]);
@@ -223,7 +223,7 @@ static const std::vector<float> CONE_VERTICES = [] {
     // indices: baseRingStart .. baseRingStart+sectors
     for (int i = 0; i <= sectors; i++) {
         float t = (float)i / (float)sectors;
-        float a = t * 2.0f * PI;
+        float a = t * 2.0f * pi;
 
         float x = radius * cosf(a);
         float z = radius * sinf(a);
@@ -233,7 +233,7 @@ static const std::vector<float> CONE_VERTICES = [] {
         float w = (z / radius) * 0.5f + 0.5f;
 
         v.push_back(x);
-        v.push_back(-halfHeight);
+        v.push_back(-half_height);
         v.push_back(z);
 
         v.push_back(0.0f);
@@ -247,29 +247,29 @@ static const std::vector<float> CONE_VERTICES = [] {
     return v;
 }();
 
-static const std::vector<unsigned int> CONE_INDICES = [] {
+static const std::vector<unsigned int> cone_indices = [] {
     const int sectors = 32;
 
     std::vector<unsigned int> idx;
     idx.reserve(sectors * 6);
 
-    const unsigned int tipIndex        = 0;
-    const unsigned int baseCenterIndex = 1;
-    const unsigned int sideRingStart   = 2;
-    const unsigned int baseRingStart   = sideRingStart + (sectors + 1);
+    const unsigned int tip_index        = 0;
+    const unsigned int base_center_index = 1;
+    const unsigned int side_ring_start   = 2;
+    const unsigned int base_ring_start   = side_ring_start + (sectors + 1);
 
     // --- Side triangles (CCW from outside) ---
     for (int i = 0; i < sectors; i++) {
-        idx.push_back(tipIndex);
-        idx.push_back(sideRingStart + i + 1);
-        idx.push_back(sideRingStart + i);
+        idx.push_back(tip_index);
+        idx.push_back(side_ring_start + i + 1);
+        idx.push_back(side_ring_start + i);
     }
 
     // --- Base triangles (CCW when viewed from outside i.e. from -Y) ---
     for (int i = 0; i < sectors; i++) {
-        idx.push_back(baseCenterIndex);
-        idx.push_back(baseRingStart + i);
-        idx.push_back(baseRingStart + i + 1);
+        idx.push_back(base_center_index);
+        idx.push_back(base_ring_start + i);
+        idx.push_back(base_ring_start + i + 1);
     }
 
     return idx;
@@ -280,18 +280,18 @@ static const std::vector<unsigned int> CONE_INDICES = [] {
 #pragma endregion
 
 namespace Origo {
-MeshData GetDataFromShape(PrimitiveShape shape) {
+MeshData get_data_from_shape(PrimitiveShape shape) {
 	switch (shape) {
 	case PrimitiveShape::Cube:
-		return { CUBE_VERTICES, CUBE_INDICES };
+		return { cube_vertices, cube_indices };
 	case PrimitiveShape::Triangle:
-		return { TRIANGLE_VERTICES, TRIANGLE_INDICES };
+		return { triangle_vertices, triangle_indices };
 	case PrimitiveShape::Sphere:
-		return { SPHERE_VERTICES, SPHERE_INDICES };
+		return { sphere_vertices, sphere_indices };
 	case PrimitiveShape::Quad:
-		return { QUAD_VERTICES, QUAD_INDICES };
+		return { quad_vertices, quad_indices };
 	case PrimitiveShape::Cone:
-		return { CONE_VERTICES, CONE_INDICES };
+		return { cone_vertices, cone_indices };
 	}
 
 	return { {}, {} };

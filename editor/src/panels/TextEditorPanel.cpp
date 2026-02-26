@@ -17,34 +17,34 @@
 namespace OrigoEditor {
 
 TextEditorPanel::TextEditorPanel(EditorContext& ctx)
-    : m_Context(ctx) {
-	m_Editor.SetLanguageDefinition(TextEditor::LanguageDefinition::Lua());
+    : m_context(ctx) {
+	m_editor.SetLanguageDefinition(TextEditor::LanguageDefinition::Lua());
 }
 
-void TextEditorPanel::OnImGuiRender() {
-	static auto& am { Origo::AssetManager::GetInstance() };
+void TextEditorPanel::on_im_gui_render() {
+	static auto& am { Origo::AssetManager::get_instance() };
 
-	auto uuid = m_Context.GetSelectedAsset();
+	auto uuid = m_context.get_selected_asset();
 	if (!uuid) {
-		m_CopiedFileContents = false;
-		DisplayUneditableAsset("No asset selected");
+		m_copied_file_contents = false;
+		display_uneditable_asset("No asset selected");
 		return;
 	}
 
-	auto handle = am.GetHandleByUUID(*uuid);
+	auto handle = am.get_handle_by_uuid(*uuid);
 	if (!handle) {
-		m_CopiedFileContents = false;
-		DisplayUneditableAsset("Invalid asset");
+		m_copied_file_contents = false;
+		display_uneditable_asset("Invalid asset");
 		return;
 	}
 
-	auto asset = am.Get(*handle);
+	auto asset = am.get(*handle);
 
-	auto editable = ToEditableAsset(asset);
+	auto editable = to_editable_asset(asset);
 	if (!editable) {
-		m_CopiedFileContents = false;
-		std::string_view asset_name = magic_enum::enum_name(asset->GetAssetType());
-		DisplayUneditableAsset(asset_name.data());
+		m_copied_file_contents = false;
+		std::string_view asset_name = magic_enum::enum_name(asset->get_asset_type());
+		display_uneditable_asset(asset_name.data());
 		return;
 	}
 
@@ -52,40 +52,40 @@ void TextEditorPanel::OnImGuiRender() {
 	if (!path)
 		return;
 
-	if (!m_CopiedFileContents || m_CurrentPath != *path) {
-		m_CurrentPath = *path;
-		m_Editor.SetLanguageDefinition(TextEditor::LanguageDefinition::Lua());
+	if (!m_copied_file_contents || m_current_path != *path) {
+		m_current_path = *path;
+		m_editor.SetLanguageDefinition(TextEditor::LanguageDefinition::Lua());
 
 		auto text = std::visit(TextEditableLoadTextVisitor {}, *editable);
-		m_Editor.SetLanguageDefinition(std::visit(TextEditableSyntaxHighlit {}, *editable));
-		m_Editor.SetText(text);
+		m_editor.SetLanguageDefinition(std::visit(TextEditableSyntaxHighlit {}, *editable));
+		m_editor.SetText(text);
 
-		m_CopiedFileContents = true;
+		m_copied_file_contents = true;
 	}
 
-	if (UI::CodeFont) {
-		ImGui::PushFont(UI::CodeFont);
+	if (UI::code_font) {
+		ImGui::PushFont(UI::code_font);
 		ImGui::SetWindowFontScale(1.15f);
 	}
 
-	m_Editor.Render("ScriptEditor");
-	bool saveRequested = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S);
+	m_editor.Render("ScriptEditor");
+	bool save_requested = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S);
 
-	if (saveRequested)
-		SaveCurrentAsset(*editable);
+	if (save_requested)
+		save_current_asset(*editable);
 
-	if (UI::CodeFont) {
+	if (UI::code_font) {
 		ImGui::PopFont();
 		ImGui::SetWindowFontScale(1.0f);
 	}
 }
 
-void TextEditorPanel::SaveCurrentAsset(const TextEditableAsset& editable) {
-	auto text { m_Editor.GetText() };
+void TextEditorPanel::save_current_asset(const TextEditableAsset& editable) {
+	auto text { m_editor.GetText() };
 	std::visit(TextEditableSaveTextVisitor { text }, editable);
 }
 
-void TextEditorPanel::DisplayUneditableAsset(const std::string& assetTypeName) {
+void TextEditorPanel::display_uneditable_asset(const std::string& assetTypeName) {
 	ImGui::BeginChild("UneditableAssetPanel", ImVec2(0, 0), true);
 
 	ImVec2 region = ImGui::GetContentRegionAvail();
@@ -94,17 +94,17 @@ void TextEditorPanel::DisplayUneditableAsset(const std::string& assetTypeName) {
 	const char* title = "No Editable Source";
 	const char* subtitle = "This asset cannot be modified directly";
 
-	ImVec2 iconSize = ImGui::CalcTextSize(icon);
-	ImVec2 titleSize = ImGui::CalcTextSize(title);
-	ImVec2 subSize = ImGui::CalcTextSize(subtitle);
-	ImVec2 typeSize = ImGui::CalcTextSize(assetTypeName.c_str());
+	ImVec2 icon_size = ImGui::CalcTextSize(icon);
+	ImVec2 title_size = ImGui::CalcTextSize(title);
+	ImVec2 sub_size = ImGui::CalcTextSize(subtitle);
+	ImVec2 type_size = ImGui::CalcTextSize(assetTypeName.c_str());
 
-	float totalHeight = iconSize.y + 12.0f + titleSize.y + 6.0f + subSize.y + 18.0f + typeSize.y;
+	float total_height = icon_size.y + 12.0f + title_size.y + 6.0f + sub_size.y + 18.0f + type_size.y;
 
-	float startY = (region.y - totalHeight) * 0.5f;
-	ImGui::SetCursorPosY(startY);
+	float start_y = (region.y - total_height) * 0.5f;
+	ImGui::SetCursorPosY(start_y);
 
-	auto centerText = [&](const char* txt) {
+	auto center_text = [&](const char* txt) {
 		float width = ImGui::CalcTextSize(txt).x;
 		ImGui::SetCursorPosX((region.x - width) * 0.5f);
 		ImGui::TextUnformatted(txt);
@@ -112,40 +112,40 @@ void TextEditorPanel::DisplayUneditableAsset(const std::string& assetTypeName) {
 
 	// Icon
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1));
-	centerText(icon);
+	center_text(icon);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 12));
 
 	// Title
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1));
-	centerText(title);
+	center_text(title);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 6));
 
 	// Subtitle
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1));
-	centerText(subtitle);
+	center_text(subtitle);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 18));
 
 	// Asset type label
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.4f, 0.4f, 1));
-	centerText("Asset Type");
+	center_text("Asset Type");
 	ImGui::PopStyleColor();
 
 	// Asset type value
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.55f, 0.35f, 1));
-	centerText(assetTypeName.c_str());
+	center_text(assetTypeName.c_str());
 	ImGui::PopStyleColor();
 
 	ImGui::EndChild();
 }
 
-std::optional<TextEditableAsset> TextEditorPanel::ToEditableAsset(Origo::Asset* asset) {
-	switch (asset->GetAssetType()) {
+std::optional<TextEditableAsset> TextEditorPanel::to_editable_asset(Origo::Asset* asset) {
+	switch (asset->get_asset_type()) {
 	case Origo::AssetType::Script:
 		return static_cast<Origo::Script*>(asset);
 

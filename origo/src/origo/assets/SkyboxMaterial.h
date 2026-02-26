@@ -10,14 +10,14 @@ class SkyboxMaterial final : public Asset {
 public:
 	SkyboxMaterial(AssetHandle shader, AssetHandle cubemap);
 
-	static AssetType GetClassAssetType() { return AssetType::SkyboxMaterial; }
-	AssetType GetAssetType() const override { return GetClassAssetType(); }
+	static AssetType get_class_asset_type() { return AssetType::SkyboxMaterial; }
+	AssetType get_asset_type() const override { return get_class_asset_type(); }
 
-	void Bind(const glm::mat4& projection, const glm::mat4& view);
+	void bind(const glm::mat4& projection, const glm::mat4& view);
 
 private:
-	AssetHandle m_Shader;
-	AssetHandle m_Cubemap;
+	AssetHandle m_shader;
+	AssetHandle m_cubemap;
 };
 
 }

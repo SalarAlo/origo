@@ -20,14 +20,14 @@
 namespace OrigoEditor {
 
 HierarchyPanel::HierarchyPanel(EditorContext& ctx)
-    : m_Context(ctx) { }
+    : m_context(ctx) { }
 
-void HierarchyPanel::OnImGuiRender() {
+void HierarchyPanel::on_im_gui_render() {
 	ImGui::TextUnformatted("Hierarchy");
 	ImGui::Separator();
 
-	auto selectedEntityID { m_Context.GetSelectedEntity() };
-	ImTextureID entityIcon { EditorIcons::GetInstance().Get(IconType::Entity) };
+	auto selected_entity_id { m_context.get_selected_entity() };
+	ImTextureID entity_icon { EditorIcons::get_instance().get(IconType::Entity) };
 
 	ImGui::BeginChild("HierarchyList", ImVec2(0, 0), false);
 
@@ -35,74 +35,74 @@ void HierarchyPanel::OnImGuiRender() {
 		ImGui::MenuItem("Empty");
 
 		if (ImGui::IsItemClicked()) {
-			auto ent { m_Context.ActiveScene->CreateEntity("Entity") };
-			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(ent);
+			auto ent { m_context.ActiveScene->create_entity("Entity") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(ent);
 		}
 
 		ImGui::Separator();
 
 		ImGui::MenuItem("Cube");
 		if (ImGui::IsItemClicked()) {
-			auto cube { m_Context.ActiveScene->CreateEntity("Cube") };
-			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
-			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
-			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetCubeMesh();
-			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
+			auto cube { m_context.ActiveScene->create_entity("Cube") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cube);
+			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
+			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_cube_mesh();
+			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 		}
 
 		ImGui::MenuItem("Cone");
 		if (ImGui::IsItemClicked()) {
-			auto cube { m_Context.ActiveScene->CreateEntity("Cube") };
-			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
-			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
-			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetConeMesh();
-			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
+			auto cube { m_context.ActiveScene->create_entity("Cube") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cube);
+			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
+			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_cone_mesh();
+			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 		}
 
 		ImGui::MenuItem("Sphere");
 		if (ImGui::IsItemClicked()) {
-			auto cube { m_Context.ActiveScene->CreateEntity("Sphere") };
-			m_Context.ActiveScene->AddNativeComponent<EditorOutlineComponent>(cube);
-			auto meshRenderer { m_Context.ActiveScene->AddNativeComponent<Origo::MeshRendererComponent>(cube) };
-			meshRenderer->MeshHandle = Origo::PrimitiveShapeCache::GetInstance().GetSphereMesh();
-			meshRenderer->MaterialHandle = Origo::DefaultAssetCache::GetInstance().GetMaterial();
+			auto cube { m_context.ActiveScene->create_entity("Sphere") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cube);
+			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
+			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_sphere_mesh();
+			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 		}
 
 		ImGui::EndPopup();
 	}
 
-	for (const auto& entityID : m_Context.ActiveScene->GetEntities()) {
-		if (m_Context.ActiveScene->HasNativeComponent<Origo::EditorHiddenComponent>(entityID)) {
+	for (const auto& entity_id : m_context.ActiveScene->get_entities()) {
+		if (m_context.ActiveScene->has_native_component<Origo::EditorHiddenComponent>(entity_id)) {
 			continue;
 		}
 
-		ImGui::PushID(entityID.GetId());
+		ImGui::PushID(entity_id.get_id());
 
-		bool selected = selectedEntityID && selectedEntityID == entityID;
+		bool selected = selected_entity_id && selected_entity_id == entity_id;
 
 		ImGui::Selectable("##EntitySelectable", selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap);
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !selected)
-			m_Context.SetSelectedEntity(entityID);
+			m_context.set_selected_entity(entity_id);
 
 		if (ImGui::BeginPopupContextItem("EntityContextPopup")) {
 			ImGui::MenuItem("Remove");
 			if (ImGui::IsItemClicked()) {
-				m_Context.ActiveScene->ScheduleRemoveEntity(entityID);
-				m_Context.UnselectEntity();
+				m_context.ActiveScene->schedule_remove_entity(entity_id);
+				m_context.unselect_entity();
 			}
 			ImGui::EndPopup();
 		}
 
 		ImGui::SameLine();
 
-		if (entityIcon)
-			ImGui::Image(entityIcon, ImVec2(16, 16));
+		if (entity_icon)
+			ImGui::Image(entity_icon, ImVec2(16, 16));
 
 		ImGui::SameLine(0.0f, 6.0f);
 
-		auto* nameComp = m_Context.ActiveScene->GetNativeComponent<Origo::NameComponent>(entityID);
-		ImGui::TextUnformatted(nameComp->Name.c_str());
+		auto* name_comp = m_context.ActiveScene->get_native_component<Origo::NameComponent>(entity_id);
+		ImGui::TextUnformatted(name_comp->Name.c_str());
 
 		ImGui::PopID();
 	}

@@ -10,21 +10,21 @@ public:
 	using DrawFn = std::function<void(T&)>;
 
 	InspectorDrawable(std::string_view name, DrawFn drawer)
-	    : m_Name(name.data())
-	    , m_DrawFn(drawer) {
+	    : m_name(name.data())
+	    , m_draw_fn(drawer) {
 	}
 
-	void Draw(void* drawablePtr) override {
-		m_DrawFn(*reinterpret_cast<T*>(drawablePtr));
+	void draw(void* drawablePtr) override {
+		m_draw_fn(*reinterpret_cast<T*>(drawablePtr));
 	}
 
-	const char* GetName() const override {
-		return m_Name;
+	const char* get_name() const override {
+		return m_name;
 	}
 
 private:
-	const char* m_Name;
-	DrawFn m_DrawFn;
+	const char* m_name;
+	DrawFn m_draw_fn;
 };
 
 }

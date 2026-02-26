@@ -13,58 +13,58 @@
 #include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
-void InspectorComponentRenderer::Init(EditorContext* ctx) {
-	s_Context = ctx;
+void InspectorComponentRenderer::init(EditorContext* ctx) {
+	s_context = ctx;
 }
 
-void InspectorComponentRenderer::DrawNativeComponent(const Origo::RID& entity, void* componentPtr, std::type_index type) {
-	auto* entry = InspectorDrawRegistry::Get(type);
+void InspectorComponentRenderer::draw_native_component(const Origo::RID& entity, void* componentPtr, std::type_index type) {
+	auto* entry = InspectorDrawRegistry::get(type);
 
 	if (!entry) {
-		DrawUnknown(componentPtr);
+		draw_unknown(componentPtr);
 		return;
 	}
 
 	if (!entry->Icon && entry->IconPath)
-		entry->Icon = LoadIcon(entry->IconPath);
+		entry->Icon = load_icon(entry->IconPath);
 
 	std::string label = std::string(entry->Name) + "##" + std::to_string(reinterpret_cast<uintptr_t>(componentPtr));
 
-	if (DrawHeaderNative(entity, componentPtr, label.c_str(), entry->Icon, type))
-		entry->Drawer->Draw(componentPtr);
+	if (draw_header_native(entity, componentPtr, label.c_str(), entry->Icon, type))
+		entry->Drawer->draw(componentPtr);
 }
 
-void InspectorComponentRenderer::DrawScriptComponent(Origo::ScriptComponentInstance& instance) {
-	auto& desc = Origo::ScriptComponentRegistry::Get(instance.ID);
+void InspectorComponentRenderer::draw_script_component(Origo::ScriptComponentInstance& instance) {
+	auto& desc = Origo::ScriptComponentRegistry::get(instance.ID);
 
-	if (!s_ScriptIcon)
-		s_ScriptIcon = LoadIcon("./icons/Script.svg");
+	if (!s_script_icon)
+		s_script_icon = load_icon("./icons/Script.svg");
 
 	std::string label = desc.Name + "##" + std::to_string(reinterpret_cast<uintptr_t>(&instance));
 
-	if (!DrawHeaderScripted(&instance, label.c_str(), s_ScriptIcon))
+	if (!draw_header_scripted(&instance, label.c_str(), s_script_icon))
 		return;
 
-	for (auto& fieldDesc : desc.Fields) {
+	for (auto& field_desc : desc.Fields) {
 		auto it = std::find_if(
 		    instance.Fields.begin(),
 		    instance.Fields.end(),
-		    [&](auto& f) { return f.ID == fieldDesc.ID; });
+		    [&](auto& f) { return f.ID == field_desc.ID; });
 
 		if (it == instance.Fields.end()) {
 			instance.Fields.emplace_back(
-			    fieldDesc.ID,
-			    fieldDesc.Name,
-			    fieldDesc.DefaultValue);
+			    field_desc.ID,
+			    field_desc.Name,
+			    field_desc.DefaultValue);
 
 			it = std::prev(instance.Fields.end());
 		}
 
-		DrawScriptField(fieldDesc, it->Value);
+		draw_script_field(field_desc, it->Value);
 	}
 }
 
-bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void* id, const char* label, Origo::Ref<Origo::Texture2D> icon, std::type_index type) {
+bool InspectorComponentRenderer::draw_header_native(const Origo::RID& entity, void* id, const char* label, Origo::Ref<Origo::Texture2D> icon, std::type_index type) {
 	ImGui::PushID(id);
 
 	bool open = false;
@@ -75,14 +75,14 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 		ImGui::TableNextRow();
 
 		ImGui::TableSetColumnIndex(0);
-		float iconSize = 18.0f;
-		float yOff = (ImGui::GetFrameHeight() - iconSize) * 0.5f;
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOff);
+		float icon_size = 18.0f;
+		float y_off = (ImGui::GetFrameHeight() - icon_size) * 0.5f;
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + y_off);
 
 		if (icon)
 			ImGui::Image(
-			    (ImTextureID)(intptr_t)icon->GetRendererID(),
-			    ImVec2(iconSize, iconSize));
+			    (ImTextureID)(intptr_t)icon->get_renderer_id(),
+			    ImVec2(icon_size, icon_size));
 
 		ImGui::TableSetColumnIndex(1);
 
@@ -92,24 +92,24 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 
 		ImGui::SetItemAllowOverlap();
 
-		ImRect cellRect = ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1);
+		ImRect cell_rect = ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1);
 
-		float menuSize = 14.0f;
-		float x = cellRect.Max.x
-		    - menuSize
+		float menu_size = 14.0f;
+		float x = cell_rect.Max.x
+		    - menu_size
 		    - ImGui::GetStyle().CellPadding.x
 		    - ImGui::GetStyle().FramePadding.x;
 
-		ImRect headerRect(
+		ImRect header_rect(
 		    ImGui::GetItemRectMin(),
 		    ImGui::GetItemRectMax());
 
-		float y = headerRect.Min.y + (headerRect.GetHeight() - menuSize) * 0.5f;
+		float y = header_rect.Min.y + (header_rect.GetHeight() - menu_size) * 0.5f;
 
 		ImGui::SetCursorScreenPos(ImVec2(x, y));
 		ImGui::SetNextItemAllowOverlap();
 
-		ImTextureID menuIcon = EditorIcons::GetInstance().Get(IconType::Menu);
+		ImTextureID menu_icon = EditorIcons::get_instance().get(IconType::Menu);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
@@ -123,8 +123,8 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 
 		if (ImGui::ImageButton(
 		        "##component_menu_btn",
-		        menuIcon,
-		        ImVec2(menuSize, menuSize))) {
+		        menu_icon,
+		        ImVec2(menu_size, menu_size))) {
 
 			ImGui::OpenPopup("##component_menu");
 		}
@@ -134,7 +134,7 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 
 		if (ImGui::BeginPopup("##component_menu")) {
 			if (ImGui::MenuItem("Remove Component")) {
-				s_Context->ActiveScene->ScheduleRemoveNativeComponent(entity, type);
+				s_context->ActiveScene->schedule_remove_native_component(entity, type);
 			}
 			ImGui::EndPopup();
 		}
@@ -146,7 +146,7 @@ bool InspectorComponentRenderer::DrawHeaderNative(const Origo::RID& entity, void
 	return open;
 }
 
-bool InspectorComponentRenderer::DrawHeaderScripted(void* id, const char* label, Origo::Ref<Origo::Texture2D> icon) {
+bool InspectorComponentRenderer::draw_header_scripted(void* id, const char* label, Origo::Ref<Origo::Texture2D> icon) {
 	ImGui::PushID(id);
 
 	bool open = ImGui::CollapsingHeader(
@@ -157,60 +157,60 @@ bool InspectorComponentRenderer::DrawHeaderScripted(void* id, const char* label,
 	return open;
 }
 
-void InspectorComponentRenderer::DrawUnknown(void* componentPtr) {
-	if (!s_UnknownIcon)
-		s_UnknownIcon = LoadIcon("./icons/Entity.svg");
+void InspectorComponentRenderer::draw_unknown(void* componentPtr) {
+	if (!s_unknown_icon)
+		s_unknown_icon = load_icon("./icons/Entity.svg");
 
 	std::string label = "Unknown Component##" + std::to_string(reinterpret_cast<uintptr_t>(componentPtr));
 
 	ImGui::TextDisabled("(No inspector drawer registered)");
 }
 
-void InspectorComponentRenderer::DrawScriptField(const Origo::ScriptFieldDescriptor& field, Origo::Variant& value) {
-	if (value.GetType() != field.Type)
+void InspectorComponentRenderer::draw_script_field(const Origo::ScriptFieldDescriptor& field, Origo::Variant& value) {
+	if (value.get_type() != field.Type)
 		value = field.DefaultValue;
 
 	switch (field.Type) {
 	case Origo::VariantType::Bool: {
 		bool v;
 		value.TryGetAsBool(v);
-		ComponentUI::DrawBoolControl(field.Name, v);
+		ComponentUI::draw_bool_control(field.Name, v);
 		value = Origo::Variant(v);
 		break;
 	}
 	case Origo::VariantType::Int: {
 		int v;
 		value.TryGetAsInt(v);
-		ComponentUI::DrawIntControl(field.Name, v);
+		ComponentUI::draw_int_control(field.Name, v);
 		value = Origo::Variant(v);
 		break;
 	}
 	case Origo::VariantType::Float: {
 		float v;
 		value.TryGetAsFloat(v);
-		ComponentUI::DrawFloatControl(field.Name, v);
+		ComponentUI::draw_float_control(field.Name, v);
 		value = Origo::Variant(v);
 		break;
 	}
 	case Origo::VariantType::String: {
 		std::string v;
 		value.TryGetAsString(v);
-		ComponentUI::DrawStringControl(field.Name, v);
+		ComponentUI::draw_string_control(field.Name, v);
 		value = Origo::Variant(v);
 		break;
 	}
 	}
 }
 
-Origo::Ref<Origo::Texture2D> InspectorComponentRenderer::LoadIcon(const std::string& path) {
+Origo::Ref<Origo::Texture2D> InspectorComponentRenderer::load_icon(const std::string& path) {
 	auto tex = Origo::MakeRef<Origo::Texture2D>(
 	    Origo::TextureType::UI);
 
-	tex->SetSource(
+	tex->set_source(
 	    Origo::MakeScope<Origo::TextureSourceSVG>(
 	        path, 14, 14));
 
-	tex->Load();
+	tex->load();
 	return tex;
 }
 }

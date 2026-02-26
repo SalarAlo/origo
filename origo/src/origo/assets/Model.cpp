@@ -19,7 +19,7 @@
 
 namespace Origo {
 
-static glm::mat4 ConvertMatrix(const aiMatrix4x4& m) {
+static glm::mat4 convert_matrix(const aiMatrix4x4& m) {
 	glm::mat4 out;
 	out[0][0] = m.a1;
 	out[1][0] = m.a2;
@@ -40,7 +40,7 @@ static glm::mat4 ConvertMatrix(const aiMatrix4x4& m) {
 	return out;
 }
 
-static void MakeFallbackModel(std::vector<Model::Node>& nodes, int& rootNode) {
+static void make_fallback_model(std::vector<Model::Node>& nodes, int& rootNode) {
 	nodes.clear();
 	nodes.reserve(1);
 
@@ -54,63 +54,63 @@ static void MakeFallbackModel(std::vector<Model::Node>& nodes, int& rootNode) {
 }
 
 Model::Model()
-    : m_Path("")
-    , m_ModelShaderHandle(std::nullopt) { }
+    : m_path("")
+    , m_model_shader_handle(std::nullopt) { }
 
 Model::Model(const std::filesystem::path& path, const AssetHandle& shader)
-    : m_Path(path)
-    , m_ModelShaderHandle(shader) { }
+    : m_path(path)
+    , m_model_shader_handle(shader) { }
 
-AssetType Model::GetAssetType() const { return AssetType::Model; }
-AssetType Model::GetClassAssetType() { return AssetType::Model; }
+AssetType Model::get_asset_type() const { return AssetType::Model; }
+AssetType Model::get_class_asset_type() { return AssetType::Model; }
 
-const std::filesystem::path& Model::GetPath() const { return m_Path; }
-int Model::GetRootNode() const { return m_RootNode; }
-const std::vector<Model::Node>& Model::GetNodes() const { return m_Nodes; }
-const std::vector<Model::SubMesh>& Model::GetSubMeshes() const { return m_SubMeshes; }
+const std::filesystem::path& Model::get_path() const { return m_path; }
+int Model::get_root_node() const { return m_root_node; }
+const std::vector<Model::Node>& Model::get_nodes() const { return m_nodes; }
+const std::vector<Model::SubMesh>& Model::get_sub_meshes() const { return m_sub_meshes; }
 
-void Model::SetPath(const std::filesystem::path& path) { m_Path = path; }
-void Model::SetShaderHandle(const AssetHandle& handle) { m_ModelShaderHandle = handle; }
-void Model::SetShaderUUID(const UUID& id) { m_ShaderUUID = id; }
+void Model::set_path(const std::filesystem::path& path) { m_path = path; }
+void Model::set_shader_handle(const AssetHandle& handle) { m_model_shader_handle = handle; }
+void Model::set_shader_uuid(const UUID& id) { m_shader_uuid = id; }
 
-void Model::Load() {
-	if (m_Path.empty()) {
+void Model::load() {
+	if (m_path.empty()) {
 		ORG_CORE_WARN("Model::Load: path is empty");
-		Clear();
-		MakeFallbackModel(m_Nodes, m_RootNode);
+		clear();
+		make_fallback_model(m_nodes, m_root_node);
 		return;
 	}
 
-	Clear();
-	LoadFromAssimp();
+	clear();
+	load_from_assimp();
 
-	if (m_Nodes.empty() || m_RootNode < 0 || m_RootNode >= (int)m_Nodes.size()) {
-		ORG_CORE_WARN("Model::Load: invalid node graph produced for '{}', using fallback", m_Path.string());
-		MakeFallbackModel(m_Nodes, m_RootNode);
+	if (m_nodes.empty() || m_root_node < 0 || m_root_node >= (int)m_nodes.size()) {
+		ORG_CORE_WARN("Model::Load: invalid node graph produced for '{}', using fallback", m_path.string());
+		make_fallback_model(m_nodes, m_root_node);
 	}
 }
 
-void Model::Clear() {
-	m_SubMeshes.clear();
-	m_Nodes.clear();
-	m_AssimpMeshToSubMesh.clear();
-	m_RootNode = -1;
+void Model::clear() {
+	m_sub_meshes.clear();
+	m_nodes.clear();
+	m_assimp_mesh_to_sub_mesh.clear();
+	m_root_node = -1;
 }
 
-void Model::LoadFromAssimp() {
-	constexpr unsigned int Flags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_ImproveCacheLocality | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure;
+void Model::load_from_assimp() {
+	constexpr unsigned int flags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_ImproveCacheLocality | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure;
 
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(m_Path.string(), Flags);
+	const aiScene* scene = importer.ReadFile(m_path.string(), flags);
 
 	if (!scene || !scene->mRootNode) {
-		ORG_CORE_ERROR("Assimp failed to load '{}': {}", m_Path.string(), importer.GetErrorString());
-		MakeFallbackModel(m_Nodes, m_RootNode);
+		ORG_CORE_ERROR("Assimp failed to load '{}': {}", m_path.string(), importer.GetErrorString());
+		make_fallback_model(m_nodes, m_root_node);
 		return;
 	}
 
-	m_AssimpMeshToSubMesh.assign(scene->mNumMeshes, -1);
-	m_SubMeshes.reserve(scene->mNumMeshes);
+	m_assimp_mesh_to_sub_mesh.assign(scene->mNumMeshes, -1);
+	m_sub_meshes.reserve(scene->mNumMeshes);
 
 	for (uint32_t i = 0; i < scene->mNumMeshes; ++i) {
 		aiMesh* mesh = scene->mMeshes[i];
@@ -155,35 +155,35 @@ void Model::LoadFromAssimp() {
 			indices.push_back(face.mIndices[2]);
 		}
 
-		int layoutId = VertexLayout::GetStaticMeshLayout();
-		int heapId = GeometryHeapRegistry::GetOrCreateStaticMeshHeap(layoutId);
-		GeometryHeap* heap = GeometryHeapRegistry::GetHeap(heapId);
+		int layout_id = VertexLayout::get_static_mesh_layout();
+		int heap_id = GeometryHeapRegistry::get_or_create_static_mesh_heap(layout_id);
+		GeometryHeap* heap = GeometryHeapRegistry::get_heap(heap_id);
 
-		auto range = heap->Allocate(
+		auto range = heap->allocate(
 		    vertices.data(),
 		    vertices.size() * sizeof(float),
 		    8 * sizeof(float),
 		    indices.data(),
 		    indices.size());
 
-		AssetHandle meshHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Mesh>(
+		AssetHandle mesh_handle = AssetFactory::get_instance().create_runtime_asset<Mesh>(
 		    "ModelMesh_" + std::to_string(i),
-		    layoutId,
-		    heapId,
+		    layout_id,
+		    heap_id,
 		    range);
 
-		OptionalAssetHandle textureHandle {};
-		aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
+		OptionalAssetHandle texture_handle {};
+		aiMaterial* ai_mat = scene->mMaterials[mesh->mMaterialIndex];
 
-		aiString texPath;
-		if (aiMat && aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
-			std::string path = texPath.C_Str();
+		aiString tex_path;
+		if (ai_mat && ai_mat->GetTexture(aiTextureType_DIFFUSE, 0, &tex_path) == AI_SUCCESS) {
+			std::string path = tex_path.C_Str();
 
-			textureHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Texture2D>(
+			texture_handle = AssetFactory::get_instance().create_runtime_asset<Texture2D>(
 			    "ModelTex_" + std::to_string(i),
 			    TextureType::Albedo);
 
-			auto tex = AssetManager::GetInstance().Get<Texture2D>(*textureHandle);
+			auto tex = AssetManager::get_instance().get_asset<Texture2D>(*texture_handle);
 
 			if (!path.empty() && path[0] == '*') {
 				int idx = std::atoi(path.c_str() + 1);
@@ -194,7 +194,7 @@ void Model::LoadFromAssimp() {
 							std::vector<unsigned char> compressed(
 							    reinterpret_cast<unsigned char*>(embedded->pcData),
 							    reinterpret_cast<unsigned char*>(embedded->pcData) + embedded->mWidth);
-							tex->SetSource(MakeScope<TextureSourceEmbedded>(std::move(compressed)));
+							tex->set_source(MakeScope<TextureSourceEmbedded>(std::move(compressed)));
 						} else {
 							const int w = embedded->mWidth;
 							const int h = embedded->mHeight;
@@ -209,44 +209,44 @@ void Model::LoadFromAssimp() {
 								pixels[p * 4 + 3] = src[p].a;
 							}
 
-							tex->SetSource(MakeScope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
+							tex->set_source(MakeScope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
 						}
 					}
 				}
 			} else {
-				tex->SetSource(MakeScope<TextureSourceFile>((m_Path.parent_path() / path).string()));
+				tex->set_source(MakeScope<TextureSourceFile>((m_path.parent_path() / path).string()));
 			}
 
-			tex->Load();
+			tex->load();
 		}
 
-		AssetHandle materialHandle = AssetFactory::GetInstance().CreateRuntimeAsset<Material2D>(
+		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<Material2D>(
 		    "ModelMat_" + std::to_string(i),
-		    *m_ModelShaderHandle,
-		    textureHandle);
+		    *m_model_shader_handle,
+		    texture_handle);
 
-		m_AssimpMeshToSubMesh[i] = (int)m_SubMeshes.size();
-		m_SubMeshes.push_back({ meshHandle, materialHandle });
+		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();
+		m_sub_meshes.push_back({ mesh_handle, material_handle });
 	}
 
-	m_RootNode = ProcessNode(scene->mRootNode, -1);
-	if (m_Nodes.empty() || m_RootNode < 0 || m_RootNode >= (int)m_Nodes.size()) {
-		MakeFallbackModel(m_Nodes, m_RootNode);
+	m_root_node = process_node(scene->mRootNode, -1);
+	if (m_nodes.empty() || m_root_node < 0 || m_root_node >= (int)m_nodes.size()) {
+		make_fallback_model(m_nodes, m_root_node);
 	}
 }
 
-int Model::ProcessNode(aiNode* node, int parent) {
-	const int index = (int)m_Nodes.size();
+int Model::process_node(aiNode* node, int parent) {
+	const int index = (int)m_nodes.size();
 
-	Node& dst = m_Nodes.emplace_back();
+	Node& dst = m_nodes.emplace_back();
 	dst.Parent = parent;
-	dst.LocalTransform = ConvertMatrix(node->mTransformation);
+	dst.LocalTransform = convert_matrix(node->mTransformation);
 
 	dst.SubMeshIndex = -1;
 	for (uint32_t k = 0; k < node->mNumMeshes; ++k) {
-		const int assimpMeshIdx = (int)node->mMeshes[k];
-		if (assimpMeshIdx >= 0 && assimpMeshIdx < (int)m_AssimpMeshToSubMesh.size()) {
-			const int mapped = m_AssimpMeshToSubMesh[assimpMeshIdx];
+		const int assimp_mesh_idx = (int)node->mMeshes[k];
+		if (assimp_mesh_idx >= 0 && assimp_mesh_idx < (int)m_assimp_mesh_to_sub_mesh.size()) {
+			const int mapped = m_assimp_mesh_to_sub_mesh[assimp_mesh_idx];
 			if (mapped != -1) {
 				dst.SubMeshIndex = mapped;
 				break;
@@ -256,38 +256,38 @@ int Model::ProcessNode(aiNode* node, int parent) {
 
 	dst.Children.reserve(node->mNumChildren);
 	for (uint32_t i = 0; i < node->mNumChildren; ++i) {
-		dst.Children.push_back(ProcessNode(node->mChildren[i], index));
+		dst.Children.push_back(process_node(node->mChildren[i], index));
 	}
 
 	return index;
 }
 
-void Model::Resolve() {
-	if (m_Path.empty()) {
+void Model::resolve() {
+	if (m_path.empty()) {
 		ORG_CORE_WARN("Could not Resolve Model because no path provided");
 		return;
 	}
 
-	EnsureShader();
+	ensure_shader();
 
-	Load();
+	load();
 }
 
-void Model::EnsureShader() {
-	if (m_ModelShaderHandle.has_value())
+void Model::ensure_shader() {
+	if (m_model_shader_handle.has_value())
 		return;
 
-	auto defaultShader { DefaultAssetCache::GetInstance().GetShader() };
+	auto default_shader { DefaultAssetCache::get_instance().get_shader() };
 
-	if (!m_ShaderUUID.has_value()) {
-		m_ModelShaderHandle = defaultShader;
+	if (!m_shader_uuid.has_value()) {
+		m_model_shader_handle = default_shader;
 		return;
 	}
 
-	auto shaderHandle = AssetManager::GetInstance().GetHandleByUUID(*m_ShaderUUID);
+	auto shader_handle = AssetManager::get_instance().get_handle_by_uuid(*m_shader_uuid);
 
-	m_ModelShaderHandle = !shaderHandle.has_value() ? defaultShader : shaderHandle;
+	m_model_shader_handle = !shader_handle.has_value() ? default_shader : shader_handle;
 }
 
-OptionalAssetHandle Model::GetShaderHandle() const { return m_ModelShaderHandle; }
+OptionalAssetHandle Model::get_shader_handle() const { return m_model_shader_handle; }
 }

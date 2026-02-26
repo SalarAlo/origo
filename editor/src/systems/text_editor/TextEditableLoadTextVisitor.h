@@ -9,15 +9,15 @@ namespace OrigoEditor {
 
 struct TextEditableLoadTextVisitor {
 	std::string operator()(Origo::Script* script) const {
-		return LoadFromFile(script->GetPath());
+		return load_from_file(script->get_path());
 	}
 
 	std::string operator()(Origo::Shader* shader) const {
-		return LoadFromFile(*TextEditablePathVisitor {}(shader));
+		return load_from_file(*TextEditablePathVisitor {}(shader));
 	}
 
 private:
-	static std::string LoadFromFile(const std::filesystem::path& path) {
+	static std::string load_from_file(const std::filesystem::path& path) {
 		std::ifstream file(path);
 		if (!file.is_open())
 			return {};

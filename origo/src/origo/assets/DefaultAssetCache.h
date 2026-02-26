@@ -8,23 +8,23 @@ namespace Origo {
 
 class DefaultAssetCache : public Singleton<DefaultAssetCache> {
 public:
-	void CreateAllDefaults();
+	void create_all_defaults();
 
-	AssetHandle GetShader();
-	AssetHandle GetTexture();
+	AssetHandle get_shader();
+	AssetHandle get_texture();
 
-	AssetHandle GetMaterial();
-	AssetHandle GetOutlineMaterial();
-	AssetHandle GetParticleEmissionDebugMaterial();
-	AssetHandle GetParticleMaterial();
+	AssetHandle get_material();
+	AssetHandle get_outline_material();
+	AssetHandle get_particle_emission_debug_material();
+	AssetHandle get_particle_material();
 
 private:
-	std::optional<AssetHandle> m_Shader;
-	std::optional<AssetHandle> m_Texture;
-	std::optional<AssetHandle> m_Material;
-	std::optional<AssetHandle> m_OutlineMaterial;
-	std::optional<AssetHandle> m_ParticleEmissionDebugMaterial;
-	std::optional<AssetHandle> m_ParticleMaterial;
+	std::optional<AssetHandle> m_shader;
+	std::optional<AssetHandle> m_texture;
+	std::optional<AssetHandle> m_material;
+	std::optional<AssetHandle> m_outline_material;
+	std::optional<AssetHandle> m_particle_emission_debug_material;
+	std::optional<AssetHandle> m_particle_material;
 };
 
 }

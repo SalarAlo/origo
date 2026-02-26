@@ -15,20 +15,20 @@ class TextEditorPanel : public EditorPanel {
 public:
 	TextEditorPanel(EditorContext& ctx);
 
-	void OnImGuiRender();
-	const char* GetName() const { return "Text Editor"; }
+	void on_im_gui_render();
+	const char* get_name() const { return "Text Editor"; }
 
 private:
-	void SaveCurrentAsset(const TextEditableAsset& editable);
-	void DisplayUneditableAsset(const std::string& assetTypeName);
-	std::optional<TextEditableAsset> ToEditableAsset(Origo::Asset* asset);
+	void save_current_asset(const TextEditableAsset& editable);
+	void display_uneditable_asset(const std::string& assetTypeName);
+	std::optional<TextEditableAsset> to_editable_asset(Origo::Asset* asset);
 
 private:
-	EditorContext& m_Context;
-	TextEditor m_Editor;
+	EditorContext& m_context;
+	TextEditor m_editor;
 
-	bool m_CopiedFileContents;
-	std::filesystem::path m_CurrentPath;
+	bool m_copied_file_contents;
+	std::filesystem::path m_current_path;
 };
 
 }

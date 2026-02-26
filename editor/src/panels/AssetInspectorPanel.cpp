@@ -6,25 +6,25 @@
 
 namespace OrigoEditor {
 
-void AssetInspectorPanel::OnImGuiRender() {
-	auto selectedAssetIDOptional = m_Context.GetSelectedAsset();
-	auto activeScene = m_Context.ActiveScene;
+void AssetInspectorPanel::on_im_gui_render() {
+	auto selected_asset_id_optional = m_context.get_selected_asset();
+	auto active_scene = m_context.ActiveScene;
 
-	if (!selectedAssetIDOptional.has_value()) {
+	if (!selected_asset_id_optional.has_value()) {
 		ImGui::TextDisabled("No Asset selected.");
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
-	auto& selectedAssetID { *selectedAssetIDOptional };
-	auto md { Origo::AssetDatabase::GetInstance().GetMetadata(selectedAssetID) };
+	auto& selected_asset_id { *selected_asset_id_optional };
+	auto md { Origo::AssetDatabase::get_instance().get_metadata(selected_asset_id) };
 	const std::string& name = md.Name;
 
 	ImGui::SetWindowFontScale(1.1f);
 	ImGui::SeparatorText(name.c_str());
 
 	ImGui::SetWindowFontScale(0.9f);
-	AssetInspectorDrawer::DrawAsset(md);
+	AssetInspectorDrawer::draw_asset(md);
 	ImGui::SetWindowFontScale(1.0f);
 }
 

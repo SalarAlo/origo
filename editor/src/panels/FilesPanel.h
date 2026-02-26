@@ -13,16 +13,16 @@ struct FilesPanelState {
 
 class FilesPanel : public EditorPanel {
 public:
-	const char* GetName() const override { return "Files"; }
-	void OnImGuiRender() override;
+	const char* get_name() const override { return "Files"; }
+	void on_im_gui_render() override;
 
 private:
-	bool IsInsideProject(const std::filesystem::path& p);
-	ImTextureID GetIconForFile(const std::filesystem::path& p);
-	void DrawFileSystemRecursive(const std::filesystem::path& path);
+	bool is_inside_project(const std::filesystem::path& p);
+	ImTextureID get_icon_for_file(const std::filesystem::path& p);
+	void draw_file_system_recursive(const std::filesystem::path& path);
 
 private:
-	FilesPanelState m_State {};
+	FilesPanelState m_state {};
 };
 
 }

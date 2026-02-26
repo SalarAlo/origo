@@ -8,11 +8,11 @@ namespace Origo {
 class AssetImporterRegistry : public Singleton<AssetImporterRegistry> {
 public:
 	void Register(Scope<IAssetImporter> importer);
-	IAssetImporter* GetImporter(const std::filesystem::path& file);
-	void InitialiseDefaultImporters();
+	IAssetImporter* get_importer(const std::filesystem::path& file);
+	void initialise_default_importers();
 
 private:
-	std::vector<Scope<IAssetImporter>> m_Importers {};
+	std::vector<Scope<IAssetImporter>> m_importers {};
 };
 
 }

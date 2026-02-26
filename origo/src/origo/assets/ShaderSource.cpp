@@ -1,9 +1,10 @@
 #include "origo/assets/ShaderSource.h"
+
 #include "origo/core/Logger.h"
 
 #pragma region IO_RELATED
-static std::string ReadFile(std::string_view path) {
-	constexpr std::size_t readSize { 4096 };
+static std::string read_file(std::string_view path) {
+	constexpr std::size_t read_size { 4096 };
 	auto stream = std::ifstream(path.data());
 
 	if (!stream) {
@@ -12,35 +13,35 @@ static std::string ReadFile(std::string_view path) {
 	}
 
 	std::string out {};
-	std::string buf(readSize, '\0');
-	while (stream.read(&buf[0], readSize)) {
+	std::string buf(read_size, '\0');
+	while (stream.read(&buf[0], read_size)) {
 		out.append(buf, 0, stream.gcount());
 	}
 	out.append(buf, 0, stream.gcount());
 	return out;
 }
 
-static Origo::ShaderData GetData(std::string_view path) {
+static Origo::ShaderData get_data(std::string_view path) {
 	Origo::ShaderData data {};
-	std::string fileContent { ReadFile(path) };
+	std::string file_content { read_file(path) };
 
-	auto vertPos { fileContent.find("#VERTEX") };
-	auto fragPos { fileContent.find("#FRAGMENT") };
+	auto vert_pos { file_content.find("#VERTEX") };
+	auto frag_pos { file_content.find("#FRAGMENT") };
 
-	if (vertPos == std::string::npos || fragPos == std::string::npos) {
+	if (vert_pos == std::string::npos || frag_pos == std::string::npos) {
 		ORG_CORE_ERROR("[Shader] file missing #VERTEX or #FRAGMENT section");
 		throw std::runtime_error("Shader file missing #VERTEX or #FRAGMENT section");
 	}
 
-	std::string vertexSrc { fileContent.substr(vertPos + 7, fragPos - (vertPos + 7)) };
-	std::string fragmentSrc { fileContent.substr(fragPos + 9) };
+	std::string vertex_src { file_content.substr(vert_pos + 7, frag_pos - (vert_pos + 7)) };
+	std::string fragment_src { file_content.substr(frag_pos + 9) };
 
-	static std::string vertexStorage, fragmentStorage;
-	vertexStorage = std::move(vertexSrc);
-	fragmentStorage = std::move(fragmentSrc);
+	static std::string vertex_storage, fragment_storage;
+	vertex_storage = std::move(vertex_src);
+	fragment_storage = std::move(fragment_src);
 
-	data.VertexShader = vertexStorage.c_str();
-	data.FragmentShader = fragmentStorage.c_str();
+	data.VertexShader = vertex_storage.c_str();
+	data.FragmentShader = fragment_storage.c_str();
 
 	return data;
 }
@@ -48,35 +49,35 @@ static Origo::ShaderData GetData(std::string_view path) {
 
 namespace Origo {
 
-ShaderData ShaderSourceFile::GetShaderData() const {
-	return GetData(m_Path);
+ShaderData ShaderSourceFile::get_shader_data() const {
+	return get_data(m_path);
 }
 
-void ShaderSource::Serialize(ISerializer& backend) const {
-	backend.BeginObject("source");
-	backend.Write("type", magic_enum::enum_name(GetSourceType()));
-	SerializeBody(backend);
-	backend.EndObject();
+void ShaderSource::serialize(ISerializer& backend) const {
+	backend.begin_object("source");
+	backend.write("type", magic_enum::enum_name(get_source_type()));
+	serialize_body(backend);
+	backend.end_object();
 }
 
-Scope<ShaderSource> ShaderSource::Deserialize(ISerializer& backend) {
-	backend.BeginObject("source");
+Scope<ShaderSource> ShaderSource::deserialize(ISerializer& backend) {
+	backend.begin_object("source");
 
-	std::string typeStr {};
-	backend.TryRead("type", typeStr);
-	auto typeOptional { magic_enum::enum_cast<ShaderSourceType>(typeStr) };
+	std::string type_str {};
+	backend.try_read("type", type_str);
+	auto type_optional { magic_enum::enum_cast<ShaderSourceType>(type_str) };
 
-	if (!typeOptional.has_value()) {
-		ORG_ERROR("ShaderSource::Deserialize: Unidentifiable type {}", typeStr);
+	if (!type_optional.has_value()) {
+		ORG_ERROR("ShaderSource::Deserialize: Unidentifiable type {}", type_str);
 		return nullptr;
 	}
-	auto type { typeOptional.value() };
+	auto type { type_optional.value() };
 
 	switch (type) {
 	case ShaderSourceType::File: {
 		std::string path {};
-		backend.TryRead("shader_path", path);
-		backend.EndObject();
+		backend.try_read("shader_path", path);
+		backend.end_object();
 
 		return MakeScope<ShaderSourceFile>(path);
 	}
@@ -84,14 +85,14 @@ Scope<ShaderSource> ShaderSource::Deserialize(ISerializer& backend) {
 	case ShaderSourceType::Raw: {
 		std::string vert {};
 		std::string frag {};
-		backend.TryRead("vertex_shader", vert);
-		backend.TryRead("fragment_shader", frag);
-		backend.EndObject();
+		backend.try_read("vertex_shader", vert);
+		backend.try_read("fragment_shader", frag);
+		backend.end_object();
 		return MakeScope<ShaderSourceRaw>(vert, frag);
 	}
 	default: {
-		backend.EndObject();
-		ORG_ERROR("ShaderSource::Deserialize: Unsupported type {}", typeStr);
+		backend.end_object();
+		ORG_ERROR("ShaderSource::Deserialize: Unsupported type {}", type_str);
 		return nullptr;
 	}
 	}

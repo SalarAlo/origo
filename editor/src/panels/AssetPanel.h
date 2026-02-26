@@ -14,24 +14,24 @@ namespace OrigoEditor {
 class AssetPanel : public EditorPanel {
 public:
 	AssetPanel(EditorContext& ctx);
-	const char* GetName() const override { return "Assets"; }
-	void OnImGuiRender() override;
+	const char* get_name() const override { return "Assets"; }
+	void on_im_gui_render() override;
 
 private:
-	void DrawTopBar();
-	void DrawBreadcrumbBar(float availableWidth);
-	void DrawFolderContents(FolderEntry* folder);
-	void DrawFolderTile(FolderEntry* folder, ImDrawList* drawList);
-	void DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList);
+	void draw_top_bar();
+	void draw_breadcrumb_bar(float availableWidth);
+	void draw_folder_contents(FolderEntry* folder);
+	void draw_folder_tile(FolderEntry* folder, ImDrawList* drawList);
+	void draw_asset_tile(AssetEntry*& asset, ImDrawList* drawList);
 
 private:
-	EditorContext& m_Context;
-	EditorAssetTree m_Tree;
+	EditorContext& m_context;
+	EditorAssetTree m_tree;
 
-	FolderEntry* m_CurrentFolder = nullptr;
-	std::vector<FolderEntry*> m_Path;
+	FolderEntry* m_current_folder = nullptr;
+	std::vector<FolderEntry*> m_path;
 
-	std::string m_Search;
+	std::string m_search;
 };
 
 }

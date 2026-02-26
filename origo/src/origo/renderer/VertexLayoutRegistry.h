@@ -4,7 +4,7 @@
 
 namespace Origo::VertexLayoutRegistry {
 
-int Register(VertexLayout& layout);
-VertexLayout* Get(int id);
+int register_layout(VertexLayout& layout);
+VertexLayout* get(int id);
 
 }

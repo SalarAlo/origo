@@ -6,37 +6,37 @@
 
 namespace Origo {
 
-void MeshRendererComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
+void MeshRendererComponentSerializer::serialize(Component* comp, ISerializer& backend) const {
 	auto renderer = static_cast<MeshRendererComponent*>(comp);
 
 	if (renderer->MaterialHandle.has_value()) {
-		auto uuid = AssetManager::GetInstance().GetUUID(*renderer->MaterialHandle);
+		auto uuid = AssetManager::get_instance().get_uuid(*renderer->MaterialHandle);
 		if (uuid.has_value()) {
-			backend.Write("material", uuid->ToString());
+			backend.write("material", uuid->to_string());
 		}
 	}
 
 	if (renderer->MeshHandle.has_value()) {
-		auto uuid = AssetManager::GetInstance().GetUUID(*renderer->MeshHandle);
+		auto uuid = AssetManager::get_instance().get_uuid(*renderer->MeshHandle);
 		if (uuid.has_value()) {
-			backend.Write("mesh", uuid->ToString());
+			backend.write("mesh", uuid->to_string());
 		}
 	}
 }
 
-void MeshRendererComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
+void MeshRendererComponentSerializer::deserialize(Component* comp, ISerializer& backend) {
 	auto renderer = static_cast<MeshRendererComponent*>(comp);
 
-	std::string materialId;
-	if (backend.TryRead("material", materialId)) {
-		auto uuid = UUID::FromString(materialId);
-		renderer->MaterialHandle = AssetManager::GetInstance().GetHandleByUUID(uuid);
+	std::string material_id;
+	if (backend.try_read("material", material_id)) {
+		auto uuid = UUID::from_string(material_id);
+		renderer->MaterialHandle = AssetManager::get_instance().get_handle_by_uuid(uuid);
 	}
 
-	std::string meshId;
-	if (backend.TryRead("mesh", meshId)) {
-		auto uuid = UUID::FromString(meshId);
-		renderer->MeshHandle = AssetManager::GetInstance().GetHandleByUUID(uuid);
+	std::string mesh_id;
+	if (backend.try_read("mesh", mesh_id)) {
+		auto uuid = UUID::from_string(mesh_id);
+		renderer->MeshHandle = AssetManager::get_instance().get_handle_by_uuid(uuid);
 	}
 }
 

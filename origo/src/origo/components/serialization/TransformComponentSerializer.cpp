@@ -1,50 +1,51 @@
 #include "TransformComponentSerializer.h"
+
 #include "origo/components/Transform.h"
 
 namespace Origo {
 
-void TransformComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
+void TransformComponentSerializer::serialize(Component* comp, ISerializer& backend) const {
 	auto transform = static_cast<TransformComponent*>(comp);
 
-	const Vec3& position = transform->GetPosition();
-	const Vec3& rotation = transform->GetRotation();
-	const Vec3& scale = transform->GetScale();
+	const Vec3& position = transform->get_position();
+	const Vec3& rotation = transform->get_rotation();
+	const Vec3& scale = transform->get_scale();
 
-	backend.Write("pos_x", position.x);
-	backend.Write("pos_y", position.y);
-	backend.Write("pos_z", position.z);
+	backend.write("pos_x", position.x);
+	backend.write("pos_y", position.y);
+	backend.write("pos_z", position.z);
 
-	backend.Write("rot_x", rotation.x);
-	backend.Write("rot_y", rotation.y);
-	backend.Write("rot_z", rotation.z);
+	backend.write("rot_x", rotation.x);
+	backend.write("rot_y", rotation.y);
+	backend.write("rot_z", rotation.z);
 
-	backend.Write("scale_x", scale.x);
-	backend.Write("scale_y", scale.y);
-	backend.Write("scale_z", scale.z);
+	backend.write("scale_x", scale.x);
+	backend.write("scale_y", scale.y);
+	backend.write("scale_z", scale.z);
 }
 
-void TransformComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
+void TransformComponentSerializer::deserialize(Component* comp, ISerializer& backend) {
 	auto transform = static_cast<TransformComponent*>(comp);
 
-	Vec3 position = transform->GetPosition();
-	Vec3 rotation = transform->GetRotation();
-	Vec3 scale = transform->GetScale();
+	Vec3 position = transform->get_position();
+	Vec3 rotation = transform->get_rotation();
+	Vec3 scale = transform->get_scale();
 
-	backend.TryRead("pos_x", position.x);
-	backend.TryRead("pos_y", position.y);
-	backend.TryRead("pos_z", position.z);
+	backend.try_read("pos_x", position.x);
+	backend.try_read("pos_y", position.y);
+	backend.try_read("pos_z", position.z);
 
-	backend.TryRead("rot_x", rotation.x);
-	backend.TryRead("rot_y", rotation.y);
-	backend.TryRead("rot_z", rotation.z);
+	backend.try_read("rot_x", rotation.x);
+	backend.try_read("rot_y", rotation.y);
+	backend.try_read("rot_z", rotation.z);
 
-	backend.TryRead("scale_x", scale.x);
-	backend.TryRead("scale_y", scale.y);
-	backend.TryRead("scale_z", scale.z);
+	backend.try_read("scale_x", scale.x);
+	backend.try_read("scale_y", scale.y);
+	backend.try_read("scale_z", scale.z);
 
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetScale(scale);
+	transform->set_position(position);
+	transform->set_rotation(rotation);
+	transform->set_scale(scale);
 }
 
 }

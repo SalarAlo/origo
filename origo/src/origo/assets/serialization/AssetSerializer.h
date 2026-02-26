@@ -8,16 +8,16 @@ namespace Origo {
 class AssetSerializer {
 public:
 	virtual ~AssetSerializer() = default;
-	virtual void Serialize(const Asset* asset, ISerializer& backend) const = 0;
-	virtual void Deserialize(ISerializer& backend, Asset& asset) const = 0;
+	virtual void serialize(const Asset* asset, ISerializer& backend) const = 0;
+	virtual void deserialize(ISerializer& backend, Asset& asset) const = 0;
 };
 
 namespace AssetSerializationSystem {
-	void Register(AssetType type, AssetSerializer* serializer);
-	AssetSerializer* Get(AssetType type);
+	void register_serializer(AssetType type, AssetSerializer* serializer);
+	AssetSerializer* get(AssetType type);
 
-	void RegisterAllAssetSerializers();
-	void Cleanup();
+	void register_all_asset_serializers();
+	void cleanup();
 
 }
 }

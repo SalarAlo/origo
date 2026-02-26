@@ -19,24 +19,24 @@ using namespace Origo;
 
 namespace OrigoEditor {
 
-void EntityInspectorPanel::OnImGuiRender() {
-	auto selectedEntityOptional = m_Context.GetSelectedEntity();
-	auto activeScene = m_Context.ActiveScene;
+void EntityInspectorPanel::on_im_gui_render() {
+	auto selected_entity_optional = m_context.get_selected_entity();
+	auto active_scene = m_context.ActiveScene;
 
-	if (!selectedEntityOptional.has_value()) {
+	if (!selected_entity_optional.has_value()) {
 		ImGui::TextDisabled("No entity selected.");
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
-	DrawEntityName();
+	draw_entity_name();
 
-	const Origo::RID selectedEntity = selectedEntityOptional.value();
+	const Origo::RID selected_entity = selected_entity_optional.value();
 
 	ImGui::SetWindowFontScale(0.9f);
 
-	DrawNativeComponents(activeScene, selectedEntity);
-	DrawScriptComponents(activeScene, selectedEntity);
+	draw_native_components(active_scene, selected_entity);
+	draw_script_components(active_scene, selected_entity);
 
 	ImGui::SetWindowFontScale(1.0f);
 
@@ -44,98 +44,98 @@ void EntityInspectorPanel::OnImGuiRender() {
 	ImGui::Separator();
 	ImGui::Spacing();
 
-	DrawAddComponent(activeScene, selectedEntity);
-	DrawScriptDropTarget(activeScene, selectedEntity);
+	draw_add_component(active_scene, selected_entity);
+	draw_script_drop_target(active_scene, selected_entity);
 }
 
-void EntityInspectorPanel::DrawEntityName() {
-	auto selectedEntity = m_Context.GetSelectedEntity();
-	auto scene = m_Context.ActiveScene;
+void EntityInspectorPanel::draw_entity_name() {
+	auto selected_entity = m_context.get_selected_entity();
+	auto scene = m_context.ActiveScene;
 
-	const Origo::RID entity = selectedEntity.value();
-	auto* nameComp = scene->GetNativeComponent<Origo::NameComponent>(entity);
-	const std::string& name = nameComp->Name;
+	const Origo::RID entity = selected_entity.value();
+	auto* name_comp = scene->get_native_component<Origo::NameComponent>(entity);
+	const std::string& name = name_comp->Name;
 
-	static Origo::RID editingEntity {};
-	static bool isEditingName = false;
-	static char nameBuffer[256] {};
+	static Origo::RID editing_entity {};
+	static bool is_editing_name = false;
+	static char name_buffer[256] {};
 
 	ImGui::SetWindowFontScale(1.1f);
 
-	if (!isEditingName || editingEntity != entity) {
-		isEditingName = false;
+	if (!is_editing_name || editing_entity != entity) {
+		is_editing_name = false;
 	}
 
-	if (!isEditingName) {
+	if (!is_editing_name) {
 		ImGui::SeparatorText(name.c_str());
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-			editingEntity = entity;
-			isEditingName = true;
-			std::strncpy(nameBuffer, name.c_str(), sizeof(nameBuffer));
-			nameBuffer[sizeof(nameBuffer) - 1] = '\0';
+			editing_entity = entity;
+			is_editing_name = true;
+			std::strncpy(name_buffer, name.c_str(), sizeof(name_buffer));
+			name_buffer[sizeof(name_buffer) - 1] = '\0';
 			ImGui::SetKeyboardFocusHere();
 		}
 	} else {
 		ImGui::SetNextItemWidth(-1.0f);
 
-		const bool enterPressed = ImGui::InputText("##EntityName",
-		    nameBuffer,
-		    sizeof(nameBuffer),
+		const bool enter_pressed = ImGui::InputText("##EntityName",
+		    name_buffer,
+		    sizeof(name_buffer),
 		    ImGuiInputTextFlags_EnterReturnsTrue);
 
 		const bool deactivated = ImGui::IsItemDeactivatedAfterEdit();
 
-		if (enterPressed || deactivated) {
-			nameComp->Name = nameBuffer;
-			isEditingName = false;
+		if (enter_pressed || deactivated) {
+			name_comp->Name = name_buffer;
+			is_editing_name = false;
 		}
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
-			std::strncpy(nameBuffer, name.c_str(), sizeof(nameBuffer));
-			isEditingName = false;
+			std::strncpy(name_buffer, name.c_str(), sizeof(name_buffer));
+			is_editing_name = false;
 		}
 	}
 }
 
-void EntityInspectorPanel::DrawNativeComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-		if (!activeScene->HasNativeComponentByType(selectedEntity, type))
+void EntityInspectorPanel::draw_native_components(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+	for (const auto& [type, entry] : InspectorDrawRegistry::get_entries()) {
+		if (!activeScene->has_native_component_by_type(selectedEntity, type))
 			continue;
 
-		void* componentPtr = activeScene->GetNativeComponentByType(selectedEntity, type);
-		InspectorComponentRenderer::DrawNativeComponent(selectedEntity, componentPtr, type);
+		void* component_ptr = activeScene->get_native_component_by_type(selectedEntity, type);
+		InspectorComponentRenderer::draw_native_component(selectedEntity, component_ptr, type);
 	}
 }
 
-void EntityInspectorPanel::DrawScriptComponents(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	for (const auto& [id, descr] : Origo::ScriptComponentRegistry::GetAll()) {
-		if (!activeScene->HasScriptComponent(selectedEntity, id))
+void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+	for (const auto& [id, descr] : Origo::ScriptComponentRegistry::get_all()) {
+		if (!activeScene->has_script_component(selectedEntity, id))
 			continue;
 
-		auto& instance = *activeScene->GetScriptComponent(selectedEntity, id);
-		InspectorComponentRenderer::DrawScriptComponent(instance);
+		auto& instance = *activeScene->get_script_component(selectedEntity, id);
+		InspectorComponentRenderer::draw_script_component(instance);
 	}
 }
 
-void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	const float buttonWidth = 180.0f;
-	const float contentWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+	const float button_width = 180.0f;
+	const float content_width = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 
 	ImGui::SetCursorPosX(
-	    ImGui::GetWindowContentRegionMin().x + (contentWidth - buttonWidth) * 0.5f);
+	    ImGui::GetWindowContentRegionMin().x + (content_width - button_width) * 0.5f);
 
-	static ImVec2 addButtonPos {};
-	static ImVec2 addButtonSize {};
+	static ImVec2 add_button_pos {};
+	static ImVec2 add_button_size {};
 
-	if (ImGui::Button("+ Add Component", ImVec2(buttonWidth, 0))) {
-		addButtonPos = ImGui::GetItemRectMin();
-		addButtonSize = ImGui::GetItemRectSize();
+	if (ImGui::Button("+ Add Component", ImVec2(button_width, 0))) {
+		add_button_pos = ImGui::GetItemRectMin();
+		add_button_size = ImGui::GetItemRectSize();
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 
 	ImGui::SetNextWindowPos(
-	    ImVec2(addButtonPos.x, addButtonPos.y + addButtonSize.y),
+	    ImVec2(add_button_pos.x, add_button_pos.y + add_button_size.y),
 	    ImGuiCond_Appearing);
 
 	ImGui::SetNextWindowSize(ImVec2(300.0f, 0.0f),
@@ -147,13 +147,13 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 		ImGui::TextDisabled("Available Components");
 		ImGui::Separator();
 
-		for (const auto& [type, entry] : InspectorDrawRegistry::GetEntries()) {
-			if (activeScene->HasNativeComponentByType(selectedEntity, type))
+		for (const auto& [type, entry] : InspectorDrawRegistry::get_entries()) {
+			if (activeScene->has_native_component_by_type(selectedEntity, type))
 				continue;
 
-			const bool isRegistered = Origo::NativeComponentRegistry::Get(type) != nullptr;
+			const bool is_registered = Origo::NativeComponentRegistry::get(type) != nullptr;
 
-			if (!isRegistered) {
+			if (!is_registered) {
 				ImGui::PushStyleColor(
 				    ImGuiCol_Text,
 				    ImVec4(0.85f, 0.25f, 0.25f, 1.0f));
@@ -165,7 +165,7 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 			}
 
 			if (ImGui::MenuItem(entry.Name)) {
-				activeScene->AddNativeComponent(selectedEntity, type);
+				activeScene->add_native_component(selectedEntity, type);
 				ImGui::CloseCurrentPopup();
 				break;
 			}
@@ -174,12 +174,12 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 		ImGui::Separator();
 		ImGui::TextDisabled("Script Components");
 
-		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::GetAll()) {
-			if (activeScene->HasScriptComponent(selectedEntity, id))
+		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::get_all()) {
+			if (activeScene->has_script_component(selectedEntity, id))
 				continue;
 
 			if (ImGui::MenuItem(desc.Name.c_str())) {
-				activeScene->AddScriptComponent(selectedEntity, id);
+				activeScene->add_script_component(selectedEntity, id);
 				ImGui::CloseCurrentPopup();
 				break;
 			}
@@ -189,22 +189,22 @@ void EntityInspectorPanel::DrawAddComponent(Origo::Scene* activeScene, Origo::RI
 	}
 }
 
-void EntityInspectorPanel::DrawScriptDropTarget(
+void EntityInspectorPanel::draw_script_drop_target(
     Origo::Scene* activeScene,
     Origo::RID selectedEntity) {
 	ImGui::Spacing();
 
-	ImVec2 dropSize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-	ImGui::Dummy(dropSize);
+	ImVec2 drop_size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+	ImGui::Dummy(drop_size);
 
 	ImVec2 min = ImGui::GetItemRectMin();
 	ImVec2 max = ImGui::GetItemRectMax();
 
 	ImDrawList* dl = ImGui::GetWindowDrawList();
 
-	const bool hoveringPayload = ImGui::GetDragDropPayload() != nullptr && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+	const bool hovering_payload = ImGui::GetDragDropPayload() != nullptr && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 
-	if (hoveringPayload) {
+	if (hovering_payload) {
 		dl->AddRect(
 		    min, max,
 		    IM_COL32(120, 160, 255, 180),
@@ -225,15 +225,15 @@ void EntityInspectorPanel::DrawScriptDropTarget(
 		return;
 	}
 
-	const char* uuidStr = static_cast<const char*>(payload->Data);
-	Origo::UUID uuid = Origo::UUID::FromString(uuidStr);
+	const char* uuid_str = static_cast<const char*>(payload->Data);
+	Origo::UUID uuid = Origo::UUID::from_string(uuid_str);
 
-	auto metadata = Origo::AssetDatabase::GetInstance().GetMetadata(uuid);
+	auto metadata = Origo::AssetDatabase::get_instance().get_metadata(uuid);
 	if (metadata.Type == Origo::AssetType::Script) {
 
-		auto scriptID = Origo::ScriptComponentRegistry::Get(uuid);
-		if (!activeScene->HasScriptComponent(selectedEntity, scriptID.ID)) {
-			activeScene->AddScriptComponent(selectedEntity, scriptID.ID);
+		auto script_id = Origo::ScriptComponentRegistry::get(uuid);
+		if (!activeScene->has_script_component(selectedEntity, script_id.ID)) {
+			activeScene->add_script_component(selectedEntity, script_id.ID);
 		}
 	}
 }

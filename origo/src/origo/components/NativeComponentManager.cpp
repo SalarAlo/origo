@@ -1,33 +1,34 @@
 #include "NativeComponentManager.h"
+
 #include "NativeComponentRegistry.h"
 
 namespace Origo {
 
 NativeComponentManager::NativeComponentManager(const NativeComponentManager& other) {
-	CloneFrom(other);
+	clone_from(other);
 }
 
 NativeComponentManager& NativeComponentManager::operator=(const NativeComponentManager& other) {
 	if (this != &other)
-		CloneFrom(other);
+		clone_from(other);
 	return *this;
 }
 
-void NativeComponentManager::CloneFrom(const NativeComponentManager& other) {
-	m_Storages.clear();
-	m_Storages.reserve(other.m_Storages.size());
+void NativeComponentManager::clone_from(const NativeComponentManager& other) {
+	m_storages.clear();
+	m_storages.reserve(other.m_storages.size());
 
-	for (const auto& [type, storage] : other.m_Storages) {
-		m_Storages.emplace(type, storage->Clone());
+	for (const auto& [type, storage] : other.m_storages) {
+		m_storages.emplace(type, storage->clone());
 	}
 }
 
-bool NativeComponentManager::CanAddComponentByType(std::type_index type) {
-	return NativeComponentRegistry::Get(type) != nullptr;
+bool NativeComponentManager::can_add_component_by_type(std::type_index type) {
+	return NativeComponentRegistry::get(type) != nullptr;
 }
 
-bool NativeComponentManager::AddComponentByType(const RID& entity, std::type_index type) {
-	auto* info = NativeComponentRegistry::Get(type);
+bool NativeComponentManager::add_component_by_type(const RID& entity, std::type_index type) {
+	auto* info = NativeComponentRegistry::get(type);
 	if (!info)
 		return false;
 
@@ -38,32 +39,32 @@ bool NativeComponentManager::AddComponentByType(const RID& entity, std::type_ind
 	return true;
 }
 
-std::size_t NativeComponentManager::RemoveAllComponents(const RID& entity) {
+std::size_t NativeComponentManager::remove_all_components(const RID& entity) {
 	std::size_t removed = 0;
-	for (auto& [_, storage] : m_Storages) {
-		removed += storage->Remove(entity) ? 1 : 0;
+	for (auto& [_, storage] : m_storages) {
+		removed += storage->remove(entity) ? 1 : 0;
 	}
 	return removed;
 }
 
-bool NativeComponentManager::HasComponent(const RID& entity, std::type_index type) const {
-	auto it = m_Storages.find(type);
-	return it != m_Storages.end() && it->second->Has(entity);
+bool NativeComponentManager::has_component(const RID& entity, std::type_index type) const {
+	auto it = m_storages.find(type);
+	return it != m_storages.end() && it->second->has(entity);
 }
 
-bool NativeComponentManager::RemoveComponentByType(
+bool NativeComponentManager::remove_component_by_type(
     const RID& entity,
     std::type_index type) {
 
-	auto it = m_Storages.find(type);
-	if (it == m_Storages.end())
+	auto it = m_storages.find(type);
+	if (it == m_storages.end())
 		return false;
 
-	return it->second->Remove(entity);
+	return it->second->remove(entity);
 }
 
-void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFn fn, void* user) {
-	for (const auto& [type, info] : NativeComponentRegistry::GetAll()) {
+void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFn fn, void* user) {
+	for (const auto& [type, info] : NativeComponentRegistry::get_all()) {
 		if (!info.Has(*this, entity))
 			continue;
 
@@ -75,12 +76,12 @@ void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFn
 	}
 }
 
-void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFnConst fn, void* user) const {
-	for (const auto& [type, info] : NativeComponentRegistry::GetAll()) {
+void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const {
+	for (const auto& [type, info] : NativeComponentRegistry::get_all()) {
 		if (!info.Has(*this, entity))
 			continue;
 
-		const void* ptr = this->GetComponentByType(entity, type);
+		const void* ptr = this->get_component_by_type(entity, type);
 		if (!ptr)
 			continue;
 
@@ -88,24 +89,24 @@ void NativeComponentManager::ForEachComponentOnEntity(const RID& entity, VisitFn
 	}
 }
 
-void NativeComponentManager::SerializeEntity(const RID& entity, ISerializer& backend) const {
-	backend.BeginArray("native_components");
+void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& backend) const {
+	backend.begin_array("native_components");
 
-	ForEachComponentOnEntity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
+	for_each_component_on_entity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
 		if (!info.Serializer)
 			return;
-		backend.BeginArrayElement();
+		backend.begin_array_element();
 
-		backend.Write("type", info.DisplayName);
+		backend.write("type", info.DisplayName);
 
-		backend.BeginObject("data");
-		info.Serializer->Serialize(static_cast<Component*>(const_cast<void*>(c)), backend);
-		backend.EndObject();
+		backend.begin_object("data");
+		info.Serializer->serialize(static_cast<Component*>(const_cast<void*>(c)), backend);
+		backend.end_object();
 
-		backend.EndArrayElement();
+		backend.end_array_element();
 	});
 
-	backend.EndArray();
+	backend.end_array();
 }
 
 }

@@ -10,21 +10,21 @@ public:
 	Shader() = default;
 	~Shader();
 
-	void UseProgram() const;
-	void UnuseProgram() const;
+	void use_program() const;
+	void unuse_program() const;
 
 	template <typename T>
-	void SetUniform(std::string_view name, const T& value) const;
+	void set_uniform(std::string_view name, const T& value) const;
 
-	void SetSource(Scope<ShaderSource> source);
-	ShaderSource* GetSource() const { return m_Source.get(); }
+	void set_source(Scope<ShaderSource> source);
+	ShaderSource* get_source() const { return m_source.get(); }
 
-	AssetType GetAssetType() const override { return AssetType::Shader; };
-	static AssetType GetClassAssetType() { return AssetType::Shader; }
+	AssetType get_asset_type() const override { return AssetType::Shader; };
+	static AssetType get_class_asset_type() { return AssetType::Shader; }
 
-	GLuint GetProgramID() const { return m_ProgramId; }
+	GLuint get_program_id() const { return m_program_id; }
 
-	void Resolve() override;
+	void resolve() override;
 
 	Shader(const Shader&) = delete;
 	Shader& operator=(const Shader&) = delete;
@@ -32,12 +32,12 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 private:
-	GLint GetUniformLocation(std::string_view name) const;
+	GLint get_uniform_location(std::string_view name) const;
 
 private:
-	Scope<ShaderSource> m_Source {};
+	Scope<ShaderSource> m_source {};
 
-	unsigned int m_ProgramId {};
-	mutable std::unordered_map<std::string, GLint> m_UniformCache;
+	unsigned int m_program_id {};
+	mutable std::unordered_map<std::string, GLint> m_uniform_cache;
 };
 }

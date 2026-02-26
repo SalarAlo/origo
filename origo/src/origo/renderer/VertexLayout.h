@@ -7,21 +7,21 @@ namespace Origo {
 class VertexLayout {
 public:
 	template <typename>
-	void AddAttribute(unsigned int amount, bool normalized = false, VertexAttributeSemantic semantic = VertexAttributeSemantic::None);
+	void add_attribute(unsigned int amount, bool normalized = false, VertexAttributeSemantic semantic = VertexAttributeSemantic::None);
 
-	std::vector<VertexAttribute>& GetAttributes();
-	size_t GetStride() { return m_Stride; }
-	static int GetStaticMeshLayout();
+	std::vector<VertexAttribute>& get_attributes();
+	size_t get_stride() { return m_stride; }
+	static int get_static_mesh_layout();
 
 private:
-	std::vector<VertexAttribute> m_Attributes {};
-	size_t m_Stride {};
+	std::vector<VertexAttribute> m_attributes {};
+	size_t m_stride {};
 };
 
 template <>
-void VertexLayout::AddAttribute<unsigned int>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
+void VertexLayout::add_attribute<unsigned int>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
 
 template <>
-void VertexLayout::AddAttribute<float>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
+void VertexLayout::add_attribute<float>(unsigned int amount, bool normalized, VertexAttributeSemantic semantic);
 
 }

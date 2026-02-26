@@ -16,10 +16,10 @@
 
 namespace OrigoEditor::UI {
 
-ImFont* UIFont = nullptr;
-ImFont* CodeFont = nullptr;
+ImFont* ui_font = nullptr;
+ImFont* code_font = nullptr;
 
-void ApplyEditorStyle(const EditorPalette& p) {
+void apply_editor_style(const EditorPalette& p) {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* c = style.Colors;
 
@@ -106,26 +106,26 @@ void ApplyEditorStyle(const EditorPalette& p) {
 	style.WindowMenuButtonPosition = ImGuiDir_None;
 }
 
-void LoadEditorFont() {
+void load_editor_font() {
 	ImGuiIO& io = ImGui::GetIO();
 
-	UIFont = io.Fonts->AddFontFromFileTTF(
+	ui_font = io.Fonts->AddFontFromFileTTF(
 	    "resources/fonts/Inter.ttf",
 	    17.0f);
 
-	CodeFont = io.Fonts->AddFontFromFileTTF(
+	code_font = io.Fonts->AddFontFromFileTTF(
 	    "resources/fonts/JetBrainsMono-Regular.ttf",
 	    17.0f);
 
-	io.FontDefault = UIFont;
+	io.FontDefault = ui_font;
 
-	IM_ASSERT(UIFont && CodeFont);
+	IM_ASSERT(ui_font && code_font);
 }
 
-void BeginDockspace() {
-	static bool dockspaceOpen = true;
+void begin_dockspace() {
+	static bool dockspace_open = true;
 	static bool fullscreen = true;
-	static ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+	static ImGuiDockNodeFlags dock_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
@@ -142,21 +142,21 @@ void BeginDockspace() {
 	}
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin("DockspaceHost", &dockspaceOpen, flags);
+	ImGui::Begin("DockspaceHost", &dockspace_open, flags);
 	ImGui::PopStyleVar();
 
 	if (fullscreen)
 		ImGui::PopStyleVar(2);
 
-	ImGuiID dockID = ImGui::GetID("MainDockspace");
-	ImGui::DockSpace(dockID, { 0, 0 }, dockFlags);
+	ImGuiID dock_id = ImGui::GetID("MainDockspace");
+	ImGui::DockSpace(dock_id, { 0, 0 }, dock_flags);
 }
 
-void EndDockspace() {
+void end_dockspace() {
 	ImGui::End();
 }
 
-void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
+void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 	static EditorRuntimeController controller { ctx };
 
 	if (!ImGui::BeginMenuBar())
@@ -168,26 +168,26 @@ void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
 
 		if (ImGui::MenuItem("Open Scene...")) {
 
-			nfdchar_t* outPath = nullptr;
+			nfdchar_t* out_path = nullptr;
 
 			nfdfilteritem_t filters[] = {
 				{ "Origo Scene", "scene.json" }
 			};
 
 			nfdresult_t result = NFD_OpenDialog(
-			    &outPath,
+			    &out_path,
 			    filters,
 			    1,
 			    "./resources/scenes");
 
 			if (result == NFD_OKAY) {
-				std::filesystem::path scenePath = outPath;
-				NFD_FreePath(outPath);
+				std::filesystem::path scene_path = out_path;
+				NFD_FreePath(out_path);
 
-				if (std::filesystem::exists(scenePath)) {
-					ctx.PendingScene = Origo::SceneSerializer::DeserializeFromFile(scenePath);
+				if (std::filesystem::exists(scene_path)) {
+					ctx.PendingScene = Origo::SceneSerializer::deserialize_from_file(scene_path);
 				} else {
-					ORG_CORE_ERROR("Scene file does not exist: {}", scenePath.string());
+					ORG_CORE_ERROR("Scene file does not exist: {}", scene_path.string());
 				}
 			} else if (result == NFD_ERROR) {
 				ORG_CORE_ERROR("NFD error: {}", NFD_GetError());
@@ -196,27 +196,27 @@ void DrawMenuBar(PanelManager& manager, EditorContext& ctx) {
 
 		if (ImGui::MenuItem("Save Scene")) {
 			std::string path = "./resources/scenes/";
-			path += ctx.EditorScene->GetName();
+			path += ctx.EditorScene->get_name();
 			path += ".scene.json";
-			Origo::SceneSerializer::SerializeToFile(*ctx.EditorScene, path);
+			Origo::SceneSerializer::serialize_to_file(*ctx.EditorScene, path);
 		}
 
 		if (ImGui::MenuItem("Save Generated Assets"))
-			Origo::AssetDatabase::GetInstance().SaveAll();
+			Origo::AssetDatabase::get_instance().save_all();
 
 		if (ImGui::MenuItem("Reload Scripts")) {
-			Origo::AssetManager::GetInstance().ResolveAll(
+			Origo::AssetManager::get_instance().resolve_all(
 			    [](Origo::Asset* a) {
-				    return a->GetAssetType() == Origo::AssetType::Script;
+				    return a->get_asset_type() == Origo::AssetType::Script;
 			    });
-			Origo::ScriptSystem::ReloadAll();
+			Origo::ScriptSystem::reload_all();
 		}
 
 		ImGui::Separator();
 		ImGui::EndMenu();
 	}
 
-	manager.RenderMenuItems();
+	manager.render_menu_items();
 	ImGui::EndMenuBar();
 }
 

@@ -3,18 +3,18 @@
 namespace Origo {
 
 VertexArray::VertexArray() {
-	GLCall(glGenVertexArrays(1, &m_BufferId));
+	GLCall(glGenVertexArrays(1, &m_buffer_id));
 }
 
 VertexArray::~VertexArray() {
-	GLCall(glDeleteVertexArrays(1, &m_BufferId));
+	GLCall(glDeleteVertexArrays(1, &m_buffer_id));
 }
 
-void VertexArray::Bind() const {
-	GLCall(glBindVertexArray(m_BufferId));
+void VertexArray::bind() const {
+	GLCall(glBindVertexArray(m_buffer_id));
 }
 
-void VertexArray::Unbind() const {
+void VertexArray::unbind() const {
 	GLCall(glBindVertexArray(0));
 }
 

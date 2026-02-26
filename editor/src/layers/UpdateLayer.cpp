@@ -4,10 +4,10 @@
 
 namespace OrigoEditor {
 
-void UpdateLayer::OnUpdate(double dt) {
-	auto scenePtr = m_Context.ActiveScene;
-	Origo::SystemScheduler::Get().RunPhase(Origo::GamePhase::UpdateGame, scenePtr, dt);
-	Origo::SystemScheduler::Get().RunPhase(Origo::GamePhase::RenderGame, scenePtr, m_RenderContext);
+void UpdateLayer::on_update(double dt) {
+	auto scene_ptr = m_context.ActiveScene;
+	Origo::SystemScheduler::get().run_phase(Origo::GamePhase::UpdateGame, scene_ptr, dt);
+	Origo::SystemScheduler::get().run_phase(Origo::GamePhase::RenderGame, scene_ptr, m_render_context);
 }
 
 }

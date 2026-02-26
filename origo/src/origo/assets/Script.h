@@ -12,28 +12,28 @@ namespace Origo {
 
 class Script : public Asset {
 public:
-	Script(const std::filesystem::path& path = "/", const UUID& id = UUID::Generate())
-	    : m_Path(path)
-	    , m_ID(id) {
-		m_AssetType = AssetType::Script;
+	Script(const std::filesystem::path& path = "/", const UUID& id = UUID::generate())
+	    : m_path(path)
+	    , m_id(id) {
+		m_asset_type = AssetType::Script;
 	}
 
-	AssetType GetAssetType() const override { return AssetType::Script; }
-	static AssetType GetClassAssetType() { return AssetType::Script; }
+	AssetType get_asset_type() const override { return AssetType::Script; }
+	static AssetType get_class_asset_type() { return AssetType::Script; }
 
-	const std::filesystem::path& GetPath() const { return m_Path; }
-	void SetPath(const std::filesystem::path& path) { m_Path = path; }
+	const std::filesystem::path& get_path() const { return m_path; }
+	void set_path(const std::filesystem::path& path) { m_path = path; }
 
-	void SetID(const UUID& id) { m_ID = id; }
-	const UUID& GetID() const { return m_ID; }
+	void set_id(const UUID& id) { m_id = id; }
+	const UUID& get_id() const { return m_id; }
 
-	void Resolve() override {
-		auto src { ReadFile(m_Path) };
-		ScriptSystem::Register(m_ID, m_Path, src);
+	void resolve() override {
+		auto src { read_file(m_path) };
+		ScriptSystem::register_script(m_id, m_path, src);
 	}
 
 private:
-	std::filesystem::path m_Path;
-	UUID m_ID;
+	std::filesystem::path m_path;
+	UUID m_id;
 };
 }

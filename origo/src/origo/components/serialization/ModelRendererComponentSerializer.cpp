@@ -6,29 +6,29 @@
 
 namespace Origo {
 
-void ModelRendererComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
+void ModelRendererComponentSerializer::serialize(Component* comp, ISerializer& backend) const {
 	auto renderer = static_cast<ModelRendererComponent*>(comp);
 
 	auto model = renderer->ModelHandle;
 	if (!model.has_value())
 		return;
 
-	auto uuid = AssetManager::GetInstance().GetUUID(*model);
+	auto uuid = AssetManager::get_instance().get_uuid(*model);
 	if (!uuid.has_value())
 		return;
 
-	backend.Write("model", uuid->ToString());
+	backend.write("model", uuid->to_string());
 }
 
-void ModelRendererComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
+void ModelRendererComponentSerializer::deserialize(Component* comp, ISerializer& backend) {
 	auto renderer = static_cast<ModelRendererComponent*>(comp);
 
-	std::string modelId;
-	if (!backend.TryRead("model", modelId))
+	std::string model_id;
+	if (!backend.try_read("model", model_id))
 		return;
 
-	auto uuid = UUID::FromString(modelId);
-	renderer->ModelHandle = AssetManager::GetInstance().GetHandleByUUID(uuid);
+	auto uuid = UUID::from_string(model_id);
+	renderer->ModelHandle = AssetManager::get_instance().get_handle_by_uuid(uuid);
 }
 
 }

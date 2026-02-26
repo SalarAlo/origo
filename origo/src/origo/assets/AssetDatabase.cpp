@@ -15,147 +15,147 @@
 
 namespace Origo {
 
-void AssetDatabase::RegisterMetadata(const AssetMetadata& meta) {
-	s_Metadata[*meta.ID] = meta;
+void AssetDatabase::register_metadata(const AssetMetadata& meta) {
+	m_s_metadata[*meta.ID] = meta;
 }
 
-void AssetDatabase::WriteImportFile(const UUID& id) {
-	auto metaIt = s_Metadata.find(id);
-	if (metaIt == s_Metadata.end()) {
-		ORG_ERROR("AssetDatabase::WriteImportFile: No metadata for UUID {}", id.ToString());
+void AssetDatabase::write_import_file(const UUID& id) {
+	auto meta_it = m_s_metadata.find(id);
+	if (meta_it == m_s_metadata.end()) {
+		ORG_ERROR("AssetDatabase::writeImportFile: No metadata for UUID {}", id.to_string());
 		return;
 	}
 
-	const AssetMetadata& meta = metaIt->second;
+	const AssetMetadata& meta = meta_it->second;
 
-	auto& am = AssetManager::GetInstance();
-	OptionalAssetHandle handle = am.GetHandleByUUID(id);
+	auto& am = AssetManager::get_instance();
+	OptionalAssetHandle handle = am.get_handle_by_uuid(id);
 
 	if (!handle.has_value()) {
-		ORG_WARN("Skipping save: asset {} not loaded", id.ToString());
+		ORG_WARN("Skipping save: asset {} not loaded", id.to_string());
 		return;
 	}
 
-	Asset* asset = am.Get(*handle);
-	auto path = GetImportPath(meta);
+	Asset* asset = am.get(*handle);
+	auto path = get_import_path(meta);
 	JsonSerializer serializer { path.string() };
 
-	serializer.BeginObject("header");
-	serializer.Write("uuid", (*meta.ID).ToString());
-	serializer.Write("name", meta.Name);
-	serializer.Write("type", magic_enum::enum_name(meta.Type));
-	serializer.Write("origin", magic_enum::enum_name(meta.Origin));
-	serializer.Write("source_path", meta.SourcePath.string());
-	serializer.Write("source_time_stamp", std::to_string(meta.SourceTimestamp.time_since_epoch().count()));
-	serializer.Write("imported_time_stamp", std::to_string(meta.ImportedTimestamp.time_since_epoch().count()));
-	serializer.EndObject();
+	serializer.begin_object("header");
+	serializer.write("uuid", (*meta.ID).to_string());
+	serializer.write("name", meta.Name);
+	serializer.write("type", magic_enum::enum_name(meta.Type));
+	serializer.write("origin", magic_enum::enum_name(meta.Origin));
+	serializer.write("source_path", meta.SourcePath.string());
+	serializer.write("source_time_stamp", std::to_string(meta.SourceTimestamp.time_since_epoch().count()));
+	serializer.write("imported_time_stamp", std::to_string(meta.ImportedTimestamp.time_since_epoch().count()));
+	serializer.end_object();
 
-	serializer.BeginObject("payload");
-	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
-	assetSerializer->Serialize(asset, serializer);
-	serializer.EndObject();
+	serializer.begin_object("payload");
+	auto asset_serializer = AssetSerializationSystem::get(meta.Type);
+	asset_serializer->serialize(asset, serializer);
+	serializer.end_object();
 
-	serializer.SaveToFile();
+	serializer.save_to_file();
 }
 
-AssetMetadata AssetDatabase::LoadImportHeader(const std::filesystem::path& path) {
+AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& path) {
 	if (!std::filesystem::exists(path)) {
 		ORG_ERROR("Import file '{}' does not exist", path.string());
 		return {};
 	}
 
 	JsonSerializer backend { path.string() };
-	backend.LoadFile();
+	backend.load_file();
 
 	AssetMetadata meta;
 
-	backend.BeginObject("header");
+	backend.begin_object("header");
 
-	std::string uuidStr;
-	backend.TryRead("uuid", uuidStr);
-	meta.ID = UUID::FromString(uuidStr);
+	std::string uuid_str;
+	backend.try_read("uuid", uuid_str);
+	meta.ID = UUID::from_string(uuid_str);
 
-	backend.TryRead("name", meta.Name);
+	backend.try_read("name", meta.Name);
 
-	std::string typeStr;
-	backend.TryRead("type", typeStr);
-	if (auto t = magic_enum::enum_cast<AssetType>(typeStr))
+	std::string type_str;
+	backend.try_read("type", type_str);
+	if (auto t = magic_enum::enum_cast<AssetType>(type_str))
 		meta.Type = *t;
 
-	std::string originStr;
-	backend.TryRead("origin", originStr);
-	if (auto o = magic_enum::enum_cast<AssetOrigin>(originStr))
+	std::string origin_str;
+	backend.try_read("origin", origin_str);
+	if (auto o = magic_enum::enum_cast<AssetOrigin>(origin_str))
 		meta.Origin = *o;
 
 	std::string source;
-	if (backend.TryRead("source_path", source))
+	if (backend.try_read("source_path", source))
 		meta.SourceTimestamp = std::filesystem::last_write_time(source);
 	meta.SourcePath = source;
 
-	std::string importedStamp;
-	backend.TryRead("imported_time_stamp", importedStamp);
-	meta.ImportedTimestamp = std::filesystem::file_time_type(std::filesystem::file_time_type::duration(std::stoll(importedStamp)));
+	std::string imported_stamp;
+	backend.try_read("imported_time_stamp", imported_stamp);
+	meta.ImportedTimestamp = std::filesystem::file_time_type(std::filesystem::file_time_type::duration(std::stoll(imported_stamp)));
 
-	backend.BeginArray("dependencies");
+	backend.begin_array("dependencies");
 	std::string dep;
-	while (backend.TryReadArrayElement(dep)) {
-		meta.Dependencies.push_back(UUID::FromString(dep));
+	while (backend.try_read_array_element(dep)) {
+		meta.Dependencies.push_back(UUID::from_string(dep));
 	}
-	backend.EndArray();
+	backend.end_array();
 
-	backend.EndObject();
+	backend.end_object();
 
 	return meta;
 }
 
-Asset* AssetDatabase::LoadAsset(const UUID& id) {
-	auto& am { AssetManager::GetInstance() };
+Asset* AssetDatabase::load_asset(const UUID& id) {
+	auto& am { AssetManager::get_instance() };
 
-	auto metaIt = s_Metadata.find(id);
-	if (metaIt == s_Metadata.end()) {
-		ORG_ERROR("AssetDatabase::LoadAsset: No metadata for uuid {}", id.ToString());
+	auto meta_it = m_s_metadata.find(id);
+	if (meta_it == m_s_metadata.end()) {
+		ORG_ERROR("AssetDatabase::LoadAsset: No metadata for uuid {}", id.to_string());
 		return nullptr;
 	}
 
-	const AssetMetadata& meta = metaIt->second;
-	auto path = GetImportPath(meta);
+	const AssetMetadata& meta = meta_it->second;
+	auto path = get_import_path(meta);
 
 	JsonSerializer backend { path.string() };
-	backend.LoadFile();
+	backend.load_file();
 
-	backend.BeginObject("header");
-	backend.EndObject();
+	backend.begin_object("header");
+	backend.end_object();
 
-	backend.BeginObject("payload");
+	backend.begin_object("payload");
 
-	auto serializer = AssetSerializationSystem::Get(meta.Type);
-	auto asset { AssetFactory::GetInstance().AllocateHollowAsset(meta.Type) };
-	serializer->Deserialize(backend, *asset);
+	auto serializer = AssetSerializationSystem::get(meta.Type);
+	auto asset { AssetFactory::get_instance().allocate_hollow_asset(meta.Type) };
+	serializer->deserialize(backend, *asset);
 
-	backend.EndObject();
+	backend.end_object();
 
-	auto handle = am.Register(std::move(asset), meta.ID);
+	auto handle = am.register_asset(std::move(asset), meta.ID);
 
-	return am.Get(handle);
+	return am.get(handle);
 }
 
-void AssetDatabase::SaveAll() {
-	auto& am = AssetManager::GetInstance();
+void AssetDatabase::save_all() {
+	auto& am = AssetManager::get_instance();
 
-	for (const auto& [uuid, handle] : am.GetUuidMap()) {
-		if (am.IsValid(handle))
-			WriteImportFile(uuid);
+	for (const auto& [uuid, handle] : am.get_uuid_map()) {
+		if (am.is_valid(handle))
+			write_import_file(uuid);
 	}
 }
 
-std::filesystem::path AssetDatabase::GetImportPath(const AssetMetadata& meta) {
+std::filesystem::path AssetDatabase::get_import_path(const AssetMetadata& meta) {
 	if (!meta.SourcePath.empty()) {
 		return meta.SourcePath.string() + ".import";
 	}
 
-	return ROOT / "generated" / ((*meta.ID).ToString() + ".import");
+	return ROOT / "generated" / ((*meta.ID).to_string() + ".import");
 }
 
-const AssetMetadata& AssetDatabase::GetMetadata(const UUID& id) { return s_Metadata[id]; }
+const AssetMetadata& AssetDatabase::get_metadata(const UUID& id) { return m_s_metadata[id]; }
 
 }

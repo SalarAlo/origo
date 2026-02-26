@@ -8,15 +8,15 @@
 
 namespace Origo {
 
-void ScriptSystem::InitialiseState() {
-	if (s_Initialised)
+void ScriptSystem::initialise_state() {
+	if (s_initialised)
 		return;
 
-	s_Initialised = true;
-	s_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
-	sol::table componentTable = s_Lua.create_named_table("Component");
+	s_initialised = true;
+	s_lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
+	sol::table component_table = s_lua.create_named_table("Component");
 
-	componentTable.set_function(
+	component_table.set_function(
 	    "define",
 	    [](const std::string& name,
 	        sol::table fields,
@@ -26,8 +26,8 @@ void ScriptSystem::InitialiseState() {
 
 		    sol::environment env = this_env.env.value();
 
-		    sol::object uuidObj = env["__SCRIPT_UUID"];
-		    if (!uuidObj.valid())
+		    sol::object uuid_obj = env["__SCRIPT_UUID"];
+		    if (!uuid_obj.valid())
 			    throw std::runtime_error("Component.define called outside import context");
 
 		    // this only ensures defined components in one file arent repeated
@@ -42,22 +42,22 @@ void ScriptSystem::InitialiseState() {
 
 		    defined[name] = true;
 
-		    std::string uuid = uuidObj.as<std::string>();
-		    ScriptComponentRegistry::RegisterComponentFromLua(
-		        UUID::FromString(uuid),
+		    std::string uuid = uuid_obj.as<std::string>();
+		    ScriptComponentRegistry::register_component_from_lua(
+		        UUID::from_string(uuid),
 		        name,
 		        fields);
 	    });
 }
 
-void ScriptSystem::Shutdown() {
-	s_Lua = sol::state {};
-	s_Initialised = false;
+void ScriptSystem::shutdown() {
+	s_lua = sol::state {};
+	s_initialised = false;
 }
 
-void ScriptSystem::Register(const UUID& id, const std::filesystem::path& path, const std::string& source) {
-	if (s_Scripts.contains(id)) {
-		auto& entry = s_Scripts[id];
+void ScriptSystem::register_script(const UUID& id, const std::filesystem::path& path, const std::string& source) {
+	if (s_scripts.contains(id)) {
+		auto& entry = s_scripts[id];
 		entry.Path = path;
 		entry.Source = source;
 		entry.ReloadNecessary = true;
@@ -67,38 +67,38 @@ void ScriptSystem::Register(const UUID& id, const std::filesystem::path& path, c
 	ScriptEntry entry {};
 	entry.Source = source;
 	entry.Path = path;
-	s_Scripts.emplace(id, entry);
+	s_scripts.emplace(id, entry);
 }
 
-void ScriptSystem::ReloadAll() {
-	Shutdown();
-	InitialiseState();
+void ScriptSystem::reload_all() {
+	shutdown();
+	initialise_state();
 
-	for (auto& [id, entry] : s_Scripts) {
-		Execute(entry, id);
+	for (auto& [id, entry] : s_scripts) {
+		execute(entry, id);
 		entry.ReloadNecessary = false;
 	}
 }
 
-void ScriptSystem::ReloadAllNecessary() {
-	Shutdown();
-	InitialiseState();
+void ScriptSystem::reload_all_necessary() {
+	shutdown();
+	initialise_state();
 
-	for (auto& [id, entry] : s_Scripts) {
+	for (auto& [id, entry] : s_scripts) {
 		if (!entry.ReloadNecessary)
 			continue;
 
-		Execute(entry, id);
+		execute(entry, id);
 		entry.ReloadNecessary = false;
 	}
 }
 
-void ScriptSystem::Execute(const ScriptEntry& entry, const UUID& id) {
-	sol::environment env(s_Lua, sol::create, s_Lua.globals());
-	env["__SCRIPT_UUID"] = id.ToString();
+void ScriptSystem::execute(const ScriptEntry& entry, const UUID& id) {
+	sol::environment env(s_lua, sol::create, s_lua.globals());
+	env["__SCRIPT_UUID"] = id.to_string();
 	env["__DEFINED_COMPONENTS"] = sol::table::create(env.lua_state());
 
-	sol::load_result load = s_Lua.load(entry.Source, id.ToString());
+	sol::load_result load = s_lua.load(entry.Source, id.to_string());
 	if (!load.valid()) {
 		sol::error err = load;
 		ORG_CORE_ERROR("{} failed to compile because {}", entry.Path.filename().c_str(), err.what());

@@ -19,28 +19,28 @@
 
 namespace Origo {
 
-void ParticleSpawnerSystem::Update(Origo::Scene* scene, float dt) {
-	scene->View<ParticleSystemComponent, TransformComponent, NameComponent>(
+void ParticleSpawnerSystem::update(Origo::Scene* scene, float dt) {
+	scene->view<ParticleSystemComponent, TransformComponent, NameComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf,
 	        NameComponent& nc) {
 		    particleSystem.SpawnAccumulator += particleSystem.SpawnRate * dt;
 
-		    int spawnCount = (int)particleSystem.SpawnAccumulator;
-		    particleSystem.SpawnAccumulator -= spawnCount;
+		    int spawn_count = (int)particleSystem.SpawnAccumulator;
+		    particleSystem.SpawnAccumulator -= spawn_count;
 
-		    for (size_t i = 0; i < spawnCount; i++) {
-			    auto particle = scene->CreateEntity(
+		    for (size_t i = 0; i < spawn_count; i++) {
+			    auto particle = scene->create_entity(
 			        nc.Name + "_particle_" + std::to_string(i));
 
-			    scene->AddNativeComponent<EditorHiddenComponent>(particle);
+			    scene->add_native_component<EditorHiddenComponent>(particle);
 
-			    auto* particleTransf = scene->GetNativeComponent<TransformComponent>(particle);
-			    particleTransf->SetPosition(std::visit(SampleParticleEmissionPosition {}, particleSystem.Shape));
-			    particleTransf->SetScale(Vec3 { particleSystem.StartSize });
+			    auto* particle_transf = scene->get_native_component<TransformComponent>(particle);
+			    particle_transf->set_position(std::visit(SampleParticleEmissionPosition {}, particleSystem.Shape));
+			    particle_transf->set_scale(Vec3 { particleSystem.StartSize });
 
-			    auto* pc = scene->AddNativeComponent<ParticleComponent>(particle);
+			    auto* pc = scene->add_native_component<ParticleComponent>(particle);
 
 			    pc->StartSize = particleSystem.StartSize;
 			    pc->EndSize = particleSystem.EndSize;
@@ -52,26 +52,26 @@ void ParticleSpawnerSystem::Update(Origo::Scene* scene, float dt) {
 			    pc->GravityForceFactor = particleSystem.GravityForceFactor;
 			    pc->Drag = particleSystem.Drag;
 
-			    pc->Lifetime = Random::Range(
+			    pc->Lifetime = Random::range(
 			        particleSystem.LifetimeMin,
 			        particleSystem.LifetimeMax);
 
 			    pc->MaxLifetime = pc->Lifetime;
 
-			    float speed = Random::Range(
+			    float speed = Random::range(
 			        particleSystem.InitialSpeedMin,
 			        particleSystem.InitialSpeedMax);
 
 			    pc->Velocity = std::visit(SampleParticleEmissionDirection {}, particleSystem.Shape) * speed;
 
 			    if (!particleSystem.ParticleMesh.has_value()) {
-				    particleSystem.ParticleMesh = PrimitiveShapeCache::GetInstance().GetSphereMesh();
+				    particleSystem.ParticleMesh = PrimitiveShapeCache::get_instance().get_sphere_mesh();
 			    }
 			    auto mesh = *particleSystem.ParticleMesh;
 
-			    scene->AddNativeComponent<MeshRendererComponent>(
+			    scene->add_native_component<MeshRendererComponent>(
 			        particle,
-			        DefaultAssetCache::GetInstance().GetParticleMaterial(),
+			        DefaultAssetCache::get_instance().get_particle_material(),
 			        mesh);
 		    }
 	    });

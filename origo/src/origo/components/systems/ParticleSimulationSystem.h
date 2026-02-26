@@ -7,7 +7,7 @@ namespace Origo {
 
 class ParticleSimulationSystem final : public IUpdateSystem {
 public:
-	void Update(Scene* scene, float dt) override;
+	void update(Scene* scene, float dt) override;
 };
 
 }

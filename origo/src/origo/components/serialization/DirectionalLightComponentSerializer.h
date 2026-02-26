@@ -6,8 +6,8 @@ namespace Origo {
 
 class DirectionalLightComponentSerializer : public IComponentSerializer {
 public:
-	void Serialize(Component* comp, ISerializer& s) const override;
-	void Deserialize(Component* comp, ISerializer& s) override;
+	void serialize(Component* comp, ISerializer& s) const override;
+	void deserialize(Component* comp, ISerializer& s) override;
 };
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/serialization/ISerializer.h"
+
 namespace Origo {
 
 enum class TextureSourceType {
@@ -29,13 +30,13 @@ struct TextureInitialisationData {
 class TextureSource {
 public:
 	virtual ~TextureSource() = default;
-	virtual void Serialize(ISerializer& backend) const;
-	static Scope<TextureSource> Deserialize(ISerializer& backend);
-	virtual TextureSourceType GetType() const = 0;
-	virtual TextureInitialisationData GetInitialisationData() const = 0;
+	virtual void serialize(ISerializer& backend) const;
+	static Scope<TextureSource> deserialize(ISerializer& backend);
+	virtual TextureSourceType get_type() const = 0;
+	virtual TextureInitialisationData get_initialisation_data() const = 0;
 
 protected:
-	virtual void SerializeBody(ISerializer& backend) const = 0;
+	virtual void serialize_body(ISerializer& backend) const = 0;
 };
 
 class TextureSourceFile : public TextureSource {
@@ -44,9 +45,9 @@ public:
 	    : Path(path)
 	    , Flip(flip) { }
 
-	void SerializeBody(ISerializer& backend) const override;
-	TextureSourceType GetType() const override { return TextureSourceType::File; }
-	TextureInitialisationData GetInitialisationData() const override;
+	void serialize_body(ISerializer& backend) const override;
+	TextureSourceType get_type() const override { return TextureSourceType::File; }
+	TextureInitialisationData get_initialisation_data() const override;
 
 	std::string Path;
 	bool Flip;
@@ -57,9 +58,9 @@ public:
 	TextureSourceRaw(int w, int h, int c, std::vector<unsigned char>&& d, bool generateMipmaps = true)
 	    : InitialisationData(w, h, c, std::move(d), generateMipmaps) { }
 
-	void SerializeBody(ISerializer& backend) const override;
-	TextureSourceType GetType() const override { return TextureSourceType::Raw; }
-	TextureInitialisationData GetInitialisationData() const override;
+	void serialize_body(ISerializer& backend) const override;
+	TextureSourceType get_type() const override { return TextureSourceType::Raw; }
+	TextureInitialisationData get_initialisation_data() const override;
 
 	TextureInitialisationData InitialisationData {};
 };
@@ -72,9 +73,9 @@ public:
 	    , Path(path) {
 	}
 
-	void SerializeBody(ISerializer& backend) const override;
-	TextureSourceType GetType() const override { return TextureSourceType::Svg; }
-	TextureInitialisationData GetInitialisationData() const override;
+	void serialize_body(ISerializer& backend) const override;
+	TextureSourceType get_type() const override { return TextureSourceType::Svg; }
+	TextureInitialisationData get_initialisation_data() const override;
 
 	std::string Path;
 	int Width;
@@ -86,8 +87,8 @@ public:
 	TextureSourceEmbedded(
 	    std::vector<unsigned char>&& compressedData,
 	    bool generateMipmaps = true)
-	    : m_CompressedData(std::move(compressedData))
-	    , m_GenerateMipmaps(generateMipmaps) { }
+	    : m_compressed_data(std::move(compressedData))
+	    , m_generate_mipmaps(generateMipmaps) { }
 
 	TextureSourceEmbedded(
 	    int w,
@@ -95,23 +96,23 @@ public:
 	    int channels,
 	    std::vector<unsigned char>&& pixels,
 	    bool generateMipmaps = true)
-	    : m_RawData(w, h, channels, std::move(pixels), generateMipmaps)
-	    , m_GenerateMipmaps(generateMipmaps) { }
+	    : m_raw_data(w, h, channels, std::move(pixels), generateMipmaps)
+	    , m_generate_mipmaps(generateMipmaps) { }
 
-	TextureSourceType GetType() const override {
+	TextureSourceType get_type() const override {
 		return TextureSourceType::Embedded;
 	}
 
-	TextureInitialisationData GetInitialisationData() const override;
+	TextureInitialisationData get_initialisation_data() const override;
 
 protected:
-	void SerializeBody(ISerializer& backend) const override;
+	void serialize_body(ISerializer& backend) const override;
 
 private:
-	std::vector<unsigned char> m_CompressedData {};
-	TextureInitialisationData m_RawData {};
+	std::vector<unsigned char> m_compressed_data {};
+	TextureInitialisationData m_raw_data {};
 
-	bool m_GenerateMipmaps = true;
+	bool m_generate_mipmaps = true;
 };
 
 }

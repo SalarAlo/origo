@@ -7,9 +7,9 @@ public:
 	ImGuiLayer() = default;
 	~ImGuiLayer() = default;
 
-	void OnAttach(GLFWwindow* window);
-	void OnDetach();
-	void Begin();
-	void End();
+	void on_attach(GLFWwindow* window);
+	void on_detach();
+	void begin();
+	void end();
 };
 }

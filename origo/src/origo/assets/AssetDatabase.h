@@ -11,22 +11,22 @@ class Asset;
 
 class AssetDatabase : public Singleton<AssetDatabase> {
 public:
-	const std::unordered_map<UUID, AssetMetadata>& GetAllMetadata() { return s_Metadata; }
-	void WriteImportFile(const UUID& id);
-	const AssetMetadata& GetMetadata(const UUID& id);
-	void RegisterMetadata(const AssetMetadata& meta);
-	AssetMetadata LoadImportHeader(const std::filesystem::path& path);
-	Asset* LoadAsset(const UUID& id);
-	void SaveAll();
+	const std::unordered_map<UUID, AssetMetadata>& get_all_metadata() { return m_s_metadata; }
+	void write_import_file(const UUID& id);
+	const AssetMetadata& get_metadata(const UUID& id);
+	void register_metadata(const AssetMetadata& meta);
+	AssetMetadata load_import_header(const std::filesystem::path& path);
+	Asset* load_asset(const UUID& id);
+	void save_all();
 
 public:
 	const std::filesystem::path ROOT { "./assets" };
 
 private:
-	std::filesystem::path GetImportPath(const AssetMetadata& meta);
+	std::filesystem::path get_import_path(const AssetMetadata& meta);
 
 private:
-	std::unordered_map<UUID, AssetMetadata> s_Metadata {};
+	std::unordered_map<UUID, AssetMetadata> m_s_metadata {};
 };
 
 }

@@ -3,6 +3,6 @@
 
 namespace Origo {
 Layer::Layer(std::string_view name)
-    : m_DebugName(name) { }
+    : m_debug_name(name) { }
 Layer::~Layer() { }
 }

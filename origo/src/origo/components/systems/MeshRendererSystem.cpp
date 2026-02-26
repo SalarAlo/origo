@@ -7,8 +7,8 @@
 
 namespace Origo {
 
-void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
-	scene->View<MeshRendererComponent, TransformComponent>(
+void MeshRenderSystem::render(Scene* scene, RenderContext& context) {
+	scene->view<MeshRendererComponent, TransformComponent>(
 	    [&](RID entity,
 	        MeshRendererComponent& mr,
 	        TransformComponent& transform) {
@@ -16,10 +16,10 @@ void MeshRenderSystem::Render(Scene* scene, RenderContext& context) {
 			    return;
 		    }
 
-		    context.SubmitMesh(
+		    context.submit_mesh(
 		        *mr.MeshHandle,
 		        *mr.MaterialHandle,
-		        transform.GetModelMatrix(),
+		        transform.get_model_matrix(),
 		        RenderPass::Geometry);
 	    });
 }

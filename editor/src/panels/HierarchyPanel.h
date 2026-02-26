@@ -9,15 +9,15 @@ class HierarchyPanel : public EditorPanel {
 public:
 	HierarchyPanel(EditorContext& ctx);
 
-	const char* GetName() const override { return "Hierarchy"; }
+	const char* get_name() const override { return "Hierarchy"; }
 
-	void OnImGuiRender() override;
-
-private:
-	void ChangeActiveSelectedEntity(const Origo::RID& e);
+	void on_im_gui_render() override;
 
 private:
-	EditorContext& m_Context;
+	void change_active_selected_entity(const Origo::RID& e);
+
+private:
+	EditorContext& m_context;
 };
 
 }

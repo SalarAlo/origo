@@ -7,20 +7,20 @@ namespace Origo {
 class SceneAsset : public Asset {
 public:
 	SceneAsset(const std::optional<std::filesystem::path>& path = std::nullopt)
-	    : m_Path(path) {
-		m_AssetType = AssetType::Scene;
+	    : m_path(path) {
+		m_asset_type = AssetType::Scene;
 	}
 
-	AssetType GetAssetType() const override { return AssetType::Scene; }
-	static AssetType GetClassAssetType() { return AssetType::Scene; }
+	AssetType get_asset_type() const override { return AssetType::Scene; }
+	static AssetType get_class_asset_type() { return AssetType::Scene; }
 
-	const std::optional<std::filesystem::path>& GetPath() const { return m_Path; }
-	void SetPath(const std::filesystem::path& path) { m_Path = path; }
+	const std::optional<std::filesystem::path>& get_path() const { return m_path; }
+	void set_path(const std::filesystem::path& path) { m_path = path; }
 
-	void Resolve() override {
+	void resolve() override {
 	}
 
 private:
-	std::optional<std::filesystem::path> m_Path;
+	std::optional<std::filesystem::path> m_path;
 };
 }

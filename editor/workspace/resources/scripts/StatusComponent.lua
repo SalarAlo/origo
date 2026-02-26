@@ -1,6 +1,6 @@
 Component.define("StatusComponent", {
 	poisoned = {
-		type = "bool",
+		type = "float",
 		default = false
 	},
 	freezing = {
@@ -16,3 +16,4 @@ Component.define("StatusComponent", {
 		default = true
 	},
 })
+

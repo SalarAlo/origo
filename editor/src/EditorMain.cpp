@@ -28,7 +28,7 @@ class EditorApplication : public Application {
 public:
 	EditorApplication(const ApplicationSettings& settings)
 	    : Application(settings)
-	    , m_RenderBuffer([] {
+	    , m_render_buffer([] {
 		    FrameBufferSpec spec;
 		    spec.Width = 1920;
 		    spec.Height = 1080;
@@ -39,7 +39,7 @@ public:
 		    };
 		    return spec;
 	    }())
-	    , m_ResolveBuffer([] {
+	    , m_resolve_buffer([] {
 		    FrameBufferSpec spec;
 		    spec.Width = 1920;
 		    spec.Attachments = {
@@ -48,62 +48,62 @@ public:
 		    };
 		    return spec;
 	    }())
-	    , m_Context(new Scene("Sample Scene"), m_RenderBuffer, m_ResolveBuffer, m_Window.GetNativeWindow(), GetDefaultEditorPalette(), m_LayerSystem)
-	    , m_RuntimeController(m_Context) {
-		PushLayer(new EditorCameraLayer(m_Context), static_cast<size_t>(LayerType::EditorCameraLayer));
-		PushLayer(new SceneLayer(m_Context), static_cast<size_t>(LayerType::SceneLayer));
-		PushLayer(new EditorUILayer(m_Context, m_ImGuiController), static_cast<size_t>(LayerType::EditorUILayer));
-		PushLayer(new RenderLayer(m_Context, m_RenderContext), static_cast<size_t>(LayerType::RenderLayer));
-		PushLayer(new UpdateLayer(m_Context, m_RenderContext), static_cast<size_t>(LayerType::UpdateLayer), true);
+	    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
+	    , m_runtime_controller(m_context) {
+		push_layer(new EditorCameraLayer(m_context), static_cast<size_t>(LayerType::EditorCameraLayer));
+		push_layer(new SceneLayer(m_context), static_cast<size_t>(LayerType::SceneLayer));
+		push_layer(new EditorUILayer(m_context, m_im_gui_controller), static_cast<size_t>(LayerType::EditorUILayer));
+		push_layer(new RenderLayer(m_context, m_render_context), static_cast<size_t>(LayerType::RenderLayer));
+		push_layer(new UpdateLayer(m_context, m_render_context), static_cast<size_t>(LayerType::UpdateLayer), true);
 
-		m_RenderContext.SetTarget(&m_RenderBuffer);
-		m_RenderContext.SetResolveTarget(&m_ResolveBuffer);
+		m_render_context.set_target(&m_render_buffer);
+		m_render_context.set_resolve_target(&m_resolve_buffer);
 	}
 
-	void OnAwake() override {
-		EditorIcons::GetInstance().Init();
+	void on_awake() override {
+		EditorIcons::get_instance().init();
 	}
 
-	void OnEndFrame(float dt) override {
-		m_Context.DeltaTime = dt;
+	void on_end_frame(float dt) override {
+		m_context.DeltaTime = dt;
 
-		if (m_Context.ActiveScene)
-			m_Context.ActiveScene->EndFrame();
+		if (m_context.ActiveScene)
+			m_context.ActiveScene->end_frame();
 
-		if (!m_Context.PendingScene)
+		if (!m_context.PendingScene)
 			return;
 
-		m_Context.UnselectEntity();
+		m_context.unselect_entity();
 
-		if (m_Context.RuntimeState == EditorRuntimeState::Running) {
-			m_RuntimeController.Stop();
+		if (m_context.RuntimeState == EditorRuntimeState::Running) {
+			m_runtime_controller.stop();
 		}
 
-		m_Context.EditorScene = std::move(m_Context.PendingScene);
+		m_context.EditorScene = std::move(m_context.PendingScene);
 
-		m_Context.ActiveScene = m_Context.EditorScene.get();
-		m_Context.RuntimeState = EditorRuntimeState::Editing;
-		m_Context.ViewMode = EditorViewMode::Editor;
+		m_context.ActiveScene = m_context.EditorScene.get();
+		m_context.RuntimeState = EditorRuntimeState::Editing;
+		m_context.ViewMode = EditorViewMode::Editor;
 
-		m_Context.RuntimeScene.reset();
+		m_context.RuntimeScene.reset();
 
-		m_Context.UnselectEntity();
+		m_context.unselect_entity();
 	}
 
 private:
-	FrameBuffer m_RenderBuffer;
-	FrameBuffer m_ResolveBuffer;
-	EditorContext m_Context;
-	EditorRuntimeController m_RuntimeController;
+	FrameBuffer m_render_buffer;
+	FrameBuffer m_resolve_buffer;
+	EditorContext m_context;
+	EditorRuntimeController m_runtime_controller;
 
-	RenderContext m_RenderContext { nullptr };
-	Origo::ImGuiLayer m_ImGuiController;
+	RenderContext m_render_context { nullptr };
+	Origo::ImGuiLayer m_im_gui_controller;
 };
 
 }
 
 namespace Origo {
-Application* CreateApplication() {
+Application* create_application() {
 	ApplicationSettings settings {
 		.WorkingDirectory = "./editor/workspace",
 		.WindowSettings = { .Width = 1900, .Height = 900, .Title = "Origo" }

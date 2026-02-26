@@ -10,47 +10,47 @@
 
 namespace OrigoEditor {
 
-void AssetInspectorDrawer::DrawAsset(const Origo::AssetMetadata& md) {
-	auto& am { Origo::AssetManager::GetInstance() };
-	auto assetHandle { am.GetHandleByUUID(*md.ID) };
-	if (!assetHandle) {
+void AssetInspectorDrawer::draw_asset(const Origo::AssetMetadata& md) {
+	auto& am { Origo::AssetManager::get_instance() };
+	auto asset_handle { am.get_handle_by_uuid(*md.ID) };
+	if (!asset_handle) {
 		ORG_CORE_TRACE("Trying to draw invalid asset");
 		return;
 	}
 
-	auto assetPtr { am.Get(*assetHandle) };
-	ImGui::Text("%s", (*md.ID).ToString().c_str());
-	DrawSpecific(assetPtr, md.Type);
+	auto asset_ptr { am.get(*asset_handle) };
+	ImGui::Text("%s", (*md.ID).to_string().c_str());
+	draw_specific(asset_ptr, md.Type);
 }
 
-void AssetInspectorDrawer::DrawSpecific(Origo::Asset* asset, Origo::AssetType type) {
+void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType type) {
 	switch (type) {
 	case Origo::AssetType::Material2D:
-		DrawMaterial(dynamic_cast<Origo::Material2D*>(asset));
+		draw_material(dynamic_cast<Origo::Material2D*>(asset));
 		break;
 	default: {
-		std::string assetTypeStr { magic_enum::enum_name(type) };
-		ImGui::Text("%s", ("No draw for assets of type " + assetTypeStr + "implemented yet").c_str());
+		std::string asset_type_str { magic_enum::enum_name(type) };
+		ImGui::Text("%s", ("No draw for assets of type " + asset_type_str + "implemented yet").c_str());
 	}
 	}
 }
 
-void AssetInspectorDrawer::DrawMaterial(Origo::Material2D* material) {
-	auto albedoHandle { material->GetAlbedo() };
-	auto shaderHandle { material->GetShader() };
+void AssetInspectorDrawer::draw_material(Origo::Material2D* material) {
+	auto albedo_handle { material->get_albedo() };
+	auto shader_handle { material->get_shader() };
 
-	ComponentUI::DrawAssetControl("Albedo", albedoHandle, Origo::AssetType::Texture2D);
-	ComponentUI::DrawAssetControl("Shader", shaderHandle, Origo::AssetType::Shader);
+	ComponentUI::draw_asset_control("Albedo", albedo_handle, Origo::AssetType::Texture2D);
+	ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
 
-	if (albedoHandle.has_value())
-		material->SetAlbedo(*albedoHandle);
+	if (albedo_handle.has_value())
+		material->set_albedo(*albedo_handle);
 
-	if (shaderHandle.has_value())
-		material->SetShader(*shaderHandle);
+	if (shader_handle.has_value())
+		material->set_shader(*shader_handle);
 
-	Origo::Vec3 color { material->GetColor() };
-	ComponentUI::DrawColorControl("Color", color);
-	material->SetColor(color);
+	Origo::Vec3 color { material->get_color() };
+	ComponentUI::draw_color_control("Color", color);
+	material->set_color(color);
 }
 
 }

@@ -16,7 +16,7 @@
 
 namespace OrigoEditor {
 
-static std::string ClipTextToWidth(const std::string& text, float maxWidth) {
+static std::string clip_text_to_width(const std::string& text, float maxWidth) {
 	if (ImGui::CalcTextSize(text.c_str()).x <= maxWidth)
 		return text;
 
@@ -30,7 +30,7 @@ static std::string ClipTextToWidth(const std::string& text, float maxWidth) {
 	return "...";
 }
 
-static bool ContainsCaseInsensitive(const std::string& haystack, const std::string& needle) {
+static bool contains_case_insensitive(const std::string& haystack, const std::string& needle) {
 	if (needle.empty())
 		return true;
 
@@ -50,35 +50,35 @@ static bool ContainsCaseInsensitive(const std::string& haystack, const std::stri
 }
 
 AssetPanel::AssetPanel(EditorContext& ctx)
-    : m_Context(ctx) {
-	const auto& metadataMap = Origo::AssetDatabase::GetInstance().GetAllMetadata();
+    : m_context(ctx) {
+	const auto& metadata_map = Origo::AssetDatabase::get_instance().get_all_metadata();
 
 	std::vector<Origo::AssetMetadata> snapshot;
-	snapshot.reserve(metadataMap.size());
-	for (const auto& [id, meta] : metadataMap)
+	snapshot.reserve(metadata_map.size());
+	for (const auto& [id, meta] : metadata_map)
 		snapshot.push_back(meta);
 
-	m_Tree.Build(snapshot);
-	m_CurrentFolder = m_Tree.GetRoot();
-	if (m_CurrentFolder)
-		m_Path = { m_CurrentFolder };
+	m_tree.build(snapshot);
+	m_current_folder = m_tree.get_root();
+	if (m_current_folder)
+		m_path = { m_current_folder };
 }
 
-void AssetPanel::OnImGuiRender() {
+void AssetPanel::on_im_gui_render() {
 	ImGui::Begin("Assets", nullptr, ImGuiWindowFlags_NoScrollbar);
 
-	DrawTopBar();
+	draw_top_bar();
 
 	ImGui::Separator();
 
 	ImGui::BeginChild("AssetBrowser", ImVec2(0, 0), false);
-	DrawFolderContents(m_CurrentFolder);
+	draw_folder_contents(m_current_folder);
 	ImGui::EndChild();
 
 	ImGui::End();
 }
 
-void AssetPanel::DrawTopBar() {
+void AssetPanel::draw_top_bar() {
 	const float height = ImGui::GetFrameHeight() + ImGui::GetStyle().WindowPadding.y * 0.5f;
 	ImGui::BeginChild("AssetTopBar", ImVec2(0, height), false, ImGuiWindowFlags_NoScrollbar);
 
@@ -86,22 +86,22 @@ void AssetPanel::DrawTopBar() {
 
 	ImGui::SameLine();
 
-	float searchWidth = 220.0f;
+	float search_width = 220.0f;
 	float avail = ImGui::GetContentRegionAvail().x;
-	float breadcrumbWidth = std::max(0.0f, avail - searchWidth - style.ItemSpacing.x);
+	float breadcrumb_width = std::max(0.0f, avail - search_width - style.ItemSpacing.x);
 
-	DrawBreadcrumbBar(breadcrumbWidth);
+	draw_breadcrumb_bar(breadcrumb_width);
 
 	ImGui::SameLine();
 
-	ImGui::SetNextItemWidth(searchWidth);
-	ImGui::InputTextWithHint("##AssetSearch", "Search...", &m_Search);
+	ImGui::SetNextItemWidth(search_width);
+	ImGui::InputTextWithHint("##AssetSearch", "Search...", &m_search);
 
 	ImGui::EndChild();
 }
 
-void AssetPanel::DrawBreadcrumbBar(float availableWidth) {
-	if (!m_CurrentFolder)
+void AssetPanel::draw_breadcrumb_bar(float availableWidth) {
+	if (!m_current_folder)
 		return;
 
 	const float h = ImGui::GetFrameHeight();
@@ -110,42 +110,42 @@ void AssetPanel::DrawBreadcrumbBar(float availableWidth) {
 
 	ImGui::BeginChild("Breadcrumb", ImVec2(availableWidth, h), false, flags);
 
-	const float childH = h;
+	const float child_h = h;
 
-	const float itemH = ImGui::GetFrameHeight();
-	const float availY = ImGui::GetContentRegionAvail().y;
+	const float item_h = ImGui::GetFrameHeight();
+	const float avail_y = ImGui::GetContentRegionAvail().y;
 
-	float yOffset = 0.0f;
-	if (availY > itemH)
-		yOffset = (availY - itemH) * 0.5f;
+	float y_offset = 0.0f;
+	if (avail_y > item_h)
+		y_offset = (avail_y - item_h) * 0.5f;
 
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + y_offset);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 0.0f));
 
-	const ImU32 sepColor = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	const ImU32 sep_color = ImGui::GetColorU32(ImGuiCol_TextDisabled);
 
-	float totalWidth = 0.0f;
-	for (size_t i = 0; i < m_Path.size(); ++i) {
-		const char* label = m_Path[i]->name.empty() ? "Assets" : m_Path[i]->name.c_str();
-		totalWidth += ImGui::CalcTextSize(label).x + ImGui::GetStyle().FramePadding.x * 2.0f;
-		if (i + 1 < m_Path.size())
-			totalWidth += ImGui::CalcTextSize(">").x + ImGui::GetStyle().ItemSpacing.x * 2.0f;
+	float total_width = 0.0f;
+	for (size_t i = 0; i < m_path.size(); ++i) {
+		const char* label = m_path[i]->Name.empty() ? "Assets" : m_path[i]->Name.c_str();
+		total_width += ImGui::CalcTextSize(label).x + ImGui::GetStyle().FramePadding.x * 2.0f;
+		if (i + 1 < m_path.size())
+			total_width += ImGui::CalcTextSize(">").x + ImGui::GetStyle().ItemSpacing.x * 2.0f;
 	}
 
-	if (totalWidth > availableWidth)
+	if (total_width > availableWidth)
 		ImGui::SetScrollX(ImGui::GetScrollMaxX());
 
-	for (size_t i = 0; i < m_Path.size(); ++i) {
+	for (size_t i = 0; i < m_path.size(); ++i) {
 		ImGui::PushID((int)i);
 
-		const bool isLast = (i + 1 == m_Path.size());
-		const char* rawLabel = m_Path[i]->name.empty() ? "Assets" : m_Path[i]->name.c_str();
+		const bool is_last = (i + 1 == m_path.size());
+		const char* raw_label = m_path[i]->Name.empty() ? "Assets" : m_path[i]->Name.c_str();
 
-		const float maxSegmentWidth = std::min(220.0f, availableWidth * 0.45f);
-		std::string label = ClipTextToWidth(rawLabel, maxSegmentWidth);
+		const float max_segment_width = std::min(220.0f, availableWidth * 0.45f);
+		std::string label = clip_text_to_width(raw_label, max_segment_width);
 
-		if (!isLast) {
+		if (!is_last) {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.06f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, 0.10f));
@@ -156,23 +156,23 @@ void AssetPanel::DrawBreadcrumbBar(float availableWidth) {
 		}
 
 		if (ImGui::Button(label.c_str())) {
-			m_Path.resize(i + 1);
-			m_CurrentFolder = m_Path.back();
+			m_path.resize(i + 1);
+			m_current_folder = m_path.back();
 		}
 
 		ImGui::PopStyleColor(3);
 
-		if (ImGui::IsItemHovered() && label != rawLabel) {
+		if (ImGui::IsItemHovered() && label != raw_label) {
 			ImGui::BeginTooltip();
-			ImGui::TextUnformatted(rawLabel);
+			ImGui::TextUnformatted(raw_label);
 			ImGui::EndTooltip();
 		}
 
 		ImGui::PopID();
 
-		if (i + 1 < m_Path.size()) {
+		if (i + 1 < m_path.size()) {
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(sepColor));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(sep_color));
 			ImGui::TextUnformatted(">");
 			ImGui::PopStyleColor();
 			ImGui::SameLine();
@@ -183,95 +183,95 @@ void AssetPanel::DrawBreadcrumbBar(float availableWidth) {
 	ImGui::EndChild();
 }
 
-void AssetPanel::DrawFolderContents(FolderEntry* folder) {
+void AssetPanel::draw_folder_contents(FolderEntry* folder) {
 	if (!folder)
 		return;
 
-	constexpr float TILE_SIZE = 96.0f;
-	constexpr float TILE_PADDING = 10.0f;
-	constexpr float TEXT_HEIGHT = 22.0f;
+	constexpr float tile_size = 96.0f;
+	constexpr float tile_padding = 10.0f;
+	constexpr float text_height = 22.0f;
 
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-	const float cellSize = TILE_SIZE + TILE_PADDING;
-	const float panelWidth = ImGui::GetContentRegionAvail().x;
-	const int columnCount = std::max(1, (int)(panelWidth / cellSize));
+	const float cell_size = tile_size + tile_padding;
+	const float panel_width = ImGui::GetContentRegionAvail().x;
+	const int column_count = std::max(1, (int)(panel_width / cell_size));
 
-	ImGui::Columns(columnCount, nullptr, false);
+	ImGui::Columns(column_count, nullptr, false);
 
-	for (FolderEntry* child : folder->children) {
-		if (!ContainsCaseInsensitive(child->name, m_Search))
+	for (FolderEntry* child : folder->Children) {
+		if (!contains_case_insensitive(child->Name, m_search))
 			continue;
-		DrawFolderTile(child, drawList);
+		draw_folder_tile(child, draw_list);
 		ImGui::NextColumn();
 	}
 
-	for (AssetEntry*& asset : folder->assets) {
-		if (!ContainsCaseInsensitive(asset->Name, m_Search))
+	for (AssetEntry*& asset : folder->Assets) {
+		if (!contains_case_insensitive(asset->Name, m_search))
 			continue;
-		DrawAssetTile(asset, drawList);
+		draw_asset_tile(asset, draw_list);
 		ImGui::NextColumn();
 	}
 
 	ImGui::Columns(1);
 }
 
-void AssetPanel::DrawFolderTile(FolderEntry* folder, ImDrawList* drawList) {
-	constexpr float TILE_SIZE = 96.0f;
-	constexpr float TEXT_HEIGHT = 22.0f;
+void AssetPanel::draw_folder_tile(FolderEntry* folder, ImDrawList* drawList) {
+	constexpr float tile_size = 96.0f;
+	constexpr float text_height = 22.0f;
 
 	ImGui::PushID(folder);
 
 	ImVec2 cursor = ImGui::GetCursorScreenPos();
-	ImVec2 tileSize = { TILE_SIZE, TILE_SIZE + TEXT_HEIGHT };
+	ImVec2 tile_size_vec = { tile_size, tile_size + text_height };
 
-	ImGui::InvisibleButton("folder_tile", tileSize);
+	ImGui::InvisibleButton("folder_tile", tile_size_vec);
 
 	const bool hovered = ImGui::IsItemHovered();
 	const bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
-	const bool doubleClicked = hovered && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+	const bool double_clicked = hovered && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 
-	ImU32 bgColor = hovered ? IM_COL32(80, 80, 80, 140) : IM_COL32(50, 50, 50, 90);
-	drawList->AddRectFilled(cursor, cursor + tileSize, bgColor, 8.0f);
+	ImU32 bg_color = hovered ? IM_COL32(80, 80, 80, 140) : IM_COL32(50, 50, 50, 90);
+	drawList->AddRectFilled(cursor, cursor + tile_size_vec, bg_color, 8.0f);
 
-	ImVec2 thumbMin = cursor + ImVec2(10, 10);
-	ImVec2 thumbMax = thumbMin + ImVec2(TILE_SIZE - 20, TILE_SIZE - 20);
+	ImVec2 thumb_min = cursor + ImVec2(10, 10);
+	ImVec2 thumb_max = thumb_min + ImVec2(tile_size - 20, tile_size - 20);
 
-	ImTextureID icon = EditorIcons::GetInstance().Get(IconType::Folder);
+	ImTextureID icon = EditorIcons::get_instance().get(IconType::Folder);
 	if (icon)
-		drawList->AddImage(icon, thumbMin, thumbMax);
+		drawList->AddImage(icon, thumb_min, thumb_max);
 	else
-		drawList->AddRectFilled(thumbMin, thumbMax, IM_COL32(90, 90, 90, 255), 6.0f);
+		drawList->AddRectFilled(thumb_min, thumb_max, IM_COL32(90, 90, 90, 255), 6.0f);
 
-	const float textPadding = 6.0f;
-	const float maxWidth = TILE_SIZE - textPadding * 2.0f;
+	const float text_padding = 6.0f;
+	const float max_width = tile_size - text_padding * 2.0f;
 
-	std::string displayName = ClipTextToWidth(folder->name, maxWidth);
-	ImVec2 textSize = ImGui::CalcTextSize(displayName.c_str());
-	const float fontSize = ImGui::GetFontSize();
+	std::string display_name = clip_text_to_width(folder->Name, max_width);
+	ImVec2 text_size = ImGui::CalcTextSize(display_name.c_str());
+	const float font_size = ImGui::GetFontSize();
 
-	ImVec2 textPos = {
-		cursor.x + (TILE_SIZE - textSize.x) * 0.5f,
-		cursor.y + TILE_SIZE + (TEXT_HEIGHT - fontSize) * 0.5f
+	ImVec2 text_pos = {
+		cursor.x + (tile_size - text_size.x) * 0.5f,
+		cursor.y + tile_size + (text_height - font_size) * 0.5f
 	};
 
-	drawList->AddText(textPos, IM_COL32(230, 230, 230, 255), displayName.c_str());
+	drawList->AddText(text_pos, IM_COL32(230, 230, 230, 255), display_name.c_str());
 
-	if (hovered && displayName != folder->name) {
+	if (hovered && display_name != folder->Name) {
 		ImGui::BeginTooltip();
-		ImGui::TextUnformatted(folder->name.c_str());
+		ImGui::TextUnformatted(folder->Name.c_str());
 		ImGui::EndTooltip();
 	}
 
-	if (clicked || doubleClicked) {
-		m_CurrentFolder = folder;
-		m_Path.push_back(folder);
+	if (clicked || double_clicked) {
+		m_current_folder = folder;
+		m_path.push_back(folder);
 	}
 
 	ImGui::PopID();
 }
 
-static void AddImageRotated(ImDrawList* drawList, ImTextureID texture, ImVec2 center, ImVec2 size, float angleRad, ImU32 tint = IM_COL32_WHITE) {
+static void add_image_rotated(ImDrawList* drawList, ImTextureID texture, ImVec2 center, ImVec2 size, float angleRad, ImU32 tint = IM_COL32_WHITE) {
 	const ImVec2 half = size * 0.5f;
 	const float c = cosf(angleRad);
 	const float s = sinf(angleRad);
@@ -298,75 +298,75 @@ static void AddImageRotated(ImDrawList* drawList, ImTextureID texture, ImVec2 ce
 	    tint);
 }
 
-void AssetPanel::DrawAssetTile(AssetEntry*& asset, ImDrawList* drawList) {
-	constexpr float TILE_SIZE = 96.0f;
-	constexpr float TEXT_HEIGHT = 22.0f;
+void AssetPanel::draw_asset_tile(AssetEntry*& asset, ImDrawList* drawList) {
+	constexpr float tile_size = 96.0f;
+	constexpr float text_height = 22.0f;
 
-	ImGui::PushID(&asset->id);
+	ImGui::PushID(&asset->Id);
 
 	ImVec2 cursor = ImGui::GetCursorScreenPos();
-	ImVec2 tileSize = { TILE_SIZE, TILE_SIZE + TEXT_HEIGHT };
+	ImVec2 tile_size_vec = { tile_size, tile_size + text_height };
 
-	ImGui::InvisibleButton("asset_tile", tileSize);
+	ImGui::InvisibleButton("asset_tile", tile_size_vec);
 
 	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		m_Context.SetSelectedAsset(asset->id);
+		m_context.set_selected_asset(asset->Id);
 
 	const bool hovered = ImGui::IsItemHovered();
 
-	const auto selectedAssetID = m_Context.GetSelectedAsset();
-	const bool isSelected = (asset->id == selectedAssetID);
+	const auto selected_asset_id = m_context.get_selected_asset();
+	const bool is_selected = (asset->Id == selected_asset_id);
 
-	ImU32 bgColor = isSelected ? IM_COL32(60, 120, 200, 180)
-	    : hovered              ? IM_COL32(80, 80, 80, 140)
-	                           : IM_COL32(50, 50, 50, 90);
+	ImU32 bg_color = is_selected ? IM_COL32(60, 120, 200, 180)
+	    : hovered                ? IM_COL32(80, 80, 80, 140)
+	                             : IM_COL32(50, 50, 50, 90);
 
-	drawList->AddRectFilled(cursor, cursor + tileSize, bgColor, 8.0f);
+	drawList->AddRectFilled(cursor, cursor + tile_size_vec, bg_color, 8.0f);
 
-	ImVec2 thumbMin = cursor + ImVec2(10, 10);
-	ImVec2 thumbMax = thumbMin + ImVec2(TILE_SIZE - 20, TILE_SIZE - 20);
+	ImVec2 thumb_min = cursor + ImVec2(10, 10);
+	ImVec2 thumb_max = thumb_min + ImVec2(tile_size - 20, tile_size - 20);
 
 	if (asset->Icon) {
-		ImVec2 size = thumbMax - thumbMin;
-		ImVec2 center = thumbMin + size * 0.5f;
+		ImVec2 size = thumb_max - thumb_min;
+		ImVec2 center = thumb_min + size * 0.5f;
 
-		if (asset->type == Origo::AssetType::Texture2D) {
-			AddImageRotated(drawList, asset->Icon, center, size, IM_PI);
+		if (asset->Type == Origo::AssetType::Texture2D) {
+			add_image_rotated(drawList, asset->Icon, center, size, IM_PI);
 		} else {
-			AddImageRotated(drawList, asset->Icon, center, size, 0);
+			add_image_rotated(drawList, asset->Icon, center, size, 0);
 		}
 	} else {
-		drawList->AddRectFilled(thumbMin, thumbMax, IM_COL32(90, 90, 90, 255), 6.0f);
+		drawList->AddRectFilled(thumb_min, thumb_max, IM_COL32(90, 90, 90, 255), 6.0f);
 	}
 
-	const float textPadding = 6.0f;
-	const float maxWidth = TILE_SIZE - textPadding * 2.0f;
+	const float text_padding = 6.0f;
+	const float max_width = tile_size - text_padding * 2.0f;
 
-	std::string displayName = ClipTextToWidth(asset->Name, maxWidth);
-	ImVec2 textSize = ImGui::CalcTextSize(displayName.c_str());
-	const float fontSize = ImGui::GetFontSize();
+	std::string display_name = clip_text_to_width(asset->Name, max_width);
+	ImVec2 text_size = ImGui::CalcTextSize(display_name.c_str());
+	const float font_size = ImGui::GetFontSize();
 
-	ImVec2 textPos = {
-		cursor.x + (TILE_SIZE - textSize.x) * 0.5f,
-		cursor.y + TILE_SIZE + (TEXT_HEIGHT - fontSize) * 0.5f
+	ImVec2 text_pos = {
+		cursor.x + (tile_size - text_size.x) * 0.5f,
+		cursor.y + tile_size + (text_height - font_size) * 0.5f
 	};
 
-	drawList->AddText(textPos, IM_COL32(230, 230, 230, 255), displayName.c_str());
+	drawList->AddText(text_pos, IM_COL32(230, 230, 230, 255), display_name.c_str());
 
-	if (hovered && displayName != asset->Name) {
+	if (hovered && display_name != asset->Name) {
 		ImGui::BeginTooltip();
 		ImGui::TextUnformatted(asset->Name.c_str());
 		ImGui::EndTooltip();
 	}
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		const std::string uuidStr = (asset->id).ToString();
+		const std::string uuid_str = (asset->Id).to_string();
 
 		ImGui::TextUnformatted(asset->Name.c_str());
 		ImGui::SetDragDropPayload(
 		    "ORIGO_ASSET_UUID",
-		    uuidStr.c_str(),
-		    uuidStr.size() + 1);
+		    uuid_str.c_str(),
+		    uuid_str.size() + 1);
 
 		ImGui::EndDragDropSource();
 	}

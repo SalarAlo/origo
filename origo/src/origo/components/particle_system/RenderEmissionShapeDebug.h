@@ -25,18 +25,18 @@ struct RenderEmissionShapeDebug {
 	RenderContext& RenderCtx;
 	TransformComponent& Emitter;
 
-	glm::mat4 GetEmitterMatrix() const {
-		return Emitter.GetModelMatrix();
+	glm::mat4 get_emitter_matrix() const {
+		return Emitter.get_model_matrix();
 	}
 
 	void operator()(const PointEmissionShape&) const {
-		constexpr float POINT_SIZE = 0.05f;
+		constexpr float point_size = 0.05f;
 
-		glm::mat4 model = GetEmitterMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(POINT_SIZE));
+		glm::mat4 model = get_emitter_matrix() * glm::scale(glm::mat4(1.0f), glm::vec3(point_size));
 
-		RenderCtx.SubmitMesh(
-		    PrimitiveShapeCache::GetInstance().GetSphereMesh(),
-		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
+		RenderCtx.submit_mesh(
+		    PrimitiveShapeCache::get_instance().get_sphere_mesh(),
+		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_TRIANGLES);
@@ -47,8 +47,8 @@ struct RenderEmissionShapeDebug {
 		if (length(dir) < 1e-6f)
 			dir = Vec3 { 0, 1, 0 };
 
-		float angleRad = glm::radians(c.Angle);
-		float radius = c.Length * tanf(angleRad);
+		float angle_rad = glm::radians(c.Angle);
+		float radius = c.Length * tanf(angle_rad);
 
 		glm::quat rot = glm::rotation(
 		    glm::vec3(0, 1, 0),
@@ -56,9 +56,9 @@ struct RenderEmissionShapeDebug {
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(c.Position)) * glm::toMat4(rot) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f * c.Length, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * radius, c.Length, 2.0f * radius));
 
-		RenderCtx.SubmitMesh(
-		    PrimitiveShapeCache::GetInstance().GetConeMesh(),
-		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
+		RenderCtx.submit_mesh(
+		    PrimitiveShapeCache::get_instance().get_cone_mesh(),
+		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_LINES);
@@ -67,11 +67,11 @@ struct RenderEmissionShapeDebug {
 	void operator()(const SphereEmissionShape& s) const {
 		glm::mat4 local = glm::scale(glm::mat4(1.0f), glm::vec3(s.Radius * 2.0f));
 
-		glm::mat4 model = GetEmitterMatrix() * local;
+		glm::mat4 model = get_emitter_matrix() * local;
 
-		RenderCtx.SubmitMesh(
-		    PrimitiveShapeCache::GetInstance().GetSphereMesh(),
-		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
+		RenderCtx.submit_mesh(
+		    PrimitiveShapeCache::get_instance().get_sphere_mesh(),
+		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_LINES);
@@ -80,11 +80,11 @@ struct RenderEmissionShapeDebug {
 	void operator()(const BoxEmissionShape& b) const {
 		glm::mat4 local = glm::scale(glm::mat4(1.0f), glm::vec3(b.Size));
 
-		glm::mat4 model = GetEmitterMatrix() * local;
+		glm::mat4 model = get_emitter_matrix() * local;
 
-		RenderCtx.SubmitMesh(
-		    PrimitiveShapeCache::GetInstance().GetCubeMesh(),
-		    DefaultAssetCache::GetInstance().GetParticleEmissionDebugMaterial(),
+		RenderCtx.submit_mesh(
+		    PrimitiveShapeCache::get_instance().get_cube_mesh(),
+		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_LINE_LOOP);

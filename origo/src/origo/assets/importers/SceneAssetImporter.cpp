@@ -7,22 +7,22 @@
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
-bool SceneAssetImporter::CanImport(const std::filesystem::path& path) const {
+bool SceneAssetImporter::can_import(const std::filesystem::path& path) const {
 	auto stem { path.stem() };
 	if (!stem.has_extension())
 		return false;
 	auto ext { stem.extension().string() };
-	ToLowerInPlace(ext);
+	to_lower_in_place(ext);
 	return ext == ".scene";
 }
 
-AssetType SceneAssetImporter::GetAssetType() const {
+AssetType SceneAssetImporter::get_asset_type() const {
 	return AssetType::Scene;
 }
 
-Scope<Asset> SceneAssetImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto scene { AssetFactory::GetInstance().AllocateHollowAsset<SceneAsset>() };
-	scene->SetPath(path);
+Scope<Asset> SceneAssetImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
+	auto scene { AssetFactory::get_instance().allocate_hollow_asset<SceneAsset>() };
+	scene->set_path(path);
 	return scene;
 }
 

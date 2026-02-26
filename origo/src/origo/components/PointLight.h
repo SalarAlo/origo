@@ -5,9 +5,9 @@
 namespace Origo {
 
 struct PointLightComponent : Component {
-	std::string GetComponentName() const override { return "Point Light"; }
+	std::string get_component_name() const override { return "Point Light"; }
 
-	void SetAttenuation(float c, float l, float q) {
+	void set_attenuation(float c, float l, float q) {
 		Constant = c;
 		Linear = l;
 		Quadratic = q;

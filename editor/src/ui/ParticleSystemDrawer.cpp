@@ -12,104 +12,104 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::ParticleSystemComponent>(
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::ParticleSystemComponent>(
 	    "Particle System",
 	    "./icons/ParticleSystem.svg",
 	    [](Origo::ParticleSystemComponent& ps) {
-		    bool generalOpen = ComponentUI::StartRegion("General");
+		    bool general_open = ComponentUI::start_region("General");
 
-		    if (generalOpen) {
-			    ComponentUI::DrawBoolControl("Is Looping", ps.IsLooping);
-			    ComponentUI::DrawFloatControl("Spawn Rate", ps.SpawnRate);
+		    if (general_open) {
+			    ComponentUI::draw_bool_control("Is Looping", ps.IsLooping);
+			    ComponentUI::draw_float_control("Spawn Rate", ps.SpawnRate);
 
-			    static bool useSizeRange = true;
-			    ComponentUI::DrawBoolControl("Use Size Range", useSizeRange);
+			    static bool use_size_range = true;
+			    ComponentUI::draw_bool_control("Use Size Range", use_size_range);
 
-			    if (useSizeRange) {
-				    glm::vec2 sizeRange { ps.StartSize, ps.EndSize };
-				    ComponentUI::DrawVec2Control("Size Range", sizeRange);
-				    ps.StartSize = sizeRange.x;
-				    ps.EndSize = sizeRange.y;
+			    if (use_size_range) {
+				    glm::vec2 size_range { ps.StartSize, ps.EndSize };
+				    ComponentUI::draw_vec2_control("Size Range", size_range);
+				    ps.StartSize = size_range.x;
+				    ps.EndSize = size_range.y;
 			    } else {
 				    float size = ps.StartSize;
-				    ComponentUI::DrawFloatControl("Size", size);
+				    ComponentUI::draw_float_control("Size", size);
 				    ps.StartSize = size;
 				    ps.EndSize = size;
 			    }
 
-			    static bool useLifetimeRange = true;
-			    ComponentUI::DrawBoolControl("Use Lifetime Range", useLifetimeRange);
+			    static bool use_lifetime_range = true;
+			    ComponentUI::draw_bool_control("Use Lifetime Range", use_lifetime_range);
 
-			    if (useLifetimeRange) {
-				    glm::vec2 lifetimeRange { ps.LifetimeMin, ps.LifetimeMax };
-				    ComponentUI::DrawMinMaxRangeControl("Lifetime Range", lifetimeRange);
-				    ps.LifetimeMin = lifetimeRange.x;
-				    ps.LifetimeMax = lifetimeRange.y;
+			    if (use_lifetime_range) {
+				    glm::vec2 lifetime_range { ps.LifetimeMin, ps.LifetimeMax };
+				    ComponentUI::draw_min_max_range_control("Lifetime Range", lifetime_range);
+				    ps.LifetimeMin = lifetime_range.x;
+				    ps.LifetimeMax = lifetime_range.y;
 			    } else {
 				    float lifetime = ps.LifetimeMin;
-				    ComponentUI::DrawFloatControl("Lifetime", lifetime);
+				    ComponentUI::draw_float_control("Lifetime", lifetime);
 				    ps.LifetimeMin = lifetime;
 				    ps.LifetimeMax = lifetime;
 			    }
 
-			    static bool useSpeedRange = true;
-			    ComponentUI::DrawBoolControl("Use Speed Range", useSpeedRange);
+			    static bool use_speed_range = true;
+			    ComponentUI::draw_bool_control("Use Speed Range", use_speed_range);
 
-			    if (useSpeedRange) {
-				    glm::vec2 speedRange { ps.InitialSpeedMin, ps.InitialSpeedMax };
-				    ComponentUI::DrawMinMaxRangeControl("Speed Range", speedRange);
-				    ps.InitialSpeedMin = speedRange.x;
-				    ps.InitialSpeedMax = speedRange.y;
+			    if (use_speed_range) {
+				    glm::vec2 speed_range { ps.InitialSpeedMin, ps.InitialSpeedMax };
+				    ComponentUI::draw_min_max_range_control("Speed Range", speed_range);
+				    ps.InitialSpeedMin = speed_range.x;
+				    ps.InitialSpeedMax = speed_range.y;
 			    } else {
 				    float speed = ps.InitialSpeedMin;
-				    ComponentUI::DrawFloatControl("Speed", speed);
+				    ComponentUI::draw_float_control("Speed", speed);
 				    ps.InitialSpeedMin = speed;
 				    ps.InitialSpeedMax = speed;
 			    }
 		    }
 
-		    ComponentUI::EndRegion(generalOpen);
+		    ComponentUI::end_region(general_open);
 
-		    bool emissionOpen = ComponentUI::StartRegion("Emission");
+		    bool emission_open = ComponentUI::start_region("Emission");
 
-		    if (emissionOpen) {
-			    auto newKind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
-			    auto orignalKind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
-			    ComponentUI::DrawEnumControl("Shape", newKind);
+		    if (emission_open) {
+			    auto new_kind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
+			    auto orignal_kind = std::visit(Origo::ParticleEmissionShapeKindOf {}, ps.Shape);
+			    ComponentUI::draw_enum_control("Shape", new_kind);
 
-			    if (orignalKind != newKind) {
-				    ps.Shape = Origo::ParticleEmissionShapeFactory::CreateDefault(newKind);
+			    if (orignal_kind != new_kind) {
+				    ps.Shape = Origo::ParticleEmissionShapeFactory::create_default(new_kind);
 			    }
 
 			    std::visit(OrigoEditor::DrawEmissionShapeGUIControls {}, ps.Shape);
 		    }
 
-		    ComponentUI::EndRegion(emissionOpen);
+		    ComponentUI::end_region(emission_open);
 
-		    bool physicsOpen = ComponentUI::StartRegion("Physics");
+		    bool physics_open = ComponentUI::start_region("Physics");
 
-		    if (physicsOpen) {
-			    ComponentUI::DrawBoolControl("Use Gravity", ps.UseGravity);
+		    if (physics_open) {
+			    ComponentUI::draw_bool_control("Use Gravity", ps.UseGravity);
 
 			    if (ps.UseGravity) {
-				    ComponentUI::DrawFloatControl("Gravity Force Factor", ps.GravityForceFactor);
-				    ComponentUI::DrawFloatControl("Drag", ps.Drag);
+				    ComponentUI::draw_float_control("Gravity Force Factor", ps.GravityForceFactor);
+				    ComponentUI::draw_float_control("Drag", ps.Drag);
 			    } else {
 				    ps.Drag = .0f;
 				    ps.GravityForceFactor = 1.0f;
 			    }
 		    }
 
-		    ComponentUI::EndRegion(physicsOpen);
+		    ComponentUI::end_region(physics_open);
 
-		    bool appearanceOpen = ComponentUI::StartRegion("Appearance");
+		    bool appearance_open = ComponentUI::start_region("Appearance");
 
-		    if (appearanceOpen) {
-			    ComponentUI::DrawAssetControl("Particle Mesh", ps.ParticleMesh, Origo::AssetType::Mesh);
+		    if (appearance_open) {
+			    ComponentUI::draw_asset_control("Particle Mesh", ps.ParticleMesh, Origo::AssetType::Mesh);
 		    }
 
-		    ComponentUI::EndRegion(appearanceOpen);
+		    ComponentUI::end_region(appearance_open);
 	    });
 	return true;
 }();

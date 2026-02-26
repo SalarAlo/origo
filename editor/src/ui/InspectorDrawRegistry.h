@@ -28,23 +28,23 @@ class InspectorDrawRegistry {
 
 public:
 	template <typename T>
-	static void RegisterNativeDrawer(const char* name, const char* iconPath, InspectorDrawable<T>::DrawFn fn) {
+	static void register_native_drawer(const char* name, const char* iconPath, InspectorDrawable<T>::DrawFn fn) {
 		InspectorEntry entry;
 		entry.Name = name;
 		entry.IconPath = iconPath;
 		entry.Drawer = Origo::MakeScope<InspectorDrawable<T>>(name, std::move(fn));
-		s_Entries[typeid(T)] = std::move(entry);
+		s_entries[typeid(T)] = std::move(entry);
 	}
 
-	static InspectorEntry* Get(std::type_index type);
-	static const ComponentToDrawerMap& GetEntries() { return s_Entries; }
+	static InspectorEntry* get(std::type_index type);
+	static const ComponentToDrawerMap& get_entries() { return s_entries; }
 
 	template <typename TComponent>
-	static InspectorEntry* Get() {
-		return Get(std::type_index(typeid(TComponent)));
+	static InspectorEntry* get() {
+		return get(std::type_index(typeid(TComponent)));
 	}
 
 private:
-	inline static ComponentToDrawerMap s_Entries;
+	inline static ComponentToDrawerMap s_entries;
 };
 }

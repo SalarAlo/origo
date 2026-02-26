@@ -26,7 +26,7 @@ struct EditorPalette {
 	ImVec4 Error;
 };
 
-inline EditorPalette GetDefaultEditorPalette() {
+inline EditorPalette get_default_editor_palette() {
 	return {
 		"Default",
 		{ 0.090f, 0.090f, 0.090f, 1.00f },
@@ -51,7 +51,7 @@ inline EditorPalette GetDefaultEditorPalette() {
 	};
 }
 
-inline EditorPalette GetGraphiteEditorPalette() {
+inline EditorPalette get_graphite_editor_palette() {
 	return {
 		"Graphite",
 		{ 0.085f, 0.087f, 0.090f, 1.00f },
@@ -76,7 +76,7 @@ inline EditorPalette GetGraphiteEditorPalette() {
 	};
 }
 
-inline EditorPalette GetNordSteelEditorPalette() {
+inline EditorPalette get_nord_steel_editor_palette() {
 	return {
 		"Nord Steel",
 		{ 0.070f, 0.085f, 0.100f, 1.00f },
@@ -101,7 +101,7 @@ inline EditorPalette GetNordSteelEditorPalette() {
 	};
 }
 
-inline EditorPalette GetAmberTerminalEditorPalette() {
+inline EditorPalette get_amber_terminal_editor_palette() {
 	return {
 		"Amber",
 		{ 0.060f, 0.050f, 0.030f, 1.00f },
@@ -126,7 +126,7 @@ inline EditorPalette GetAmberTerminalEditorPalette() {
 	};
 }
 
-inline EditorPalette GetCrimsonSignalEditorPalette() {
+inline EditorPalette get_crimson_signal_editor_palette() {
 	return {
 		"Crimson Signal",
 		{ 0.090f, 0.060f, 0.060f, 1.00f },
@@ -151,13 +151,13 @@ inline EditorPalette GetCrimsonSignalEditorPalette() {
 	};
 }
 
-inline std::vector<EditorPalette> GetAllEditorPalettes() {
+inline std::vector<EditorPalette> get_all_editor_palettes() {
 	return {
-		GetDefaultEditorPalette(),
-		GetGraphiteEditorPalette(),
-		GetNordSteelEditorPalette(),
-		GetAmberTerminalEditorPalette(),
-		GetCrimsonSignalEditorPalette()
+		get_default_editor_palette(),
+		get_graphite_editor_palette(),
+		get_nord_steel_editor_palette(),
+		get_amber_terminal_editor_palette(),
+		get_crimson_signal_editor_palette()
 	};
 }
 

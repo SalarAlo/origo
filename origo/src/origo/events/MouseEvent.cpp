@@ -1,22 +1,23 @@
-#include "origo/events/EventTypes.h"
 #include <origo/events/MouseEvent.h>
+
+#include "origo/events/EventTypes.h"
 
 namespace Origo {
 
 #pragma region MOUSE_MOVE_EVENT
 
-EventType MouseMoveEvent::GetEventType() const {
-	return GetStaticType();
+EventType MouseMoveEvent::get_event_type() const {
+	return get_static_type();
 }
 
 MouseMoveEvent::MouseMoveEvent(const Vec2& coordinate)
-    : m_Coordinate(coordinate) {
+    : m_coordinate(coordinate) {
 }
-Vec2 MouseMoveEvent::GetCoordinate() const {
-	return m_Coordinate;
+Vec2 MouseMoveEvent::get_coordinate() const {
+	return m_coordinate;
 }
 
-EventType MouseMoveEvent::GetStaticType() {
+EventType MouseMoveEvent::get_static_type() {
 	return EventType::MouseMove;
 }
 
@@ -25,17 +26,17 @@ EventType MouseMoveEvent::GetStaticType() {
 #pragma region MOUSE_SCROLL_EVENT
 
 MouseScrollEvent::MouseScrollEvent(bool scrollUp)
-    : m_IsScrollUp(scrollUp) {
+    : m_is_scroll_up(scrollUp) {
 }
 
-bool MouseScrollEvent::IsScrollUp() const {
-	return m_IsScrollUp;
+bool MouseScrollEvent::is_scroll_up() const {
+	return m_is_scroll_up;
 }
-EventType MouseScrollEvent::GetEventType() const {
-	return GetStaticType();
+EventType MouseScrollEvent::get_event_type() const {
+	return get_static_type();
 }
 
-EventType MouseScrollEvent::GetStaticType() {
+EventType MouseScrollEvent::get_static_type() {
 	return EventType::MouseMove;
 }
 
@@ -43,18 +44,18 @@ EventType MouseScrollEvent::GetStaticType() {
 
 #pragma region MOUSE_CLICK_EVENT
 MouseClickEvent::MouseClickEvent(MouseClickEventType type)
-    : m_Type(type) {
+    : m_type(type) {
 }
 
-MouseClickEventType MouseClickEvent::GetMouseClickEventType() const {
-	return m_Type;
+MouseClickEventType MouseClickEvent::get_mouse_click_event_type() const {
+	return m_type;
 }
 
-EventType MouseClickEvent::GetEventType() const {
-	return GetStaticType();
+EventType MouseClickEvent::get_event_type() const {
+	return get_static_type();
 }
 
-EventType MouseClickEvent::GetStaticType() {
+EventType MouseClickEvent::get_static_type() {
 	return EventType::MouseClick;
 }
 

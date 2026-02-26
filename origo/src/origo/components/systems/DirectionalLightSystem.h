@@ -7,7 +7,7 @@ namespace Origo {
 
 class DirectionalLightSystem final : public Origo::IRenderSystem {
 public:
-	void Render(Scene*, RenderContext&) override;
+	void render(Scene*, RenderContext&) override;
 };
 
 }

@@ -6,11 +6,11 @@
 namespace Origo {
 
 ScriptComponentManager::ScriptComponentManager() {
-	ScriptComponentRegistry::OnScriptComponentUpdated().AddListener(
+	ScriptComponentRegistry::on_script_component_updated().add_listener(
 	    [&](ScriptComponentID updatedComponent) {
 		    std::vector<RID> affected;
 
-		    for (const auto& [e, components] : m_Data) {
+		    for (const auto& [e, components] : m_data) {
 			    for (const auto& c : components) {
 				    if (c.ID == updatedComponent) {
 					    affected.push_back(e);
@@ -20,13 +20,13 @@ ScriptComponentManager::ScriptComponentManager() {
 		    }
 
 		    for (RID e : affected) {
-			    MigrateComponent(e, updatedComponent);
+			    migrate_component(e, updatedComponent);
 		    }
 	    });
 }
 
-void ScriptComponentManager::Add(RID entity, ScriptComponentID type) {
-	auto& components = m_Data[entity];
+void ScriptComponentManager::add(RID entity, ScriptComponentID type) {
+	auto& components = m_data[entity];
 
 	for (const auto& c : components) {
 		if (c.ID == type) {
@@ -34,7 +34,7 @@ void ScriptComponentManager::Add(RID entity, ScriptComponentID type) {
 		}
 	}
 
-	const auto& desc = ScriptComponentRegistry::Get(type);
+	const auto& desc = ScriptComponentRegistry::get(type);
 
 	ScriptComponentInstance instance;
 	instance.ID = type;
@@ -47,9 +47,9 @@ void ScriptComponentManager::Add(RID entity, ScriptComponentID type) {
 	components.push_back(std::move(instance));
 }
 
-ScriptComponentInstance* ScriptComponentManager::Get(RID entity, ScriptComponentID type) {
-	auto it = m_Data.find(entity);
-	if (it == m_Data.end())
+ScriptComponentInstance* ScriptComponentManager::get(RID entity, ScriptComponentID type) {
+	auto it = m_data.find(entity);
+	if (it == m_data.end())
 		return nullptr;
 
 	for (auto& c : it->second) {
@@ -60,9 +60,9 @@ ScriptComponentInstance* ScriptComponentManager::Get(RID entity, ScriptComponent
 	return nullptr;
 }
 
-const ScriptComponentInstance* ScriptComponentManager::Get(RID entity, ScriptComponentID type) const {
-	auto it = m_Data.find(entity);
-	if (it == m_Data.end())
+const ScriptComponentInstance* ScriptComponentManager::get(RID entity, ScriptComponentID type) const {
+	auto it = m_data.find(entity);
+	if (it == m_data.end())
 		return nullptr;
 
 	for (auto& c : it->second) {
@@ -73,9 +73,9 @@ const ScriptComponentInstance* ScriptComponentManager::Get(RID entity, ScriptCom
 	return nullptr;
 }
 
-bool ScriptComponentManager::Has(RID entity, ScriptComponentID type) const {
-	auto it = m_Data.find(entity);
-	if (it == m_Data.end())
+bool ScriptComponentManager::has(RID entity, ScriptComponentID type) const {
+	auto it = m_data.find(entity);
+	if (it == m_data.end())
 		return false;
 
 	for (const auto& c : it->second) {
@@ -86,9 +86,9 @@ bool ScriptComponentManager::Has(RID entity, ScriptComponentID type) const {
 	return false;
 }
 
-void ScriptComponentManager::Remove(RID entity, ScriptComponentID type) {
-	auto it = m_Data.find(entity);
-	if (it == m_Data.end())
+void ScriptComponentManager::remove(RID entity, ScriptComponentID type) {
+	auto it = m_data.find(entity);
+	if (it == m_data.end())
 		return;
 
 	auto& components = it->second;
@@ -103,17 +103,17 @@ void ScriptComponentManager::Remove(RID entity, ScriptComponentID type) {
 	    components.end());
 
 	if (components.empty()) {
-		m_Data.erase(it);
+		m_data.erase(it);
 	}
 }
 
-bool ScriptComponentManager::RemoveIfExists(RID entity, ScriptComponentID type) {
-	auto it = m_Data.find(entity);
-	if (it == m_Data.end())
+bool ScriptComponentManager::remove_if_exists(RID entity, ScriptComponentID type) {
+	auto it = m_data.find(entity);
+	if (it == m_data.end())
 		return false;
 
 	auto& components = it->second;
-	const size_t oldSize = components.size();
+	const size_t old_size = components.size();
 
 	components.erase(
 	    std::remove_if(
@@ -125,47 +125,47 @@ bool ScriptComponentManager::RemoveIfExists(RID entity, ScriptComponentID type) 
 	    components.end());
 
 	if (components.empty()) {
-		m_Data.erase(it);
+		m_data.erase(it);
 	}
 
-	return components.size() != oldSize;
+	return components.size() != old_size;
 }
 
-void ScriptComponentManager::MigrateComponent(RID entity, ScriptComponentID type) {
-	auto* instance = Get(entity, type);
+void ScriptComponentManager::migrate_component(RID entity, ScriptComponentID type) {
+	auto* instance = get(entity, type);
 
 	if (!instance)
 		return;
 
-	const auto& desc = ScriptComponentRegistry::Get(type);
+	const auto& desc = ScriptComponentRegistry::get(type);
 
-	std::vector<ScriptComponentFieldInstance> newFields;
+	std::vector<ScriptComponentFieldInstance> new_fields;
 
-	newFields.reserve(desc.Fields.size());
+	new_fields.reserve(desc.Fields.size());
 
-	for (const auto& newField : desc.Fields) {
+	for (const auto& new_field : desc.Fields) {
 		auto it = std::find_if(
 		    instance->Fields.begin(),
 		    instance->Fields.end(),
 		    [&](const ScriptComponentFieldInstance& oldField) {
-			    return oldField.ID == newField.ID;
+			    return oldField.ID == new_field.ID;
 		    });
 
 		if (it != instance->Fields.end()) {
-			if (it->Value.GetType() == newField.Type) {
-				newFields.emplace_back(newField.ID, newField.Name, it->Value);
+			if (it->Value.get_type() == new_field.Type) {
+				new_fields.emplace_back(new_field.ID, new_field.Name, it->Value);
 			} else {
-				newFields.emplace_back(newField.ID, newField.Name, newField.DefaultValue);
+				new_fields.emplace_back(new_field.ID, new_field.Name, new_field.DefaultValue);
 			}
 		} else {
-			newFields.emplace_back(
-			    newField.ID,
-			    newField.Name,
-			    newField.DefaultValue);
+			new_fields.emplace_back(
+			    new_field.ID,
+			    new_field.Name,
+			    new_field.DefaultValue);
 		}
 	}
 
-	instance->Fields = std::move(newFields);
+	instance->Fields = std::move(new_fields);
 }
 
 }

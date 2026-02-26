@@ -10,10 +10,10 @@ class IAssetImporter {
 public:
 	virtual ~IAssetImporter() = default;
 
-	virtual bool CanImport(const std::filesystem::path& path) const = 0;
-	virtual AssetType GetAssetType() const = 0;
+	virtual bool can_import(const std::filesystem::path& path) const = 0;
+	virtual AssetType get_asset_type() const = 0;
 	// TODO: Metadata alr contains path refactor!
-	virtual Scope<Asset> Import(const std::filesystem::path& path, const AssetMetadata& meta) = 0;
+	virtual Scope<Asset> import(const std::filesystem::path& path, const AssetMetadata& meta) = 0;
 };
 
 }

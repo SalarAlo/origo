@@ -4,24 +4,24 @@
 #include "origo/events/KeyEvent.h"
 
 namespace Origo::Input {
-static ScreenWindow* S_CONTEXT;
+static ScreenWindow* s_context;
 
-bool IsKeyPressed(KeyboardKey k) {
-	return glfwGetKey(S_CONTEXT->GetNativeWindow(), KeyboardKeyToGlfwKey(k));
+bool is_key_pressed(KeyboardKey k) {
+	return glfwGetKey(s_context->get_native_window(), keyboard_key_to_glfw_key(k));
 }
 
-void SetContext(ScreenWindow* ctx) {
-	S_CONTEXT = ctx;
+void set_context(ScreenWindow* ctx) {
+	s_context = ctx;
 }
 
-void SetCursorMode(CursorMode mode) {
+void set_cursor_mode(CursorMode mode) {
 	switch (mode) {
 	case CursorMode::Locked:
-		glfwSetInputMode(S_CONTEXT->GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(s_context->get_native_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		break;
 
 	case CursorMode::Free:
-		glfwSetInputMode(S_CONTEXT->GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(s_context->get_native_window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		break;
 	}
 }

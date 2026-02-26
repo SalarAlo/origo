@@ -13,13 +13,13 @@ namespace Origo {
 class Scene;
 
 namespace SceneSerializer {
-	void SerializeToFile(Scene& scene, const std::filesystem::path& out);
-	Scope<Scene> DeserializeFromFile(const std::filesystem::path& path);
+	void serialize_to_file(Scene& scene, const std::filesystem::path& out);
+	Scope<Scene> deserialize_from_file(const std::filesystem::path& path);
 }
 
 class Scene {
-	friend void SceneSerializer::SerializeToFile(Scene& scene, const std::filesystem::path& out);
-	friend Scope<Scene> SceneSerializer::DeserializeFromFile(const std::filesystem::path& path);
+	friend void SceneSerializer::serialize_to_file(Scene& scene, const std::filesystem::path& out);
+	friend Scope<Scene> SceneSerializer::deserialize_from_file(const std::filesystem::path& path);
 
 public:
 	Scene(std::string_view name = "SampleScene");
@@ -27,104 +27,104 @@ public:
 	~Scene();
 	Scene& operator=(const Scene&) = delete;
 
-	RID CreateEntity(std::string_view name);
+	RID create_entity(std::string_view name);
 
-	void ScheduleRemoveEntity(const RID&);
-	void ScheduleRemoveNativeComponent(const RID&, const std::type_index&);
+	void schedule_remove_entity(const RID&);
+	void schedule_remove_native_component(const RID&, const std::type_index&);
 
-	const std::vector<RID>& GetEntities() const { return m_Entities; }
-	const std::string& GetName() const { return m_Name; }
+	const std::vector<RID>& get_entities() const { return m_entities; }
+	const std::string& get_name() const { return m_name; }
 
-	void EndFrame();
+	void end_frame();
 
 #pragma region FORWARDING
 	template <ComponentType T, typename... Args>
-	T* AddNativeComponent(const RID& entity, Args&&... args) {
-		return &m_NativeComponentManager.AddComponent<T>(
+	T* add_native_component(const RID& entity, Args&&... args) {
+		return &m_native_component_manager.add_component<T>(
 		    entity,
 		    std::forward<Args>(args)...);
 	}
 
-	bool AddNativeComponent(const RID& e, std::type_index type) {
-		return m_NativeComponentManager.AddComponentByType(e, type);
+	bool add_native_component(const RID& e, std::type_index type) {
+		return m_native_component_manager.add_component_by_type(e, type);
 	}
 
-	void AddScriptComponent(RID entity, ScriptComponentID type) {
-		m_ScriptComponentManager.Add(entity, type);
-	}
-
-	template <ComponentType T>
-	T* GetNativeComponent(const RID& entity) {
-		return m_NativeComponentManager.GetComponent<T>(entity);
-	}
-
-	ScriptComponentInstance* GetScriptComponent(RID entity, ScriptComponentID type) {
-		return m_ScriptComponentManager.Get(entity, type);
-	}
-
-	const ScriptComponentInstance* GetScriptComponent(RID entity, ScriptComponentID type) const {
-		return m_ScriptComponentManager.Get(entity, type);
+	void add_script_component(RID entity, ScriptComponentID type) {
+		m_script_component_manager.add(entity, type);
 	}
 
 	template <ComponentType T>
-	const T* GetNativeComponent(const RID& entity) const {
-		return m_NativeComponentManager.GetComponent<T>(entity);
+	T* get_native_component(const RID& entity) {
+		return m_native_component_manager.get_component<T>(entity);
+	}
+
+	ScriptComponentInstance* get_script_component(RID entity, ScriptComponentID type) {
+		return m_script_component_manager.get(entity, type);
+	}
+
+	const ScriptComponentInstance* get_script_component(RID entity, ScriptComponentID type) const {
+		return m_script_component_manager.get(entity, type);
 	}
 
 	template <ComponentType T>
-	bool HasNativeComponent(const RID& entity) const {
-		return m_NativeComponentManager.HasComponent<T>(entity);
+	const T* get_native_component(const RID& entity) const {
+		return m_native_component_manager.get_component<T>(entity);
 	}
 
-	bool HasScriptComponent(RID entity, ScriptComponentID type) const {
-		return m_ScriptComponentManager.Has(entity, type);
+	template <ComponentType T>
+	bool has_native_component(const RID& entity) const {
+		return m_native_component_manager.has_component<T>(entity);
+	}
+
+	bool has_script_component(RID entity, ScriptComponentID type) const {
+		return m_script_component_manager.has(entity, type);
 	}
 
 	template <ComponentType T, typename Func>
-	void ForEach(Func&& func) {
-		m_NativeComponentManager.ForEach<T>(std::forward<Func>(func));
+	void for_each(Func&& func) {
+		m_native_component_manager.for_each<T>(std::forward<Func>(func));
 	}
 
 	template <ComponentType T, typename Func>
-	void ForEach(Func&& func) const {
-		m_NativeComponentManager.ForEach<T>(std::forward<Func>(func));
+	void for_each(Func&& func) const {
+		m_native_component_manager.for_each<T>(std::forward<Func>(func));
 	}
 
 	template <ComponentType... Ts, typename Func>
-	void View(Func&& func) {
-		m_NativeComponentManager.View<Ts...>(std::forward<Func>(func));
+	void view(Func&& func) {
+		m_native_component_manager.view<Ts...>(std::forward<Func>(func));
 	}
 
 	template <ComponentType... Ts, typename Func>
-	void View(Func&& func) const {
-		m_NativeComponentManager.View<Ts...>(std::forward<Func>(func));
+	void view(Func&& func) const {
+		m_native_component_manager.view<Ts...>(std::forward<Func>(func));
 	}
 
-	void* GetNativeComponentByType(const RID& entity, std::type_index type) {
-		return m_NativeComponentManager.GetComponentByType(entity, type);
+	void* get_native_component_by_type(const RID& entity, std::type_index type) {
+		return m_native_component_manager.get_component_by_type(entity, type);
 	}
 
-	const void* GetNativeComponentByType(const RID& entity, std::type_index type) const {
-		return m_NativeComponentManager.GetComponentByType(entity, type);
+	const void* get_native_component_by_type(const RID& entity, std::type_index type) const {
+		return m_native_component_manager.get_component_by_type(entity, type);
 	}
 
-	bool HasNativeComponentByType(const RID& entity, std::type_index type) const {
-		return m_NativeComponentManager.HasComponent(entity, type);
+	bool has_native_component_by_type(const RID& entity, std::type_index type) const {
+		return m_native_component_manager.has_component(entity, type);
 	}
 
 #pragma endregion
 
 private:
-	void Flush();
-	void RemoveEntity(const RID&);
+	void flush();
+	void remove_entity(const RID&);
 
 private:
-	std::string m_Name;
+	std::string m_name;
 
-	NativeComponentManager m_NativeComponentManager;
-	ScriptComponentManager m_ScriptComponentManager;
-	std::vector<SceneCommand*> m_Commands;
-	std::vector<RID> m_Entities;
+	NativeComponentManager m_native_component_manager;
+	ScriptComponentManager m_script_component_manager;
+	std::vector<SceneCommand*> m_commands;
+	std::vector<RID> m_entities;
 };
 
 }

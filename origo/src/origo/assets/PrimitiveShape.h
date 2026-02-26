@@ -11,6 +11,6 @@ enum class PrimitiveShape {
 	Cone
 };
 
-MeshData GetDataFromShape(PrimitiveShape shape);
+MeshData get_data_from_shape(PrimitiveShape shape);
 
 };

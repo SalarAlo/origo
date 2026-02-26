@@ -8,31 +8,31 @@ namespace OrigoEditor {
 
 struct AssetEntry {
 	AssetEntry() = default;
-	Origo::UUID id { Origo::UUID::Generate() };
-	Origo::AssetType type;
-	Origo::AssetOrigin origin;
+	Origo::UUID Id { Origo::UUID::generate() };
+	Origo::AssetType Type;
+	Origo::AssetOrigin Origin;
 	std::string Name;
-	std::filesystem::path virtualPath;
+	std::filesystem::path VirtualPath;
 	ImTextureID Icon;
 };
 
 struct FolderEntry {
-	std::string name;
-	std::filesystem::path path;
-	std::vector<FolderEntry*> children;
-	std::vector<AssetEntry*> assets;
+	std::string Name;
+	std::filesystem::path Path;
+	std::vector<FolderEntry*> Children;
+	std::vector<AssetEntry*> Assets;
 };
 
 class EditorAssetTree {
 public:
-	void Build(const std::vector<Origo::AssetMetadata>& metadata);
-	FolderEntry* GetRoot() const { return m_Root.get(); }
+	void build(const std::vector<Origo::AssetMetadata>& metadata);
+	FolderEntry* get_root() const { return m_root.get(); }
 
 private:
-	std::unique_ptr<FolderEntry> m_Root;
-	std::vector<std::unique_ptr<FolderEntry>> m_Folders;
-	std::vector<std::unique_ptr<AssetEntry>> m_Assets;
-	ankerl::unordered_dense::map<std::filesystem::path, FolderEntry*> m_FolderMap;
+	std::unique_ptr<FolderEntry> m_root;
+	std::vector<std::unique_ptr<FolderEntry>> m_folders;
+	std::vector<std::unique_ptr<AssetEntry>> m_assets;
+	ankerl::unordered_dense::map<std::filesystem::path, FolderEntry*> m_folder_map;
 };
 
 }

@@ -10,15 +10,15 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::MeshRendererComponent>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRendererComponent& renderer) {
-		auto& am { Origo::AssetManager::GetInstance() };
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::MeshRendererComponent>("Mesh Renderer", "icons/Paint.svg", [](Origo::MeshRendererComponent& renderer) {
+		auto& am { Origo::AssetManager::get_instance() };
 
 		auto material { renderer.MaterialHandle };
 		auto mesh { renderer.MeshHandle };
 
-		ComponentUI::DrawAssetControl("Material", material, Origo::AssetType::Material2D);
-		ComponentUI::DrawAssetControl("Mesh", mesh, Origo::AssetType::Mesh);
+		ComponentUI::draw_asset_control("Material", material, Origo::AssetType::Material2D);
+		ComponentUI::draw_asset_control("Mesh", mesh, Origo::AssetType::Mesh);
 
 		if (mesh != renderer.MeshHandle && mesh.has_value())
 			renderer.MeshHandle = mesh;

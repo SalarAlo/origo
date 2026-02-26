@@ -7,42 +7,42 @@
 
 namespace Origo::Logger {
 
-static LoggerRef s_CoreLogger;
-static LoggerRef s_ClientLogger;
-static std::shared_ptr<ConsoleLogBuffer> s_ConsoleBuffer;
+static LoggerRef s_core_logger;
+static LoggerRef s_client_logger;
+static std::shared_ptr<ConsoleLogBuffer> s_console_buffer;
 
 void Init() {
 	spdlog::set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
 
 	auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
-	s_ConsoleBuffer = std::make_shared<ConsoleLogBuffer>();
-	auto console_sink = std::make_shared<ConsoleSink>(*s_ConsoleBuffer);
+	s_console_buffer = std::make_shared<ConsoleLogBuffer>();
+	auto console_sink = std::make_shared<ConsoleSink>(*s_console_buffer);
 
-	s_CoreLogger = std::make_shared<spdlog::logger>(
+	s_core_logger = std::make_shared<spdlog::logger>(
 	    "ORIGO",
 	    spdlog::sinks_init_list { stdout_sink, console_sink });
 
-	s_ClientLogger = std::make_shared<spdlog::logger>(
+	s_client_logger = std::make_shared<spdlog::logger>(
 	    "APP",
 	    spdlog::sinks_init_list { stdout_sink, console_sink });
 
-	spdlog::register_logger(s_CoreLogger);
-	spdlog::register_logger(s_ClientLogger);
+	spdlog::register_logger(s_core_logger);
+	spdlog::register_logger(s_client_logger);
 
-	s_CoreLogger->set_level(spdlog::level::trace);
-	s_ClientLogger->set_level(spdlog::level::trace);
+	s_core_logger->set_level(spdlog::level::trace);
+	s_client_logger->set_level(spdlog::level::trace);
 
-	s_CoreLogger->info("Core logger initialized");
-	s_ClientLogger->info("Client logger initialized");
+	s_core_logger->info("Core logger initialized");
+	s_client_logger->info("Client logger initialized");
 }
 
 void Shutdown() {
 	spdlog::shutdown();
 }
 
-LoggerRef& GetCore() { return s_CoreLogger; }
-LoggerRef& GetClient() { return s_ClientLogger; }
-std::shared_ptr<ConsoleLogBuffer> GetConsoleBuffer() { return s_ConsoleBuffer; }
+LoggerRef& GetCore() { return s_core_logger; }
+LoggerRef& GetClient() { return s_client_logger; }
+std::shared_ptr<ConsoleLogBuffer> GetConsoleBuffer() { return s_console_buffer; }
 
 }

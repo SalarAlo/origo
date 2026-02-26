@@ -4,7 +4,7 @@
 
 namespace OrigoEditor {
 
-std::filesystem::path ComputeVirtualAssetPath(const Origo::AssetMetadata& metadata);
-std::string AssetTypeToString(Origo::AssetType type);
+std::filesystem::path compute_virtual_asset_path(const Origo::AssetMetadata& metadata);
+std::string asset_type_to_string(Origo::AssetType type);
 
 }

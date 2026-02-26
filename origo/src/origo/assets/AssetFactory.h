@@ -16,46 +16,46 @@ public:
 
 public:
 	template <typename T, typename... Args>
-	AssetHandle CreateRuntimeAsset(const std::string& name, Args&&... args) {
+	AssetHandle create_runtime_asset(const std::string& name, Args&&... args) {
 		AssetMetadata meta {};
 		meta.Name = name;
-		meta.ID = UUID::Generate();
-		meta.Type = T::GetClassAssetType();
+		meta.ID = UUID::generate();
+		meta.Type = T::get_class_asset_type();
 		meta.Origin = AssetOrigin::Runtime;
 
-		AssetDatabase::GetInstance().RegisterMetadata(meta);
+		AssetDatabase::get_instance().register_metadata(meta);
 
 		auto asset = MakeScope<T>(std::forward<Args>(args)...);
-		return AssetManager::GetInstance().Register(std::move(asset), meta.ID);
+		return AssetManager::get_instance().register_asset(std::move(asset), meta.ID);
 	}
 
 	template <typename T, typename... Args>
-	AssetHandle CreateSyntheticAsset(const std::string& name, const UUID& uuid, Args&&... args) {
+	AssetHandle create_synthetic_asset(const std::string& name, const UUID& uuid, Args&&... args) {
 		AssetMetadata meta {};
 		meta.Name = name;
 		meta.ID = uuid;
-		meta.Type = T::GetClassAssetType();
+		meta.Type = T::get_class_asset_type();
 		meta.Origin = AssetOrigin::Synthetic;
 
-		AssetDatabase::GetInstance().RegisterMetadata(meta);
+		AssetDatabase::get_instance().register_metadata(meta);
 
 		auto asset = MakeScope<T>(std::forward<Args>(args)...);
-		return AssetManager::GetInstance().Register(std::move(asset), uuid);
+		return AssetManager::get_instance().register_asset(std::move(asset), uuid);
 	}
 
-	AssetHandle CreateImportedAsset(const AssetMetadata& meta, Scope<Asset>&& asset) {
-		AssetDatabase::GetInstance().RegisterMetadata(meta);
+	AssetHandle create_imported_asset(const AssetMetadata& meta, Scope<Asset>&& asset) {
+		AssetDatabase::get_instance().register_metadata(meta);
 
-		return AssetManager::GetInstance().Register(
+		return AssetManager::get_instance().register_asset(
 		    std::move(asset),
 		    meta.ID,
 		    meta.SourcePath);
 	}
 
-	Scope<Asset> AllocateHollowAsset(AssetType type);
+	Scope<Asset> allocate_hollow_asset(AssetType type);
 
 	template <AssetConcept T>
-	Scope<T> AllocateHollowAsset() {
+	Scope<T> allocate_hollow_asset() {
 		return MakeScope<T>();
 	}
 };

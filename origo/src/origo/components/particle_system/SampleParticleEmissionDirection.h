@@ -12,35 +12,35 @@
 namespace Origo {
 struct SampleParticleEmissionDirection {
 	Vec3 operator()(PointEmissionShape shape) {
-		return Random::RandomUnitVector();
+		return Random::random_unit_vector();
 	}
 
 	Vec3 operator()(SphereEmissionShape shape) {
-		return Random::RandomUnitVector();
+		return Random::random_unit_vector();
 	}
 
 	Vec3 operator()(BoxEmissionShape shape) {
-		return Random::RandomUnitVector();
+		return Random::random_unit_vector();
 	}
 
 	Vec3 operator()(ConeEmissionShape shape) {
 		Vec3 axis = normalize(shape.Direction);
 
-		float angleRad = glm::radians(shape.Angle);
-		float radius = shape.Length * tanf(angleRad);
-		float cosTheta = cosf(angleRad);
+		float angle_rad = glm::radians(shape.Angle);
+		float radius = shape.Length * tanf(angle_rad);
+		float cos_theta = cosf(angle_rad);
 
-		float u = Random::Float01();
-		float v = Random::Float01();
+		float u = Random::float01();
+		float v = Random::float01();
 
-		float cosPhi = 1.0f - u * (1.0f - cosTheta);
-		float sinPhi = sqrtf(1.0f - cosPhi * cosPhi);
+		float cos_phi = 1.0f - u * (1.0f - cos_theta);
+		float sin_phi = sqrtf(1.0f - cos_phi * cos_phi);
 		float azimuth = 2.0f * glm::pi<float>() * v;
 
-		Vec3 localDir {
-			cosf(azimuth) * sinPhi,
-			cosPhi,
-			sinf(azimuth) * sinPhi
+		Vec3 local_dir {
+			cosf(azimuth) * sin_phi,
+			cos_phi,
+			sinf(azimuth) * sin_phi
 		};
 
 		Vec3 up = fabs(axis.y) < 0.999f ? Vec3 { 0, 1, 0 } : Vec3 { 1, 0, 0 };
@@ -48,7 +48,7 @@ struct SampleParticleEmissionDirection {
 		Vec3 forward = cross(axis, right);
 
 		return normalize(
-		           right * localDir.x + axis * localDir.y + forward * localDir.z)
+		           right * local_dir.x + axis * local_dir.y + forward * local_dir.z)
 		    * shape.Length;
 	}
 };

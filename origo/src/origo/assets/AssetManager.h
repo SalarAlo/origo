@@ -15,7 +15,7 @@ namespace Origo {
 
 template <typename T>
 concept AssetConcept = std::derived_from<T, Asset> && requires(T t) {
-	{ t.GetClassAssetType() } -> std::same_as<AssetType>;
+	{ t.get_class_asset_type() } -> std::same_as<AssetType>;
 };
 
 using OptionalPath = std::optional<std::filesystem::path>;
@@ -47,33 +47,33 @@ struct AssetEntry {
 class AssetManager : public Singleton<AssetManager> {
 public:
 	template <AssetConcept T>
-	T* Get(const AssetHandle& handle) {
-		if (!IsValid(handle))
+	T* get_asset(const AssetHandle& handle) {
+		if (!is_valid(handle))
 			return nullptr;
 
-		Asset* base = m_AssetEntries[handle.Index].AssetPtr.get();
-		if (base->GetAssetType() != T::GetClassAssetType())
+		Asset* base = m_asset_entries[handle.Index].AssetPtr.get();
+		if (base->get_asset_type() != T::get_class_asset_type())
 			return nullptr;
 
-		return static_cast<T*>(m_AssetEntries[handle.Index].AssetPtr.get());
+		return static_cast<T*>(m_asset_entries[handle.Index].AssetPtr.get());
 	}
 
-	Asset* Get(const AssetHandle& handle) const;
-	AssetHandle Register(Scope<Asset>&& assetPtr, OptionalUUID uuid = std::nullopt, OptionalPath path = std::nullopt);
-	void Destroy(const AssetHandle& handle);
-	bool IsValid(const AssetHandle& handle) const;
-	OptionalUUID GetUUID(const AssetHandle& handle) const;
-	OptionalAssetHandle GetHandleByUUID(const UUID& uuid) const;
-	void ResolveAll(std::optional<std::function<bool(Asset*)>> = std::nullopt);
-	const ankerl::unordered_dense::map<UUID, AssetHandle>& GetUuidMap() { return m_UuidToHandle; }
-	OptionalAssetHandle Load(const std::filesystem::path& path);
+	Asset* get(const AssetHandle& handle) const;
+	AssetHandle register_asset(Scope<Asset>&& assetPtr, OptionalUUID uuid = std::nullopt, OptionalPath path = std::nullopt);
+	void destroy(const AssetHandle& handle);
+	bool is_valid(const AssetHandle& handle) const;
+	OptionalUUID get_uuid(const AssetHandle& handle) const;
+	OptionalAssetHandle get_handle_by_uuid(const UUID& uuid) const;
+	void resolve_all(std::optional<std::function<bool(Asset*)>> = std::nullopt);
+	const ankerl::unordered_dense::map<UUID, AssetHandle>& get_uuid_map() { return m_uuid_to_handle; }
+	OptionalAssetHandle load(const std::filesystem::path& path);
 
 private:
-	AssetHandle GetNextFreeHandle();
+	AssetHandle get_next_free_handle();
 
 private:
-	std::vector<AssetEntry> m_AssetEntries {};
-	std::vector<uint32_t> m_Free {};
-	ankerl::unordered_dense::map<UUID, AssetHandle> m_UuidToHandle;
+	std::vector<AssetEntry> m_asset_entries {};
+	std::vector<uint32_t> m_free {};
+	ankerl::unordered_dense::map<UUID, AssetHandle> m_uuid_to_handle;
 };
 }

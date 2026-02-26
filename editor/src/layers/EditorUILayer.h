@@ -14,18 +14,18 @@ class EditorUILayer : public Origo::Layer {
 public:
 	EditorUILayer(EditorContext& ctx, Origo::ImGuiLayer& controller);
 
-	void OnAttach() override;
-	void OnDetach() override;
-	void OnUpdate(double dt) override;
-	void OnEvent(Origo::Event& e) override;
+	void on_attach() override;
+	void on_detach() override;
+	void on_update(double dt) override;
+	void on_event(Origo::Event& e) override;
 
 private:
-	Origo::ImGuiLayer& m_ImGuiController;
-	EditorContext& m_Context;
-	PanelManager m_PanelManager;
+	Origo::ImGuiLayer& m_im_gui_controller;
+	EditorContext& m_context;
+	PanelManager m_panel_manager;
 
-	int m_HierarchyId {};
-	int m_InspectorId {};
+	int m_hierarchy_id {};
+	int m_inspector_id {};
 };
 
 }

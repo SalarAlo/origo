@@ -27,7 +27,7 @@ struct ParticleComponent : public Component {
 	float Lifetime = 0.0f;
 	float MaxLifetime = 0.0f;
 
-	std::string GetComponentName() const override { return "Particle"; }
+	std::string get_component_name() const override { return "Particle"; }
 };
 
 }

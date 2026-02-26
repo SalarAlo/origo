@@ -7,17 +7,17 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::PointLightComponent>(
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::PointLightComponent>(
 	    "PointLight",
 	    "icons/Light.svg",
 	    [](Origo::PointLightComponent& light) {
-		    ComponentUI::DrawFloatControl("Intensity", light.Intensity);
-		    ComponentUI::DrawColorControl("Color", light.Color);
+		    ComponentUI::draw_float_control("Intensity", light.Intensity);
+		    ComponentUI::draw_color_control("Color", light.Color);
 
-		    ComponentUI::DrawFloatControl("Attenuation (Constant)", light.Constant);
-		    ComponentUI::DrawFloatControl("Attenuation (Linear)", light.Linear);
-		    ComponentUI::DrawFloatControl("Attenuation (Quadratic)", light.Quadratic);
+		    ComponentUI::draw_float_control("Attenuation (Constant)", light.Constant);
+		    ComponentUI::draw_float_control("Attenuation (Linear)", light.Linear);
+		    ComponentUI::draw_float_control("Attenuation (Quadratic)", light.Quadratic);
 	    });
 
 	return true;

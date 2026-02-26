@@ -12,73 +12,73 @@
 namespace Origo {
 
 Application::Application(const ApplicationSettings& settings)
-    : m_Settings(settings)
-    , m_Window(settings.WindowSettings)
-    , m_Running(true)
-    , m_LastTimeStamp(Time::GetNow()) {
-	m_Window.SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    : m_settings(settings)
+    , m_window(settings.WindowSettings)
+    , m_running(true)
+    , m_last_time_stamp(Time::get_now()) {
+	m_window.set_event_callback(std::bind(&Application::on_event, this, std::placeholders::_1));
 }
 
-void Application::PushLayer(Layer* layer, size_t key, bool frozen) {
-	m_LayerSystem.RequestPushLayer(layer, key, frozen);
+void Application::push_layer(Layer* layer, size_t key, bool frozen) {
+	m_layer_system.request_push_layer(layer, key, frozen);
 }
 
-void Application::InternalUpdate(double dt) {
-	m_LayerSystem.UpdateAll(dt);
+void Application::internal_update(double dt) {
+	m_layer_system.update_all(dt);
 }
 
-void Application::InternalAwake() {
-	std::filesystem::current_path(m_Settings.WorkingDirectory);
+void Application::internal_awake() {
+	std::filesystem::current_path(m_settings.WorkingDirectory);
 
-	Origo::Init();
+	Origo::init();
 
-	Origo::Input::SetContext(&m_Window);
+	Origo::Input::set_context(&m_window);
 
-	m_LayerSystem.FlushCommands();
-	for (Layer* layer : m_LayerSystem) {
-		layer->OnAttach();
+	m_layer_system.flush_commands();
+	for (Layer* layer : m_layer_system) {
+		layer->on_attach();
 	}
 }
 
-void Application::InternalShutdown() {
+void Application::internal_shutdown() {
 	Logger::Shutdown();
-	for (Layer* layer : m_LayerSystem) {
-		layer->OnDetach();
+	for (Layer* layer : m_layer_system) {
+		layer->on_detach();
 	}
-	AssetSerializationSystem::Cleanup();
+	AssetSerializationSystem::cleanup();
 }
 
-void Application::OnEvent(Event& event) {
-	for (auto it = m_LayerSystem.end(); it != m_LayerSystem.begin();) {
-		(*--it)->OnEvent(event);
-		if (event.IsHandled())
+void Application::on_event(Event& event) {
+	for (auto it = m_layer_system.end(); it != m_layer_system.begin();) {
+		(*--it)->on_event(event);
+		if (event.is_handled())
 			break;
 	}
 }
 
-void Application::Run() {
-	InternalAwake();
-	OnAwake();
+void Application::run() {
+	internal_awake();
+	on_awake();
 
-	m_LastTimeStamp = Time::GetNow();
+	m_last_time_stamp = Time::get_now();
 
-	while (m_Running) {
-		const auto now = Time::GetNow();
-		const double dt = std::chrono::duration<double>(now - m_LastTimeStamp).count();
-		m_LastTimeStamp = now;
+	while (m_running) {
+		const auto now = Time::get_now();
+		const double dt = std::chrono::duration<double>(now - m_last_time_stamp).count();
+		m_last_time_stamp = now;
 
-		InternalUpdate(dt);
+		internal_update(dt);
 
-		if (m_Window.ShouldClose()) {
-			m_Running = false;
+		if (m_window.should_close()) {
+			m_running = false;
 		}
 
-		m_Window.OnUpdate();
+		m_window.on_update();
 
-		OnEndFrame(dt);
+		on_end_frame(dt);
 	}
 
-	InternalShutdown();
-	OnShutdown();
+	internal_shutdown();
+	on_shutdown();
 }
 }

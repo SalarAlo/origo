@@ -7,18 +7,18 @@ namespace OrigoEditor {
 class EditorCameraLayer : public Origo::Layer {
 public:
 	EditorCameraLayer(EditorContext& context)
-	    : m_Camera(context.EditorViewportCamera)
-	    , m_Context(context) { };
+	    : m_camera(context.EditorViewportCamera)
+	    , m_context(context) { };
 
-	void OnAttach() override;
-	void OnUpdate(double dt) override;
-	void OnEvent(Origo::Event& e) override;
+	void on_attach() override;
+	void on_update(double dt) override;
+	void on_event(Origo::Event& e) override;
 
 private:
-	EditorCamera& m_Camera;
-	EditorContext& m_Context;
+	EditorCamera& m_camera;
+	EditorContext& m_context;
 
-	static constexpr float NORMAL_SPEED = .2f;
-	static constexpr float FAST_SPEED = NORMAL_SPEED * 5.0f;
+	static constexpr float normal_speed = .2f;
+	static constexpr float fast_speed = normal_speed * 5.0f;
 };
 }

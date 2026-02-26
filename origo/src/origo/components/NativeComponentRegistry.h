@@ -20,10 +20,10 @@ struct NativeComponentTypeInfo {
 class NativeComponentRegistry {
 public:
 	template <typename T>
-	static void Register(const std::string& name, IComponentSerializer* serializer) {
+	static void register_component(const std::string& name, IComponentSerializer* serializer) {
 		const std::type_index type = typeid(T);
 
-		auto& map = GetMap();
+		auto& map = get_map();
 		if (map.contains(type))
 			throw std::runtime_error("Component already registered");
 
@@ -31,41 +31,41 @@ public:
 		    NativeComponentTypeInfo {
 		        .DisplayName = name,
 		        .Type = type,
-		        .Add = [](NativeComponentManager& mgr, RID e) { mgr.AddComponent<T>(e); },
-		        .Remove = [](NativeComponentManager& mgr, RID e) { mgr.RemoveComponentByType(e, typeid(T)); },
-		        .Has = [](const NativeComponentManager& mgr, RID e) { return mgr.HasComponent<T>(e); },
-		        .Get = [](NativeComponentManager& mgr, RID e) -> void* { return mgr.GetComponent<T>(e); },
+		        .Add = [](NativeComponentManager& mgr, RID e) { mgr.add_component<T>(e); },
+		        .Remove = [](NativeComponentManager& mgr, RID e) { mgr.remove_component_by_type(e, typeid(T)); },
+		        .Has = [](const NativeComponentManager& mgr, RID e) { return mgr.has_component<T>(e); },
+		        .Get = [](NativeComponentManager& mgr, RID e) -> void* { return mgr.get_component<T>(e); },
 		        .Serializer = serializer });
 
-		auto& nameMap = GetNameMap();
-		if (nameMap.contains(name))
+		auto& name_map = get_name_map();
+		if (name_map.contains(name))
 			throw std::runtime_error("Component with name '" + name + "' already registered");
-		nameMap.emplace(name, type);
+		name_map.emplace(name, type);
 	}
 
-	static std::unordered_map<std::string, std::type_index>& GetNameMap() {
+	static std::unordered_map<std::string, std::type_index>& get_name_map() {
 		static std::unordered_map<std::string, std::type_index> map;
 		return map;
 	}
 
-	static const NativeComponentTypeInfo* GetByName(std::string_view name) {
-		auto& nameMap = GetNameMap();
-		auto it = nameMap.find(std::string(name));
-		if (it == nameMap.end())
+	static const NativeComponentTypeInfo* get_by_name(std::string_view name) {
+		auto& name_map = get_name_map();
+		auto it = name_map.find(std::string(name));
+		if (it == name_map.end())
 			return nullptr;
-		return Get(it->second);
+		return get(it->second);
 	}
 
-	static const auto& GetAll() { return GetMap(); }
+	static const auto& get_all() { return get_map(); }
 
-	static const NativeComponentTypeInfo* Get(std::type_index type) {
-		auto& map = GetMap();
+	static const NativeComponentTypeInfo* get(std::type_index type) {
+		auto& map = get_map();
 		auto it = map.find(type);
 		return it != map.end() ? &it->second : nullptr;
 	}
 
 private:
-	static std::unordered_map<std::type_index, NativeComponentTypeInfo>& GetMap() {
+	static std::unordered_map<std::type_index, NativeComponentTypeInfo>& get_map() {
 		static std::unordered_map<std::type_index, NativeComponentTypeInfo> map;
 		return map;
 	}
@@ -78,8 +78,8 @@ private:
 #define ORIGO_REGISTER_NATIVE_COMPONENT_IMPL(T, SerializerType, N)        \
 	static SerializerType ORIGO_DETAIL_CONCAT(_origo_serializer_, N); \
 	static bool ORIGO_DETAIL_CONCAT(_origo_reg_, N) = [] {            \
-		::Origo::NativeComponentRegistry::Register<T>(            \
-		    T {}.GetComponentName(),                              \
+		::Origo::NativeComponentRegistry::register_component<T>(  \
+		    T {}.get_component_name(),                            \
 		    &ORIGO_DETAIL_CONCAT(_origo_serializer_, N));         \
 		return true;                                              \
 	}();
@@ -87,12 +87,12 @@ private:
 #define ORIGO_REGISTER_NATIVE_COMPONENT(T, SerializerType) \
 	ORIGO_REGISTER_NATIVE_COMPONENT_IMPL(T, SerializerType, __COUNTER__)
 
-#define ORIGO_REGISTER_NATIVE_COMPONENT_NO_SERIALIZE_IMPL(T, N) \
-	static bool ORIGO_DETAIL_CONCAT(_origo_reg_, N) = [] {  \
-		::Origo::NativeComponentRegistry::Register<T>(  \
-		    T {}.GetComponentName(),                    \
-		    nullptr);                                   \
-		return true;                                    \
+#define ORIGO_REGISTER_NATIVE_COMPONENT_NO_SERIALIZE_IMPL(T, N)          \
+	static bool ORIGO_DETAIL_CONCAT(_origo_reg_, N) = [] {           \
+		::Origo::NativeComponentRegistry::register_component<T>( \
+		    T {}.get_component_name(),                           \
+		    nullptr);                                            \
+		return true;                                             \
 	}();
 
 #define ORIGO_REGISTER_NATIVE_COMPONENT_NO_SERIALIZE(T) \

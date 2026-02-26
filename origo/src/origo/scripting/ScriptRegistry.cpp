@@ -12,30 +12,30 @@ namespace {
 	};
 }
 
-static const std::unordered_map<std::string_view, ScriptTypeInfo> s_TypeRegistry = {
+static const std::unordered_map<std::string_view, ScriptTypeInfo> s_type_registry = {
 	{ "int", { VariantType::Int, [](const sol::object& o) { return Variant(o.as<int>()); } } },
 	{ "float", { VariantType::Float, [](const sol::object& o) { return Variant(o.as<float>()); } } },
 	{ "bool", { VariantType::Bool, [](const sol::object& o) { return Variant(o.as<bool>()); } } },
 	{ "string", { VariantType::String, [](const sol::object& o) { return Variant(o.as<std::string>()); } } },
 };
 
-ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescriptor descriptor) {
-	if (s_Descriptors.contains(descriptor.ID)) {
+ScriptComponentID ScriptComponentRegistry::register_or_update(ScriptComponentDescriptor descriptor) {
+	if (s_descriptors.contains(descriptor.ID)) {
 		ORG_CORE_TRACE("Registering already existent Component {}", descriptor.Name);
-		auto& existing = s_Descriptors[descriptor.ID];
+		auto& existing = s_descriptors[descriptor.ID];
 		existing.Fields = descriptor.Fields;
 		existing.Name = descriptor.Name;
 
-		s_NameToScriptComponentID.erase(existing.Name);
-		s_NameToScriptComponentID.emplace(descriptor.Name, descriptor.ID);
+		s_name_to_script_component_id.erase(existing.Name);
+		s_name_to_script_component_id.emplace(descriptor.Name, descriptor.ID);
 
-		OnScriptComponentUpdated().Invoke(descriptor.ID);
+		on_script_component_updated().invoke(descriptor.ID);
 
 		return descriptor.ID;
 	}
 
 	for (const auto& field : descriptor.Fields) {
-		if (field.DefaultValue.GetType() != field.Type) {
+		if (field.DefaultValue.get_type() != field.Type) {
 			throw std::runtime_error("Field '" + field.Name + "' has mismatched default value type");
 		}
 	}
@@ -43,44 +43,44 @@ ScriptComponentID ScriptComponentRegistry::RegisterOrUpdate(ScriptComponentDescr
 	ORG_CORE_TRACE("Registering Component {}", descriptor.Name);
 	ScriptComponentID id = descriptor.ID;
 
-	s_NameToScriptComponentID.insert({ descriptor.Name, id });
-	s_Descriptors.insert({ id, std::move(descriptor) });
+	s_name_to_script_component_id.insert({ descriptor.Name, id });
+	s_descriptors.insert({ id, std::move(descriptor) });
 
 	return id;
 }
 
-ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& uuid, const std::string& name, sol::table fields) {
+ScriptComponentID ScriptComponentRegistry::register_component_from_lua(const UUID& uuid, const std::string& name, sol::table fields) {
 	ScriptComponentDescriptor desc {};
 	desc.Name = name;
 	desc.ID = uuid;
 
 	for (auto& kv : fields) {
-		std::string fieldName = kv.first.as<std::string>();
-		sol::table fieldDef = kv.second.as<sol::table>();
+		std::string field_name = kv.first.as<std::string>();
+		sol::table field_def = kv.second.as<sol::table>();
 
-		if (!fieldDef["type"].valid() || !fieldDef["default"].valid()) {
-			throw std::runtime_error("Field '" + fieldName + "' must have 'type' and 'default'");
+		if (!field_def["type"].valid() || !field_def["default"].valid()) {
+			throw std::runtime_error("Field '" + field_name + "' must have 'type' and 'default'");
 		}
 
-		std::string typeStr = fieldDef["type"];
-		sol::object defVal = fieldDef["default"];
+		std::string type_str = field_def["type"];
+		sol::object def_val = field_def["default"];
 
-		auto it = s_TypeRegistry.find(typeStr);
+		auto it = s_type_registry.find(type_str);
 
-		if (it == s_TypeRegistry.end()) {
-			ORG_CORE_ERROR("Unknown script field type: " + typeStr);
-			throw std::runtime_error("Unknown script field type: " + typeStr);
+		if (it == s_type_registry.end()) {
+			ORG_CORE_ERROR("Unknown script field type: " + type_str);
+			throw std::runtime_error("Unknown script field type: " + type_str);
 		}
 
 		VariantType type = it->second.Type;
-		Variant value = it->second.FromLua(defVal);
+		Variant value = it->second.FromLua(def_val);
 
-		UUID fieldID = UUID::FromHash(
-		    uuid.ToString() + "::" + fieldName);
+		UUID field_id = UUID::from_hash(
+		    uuid.to_string() + "::" + field_name);
 
 		ScriptFieldDescriptor field {
-			fieldID,
-			fieldName,
+			field_id,
+			field_name,
 			type,
 			value
 		};
@@ -94,27 +94,27 @@ ScriptComponentID ScriptComponentRegistry::RegisterComponentFromLua(const UUID& 
 		    return a.Name < b.Name;
 	    });
 
-	return ScriptComponentRegistry::RegisterOrUpdate(std::move(desc));
+	return ScriptComponentRegistry::register_or_update(std::move(desc));
 }
 
-const ScriptComponentDescriptor& ScriptComponentRegistry::Get(ScriptComponentID id) {
-	if (!s_Descriptors.contains(id)) {
+const ScriptComponentDescriptor& ScriptComponentRegistry::get(ScriptComponentID id) {
+	if (!s_descriptors.contains(id)) {
 		throw std::runtime_error("Invalid ScriptComponentID");
 	}
 
-	return s_Descriptors[id];
+	return s_descriptors[id];
 }
 
-std::optional<ScriptComponentID> ScriptComponentRegistry::TryFindByName(const std::string& name) {
-	auto it = s_NameToScriptComponentID.find(name);
+std::optional<ScriptComponentID> ScriptComponentRegistry::try_find_by_name(const std::string& name) {
+	auto it = s_name_to_script_component_id.find(name);
 
-	if (it == s_NameToScriptComponentID.end()) {
+	if (it == s_name_to_script_component_id.end()) {
 		return std::nullopt;
 	}
 
 	return it->second;
 }
-Action<void, ScriptComponentID> ScriptComponentRegistry::OnScriptComponentUpdated() {
+Action<void, ScriptComponentID> ScriptComponentRegistry::on_script_component_updated() {
 	static Action<void, ScriptComponentID> action {};
 	return action;
 }

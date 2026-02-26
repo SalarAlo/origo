@@ -1,55 +1,57 @@
-#include "magic_enum/magic_enum.hpp"
 #include "origo/assets/MeshSource.h"
+
+#include "magic_enum/magic_enum.hpp"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
 
-void MeshSourceRaw::Serialize(ISerializer& backend) const {
-	backend.BeginObject("source");
+void MeshSourceRaw::serialize(ISerializer& backend) const {
+	backend.begin_object("source");
 
-	backend.BeginArray("vertices");
-	for (const auto& vertex : m_Vertices)
-		backend.Write(vertex);
-	backend.EndArray();
-	backend.BeginArray("indices");
-	for (const auto& i : m_Indices)
-		backend.Write(static_cast<int>(i));
-	backend.EndArray();
-	backend.Write("type", magic_enum::enum_name(GetType()));
+	backend.begin_array("vertices");
+	for (const auto& vertex : m_vertices)
+		backend.write(vertex);
+	backend.end_array();
+	backend.begin_array("indices");
+	for (const auto& i : m_indices)
+		backend.write(static_cast<int>(i));
+	backend.end_array();
+	backend.write("type", magic_enum::enum_name(get_type()));
 
-	backend.EndObject();
+	backend.end_object();
 }
 
-MeshSource* MeshSourceRaw::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourceRaw::deserialize(ISerializer& backend) const {
 	// Left empty on purpose
 	return nullptr;
 }
 
-void MeshSourcePrimitiveShape::Serialize(ISerializer& backend) const {
-	backend.BeginObject("source");
+void MeshSourcePrimitiveShape::serialize(ISerializer& backend) const {
+	backend.begin_object("source");
 
-	backend.Write("shape_type", magic_enum::enum_name(m_Shape));
-	backend.Write("type", magic_enum::enum_name(GetType()));
+	backend.write("shape_type", magic_enum::enum_name(m_shape));
+	backend.write("type", magic_enum::enum_name(get_type()));
 
-	backend.EndObject();
+	backend.end_object();
 }
 
-MeshSource* MeshSourcePrimitiveShape::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourcePrimitiveShape::deserialize(ISerializer& backend) const {
 	// Left empty on purpose (rebuilt everytime anyways (see PrimitiveShapeCache.h))
 	return nullptr;
 }
 
-void MeshSourceExternal::Serialize(ISerializer& backend) const {
-	backend.BeginObject("source");
+void MeshSourceExternal::serialize(ISerializer& backend) const {
+	backend.begin_object("source");
 
-	backend.Write("model_path", m_ModelPath);
-	backend.Write("mesh_index", static_cast<int>(m_MeshIndex));
-	backend.Write("type", magic_enum::enum_name(GetType()));
+	backend.write("model_path", m_model_path);
+	backend.write("mesh_index", static_cast<int>(m_mesh_index));
+	backend.write("type", magic_enum::enum_name(get_type()));
 
-	backend.EndObject();
+	backend.end_object();
 }
 
-MeshSource* MeshSourceExternal::Deserialize(ISerializer& backend) const {
+MeshSource* MeshSourceExternal::deserialize(ISerializer& backend) const {
 	// Left empty on purpose (should not serialize)
 	return nullptr;
 }

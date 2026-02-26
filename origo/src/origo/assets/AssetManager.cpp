@@ -6,47 +6,47 @@
 
 namespace Origo {
 
-Asset* AssetManager::Get(const AssetHandle& handle) const {
-	if (!IsValid(handle))
+Asset* AssetManager::get(const AssetHandle& handle) const {
+	if (!is_valid(handle))
 		return nullptr;
 
-	return m_AssetEntries[handle.Index].AssetPtr.get();
+	return m_asset_entries[handle.Index].AssetPtr.get();
 }
 
-auto AssetManager::Register(Scope<Asset>&& assetPtr, OptionalUUID uuid, OptionalPath path) -> AssetHandle {
-	auto handle { GetNextFreeHandle() };
+auto AssetManager::register_asset(Scope<Asset>&& assetPtr, OptionalUUID uuid, OptionalPath path) -> AssetHandle {
+	auto handle { get_next_free_handle() };
 
-	m_AssetEntries[handle.Index].AssetPtr = std::move(assetPtr);
-	m_AssetEntries[handle.Index].Uuid = uuid;
-	m_AssetEntries[handle.Index].Path = path;
+	m_asset_entries[handle.Index].AssetPtr = std::move(assetPtr);
+	m_asset_entries[handle.Index].Uuid = uuid;
+	m_asset_entries[handle.Index].Path = path;
 
 	if (uuid.has_value())
-		m_UuidToHandle.insert_or_assign(*uuid, handle);
+		m_uuid_to_handle.insert_or_assign(*uuid, handle);
 
 	return handle;
 }
 
-auto AssetManager::GetNextFreeHandle() -> AssetHandle {
-	if (!m_Free.empty()) {
-		auto i { m_Free.back() };
-		m_Free.pop_back();
-		AssetHandle handle { i, ++m_AssetEntries[i].Generation };
+auto AssetManager::get_next_free_handle() -> AssetHandle {
+	if (!m_free.empty()) {
+		auto i { m_free.back() };
+		m_free.pop_back();
+		AssetHandle handle { i, ++m_asset_entries[i].Generation };
 		return handle;
 	} else {
-		uint32_t i { static_cast<uint32_t>(m_AssetEntries.size()) };
-		m_AssetEntries.emplace_back(0);
+		uint32_t i { static_cast<uint32_t>(m_asset_entries.size()) };
+		m_asset_entries.emplace_back(0);
 		return { i, 0 };
 	}
 }
 
-void AssetManager::Destroy(const AssetHandle& handle) {
+void AssetManager::destroy(const AssetHandle& handle) {
 };
 
-bool AssetManager::IsValid(const AssetHandle& handle) const {
-	if (handle.Index >= m_AssetEntries.size())
+bool AssetManager::is_valid(const AssetHandle& handle) const {
+	if (handle.Index >= m_asset_entries.size())
 		return false;
 
-	const auto& entry = m_AssetEntries[handle.Index];
+	const auto& entry = m_asset_entries[handle.Index];
 
 	if (entry.Generation != handle.Generation)
 		return false;
@@ -57,37 +57,37 @@ bool AssetManager::IsValid(const AssetHandle& handle) const {
 	return true;
 }
 
-OptionalUUID AssetManager::GetUUID(const AssetHandle& handle) const {
-	if (!IsValid(handle))
+OptionalUUID AssetManager::get_uuid(const AssetHandle& handle) const {
+	if (!is_valid(handle))
 		return std::nullopt;
 
-	return m_AssetEntries[handle.Index].Uuid;
+	return m_asset_entries[handle.Index].Uuid;
 }
 
-OptionalAssetHandle AssetManager::GetHandleByUUID(const UUID& id) const {
-	auto it = m_UuidToHandle.find(id);
-	if (it == m_UuidToHandle.end()) {
-		ORG_CORE_WARN("AssetManager::GetHandleByUUID: unknown UUID {}", id.ToString());
+OptionalAssetHandle AssetManager::get_handle_by_uuid(const UUID& id) const {
+	auto it = m_uuid_to_handle.find(id);
+	if (it == m_uuid_to_handle.end()) {
+		ORG_CORE_WARN("AssetManager::GetHandleByUUID: unknown UUID {}", id.to_string());
 		return std::nullopt;
 	}
 
 	const AssetHandle& handle = it->second;
 
-	if (!IsValid(handle)) {
-		ORG_CORE_WARN("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.ToString());
+	if (!is_valid(handle)) {
+		ORG_CORE_WARN("AssetManager::GetHandleByUUID: stale handle for UUID {}", id.to_string());
 		return std::nullopt;
 	}
 
 	return handle;
 }
 
-OptionalAssetHandle AssetManager::Load(const std::filesystem::path& path) {
-	for (const auto& assetEntry : m_AssetEntries) {
-		if (!assetEntry.Path || *assetEntry.Path != path || !assetEntry.Uuid.has_value())
+OptionalAssetHandle AssetManager::load(const std::filesystem::path& path) {
+	for (const auto& asset_entry : m_asset_entries) {
+		if (!asset_entry.Path || *asset_entry.Path != path || !asset_entry.Uuid.has_value())
 			continue;
 
-		auto it = m_UuidToHandle.find(*assetEntry.Uuid);
-		if (it == m_UuidToHandle.end())
+		auto it = m_uuid_to_handle.find(*asset_entry.Uuid);
+		if (it == m_uuid_to_handle.end())
 			return std::nullopt;
 
 		return it->second;
@@ -96,28 +96,28 @@ OptionalAssetHandle AssetManager::Load(const std::filesystem::path& path) {
 	return std::nullopt;
 }
 
-void AssetManager::ResolveAll(std::optional<std::function<bool(Asset*)>> resolveCond) {
+void AssetManager::resolve_all(std::optional<std::function<bool(Asset*)>> resolveCond) {
 	// need to do this because some assets resolve might resize the entries and they move
 	// because of behaviour of std::vector (realloc on capacity exceedence)
-	size_t assetSize = m_AssetEntries.size();
+	size_t asset_size = m_asset_entries.size();
 
-	for (size_t i = 0; i < assetSize; ++i) {
-		auto& entry = m_AssetEntries[i];
+	for (size_t i = 0; i < asset_size; ++i) {
+		auto& entry = m_asset_entries[i];
 
 		if (!entry.AssetPtr)
 			continue;
 		if (!entry.Uuid.has_value())
 			continue;
 
-		if (auto assetPtr = entry.AssetPtr.get(); resolveCond.has_value() && !((*resolveCond)(assetPtr)))
+		if (auto asset_ptr = entry.AssetPtr.get(); resolveCond.has_value() && !((*resolveCond)(asset_ptr)))
 			continue;
 
-		std::string pathStr = entry.Path ? entry.Path->string() : "<no path>";
+		std::string path_str = entry.Path ? entry.Path->string() : "<no path>";
 		ORG_INFO("Resolving asset of type '{}' with path '{}'",
-		    magic_enum::enum_name(entry.AssetPtr->GetAssetType()),
-		    pathStr);
+		    magic_enum::enum_name(entry.AssetPtr->get_asset_type()),
+		    path_str);
 
-		entry.AssetPtr->Resolve();
+		entry.AssetPtr->resolve();
 	}
 }
 

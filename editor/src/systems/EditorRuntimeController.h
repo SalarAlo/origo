@@ -6,22 +6,22 @@ namespace OrigoEditor {
 class EditorRuntimeController {
 public:
 	EditorRuntimeController(EditorContext& ctx)
-	    : m_Context(ctx) { }
+	    : m_context(ctx) { }
 
-	void Play();
-	void Pause(bool changeToEditorView = true);
-	void Stop();
-	void Resume();
-	void Step();
+	void play();
+	void pause(bool changeToEditorView = true);
+	void stop();
+	void resume();
+	void step();
 
-	bool CanStep() const;
-	bool CanResume() const;
-	bool CanPlay() const;
-	bool CanStop() const;
-	bool CanPause() const;
+	bool can_step() const;
+	bool can_resume() const;
+	bool can_play() const;
+	bool can_stop() const;
+	bool can_pause() const;
 
 private:
-	EditorContext& m_Context;
+	EditorContext& m_context;
 };
 
 }

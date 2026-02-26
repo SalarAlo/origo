@@ -9,7 +9,7 @@
 namespace Origo {
 
 struct ParticleSystemComponent : public Component {
-	std::string GetComponentName() const override { return "ParticleSystem"; }
+	std::string get_component_name() const override { return "ParticleSystem"; }
 
 	bool IsLooping { true };
 	float SpawnRate { 10.0f };

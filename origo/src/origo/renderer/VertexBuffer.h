@@ -12,23 +12,23 @@ public:
 	VertexBuffer(VertexBuffer&&) = delete;
 	VertexBuffer& operator=(VertexBuffer&&) = delete;
 
-	void Bind() const;
-	void Unbind() const;
+	void bind() const;
+	void unbind() const;
 
-	void AddData(const void* data, size_t size);
-
-private:
-	void SetDataOpenGL(bool initialUpload);
-	void Resize(size_t newSize);
+	void add_data(const void* data, size_t size);
 
 private:
-	inline static GLuint s_CurrentlyBound { 0 };
+	void set_data_open_gl(bool initialUpload);
+	void resize(size_t newSize);
 
-	void* m_Data {};
-	size_t m_Size {};
-	size_t m_Capacity {};
-	size_t m_SizeBeforeLastAppend = 0;
+private:
+	inline static GLuint s_currently_bound { 0 };
 
-	GLuint m_BufferId {};
+	void* m_data {};
+	size_t m_size {};
+	size_t m_capacity {};
+	size_t m_size_before_last_append = 0;
+
+	GLuint m_buffer_id {};
 };
 }

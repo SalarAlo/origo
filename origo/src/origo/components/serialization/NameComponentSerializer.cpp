@@ -4,15 +4,15 @@
 
 namespace Origo {
 
-void NameComponentSerializer::Serialize(Component* comp, ISerializer& s) const {
+void NameComponentSerializer::serialize(Component* comp, ISerializer& s) const {
 	auto name = static_cast<NameComponent*>(comp);
-	s.Write("name", name->Name);
+	s.write("name", name->Name);
 }
 
-void NameComponentSerializer::Deserialize(Component* comp, ISerializer& s) {
+void NameComponentSerializer::deserialize(Component* comp, ISerializer& s) {
 	auto name = static_cast<NameComponent*>(comp);
 
-	s.TryRead("name", name->Name);
+	s.try_read("name", name->Name);
 }
 
 }

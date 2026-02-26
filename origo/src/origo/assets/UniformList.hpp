@@ -18,30 +18,30 @@ enum class UniformType {
 
 class UniformBase {
 public:
-	virtual void Upload(Shader* shader, std::string_view name) const = 0;
+	virtual void upload(Shader* shader, std::string_view name) const = 0;
 	virtual ~UniformBase() = default;
 
-	virtual UniformType GetUniformType() const = 0;
-	virtual void Serialize(ISerializer& backend) const = 0;
+	virtual UniformType get_uniform_type() const = 0;
+	virtual void serialize(ISerializer& backend) const = 0;
 };
 
 template <typename T>
 class Uniform : public UniformBase {
 public:
 	explicit Uniform(const T& value)
-	    : m_Value(value) { }
+	    : m_value(value) { }
 
-	void Upload(Shader* shader, std::string_view name) const override {
-		shader->SetUniform<T>(name, m_Value);
+	void upload(Shader* shader, std::string_view name) const override {
+		shader->set_uniform<T>(name, m_value);
 	}
 
-	const T& GetValue() const { return m_Value; }
+	const T& get_value() const { return m_value; }
 
-	UniformType GetUniformType() const override;
-	void Serialize(ISerializer& backend) const override;
+	UniformType get_uniform_type() const override;
+	void serialize(ISerializer& backend) const override;
 
 private:
-	T m_Value;
+	T m_value;
 };
 
 class UniformList {
@@ -55,33 +55,33 @@ public:
 	UniformList& operator=(UniformList&&) = default;
 
 	template <typename T>
-	void AddUniform(const std::string& name, const T& value) {
-		m_Uniforms[name] = MakeScope<Uniform<T>>(value);
+	void add_uniform(const std::string& name, const T& value) {
+		m_uniforms[name] = MakeScope<Uniform<T>>(value);
 	}
 
-	void UploadAll(Shader* shader) const {
-		for (const auto& [name, uniform] : m_Uniforms) {
-			uniform->Upload(shader, name);
+	void upload_all(Shader* shader) const {
+		for (const auto& [name, uniform] : m_uniforms) {
+			uniform->upload(shader, name);
 		}
 	}
 
-	void Serialize(ISerializer& backend) const {
-		backend.BeginArray("uniform_list");
+	void serialize(ISerializer& backend) const {
+		backend.begin_array("uniform_list");
 
-		for (const auto& [name, base] : m_Uniforms) {
-			backend.BeginArrayElement();
-			backend.Write("name", name);
-			base->Serialize(backend);
+		for (const auto& [name, base] : m_uniforms) {
+			backend.begin_array_element();
+			backend.write("name", name);
+			base->serialize(backend);
 
-			backend.EndArrayElement();
+			backend.end_array_element();
 		}
-		backend.EndArray();
+		backend.end_array();
 	}
 
-	const auto& GetUniforms() const { return m_Uniforms; }
+	const auto& get_uniforms() const { return m_uniforms; }
 
 private:
-	std::unordered_map<std::string, Scope<UniformBase>> m_Uniforms {};
+	std::unordered_map<std::string, Scope<UniformBase>> m_uniforms {};
 };
 
 }

@@ -4,62 +4,62 @@
 
 namespace Origo {
 
-void ParticleSystemComponentSerializer::Serialize(Component* comp, ISerializer& s) const {
+void ParticleSystemComponentSerializer::serialize(Component* comp, ISerializer& s) const {
 	auto* ps = static_cast<ParticleSystemComponent*>(comp);
 
-	s.Write("is_looping", ps->IsLooping ? 1 : 0);
-	s.Write("spawn_rate", ps->SpawnRate);
+	s.write("is_looping", ps->IsLooping ? 1 : 0);
+	s.write("spawn_rate", ps->SpawnRate);
 
-	s.Write("start_size", ps->StartSize);
-	s.Write("end_size", ps->EndSize);
+	s.write("start_size", ps->StartSize);
+	s.write("end_size", ps->EndSize);
 
-	s.Write("lifetime_min", ps->LifetimeMin);
-	s.Write("lifetime_max", ps->LifetimeMax);
+	s.write("lifetime_min", ps->LifetimeMin);
+	s.write("lifetime_max", ps->LifetimeMax);
 
-	s.Write("initial_speed_min", ps->InitialSpeedMin);
-	s.Write("initial_speed_max", ps->InitialSpeedMax);
+	s.write("initial_speed_min", ps->InitialSpeedMin);
+	s.write("initial_speed_max", ps->InitialSpeedMax);
 
-	s.Write("use_gravity", ps->UseGravity ? 1 : 0);
-	s.Write("gravity_force_factor", ps->GravityForceFactor);
-	s.Write("drag", ps->Drag);
+	s.write("use_gravity", ps->UseGravity ? 1 : 0);
+	s.write("gravity_force_factor", ps->GravityForceFactor);
+	s.write("drag", ps->Drag);
 
 	if (ps->ParticleMesh.has_value()) {
-		auto uuid = AssetManager::GetInstance().GetUUID(ps->ParticleMesh.value());
+		auto uuid = AssetManager::get_instance().get_uuid(ps->ParticleMesh.value());
 		if (uuid.has_value())
-			s.Write("particle_mesh", uuid->ToString());
+			s.write("particle_mesh", uuid->to_string());
 	}
 
 	// TODO: Serialize Emission Shape
 }
 
-void ParticleSystemComponentSerializer::Deserialize(Component* comp, ISerializer& s) {
+void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer& s) {
 	auto* ps = static_cast<ParticleSystemComponent*>(comp);
 
-	int isLooping { 1 };
-	s.TryRead("is_looping", isLooping);
-	ps->IsLooping = isLooping;
+	int is_looping { 1 };
+	s.try_read("is_looping", is_looping);
+	ps->IsLooping = is_looping;
 
-	s.TryRead("spawn_rate", ps->SpawnRate);
+	s.try_read("spawn_rate", ps->SpawnRate);
 
-	s.TryRead("start_size", ps->StartSize);
-	s.TryRead("end_size", ps->EndSize);
+	s.try_read("start_size", ps->StartSize);
+	s.try_read("end_size", ps->EndSize);
 
-	s.TryRead("lifetime_min", ps->LifetimeMin);
-	s.TryRead("lifetime_max", ps->LifetimeMax);
+	s.try_read("lifetime_min", ps->LifetimeMin);
+	s.try_read("lifetime_max", ps->LifetimeMax);
 
-	s.TryRead("initial_speed_min", ps->InitialSpeedMin);
-	s.TryRead("initial_speed_max", ps->InitialSpeedMax);
+	s.try_read("initial_speed_min", ps->InitialSpeedMin);
+	s.try_read("initial_speed_max", ps->InitialSpeedMax);
 
-	int useGravity { 0 };
-	s.TryRead("use_gravity", useGravity);
-	ps->UseGravity = useGravity;
+	int use_gravity { 0 };
+	s.try_read("use_gravity", use_gravity);
+	ps->UseGravity = use_gravity;
 
-	s.TryRead("gravity_force_factor", ps->GravityForceFactor);
-	s.TryRead("drag", ps->Drag);
+	s.try_read("gravity_force_factor", ps->GravityForceFactor);
+	s.try_read("drag", ps->Drag);
 
-	if (std::string meshID; s.TryRead("particle_mesh", meshID)) {
-		auto uuid = UUID::FromString(meshID);
-		auto handle = AssetManager::GetInstance().GetHandleByUUID(uuid);
+	if (std::string mesh_id; s.try_read("particle_mesh", mesh_id)) {
+		auto uuid = UUID::from_string(mesh_id);
+		auto handle = AssetManager::get_instance().get_handle_by_uuid(uuid);
 		ps->ParticleMesh = handle;
 	}
 

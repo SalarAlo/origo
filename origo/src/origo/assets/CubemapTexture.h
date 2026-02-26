@@ -12,7 +12,7 @@ struct CubemapDescription {
 	std::filesystem::path Front;
 	std::filesystem::path Back;
 
-	std::vector<std::filesystem::path> GetPaths() {
+	std::vector<std::filesystem::path> get_paths() {
 		std::vector<std::filesystem::path> paths {
 			Right,
 			Left,
@@ -29,14 +29,14 @@ class CubemapTexture : public Asset {
 public:
 	CubemapTexture(CubemapDescription description);
 
-	AssetType GetAssetType() const override { return AssetType::TextureCubemap; }
-	static AssetType GetClassAssetType() { return AssetType::TextureCubemap; }
-	void Load();
-	void Bind(uint32_t slot) const;
+	AssetType get_asset_type() const override { return AssetType::TextureCubemap; }
+	static AssetType get_class_asset_type() { return AssetType::TextureCubemap; }
+	void load();
+	void bind(uint32_t slot) const;
 
 private:
-	CubemapDescription m_Description;
-	GLuint m_TextureID;
+	CubemapDescription m_description;
+	GLuint m_texture_id;
 };
 
 }

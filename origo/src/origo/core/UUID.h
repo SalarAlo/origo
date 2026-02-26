@@ -8,7 +8,7 @@
 namespace Origo {
 
 struct UUID {
-	static UUID Generate() {
+	static UUID generate() {
 		static std::random_device rd;
 		static std::mt19937_64 gen(rd());
 
@@ -19,17 +19,17 @@ struct UUID {
 	}
 
 	bool operator==(const UUID& other) const noexcept {
-		return m_High == other.m_High && m_Low == other.m_Low;
+		return m_high == other.m_high && m_low == other.m_low;
 	}
 
-	std::string ToString() const {
+	std::string to_string() const {
 		std::ostringstream ss;
 		ss << std::hex << std::setfill('0')
-		   << std::setw(16) << m_High << std::setw(16) << m_Low;
+		   << std::setw(16) << m_high << std::setw(16) << m_low;
 		return ss.str();
 	}
 
-	static UUID FromString(const std::string& str) {
+	static UUID from_string(const std::string& str) {
 		if (str.size() != 32) {
 			return UUID(0, 0);
 		}
@@ -44,43 +44,43 @@ struct UUID {
 		return UUID(high, low);
 	}
 
-	static UUID FromArbitraryString(std::string_view str) {
-		uint64_t high = HashFNV1a64(str);
-		uint64_t low = HashFNV1a64("origo::uuid::salt::" + std::string(str));
+	static UUID from_arbitrary_string(std::string_view str) {
+		uint64_t high = hash_fn_v1a64(str);
+		uint64_t low = hash_fn_v1a64("origo::uuid::salt::" + std::string(str));
 		return UUID(high, low);
 	}
 
-	static uint64_t HashFNV1a64(std::string_view str) {
-		constexpr uint64_t FNV_OFFSET = 14695981039346656037ull;
-		constexpr uint64_t FNV_PRIME = 1099511628211ull;
+	static uint64_t hash_fn_v1a64(std::string_view str) {
+		constexpr uint64_t fnv_offset = 14695981039346656037ull;
+		constexpr uint64_t fnv_prime = 1099511628211ull;
 
-		uint64_t hash = FNV_OFFSET;
+		uint64_t hash = fnv_offset;
 		for (char c : str) {
 			hash ^= static_cast<uint8_t>(c);
-			hash *= FNV_PRIME;
+			hash *= fnv_prime;
 		}
 		return hash;
 	}
 
-	static UUID FromHash(std::string_view str) {
-		uint64_t h1 = HashFNV1a64(str);
-		uint64_t h2 = HashFNV1a64("origo::uuid::salt::" + std::string(str));
+	static UUID from_hash(std::string_view str) {
+		uint64_t h1 = hash_fn_v1a64(str);
+		uint64_t h2 = hash_fn_v1a64("origo::uuid::salt::" + std::string(str));
 
 		return UUID(h1, h2);
 	}
 
-	uint64_t GetHigh() const { return m_High; }
-	uint64_t GetLow() const { return m_Low; }
+	uint64_t get_high() const { return m_high; }
+	uint64_t get_low() const { return m_low; }
 
 private:
 	UUID() = default;
 	UUID(uint64_t high, uint64_t low)
-	    : m_High(high)
-	    , m_Low(low) { }
+	    : m_high(high)
+	    , m_low(low) { }
 
 private:
-	uint64_t m_High;
-	uint64_t m_Low;
+	uint64_t m_high;
+	uint64_t m_low;
 };
 }
 
@@ -90,7 +90,7 @@ namespace std {
 template <>
 struct hash<Origo::UUID> {
 	size_t operator()(const Origo::UUID& id) const noexcept {
-		return std::hash<uint64_t>()(id.GetHigh() ^ (id.GetLow() << 1));
+		return std::hash<uint64_t>()(id.get_high() ^ (id.get_low() << 1));
 	}
 };
 

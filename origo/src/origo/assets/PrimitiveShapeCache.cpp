@@ -12,95 +12,95 @@
 
 namespace Origo {
 
-void PrimitiveShapeCache::CreateAllPrimitiveShapes() {
-	GetCubeMesh();
-	GetSphereMesh();
-	GetConeMesh();
+void PrimitiveShapeCache::create_all_primitive_shapes() {
+	get_cube_mesh();
+	get_sphere_mesh();
+	get_cone_mesh();
 }
 
-AssetHandle PrimitiveShapeCache::GetCubeMesh() {
-	static auto cubeHandle = ([] {
-		auto vertexLayoutID { VertexLayout::GetStaticMeshLayout() };
-		auto heapID { GeometryHeapRegistry::GetOrCreateStaticMeshHeap(vertexLayoutID) };
-		auto heap = GeometryHeapRegistry::GetHeap(heapID);
+AssetHandle PrimitiveShapeCache::get_cube_mesh() {
+	static auto cube_handle = ([] {
+		auto vertex_layout_id { VertexLayout::get_static_mesh_layout() };
+		auto heap_id { GeometryHeapRegistry::get_or_create_static_mesh_heap(vertex_layout_id) };
+		auto heap = GeometryHeapRegistry::get_heap(heap_id);
 
-		MeshData data = GetDataFromShape(PrimitiveShape::Cube);
-		auto vertexStride = VertexLayoutRegistry::Get(vertexLayoutID)->GetStride();
+		MeshData data = get_data_from_shape(PrimitiveShape::Cube);
+		auto vertex_stride = VertexLayoutRegistry::get(vertex_layout_id)->get_stride();
 
-		auto range = heap->Allocate(
+		auto range = heap->allocate(
 		    data.Vertices.data(),
 		    data.Vertices.size() * sizeof(float),
-		    vertexStride,
+		    vertex_stride,
 		    data.Indices.data(),
 		    data.Indices.size());
 
-		UUID meshID { UUID::FromArbitraryString("DEFAULT_CUBE_MESH") };
-		auto cubeHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
+		UUID mesh_id { UUID::from_arbitrary_string("DEFAULT_CUBE_MESH") };
+		auto cube_handle = AssetFactory::get_instance().create_synthetic_asset<Mesh>(
 		    "Default Cube",
-		    meshID,
-		    vertexLayoutID,
-		    heapID,
+		    mesh_id,
+		    vertex_layout_id,
+		    heap_id,
 		    range);
 
-		return cubeHandle;
+		return cube_handle;
 	})();
-	return cubeHandle;
+	return cube_handle;
 }
 
-AssetHandle PrimitiveShapeCache::GetSphereMesh() {
-	static auto cubeHandle = ([] {
-		auto vertexLayoutID { VertexLayout::GetStaticMeshLayout() };
-		auto heapID { GeometryHeapRegistry::GetOrCreateStaticMeshHeap(vertexLayoutID) };
-		auto heap = GeometryHeapRegistry::GetHeap(heapID);
+AssetHandle PrimitiveShapeCache::get_sphere_mesh() {
+	static auto cube_handle = ([] {
+		auto vertex_layout_id { VertexLayout::get_static_mesh_layout() };
+		auto heap_id { GeometryHeapRegistry::get_or_create_static_mesh_heap(vertex_layout_id) };
+		auto heap = GeometryHeapRegistry::get_heap(heap_id);
 
-		MeshData data = GetDataFromShape(PrimitiveShape::Sphere);
-		auto vertexStride = VertexLayoutRegistry::Get(vertexLayoutID)->GetStride();
+		MeshData data = get_data_from_shape(PrimitiveShape::Sphere);
+		auto vertex_stride = VertexLayoutRegistry::get(vertex_layout_id)->get_stride();
 
-		auto range = heap->Allocate(
+		auto range = heap->allocate(
 		    data.Vertices.data(),
 		    data.Vertices.size() * sizeof(float),
-		    vertexStride,
+		    vertex_stride,
 		    data.Indices.data(),
 		    data.Indices.size());
 
-		UUID meshID { UUID::FromArbitraryString("DEFAULT_SPHERE_MESH") };
-		auto cubeHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
-		    "Default Sphere", meshID, vertexLayoutID,
-		    heapID,
+		UUID mesh_id { UUID::from_arbitrary_string("DEFAULT_SPHERE_MESH") };
+		auto cube_handle = AssetFactory::get_instance().create_synthetic_asset<Mesh>(
+		    "Default Sphere", mesh_id, vertex_layout_id,
+		    heap_id,
 		    range);
 
-		return cubeHandle;
+		return cube_handle;
 	})();
-	return cubeHandle;
+	return cube_handle;
 }
 
-AssetHandle PrimitiveShapeCache::GetConeMesh() {
-	static auto coneHandle = ([] {
-		auto vertexLayoutID { VertexLayout::GetStaticMeshLayout() };
-		auto heapID { GeometryHeapRegistry::GetOrCreateStaticMeshHeap(vertexLayoutID) };
-		auto heap = GeometryHeapRegistry::GetHeap(heapID);
+AssetHandle PrimitiveShapeCache::get_cone_mesh() {
+	static auto cone_handle = ([] {
+		auto vertex_layout_id { VertexLayout::get_static_mesh_layout() };
+		auto heap_id { GeometryHeapRegistry::get_or_create_static_mesh_heap(vertex_layout_id) };
+		auto heap = GeometryHeapRegistry::get_heap(heap_id);
 
-		MeshData data = GetDataFromShape(PrimitiveShape::Cone);
-		auto vertexStride = VertexLayoutRegistry::Get(vertexLayoutID)->GetStride();
+		MeshData data = get_data_from_shape(PrimitiveShape::Cone);
+		auto vertex_stride = VertexLayoutRegistry::get(vertex_layout_id)->get_stride();
 
-		auto range = heap->Allocate(
+		auto range = heap->allocate(
 		    data.Vertices.data(),
 		    data.Vertices.size() * sizeof(float),
-		    vertexStride,
+		    vertex_stride,
 		    data.Indices.data(),
 		    data.Indices.size());
 
-		UUID meshID { UUID::FromArbitraryString("DEFAULT_CONE_MESH") };
-		auto coneHandle = AssetFactory::GetInstance().CreateSyntheticAsset<Mesh>(
+		UUID mesh_id { UUID::from_arbitrary_string("DEFAULT_CONE_MESH") };
+		auto cone_handle = AssetFactory::get_instance().create_synthetic_asset<Mesh>(
 		    "Default Cone",
-		    meshID,
-		    vertexLayoutID,
-		    heapID,
+		    mesh_id,
+		    vertex_layout_id,
+		    heap_id,
 		    range);
 
-		return coneHandle;
+		return cone_handle;
 	})();
-	return coneHandle;
+	return cone_handle;
 }
 
 }

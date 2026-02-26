@@ -13,24 +13,24 @@
 namespace OrigoEditor {
 
 PanelManager::PanelManager(EditorContext& context)
-    : m_Context(context) {
+    : m_context(context) {
 }
 
-void PanelManager::RenderMenuItems() {
+void PanelManager::render_menu_items() {
 	if (ImGui::BeginMenu("View")) {
 		if (ImGui::BeginMenu("Panels")) {
-			for (const auto& panel : m_Panels) {
-				ImGui::MenuItem(panel->GetName(), nullptr, &panel->IsOpenRef());
+			for (const auto& panel : m_panels) {
+				ImGui::MenuItem(panel->get_name(), nullptr, &panel->is_open_ref());
 			}
 			ImGui::EndMenu();
 		}
 
 		if (ImGui::BeginMenu("Palette")) {
-			for (const auto& palette : OrigoEditor::GetAllEditorPalettes()) {
-				bool selected = (palette.Name == m_Context.ColorPalette.Name);
+			for (const auto& palette : OrigoEditor::get_all_editor_palettes()) {
+				bool selected = (palette.Name == m_context.ColorPalette.Name);
 				if (ImGui::MenuItem(palette.Name.c_str(), nullptr, selected)) {
-					m_Context.ColorPalette = palette;
-					UI::ApplyEditorStyle(m_Context.ColorPalette);
+					m_context.ColorPalette = palette;
+					UI::apply_editor_style(m_context.ColorPalette);
 				}
 			}
 			ImGui::EndMenu();
@@ -42,8 +42,8 @@ void PanelManager::RenderMenuItems() {
 	if (ImGui::BeginMenu("Entities")) {
 		static int i {};
 		if (ImGui::MenuItem("Create Entity")) {
-			auto e = m_Context.ActiveScene->CreateEntity("entity_" + std::to_string(i++));
-			m_Context.ActiveScene->AddNativeComponent<OrigoEditor::EditorOutlineComponent>(e);
+			auto e = m_context.ActiveScene->create_entity("entity_" + std::to_string(i++));
+			m_context.ActiveScene->add_native_component<OrigoEditor::EditorOutlineComponent>(e);
 		}
 
 		if (ImGui::MenuItem("Delete Entity")) {
@@ -53,17 +53,17 @@ void PanelManager::RenderMenuItems() {
 	}
 }
 
-void PanelManager::RenderPanels() {
-	for (const auto& panel : m_Panels) {
-		if (panel->IsOpen()) {
+void PanelManager::render_panels() {
+	for (const auto& panel : m_panels) {
+		if (panel->is_open()) {
 
 			ImGuiWindowFlags flags = 0;
 
-			if (!panel->IsCollapsable())
+			if (!panel->is_collapsable())
 				flags |= ImGuiWindowFlags_NoCollapse;
 
-			ImGui::Begin(panel->GetName(), nullptr, flags);
-			panel->OnImGuiRender();
+			ImGui::Begin(panel->get_name(), nullptr, flags);
+			panel->on_im_gui_render();
 			ImGui::End();
 		}
 	}

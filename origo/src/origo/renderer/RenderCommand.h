@@ -13,23 +13,23 @@ enum class RenderPass {
 class RenderCommand {
 public:
 	RenderCommand(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& model, RenderPass renderPass, GLenum drawMethod)
-	    : m_Mesh(mesh)
-	    , m_Material(material)
-	    , m_ModelMatrix(model)
-	    , m_RenderPass(renderPass)
-	    , m_DrawMethod(drawMethod) { }
+	    : m_mesh(mesh)
+	    , m_material(material)
+	    , m_model_matrix(model)
+	    , m_render_pass(renderPass)
+	    , m_draw_method(drawMethod) { }
 
-	AssetHandle GetMesh() const { return m_Mesh; }
-	AssetHandle GetMaterial() const { return m_Material; }
-	glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
-	RenderPass GetRenderPass() const { return m_RenderPass; }
-	GLenum GetDrawMethod() const { return m_DrawMethod; }
+	AssetHandle get_mesh() const { return m_mesh; }
+	AssetHandle get_material() const { return m_material; }
+	glm::mat4 get_model_matrix() const { return m_model_matrix; }
+	RenderPass get_render_pass() const { return m_render_pass; }
+	GLenum get_draw_method() const { return m_draw_method; }
 
 private:
-	AssetHandle m_Mesh;
-	AssetHandle m_Material;
-	glm::mat4 m_ModelMatrix;
-	RenderPass m_RenderPass;
-	GLenum m_DrawMethod;
+	AssetHandle m_mesh;
+	AssetHandle m_material;
+	glm::mat4 m_model_matrix;
+	RenderPass m_render_pass;
+	GLenum m_draw_method;
 };
 }

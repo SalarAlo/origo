@@ -14,57 +14,57 @@ enum class ShaderSourceType {
 class ShaderSource {
 public:
 	virtual ~ShaderSource() = default;
-	virtual ShaderData GetShaderData() const = 0;
-	virtual ShaderSourceType GetSourceType() const = 0;
+	virtual ShaderData get_shader_data() const = 0;
+	virtual ShaderSourceType get_source_type() const = 0;
 
-	void Serialize(ISerializer& backend) const;
-	static Scope<ShaderSource> Deserialize(ISerializer& backend);
+	void serialize(ISerializer& backend) const;
+	static Scope<ShaderSource> deserialize(ISerializer& backend);
 
 protected:
-	virtual void SerializeBody(ISerializer& backend) const = 0;
+	virtual void serialize_body(ISerializer& backend) const = 0;
 };
 
 class ShaderSourceRaw : public ShaderSource {
 public:
 	ShaderSourceRaw(std::string_view vertex, std::string_view fragment)
-	    : m_ShaderData(vertex.data(), fragment.data()) {
+	    : m_shader_data(vertex.data(), fragment.data()) {
 	}
 
-	ShaderData GetShaderData() const override {
-		return m_ShaderData;
+	ShaderData get_shader_data() const override {
+		return m_shader_data;
 	}
 
-	ShaderSourceType GetSourceType() const override {
+	ShaderSourceType get_source_type() const override {
 		return ShaderSourceType::Raw;
 	}
 
-	void SerializeBody(ISerializer& backend) const override {
-		backend.Write("vertex_shader", m_ShaderData.VertexShader);
-		backend.Write("fragment_shader", m_ShaderData.FragmentShader);
+	void serialize_body(ISerializer& backend) const override {
+		backend.write("vertex_shader", m_shader_data.VertexShader);
+		backend.write("fragment_shader", m_shader_data.FragmentShader);
 	}
 
 private:
-	ShaderData m_ShaderData;
+	ShaderData m_shader_data;
 };
 
 class ShaderSourceFile : public ShaderSource {
 public:
 	ShaderSourceFile(std::string_view path)
-	    : m_Path(path) { };
+	    : m_path(path) { };
 
-	ShaderData GetShaderData() const override;
-	std::string GetPath() const { return m_Path; }
+	ShaderData get_shader_data() const override;
+	std::string get_path() const { return m_path; }
 
-	ShaderSourceType GetSourceType() const override {
+	ShaderSourceType get_source_type() const override {
 		return ShaderSourceType::File;
 	}
 
-	void SerializeBody(ISerializer& backend) const override {
-		backend.Write("shader_path", m_Path);
+	void serialize_body(ISerializer& backend) const override {
+		backend.write("shader_path", m_path);
 	}
 
 private:
-	std::string m_Path;
+	std::string m_path;
 };
 
 }

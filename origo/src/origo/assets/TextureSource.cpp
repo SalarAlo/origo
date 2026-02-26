@@ -1,5 +1,7 @@
 #include "origo/assets/TextureSource.h"
+
 #include "origo/core/Logger.h"
+
 #include "origo/serialization/ISerializer.h"
 
 #define NANOSVG_IMPLEMENTATION
@@ -13,79 +15,79 @@
 
 namespace Origo {
 
-void TextureSource::Serialize(ISerializer& backend) const {
-	backend.BeginObject("source");
-	backend.Write("type", magic_enum::enum_name(GetType()));
-	SerializeBody(backend);
-	backend.EndObject();
+void TextureSource::serialize(ISerializer& backend) const {
+	backend.begin_object("source");
+	backend.write("type", magic_enum::enum_name(get_type()));
+	serialize_body(backend);
+	backend.end_object();
 }
 
-void TextureSourceRaw::SerializeBody(ISerializer& backend) const {
-	backend.Write("width", InitialisationData.Width);
-	backend.Write("height", InitialisationData.Height);
-	backend.Write("channels", InitialisationData.Channels);
-	backend.Write("generate_mipmaps", InitialisationData.GenerateMipmaps);
+void TextureSourceRaw::serialize_body(ISerializer& backend) const {
+	backend.write("width", InitialisationData.Width);
+	backend.write("height", InitialisationData.Height);
+	backend.write("channels", InitialisationData.Channels);
+	backend.write("generate_mipmaps", InitialisationData.GenerateMipmaps);
 
-	backend.BeginArray("Data");
+	backend.begin_array("Data");
 	for (const auto& entry : InitialisationData.PixelData) {
-		backend.Write(entry);
+		backend.write(entry);
 	}
-	backend.EndArray();
+	backend.end_array();
 }
 
-void TextureSourceSVG::SerializeBody(ISerializer& backend) const {
-	backend.Write("width", Width);
-	backend.Write("height", Height);
-	backend.Write("path", Path);
+void TextureSourceSVG::serialize_body(ISerializer& backend) const {
+	backend.write("width", Width);
+	backend.write("height", Height);
+	backend.write("path", Path);
 }
 
-void TextureSourceFile::SerializeBody(ISerializer& backend) const {
-	backend.Write("path", Path);
+void TextureSourceFile::serialize_body(ISerializer& backend) const {
+	backend.write("path", Path);
 }
 
-TextureInitialisationData TextureSourceFile::GetInitialisationData() const {
+TextureInitialisationData TextureSourceFile::get_initialisation_data() const {
 	stbi_set_flip_vertically_on_load(Flip);
 
-	TextureInitialisationData initialisationData {};
-	const auto pixels = stbi_load(Path.c_str(), &initialisationData.Width, &initialisationData.Height, &initialisationData.Channels, 4);
-	initialisationData.Channels = 4;
+	TextureInitialisationData initialisation_data {};
+	const auto pixels = stbi_load(Path.c_str(), &initialisation_data.Width, &initialisation_data.Height, &initialisation_data.Channels, 4);
+	initialisation_data.Channels = 4;
 
 	if (!pixels) {
 		ORG_CORE_ERROR("Texture::LoadCPU: failed to load image {}", Path);
 		return {};
 	}
-	const size_t byteCount {
-		static_cast<size_t>(initialisationData.Height) * static_cast<size_t>(initialisationData.Width) * static_cast<size_t>(initialisationData.Channels)
+	const size_t byte_count {
+		static_cast<size_t>(initialisation_data.Height) * static_cast<size_t>(initialisation_data.Width) * static_cast<size_t>(initialisation_data.Channels)
 	};
-	initialisationData.PixelData = std::vector<unsigned char>(pixels, pixels + byteCount);
+	initialisation_data.PixelData = std::vector<unsigned char>(pixels, pixels + byte_count);
 
 	stbi_image_free(pixels);
 
-	return initialisationData;
+	return initialisation_data;
 }
 
-TextureInitialisationData TextureSourceRaw::GetInitialisationData() const {
+TextureInitialisationData TextureSourceRaw::get_initialisation_data() const {
 	return InitialisationData;
 }
 
-TextureInitialisationData TextureSourceSVG::GetInitialisationData() const {
+TextureInitialisationData TextureSourceSVG::get_initialisation_data() const {
 	NSVGimage* svg = nsvgParseFromFile(Path.c_str(), "px", 96.0f);
 	if (!svg) {
-		ORG_CORE_WARN("TextureSourceSVG::GetInitialisationData: Failed to parse from file path {}", Path);
+		ORG_CORE_WARN("TextureSourceSVG::get_initialisation_data: Failed to parse from file path {}", Path);
 		return {};
 	}
 
 	NSVGrasterizer* rast = nsvgCreateRasterizer();
 	if (!rast) {
-		ORG_CORE_WARN("TextureSourceSVG::GetInitialisationData: Failed to create rasterizer");
+		ORG_CORE_WARN("TextureSourceSVG::get_initialisation_data: Failed to create rasterizer");
 		nsvgDelete(svg);
 		return {};
 	}
 
-	constexpr int SVG_OVERSAMPLE = 4;
+	constexpr int svg_oversample = 4;
 
-	int w = Width * SVG_OVERSAMPLE;
-	int h = Height * SVG_OVERSAMPLE;
+	int w = Width * svg_oversample;
+	int h = Height * svg_oversample;
 
 	float scale = w / svg->width;
 
@@ -98,21 +100,21 @@ TextureInitialisationData TextureSourceSVG::GetInitialisationData() const {
 	return { w, h, 4, std::move(pixels), false };
 }
 
-void TextureSourceEmbedded::SerializeBody(ISerializer& backend) const {
+void TextureSourceEmbedded::serialize_body(ISerializer& backend) const {
 	// Intentionally empty.
 	// Embedded textures are reconstructed during model import.
 }
 
-TextureInitialisationData TextureSourceEmbedded::GetInitialisationData() const {
-	if (!m_RawData.PixelData.empty()) {
-		return m_RawData;
+TextureInitialisationData TextureSourceEmbedded::get_initialisation_data() const {
+	if (!m_raw_data.PixelData.empty()) {
+		return m_raw_data;
 	}
 
 	int w, h, channels;
 
 	stbi_uc* pixels = stbi_load_from_memory(
-	    m_CompressedData.data(),
-	    static_cast<int>(m_CompressedData.size()),
+	    m_compressed_data.data(),
+	    static_cast<int>(m_compressed_data.size()),
 	    &w,
 	    &h,
 	    &channels,
@@ -134,29 +136,29 @@ TextureInitialisationData TextureSourceEmbedded::GetInitialisationData() const {
 	    h,
 	    4,
 	    std::move(data),
-	    m_GenerateMipmaps);
+	    m_generate_mipmaps);
 }
 
-Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
-	backend.BeginObject("source");
+Scope<TextureSource> TextureSource::deserialize(ISerializer& backend) {
+	backend.begin_object("source");
 
-	std::string typeStr {};
-	backend.TryRead("type", typeStr);
-	auto optionalType { magic_enum::enum_cast<TextureSourceType>(typeStr) };
+	std::string type_str {};
+	backend.try_read("type", type_str);
+	auto optional_type { magic_enum::enum_cast<TextureSourceType>(type_str) };
 
-	if (!optionalType.has_value()) {
-		backend.EndObject();
-		ORG_CORE_WARN("Texture Source type {} is unidentifiable", typeStr);
+	if (!optional_type.has_value()) {
+		backend.end_object();
+		ORG_CORE_WARN("Texture Source type {} is unidentifiable", type_str);
 		return nullptr;
 	}
 
-	auto type = optionalType.value();
+	auto type = optional_type.value();
 
 	switch (type) {
 	case TextureSourceType::File: {
 		std::string path {};
-		backend.TryRead("path", path);
-		backend.EndObject();
+		backend.try_read("path", path);
+		backend.end_object();
 
 		return MakeScope<TextureSourceFile>(path);
 	}
@@ -167,8 +169,8 @@ Scope<TextureSource> TextureSource::Deserialize(ISerializer& backend) {
 		    "Reimport the parent model.");
 		return nullptr;
 	default: {
-		backend.EndObject();
-		ORG_ERROR("TextureSource::Deserialize: Unsupported type {}", typeStr);
+		backend.end_object();
+		ORG_ERROR("TextureSource::Deserialize: Unsupported type {}", type_str);
 		return nullptr;
 	}
 	}

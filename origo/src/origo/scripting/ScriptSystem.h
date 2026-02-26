@@ -16,18 +16,18 @@ public:
 	};
 
 public:
-	static void InitialiseState();
-	static void Shutdown();
+	static void initialise_state();
+	static void shutdown();
 
-	static void Register(const UUID& id, const std::filesystem::path& path, const std::string& source);
-	static void ReloadAll();
-	static void ReloadAllNecessary();
-	static void Execute(const ScriptEntry& entry, const UUID& id);
+	static void register_script(const UUID& id, const std::filesystem::path& path, const std::string& source);
+	static void reload_all();
+	static void reload_all_necessary();
+	static void execute(const ScriptEntry& entry, const UUID& id);
 
 private:
-	inline static sol::state s_Lua {};
-	inline static std::unordered_map<UUID, ScriptEntry> s_Scripts {};
-	inline static bool s_Initialised {};
+	inline static sol::state s_lua {};
+	inline static std::unordered_map<UUID, ScriptEntry> s_scripts {};
+	inline static bool s_initialised {};
 };
 
 }

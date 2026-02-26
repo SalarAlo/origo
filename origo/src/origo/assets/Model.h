@@ -1,9 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <filesystem>
 #include <vector>
-
-#include <glm/glm.hpp>
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
@@ -30,43 +30,43 @@ public:
 	Model();
 	Model(const std::filesystem::path& path, const AssetHandle& shader);
 
-	void Load();
+	void load();
 
-	AssetType GetAssetType() const override;
-	static AssetType GetClassAssetType();
+	AssetType get_asset_type() const override;
+	static AssetType get_class_asset_type();
 
-	const std::filesystem::path& GetPath() const;
-	int GetRootNode() const;
+	const std::filesystem::path& get_path() const;
+	int get_root_node() const;
 
-	const std::vector<Node>& GetNodes() const;
-	const std::vector<SubMesh>& GetSubMeshes() const;
+	const std::vector<Node>& get_nodes() const;
+	const std::vector<SubMesh>& get_sub_meshes() const;
 
-	OptionalAssetHandle GetShaderHandle() const;
-	void SetShaderHandle(const AssetHandle&);
-	void SetShaderUUID(const UUID&);
+	OptionalAssetHandle get_shader_handle() const;
+	void set_shader_handle(const AssetHandle&);
+	void set_shader_uuid(const UUID&);
 
-	void SetPath(const std::filesystem::path& path);
+	void set_path(const std::filesystem::path& path);
 
-	void Resolve() override;
-	void EnsureShader();
-
-private:
-	void LoadFromAssimp();
-	void Clear();
-
-	int ProcessNode(struct aiNode* node, int parent);
+	void resolve() override;
+	void ensure_shader();
 
 private:
-	std::filesystem::path m_Path {};
+	void load_from_assimp();
+	void clear();
 
-	int m_RootNode { -1 };
+	int process_node(struct aiNode* node, int parent);
 
-	std::vector<SubMesh> m_SubMeshes {};
-	std::vector<Node> m_Nodes {};
-	std::vector<int> m_AssimpMeshToSubMesh {};
+private:
+	std::filesystem::path m_path {};
 
-	OptionalAssetHandle m_ModelShaderHandle { std::nullopt };
-	OptionalUUID m_ShaderUUID { std::nullopt };
+	int m_root_node { -1 };
+
+	std::vector<SubMesh> m_sub_meshes {};
+	std::vector<Node> m_nodes {};
+	std::vector<int> m_assimp_mesh_to_sub_mesh {};
+
+	OptionalAssetHandle m_model_shader_handle { std::nullopt };
+	OptionalUUID m_shader_uuid { std::nullopt };
 };
 
 }

@@ -1,12 +1,12 @@
 #pragma once
 
 namespace Origo::Random {
-void Seed(int seed);
+void seed(int seed);
 
-float Range(float min, float max);
-float Float01();
-int Range(int min, int max);
+float range(float min, float max);
+float float01();
+int range(int min, int max);
 
-Vec3 RandomUnitVector();
+Vec3 random_unit_vector();
 
 }

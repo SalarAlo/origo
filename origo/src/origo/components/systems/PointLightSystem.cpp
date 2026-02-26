@@ -8,21 +8,21 @@
 #include "origo/scene/SystemScheduler.h"
 
 namespace Origo {
-void PointLightSystem::Render(Origo::Scene* scene, RenderContext& rCtx) {
-	scene->View<Origo::PointLightComponent, Origo::TransformComponent>(
+void PointLightSystem::render(Origo::Scene* scene, RenderContext& rCtx) {
+	scene->view<Origo::PointLightComponent, Origo::TransformComponent>(
 	    [&](Origo::RID, Origo::PointLightComponent& light, Origo::TransformComponent& transform) {
-		    scene->View<PointLightComponent, TransformComponent>(
+		    scene->view<PointLightComponent, TransformComponent>(
 		        [&](RID, PointLightComponent& light, TransformComponent& transform) {
 			        PointLightData data;
 
-			        data.position = transform.GetPosition();
-			        data.color = light.Color;
-			        data.intensity = light.Intensity;
-			        data.constant = light.Constant;
-			        data.linear = light.Linear;
-			        data.quadratic = light.Quadratic;
+			        data.Position = transform.get_position();
+			        data.Color = light.Color;
+			        data.Intensity = light.Intensity;
+			        data.Constant = light.Constant;
+			        data.Linear = light.Linear;
+			        data.Quadratic = light.Quadratic;
 
-			        rCtx.PushPointLight(data);
+			        rCtx.push_point_light(data);
 		        });
 	    });
 }

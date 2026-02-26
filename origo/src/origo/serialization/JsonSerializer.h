@@ -22,7 +22,7 @@ public:
 private:
 	nlohmann::json& top_json();
 
-	nlohmann::json m_Root;
-	std::stack<JsonStackEntry> m_ObjectsStack {};
+	nlohmann::json m_root;
+	std::stack<JsonStackEntry> m_objects_stack {};
 };
 }

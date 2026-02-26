@@ -11,22 +11,22 @@
 
 namespace Origo {
 
-bool MaterialImporter::CanImport(const std::filesystem::path& path) const {
+bool MaterialImporter::can_import(const std::filesystem::path& path) const {
 	auto ext = path.extension().string();
-	ToLowerInPlace(ext);
+	to_lower_in_place(ext);
 	return ext == ".mat";
 }
 
-AssetType MaterialImporter::GetAssetType() const {
+AssetType MaterialImporter::get_asset_type() const {
 	return AssetType::Material2D;
 }
 
-Scope<Asset> MaterialImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
+Scope<Asset> MaterialImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
 	JsonSerializer backend { meta.SourcePath.c_str() };
-	backend.LoadFile();
-	auto serializer { AssetSerializationSystem::Get(AssetType::Material2D) };
-	auto material { AssetFactory::GetInstance().AllocateHollowAsset(AssetType::Material2D) };
-	serializer->Deserialize(backend, *material.get());
+	backend.load_file();
+	auto serializer { AssetSerializationSystem::get(AssetType::Material2D) };
+	auto material { AssetFactory::get_instance().allocate_hollow_asset(AssetType::Material2D) };
+	serializer->deserialize(backend, *material.get());
 	return material;
 }
 

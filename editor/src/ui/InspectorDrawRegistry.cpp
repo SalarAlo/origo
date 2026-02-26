@@ -2,9 +2,9 @@
 
 namespace OrigoEditor {
 
-InspectorEntry* InspectorDrawRegistry::Get(std::type_index type) {
-	auto it = s_Entries.find(type);
-	if (it == s_Entries.end())
+InspectorEntry* InspectorDrawRegistry::get(std::type_index type) {
+	auto it = s_entries.find(type);
+	if (it == s_entries.end())
 		return nullptr;
 
 	return &it->second;

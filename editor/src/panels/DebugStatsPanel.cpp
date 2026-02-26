@@ -4,7 +4,7 @@
 
 namespace OrigoEditor {
 
-static void DrawKeyValue(const char* key, const char* value) {
+static void draw_key_value(const char* key, const char* value) {
 	ImGui::TableNextRow();
 	ImGui::TableSetColumnIndex(0);
 	ImGui::TextUnformatted(key);
@@ -12,7 +12,7 @@ static void DrawKeyValue(const char* key, const char* value) {
 	ImGui::TextUnformatted(value);
 }
 
-static void DrawKeyValue(const char* key, float value, const char* fmt = "%.2f") {
+static void draw_key_value(const char* key, float value, const char* fmt = "%.2f") {
 	ImGui::TableNextRow();
 	ImGui::TableSetColumnIndex(0);
 	ImGui::TextUnformatted(key);
@@ -20,7 +20,7 @@ static void DrawKeyValue(const char* key, float value, const char* fmt = "%.2f")
 	ImGui::Text(fmt, value);
 }
 
-static void DrawKeyValue(const char* key, uint32_t value) {
+static void draw_key_value(const char* key, uint32_t value) {
 	ImGui::TableNextRow();
 	ImGui::TableSetColumnIndex(0);
 	ImGui::TextUnformatted(key);
@@ -28,34 +28,34 @@ static void DrawKeyValue(const char* key, uint32_t value) {
 	ImGui::Text("%u", value);
 }
 
-void DebugStatsPanel::OnImGuiRender() {
+void DebugStatsPanel::on_im_gui_render() {
 	const ImVec4 green(0.2f, 0.8f, 0.2f, 1.0f);
 	const ImVec4 red(0.8f, 0.2f, 0.2f, 1.0f);
 	const ImVec4 yellow(0.9f, 0.7f, 0.2f, 1.0f);
 
-	float dt = m_Context.DeltaTime;
+	float dt = m_context.DeltaTime;
 	float fps = dt > 0.0f ? 1.0f / dt : 0.0f;
 
-	auto& fb = m_Context.RenderBuffer.GetSpecification();
+	auto& fb = m_context.RenderBuffer.get_specification();
 
 	if (ImGui::CollapsingHeader("Runtime", ImGuiTreeNodeFlags_DefaultOpen)) {
 		if (ImGui::BeginTable("RuntimeTable", 2, ImGuiTableFlags_SizingStretchProp)) {
-			DrawKeyValue("FPS", fps, "%.1f");
-			DrawKeyValue("Delta Time (ms)", dt * 1000.0f);
+			draw_key_value("FPS", glm::round(fps), "%.1f");
+			draw_key_value("Delta Time (ms)", glm::round(dt * 1000.0f));
 
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
 			ImGui::Text("View Mode");
 			ImGui::TableSetColumnIndex(1);
 			ImGui::TextUnformatted(
-			    m_Context.ViewMode == EditorViewMode::Editor ? "Editor" : "Runtime");
+			    m_context.ViewMode == EditorViewMode::Editor ? "Editor" : "Runtime");
 
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
 			ImGui::Text("Runtime State");
 			ImGui::TableSetColumnIndex(1);
 
-			switch (m_Context.RuntimeState) {
+			switch (m_context.RuntimeState) {
 			case EditorRuntimeState::Editing:
 				ImGui::TextColored(yellow, "Editing");
 				break;
@@ -75,14 +75,14 @@ void DebugStatsPanel::OnImGuiRender() {
 			ImGui::Text("Active Scene");
 			ImGui::TableSetColumnIndex(1);
 
-			if (m_Context.ActiveScene)
+			if (m_context.ActiveScene)
 				ImGui::TextColored(green, "Valid");
 			else
 				ImGui::TextColored(red, "None");
 
-			DrawKeyValue(
+			draw_key_value(
 			    "Entity Count",
-			    m_Context.ActiveScene ? (uint32_t)m_Context.ActiveScene->GetEntities().size() : 0);
+			    m_context.ActiveScene ? (uint32_t)m_context.ActiveScene->get_entities().size() : 0);
 
 			ImGui::EndTable();
 		}

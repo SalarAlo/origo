@@ -9,7 +9,7 @@ enum class CursorMode {
 	Free
 };
 
-bool IsKeyPressed(KeyboardKey k);
-void SetCursorMode(CursorMode mode);
-void SetContext(ScreenWindow* win);
+bool is_key_pressed(KeyboardKey k);
+void set_cursor_mode(CursorMode mode);
+void set_context(ScreenWindow* win);
 }

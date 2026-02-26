@@ -14,8 +14,8 @@
 namespace OrigoEditor {
 using namespace Origo;
 
-void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
-	scene->View<EditorOutlineComponent, TransformComponent, MeshRendererComponent>(
+void EditorOutlineRenderSystem::render(Scene* scene, RenderContext& context) {
+	scene->view<EditorOutlineComponent, TransformComponent, MeshRendererComponent>(
 	    [&](RID entity,
 	        EditorOutlineComponent& selection,
 	        TransformComponent& transform,
@@ -23,14 +23,14 @@ void EditorOutlineRenderSystem::Render(Scene* scene, RenderContext& context) {
 		    if (!selection.ShouldOutline || !mr.MeshHandle.has_value())
 			    return;
 
-		    context.SubmitMesh(
+		    context.submit_mesh(
 		        *mr.MeshHandle,
-		        DefaultAssetCache::GetInstance().GetOutlineMaterial(),
-		        transform.GetModelMatrix(),
+		        DefaultAssetCache::get_instance().get_outline_material(),
+		        transform.get_model_matrix(),
 		        RenderPass::Outline);
 	    });
 
-	scene->View<EditorOutlineComponent, TransformComponent, ModelRendererComponent>(
+	scene->view<EditorOutlineComponent, TransformComponent, ModelRendererComponent>(
 	    [&](RID entity,
 	        EditorOutlineComponent& selection,
 	        TransformComponent& transform,

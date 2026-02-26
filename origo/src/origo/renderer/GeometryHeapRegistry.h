@@ -6,16 +6,16 @@ namespace Origo {
 
 class GeometryHeapRegistry {
 public:
-	static int CreateHeap(
+	static int create_heap(
 	    int layoutId,
 	    GLenum usage,
 	    size_t vertexBytes,
 	    size_t indexBytes);
 
-	static GeometryHeap* GetHeap(int heapId);
+	static GeometryHeap* get_heap(int heapId);
 
-	static int GetOrCreateStaticMeshHeap(int layoutId);
-	static int GetOrCreateDynamicMeshHeap(int layoutId);
+	static int get_or_create_static_mesh_heap(int layoutId);
+	static int get_or_create_dynamic_mesh_heap(int layoutId);
 
 private:
 	struct HeapKey {
@@ -34,8 +34,8 @@ private:
 	};
 
 private:
-	static std::vector<std::unique_ptr<GeometryHeap>>& GetHeaps();
-	static std::unordered_map<HeapKey, int, HeapKeyHash>& GetHeapMap();
+	static std::vector<std::unique_ptr<GeometryHeap>>& get_heaps();
+	static std::unordered_map<HeapKey, int, HeapKeyHash>& get_heap_map();
 };
 
 }

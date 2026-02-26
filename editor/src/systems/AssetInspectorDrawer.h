@@ -8,11 +8,11 @@ namespace OrigoEditor {
 
 class AssetInspectorDrawer {
 public:
-	static void DrawAsset(const Origo::AssetMetadata& md);
+	static void draw_asset(const Origo::AssetMetadata& md);
 
 private:
-	static void DrawSpecific(Origo::Asset* asset, Origo::AssetType type);
-	static void DrawMaterial(Origo::Material2D* material);
+	static void draw_specific(Origo::Asset* asset, Origo::AssetType type);
+	static void draw_material(Origo::Material2D* material);
 };
 
 }

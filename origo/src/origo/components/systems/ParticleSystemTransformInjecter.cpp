@@ -10,16 +10,16 @@
 
 namespace Origo {
 
-void ParticleSystemTransformInjecter::Update(Origo::Scene* scene, float dt) {
-	scene->View<ParticleSystemComponent, TransformComponent>(
+void ParticleSystemTransformInjecter::update(Origo::Scene* scene, float dt) {
+	scene->view<ParticleSystemComponent, TransformComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf) {
-		    auto positionSetterVisitor = SetParticleEmissionShapePosition { particleSystemTransf.GetPosition() };
-		    std::visit(positionSetterVisitor, particleSystem.Shape);
+		    auto position_setter_visitor = SetParticleEmissionShapePosition { particleSystemTransf.get_position() };
+		    std::visit(position_setter_visitor, particleSystem.Shape);
 
-		    auto forwardSetterVisitor = SetParticleEmissionShapeForward { particleSystemTransf.GetForward() };
-		    std::visit(forwardSetterVisitor, particleSystem.Shape);
+		    auto forward_setter_visitor = SetParticleEmissionShapeForward { particleSystemTransf.get_forward() };
+		    std::visit(forward_setter_visitor, particleSystem.Shape);
 	    });
 }
 

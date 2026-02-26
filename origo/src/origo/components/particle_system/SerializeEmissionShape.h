@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 
-#include "glm/gtc/constants.hpp"
-
 #include "origo/components/particle_system/BoxEmissionShape.h"
 #include "origo/components/particle_system/ConeEmissionShape.h"
 #include "origo/components/particle_system/ParticleEmissionShape.h"
@@ -15,8 +13,8 @@
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
-struct SerializeConeShape {
-	SerializeConeShape(ISerializer& backend)
+struct SerializeEmissionShape {
+	SerializeEmissionShape(ISerializer& backend)
 	    : Backend(backend) { };
 
 	void operator()(PointEmissionShape shape) {
@@ -42,8 +40,8 @@ struct SerializeConeShape {
 	}
 
 	ParticleEmissionShape operator()(ISerializer& backend) {
-		if (std::string typeStr; backend.TryRead("type", typeStr)) {
-			auto type { magic_enum::enum_cast<ParticleEmissionShapeKind>(typeStr) };
+		if (std::string type_str {}; backend.TryRead("type", type_str)) {
+			auto type { magic_enum::enum_cast<ParticleEmissionShapeKind>(type_str) };
 
 			if (!type.has_value())
 				return ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Point);
@@ -70,9 +68,9 @@ struct SerializeConeShape {
 				return box;
 			}
 			}
-
-			throw std::logic_error("unimplemented emission shape kind");
 		}
+
+		throw std::logic_error("unimplemented emission shape kind");
 	}
 
 	ISerializer& Backend;

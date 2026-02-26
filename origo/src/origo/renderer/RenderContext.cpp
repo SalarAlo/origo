@@ -14,167 +14,167 @@
 
 namespace Origo {
 
-static void DrawMesh(const RenderCommand& cmd) {
-	auto& am { AssetManager::GetInstance() };
-	auto material { am.Get<Material2D>(cmd.GetMaterial()) };
-	auto mesh { am.Get<Mesh>(cmd.GetMesh()) };
+static void draw_mesh(const RenderCommand& cmd) {
+	auto& am { AssetManager::get_instance() };
+	auto material { am.get_asset<Material2D>(cmd.get_material()) };
+	auto mesh { am.get_asset<Mesh>(cmd.get_mesh()) };
 
-	constexpr float outlineThickness { 0.1f };
-	glm::mat4 model = cmd.GetRenderPass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.GetModelMatrix();
-	if (cmd.GetRenderPass() == RenderPass::Outline)
-		model = glm::scale(model, Vec3(1.0f + outlineThickness));
+	constexpr float outline_thickness { 0.1f };
+	glm::mat4 model = cmd.get_render_pass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.get_model_matrix();
+	if (cmd.get_render_pass() == RenderPass::Outline)
+		model = glm::scale(model, Vec3(1.0f + outline_thickness));
 
-	material->WriteModel(model);
+	material->write_model(model);
 
-	const VaoCache::Entry& vaoEntry = VaoCache::CreateOrGet(mesh->LayoutId, mesh->HeapId);
+	const VaoCache::Entry& vao_entry = VaoCache::create_or_get(mesh->LayoutId, mesh->HeapId);
 
-	GLCall(glBindVertexArray(vaoEntry.VAO));
+	GLCall(glBindVertexArray(vao_entry.VAO));
 
 	const MeshRange& r = mesh->Range;
 	GLCall(glDrawElementsBaseVertex(
-	    cmd.GetDrawMethod(),
+	    cmd.get_draw_method(),
 	    r.IndexCount,
 	    GL_UNSIGNED_INT,
 	    reinterpret_cast<void*>(r.FirstIndex * sizeof(unsigned int)),
 	    r.FirstVertex));
 }
 
-void RenderContext::BeginFrame() {
-	if (!m_HasView) {
+void RenderContext::begin_frame() {
+	if (!m_has_view) {
 		throw std::runtime_error("RenderContext::Flush: called without a view (SetView not called).");
 	}
 
-	if (m_SkyboxVAO == 0) {
-		glGenVertexArrays(1, &m_SkyboxVAO);
+	if (m_skybox_vao == 0) {
+		glGenVertexArrays(1, &m_skybox_vao);
 	}
 
-	FrameBuffer* fb = m_Target;
+	FrameBuffer* fb = m_target;
 	if (!fb)
 		return;
-	glViewport(0, 0, fb->GetWidth(), fb->GetHeight());
+	glViewport(0, 0, fb->get_width(), fb->get_height());
 }
 
-void RenderContext::SetView(const RenderView& view) {
-	m_View = view;
-	m_HasView = true;
+void RenderContext::set_view(const RenderView& view) {
+	m_view = view;
+	m_has_view = true;
 }
 
-void RenderContext::SubmitMesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass, GLenum drawMethod) {
-	m_DrawQueue.emplace_back(mesh, material, modelMatrix, pass, drawMethod);
+void RenderContext::submit_mesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass, GLenum drawMethod) {
+	m_draw_queue.emplace_back(mesh, material, modelMatrix, pass, drawMethod);
 }
 
-void RenderContext::Flush() {
-	BindFB();
-	Clear();
+void RenderContext::flush() {
+	bind_fb();
+	clear();
 
-	ExecutePass(RenderPass::Skybox);
-	ExecutePass(RenderPass::Geometry);
-	ExecutePass(RenderPass::Outline);
+	execute_pass(RenderPass::Skybox);
+	execute_pass(RenderPass::Geometry);
+	execute_pass(RenderPass::Outline);
 }
 
-void RenderContext::EndFrame() {
-	m_Target->Unbind();
+void RenderContext::end_frame() {
+	m_target->unbind();
 
-	if (m_Target->IsMSAA()) {
-		if (!m_ResolveTarget)
+	if (m_target->is_msaa()) {
+		if (!m_resolve_target)
 			throw std::runtime_error("MSAA target requires a resolve target");
 
-		m_Target->ResolveTo(*m_ResolveTarget);
+		m_target->resolve_to(*m_resolve_target);
 	}
 
-	m_DirectionalLightData.reset();
-	m_PointLights.clear();
-	m_DrawQueue.clear();
+	m_directional_light_data.reset();
+	m_point_lights.clear();
+	m_draw_queue.clear();
 }
 
-void RenderContext::Clear() {
+void RenderContext::clear() {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
-void RenderContext::BindFB() {
-	FrameBuffer* fb = m_Target;
+void RenderContext::bind_fb() {
+	FrameBuffer* fb = m_target;
 	if (!fb)
 		return;
 
-	fb->Bind();
+	fb->bind();
 }
 
-void RenderContext::ExecutePass(RenderPass pass) {
-	ConfigureState(pass);
+void RenderContext::execute_pass(RenderPass pass) {
+	configure_state(pass);
 
 	if (pass == RenderPass::Skybox) {
-		if (!m_SkyboxMaterial.has_value())
+		if (!m_skybox_material.has_value())
 			return;
 
-		auto material = AssetManager::GetInstance().Get<SkyboxMaterial>(*m_SkyboxMaterial);
-		material->Bind(m_View.Projection, m_View.View);
+		auto material = AssetManager::get_instance().get_asset<SkyboxMaterial>(*m_skybox_material);
+		material->bind(m_view.Projection, m_view.View);
 
-		glBindVertexArray(m_SkyboxVAO);
+		glBindVertexArray(m_skybox_vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		return;
 	}
 
-	Material2D* currentMaterial {};
-	OptionalAssetHandle currentMaterialId {};
+	Material2D* current_material {};
+	OptionalAssetHandle current_material_id {};
 
-	for (auto& cmd : m_DrawQueue) {
-		if (cmd.GetRenderPass() != pass)
+	for (auto& cmd : m_draw_queue) {
+		if (cmd.get_render_pass() != pass)
 			continue;
 
-		if (!currentMaterialId.has_value() || cmd.GetMaterial() != currentMaterialId) {
-			auto material { AssetManager::GetInstance().Get<Material2D>(cmd.GetMaterial()) };
-			material->Bind();
+		if (!current_material_id.has_value() || cmd.get_material() != current_material_id) {
+			auto material { AssetManager::get_instance().get_asset<Material2D>(cmd.get_material()) };
+			material->bind();
 
-			currentMaterial = material;
-			currentMaterialId = cmd.GetMaterial();
+			current_material = material;
+			current_material_id = cmd.get_material();
 
-			currentMaterial
-			    ->SetShaderDirectly("u_ProjectionMatrix", m_View.Projection)
-			    .SetShaderDirectly("u_ViewMatrix", m_View.View)
-			    .SetShaderDirectly("u_CameraForward", m_View.CameraForward)
-			    .SetShaderDirectly("u_ViewPos", m_View.CameraPosition);
+			current_material
+			    ->set_shader_directly("u_ProjectionMatrix", m_view.Projection)
+			    .set_shader_directly("u_ViewMatrix", m_view.View)
+			    .set_shader_directly("u_CameraForward", m_view.CameraForward)
+			    .set_shader_directly("u_ViewPos", m_view.CameraPosition);
 
-			if (!m_DirectionalLightData)
-				m_DirectionalLightData = DirectionalLightData {};
+			if (!m_directional_light_data)
+				m_directional_light_data = DirectionalLightData {};
 
-			auto l { *m_DirectionalLightData };
+			auto l { *m_directional_light_data };
 
-			currentMaterial
-			    ->SetShaderDirectly("u_DirLight.direction", l.Direction)
-			    .SetShaderDirectly("u_DirLight.color", l.Color)
-			    .SetShaderDirectly("u_DirLight.intensity", l.Intensity)
-			    .SetShaderDirectly("u_Ambient", l.Ambient);
+			current_material
+			    ->set_shader_directly("u_DirLight.direction", l.Direction)
+			    .set_shader_directly("u_DirLight.color", l.Color)
+			    .set_shader_directly("u_DirLight.intensity", l.Intensity)
+			    .set_shader_directly("u_Ambient", l.Ambient);
 
-			const int count = std::min<int>(m_PointLights.size(), 8);
+			const int count = std::min<int>(m_point_lights.size(), 8);
 
-			currentMaterial->SetShaderDirectly("u_PointLightCount", count);
+			current_material->set_shader_directly("u_PointLightCount", count);
 
 			for (int i = 0; i < count; ++i) {
-				const auto& l = m_PointLights[i];
+				const auto& l = m_point_lights[i];
 				const std::string base = "u_PointLights[" + std::to_string(i) + "]";
 
-				currentMaterial
-				    ->SetShaderDirectly(base + ".position", l.position)
-				    .SetShaderDirectly(base + ".color", l.color)
-				    .SetShaderDirectly(base + ".intensity", l.intensity)
-				    .SetShaderDirectly(base + ".constant", l.constant)
-				    .SetShaderDirectly(base + ".linear", l.linear)
-				    .SetShaderDirectly(base + ".quadratic", l.quadratic);
+				current_material
+				    ->set_shader_directly(base + ".position", l.Position)
+				    .set_shader_directly(base + ".color", l.Color)
+				    .set_shader_directly(base + ".intensity", l.Intensity)
+				    .set_shader_directly(base + ".constant", l.Constant)
+				    .set_shader_directly(base + ".linear", l.Linear)
+				    .set_shader_directly(base + ".quadratic", l.Quadratic);
 			}
 		}
 
-		DrawMesh(cmd);
+		draw_mesh(cmd);
 	}
 }
 
-void RenderContext::PushDirectionalLight(const DirectionalLightData& directionalLightData) {
-	m_DirectionalLightData = directionalLightData;
+void RenderContext::push_directional_light(const DirectionalLightData& directionalLightData) {
+	m_directional_light_data = directionalLightData;
 }
 
-void RenderContext::PushPointLight(const PointLightData& data) {
-	m_PointLights.push_back(data);
+void RenderContext::push_point_light(const PointLightData& data) {
+	m_point_lights.push_back(data);
 }
 
-void RenderContext::ConfigureState(RenderPass pass) {
+void RenderContext::configure_state(RenderPass pass) {
 	switch (pass) {
 	case RenderPass::Geometry: {
 		glEnable(GL_DEPTH_TEST);
@@ -221,38 +221,38 @@ void RenderContext::ConfigureState(RenderPass pass) {
 	}
 }
 
-void RenderContext::SubmitModel(const AssetHandle& modelHandle, const glm::mat4& modelMatrix, RenderPass pass, const std::optional<AssetHandle>& material) {
-	auto model = AssetManager::GetInstance().Get<Model>(modelHandle);
+void RenderContext::submit_model(const AssetHandle& modelHandle, const glm::mat4& modelMatrix, RenderPass pass, const std::optional<AssetHandle>& material) {
+	auto model = AssetManager::get_instance().get_asset<Model>(modelHandle);
 	if (!model)
 		return;
 
-	const auto& nodes = model->GetNodes();
-	const auto& subMeshes = model->GetSubMeshes();
+	const auto& nodes = model->get_nodes();
+	const auto& sub_meshes = model->get_sub_meshes();
 
-	std::vector<glm::mat4> worldMatrices(nodes.size());
+	std::vector<glm::mat4> world_matrices(nodes.size());
 
-	worldMatrices[model->GetRootNode()] = modelMatrix * nodes[model->GetRootNode()].LocalTransform;
+	world_matrices[model->get_root_node()] = modelMatrix * nodes[model->get_root_node()].LocalTransform;
 
 	for (size_t i = 0; i < nodes.size(); ++i) {
 		const auto& node = nodes[i];
 
 		if (node.Parent != -1) {
-			worldMatrices[i] = worldMatrices[node.Parent] * node.LocalTransform;
+			world_matrices[i] = world_matrices[node.Parent] * node.LocalTransform;
 		}
 
 		if (node.SubMeshIndex != -1) {
-			const auto& sub = subMeshes[node.SubMeshIndex];
+			const auto& sub = sub_meshes[node.SubMeshIndex];
 
-			SubmitMesh(
+			submit_mesh(
 			    sub.Mesh,
 			    material.has_value() ? *material : sub.Material,
-			    worldMatrices[i],
+			    world_matrices[i],
 			    pass);
 		}
 	}
 }
 
-void RenderContext::SetSkyboxMaterial(AssetHandle skyboxMaterial) {
-	m_SkyboxMaterial = skyboxMaterial;
+void RenderContext::set_skybox_material(AssetHandle skyboxMaterial) {
+	m_skybox_material = skyboxMaterial;
 }
 }

@@ -2,7 +2,7 @@
 
 namespace OrigoEditor {
 
-std::string AssetTypeToString(Origo::AssetType type) {
+std::string asset_type_to_string(Origo::AssetType type) {
 	switch (type) {
 	case Origo::AssetType::Texture2D:
 		return "Textures";
@@ -21,7 +21,7 @@ std::string AssetTypeToString(Origo::AssetType type) {
 	}
 }
 
-std::filesystem::path ComputeVirtualAssetPath(const Origo::AssetMetadata& metadata) {
+std::filesystem::path compute_virtual_asset_path(const Origo::AssetMetadata& metadata) {
 	if (!metadata.SourcePath.empty())
 		return metadata.SourcePath.lexically_normal();
 
@@ -39,7 +39,7 @@ std::filesystem::path ComputeVirtualAssetPath(const Origo::AssetMetadata& metada
 		break;
 	}
 
-	root /= AssetTypeToString(metadata.Type);
+	root /= asset_type_to_string(metadata.Type);
 	root /= metadata.Name;
 
 	return root;

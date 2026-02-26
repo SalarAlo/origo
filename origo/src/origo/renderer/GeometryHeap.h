@@ -14,29 +14,29 @@ public:
 	GeometryHeap(GeometryHeap&&) = delete;
 	GeometryHeap& operator=(GeometryHeap&&) = delete;
 
-	MeshRange Allocate(
+	MeshRange allocate(
 	    const void* vertexData,
 	    size_t vertexBytes,
 	    size_t vertexStrideBytes,
 	    const unsigned int* indexData,
 	    size_t indexCount);
 
-	GLuint GetVbo() const { return m_Vbo; }
-	GLuint GetIbo() const { return m_Ibo; }
+	GLuint get_vbo() const { return m_vbo; }
+	GLuint get_ibo() const { return m_ibo; }
 
 private:
-	int m_VertexLayoutId;
+	int m_vertex_layout_id;
 
-	GLuint m_Vbo = 0;
-	GLuint m_Ibo = 0;
+	GLuint m_vbo = 0;
+	GLuint m_ibo = 0;
 
-	GLenum m_Usage = GL_STATIC_DRAW;
+	GLenum m_usage = GL_STATIC_DRAW;
 
-	size_t m_MaxVertexBytes = 0;
-	size_t m_MaxIndexBytes = 0;
+	size_t m_max_vertex_bytes = 0;
+	size_t m_max_index_bytes = 0;
 
-	size_t m_VertexWriteHeadBytes = 0;
-	size_t m_IndexWriteHeadBytes = 0;
+	size_t m_vertex_write_head_bytes = 0;
+	size_t m_index_write_head_bytes = 0;
 };
 
 }

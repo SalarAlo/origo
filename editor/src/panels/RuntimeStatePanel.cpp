@@ -7,57 +7,57 @@
 namespace OrigoEditor {
 
 RuntimeStatePanel::RuntimeStatePanel(EditorContext& context)
-    : m_Context(context)
-    , m_Controller(context) {
+    : m_context(context)
+    , m_controller(context) {
 }
 
-void RuntimeStatePanel::OnImGuiRender() {
-	const ImVec2 buttonSize { 24.0f, 24.0f };
+void RuntimeStatePanel::on_im_gui_render() {
+	const ImVec2 button_size { 24.0f, 24.0f };
 	const auto& style = ImGui::GetStyle();
 
-	ImTextureID playIcon = EditorIcons::GetInstance().Get(IconType::Play);
-	ImTextureID resumeIcon = EditorIcons::GetInstance().Get(IconType::Resume);
-	ImTextureID pauseIcon = EditorIcons::GetInstance().Get(IconType::Pause);
-	ImTextureID stopIcon = EditorIcons::GetInstance().Get(IconType::Stop);
-	ImTextureID stepIcon = EditorIcons::GetInstance().Get(IconType::Step);
+	ImTextureID play_icon = EditorIcons::get_instance().get(IconType::Play);
+	ImTextureID resume_icon = EditorIcons::get_instance().get(IconType::Resume);
+	ImTextureID pause_icon = EditorIcons::get_instance().get(IconType::Pause);
+	ImTextureID stop_icon = EditorIcons::get_instance().get(IconType::Stop);
+	ImTextureID step_icon = EditorIcons::get_instance().get(IconType::Step);
 
-	int buttonCount = 2;
+	int button_count = 2;
 
-	if (m_Controller.CanPause())
-		buttonCount += 1;
-	else if (m_Controller.CanResume())
-		buttonCount += 2;
+	if (m_controller.can_pause())
+		button_count += 1;
+	else if (m_controller.can_resume())
+		button_count += 2;
 
-	float buttonWidth = buttonSize.x + style.FramePadding.x * 2.0f;
-	float totalWidth = buttonCount * buttonWidth + (buttonCount - 1) * style.ItemSpacing.x;
+	float button_width = button_size.x + style.FramePadding.x * 2.0f;
+	float total_width = button_count * button_width + (button_count - 1) * style.ItemSpacing.x;
 
 	float avail = ImGui::GetContentRegionAvail().x;
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (avail - totalWidth) * 0.5f);
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (avail - total_width) * 0.5f);
 
-	ImGui::BeginDisabled(!m_Controller.CanPlay());
-	if (ImGui::ImageButton("Play", playIcon, buttonSize))
-		m_Controller.Play();
+	ImGui::BeginDisabled(!m_controller.can_play());
+	if (ImGui::ImageButton("Play", play_icon, button_size))
+		m_controller.play();
 	ImGui::EndDisabled();
 
 	ImGui::SameLine();
 
-	ImGui::BeginDisabled(!m_Controller.CanStop());
-	if (ImGui::ImageButton("Stop", stopIcon, buttonSize))
-		m_Controller.Stop();
+	ImGui::BeginDisabled(!m_controller.can_stop());
+	if (ImGui::ImageButton("Stop", stop_icon, button_size))
+		m_controller.stop();
 	ImGui::EndDisabled();
 
 	ImGui::SameLine();
 
-	ImGui::BeginDisabled(!m_Controller.CanPause() && !m_Controller.CanResume());
-	if (m_Controller.CanPause()) {
-		if (ImGui::ImageButton("Pause", pauseIcon, buttonSize))
-			m_Controller.Pause();
-	} else if (m_Controller.CanResume()) {
-		if (ImGui::ImageButton("Resume", resumeIcon, buttonSize))
-			m_Controller.Resume();
+	ImGui::BeginDisabled(!m_controller.can_pause() && !m_controller.can_resume());
+	if (m_controller.can_pause()) {
+		if (ImGui::ImageButton("Pause", pause_icon, button_size))
+			m_controller.pause();
+	} else if (m_controller.can_resume()) {
+		if (ImGui::ImageButton("Resume", resume_icon, button_size))
+			m_controller.resume();
 		ImGui::SameLine();
-		if (ImGui::ImageButton("Step", stepIcon, buttonSize))
-			m_Controller.Step();
+		if (ImGui::ImageButton("Step", step_icon, button_size))
+			m_controller.step();
 	}
 	ImGui::EndDisabled();
 

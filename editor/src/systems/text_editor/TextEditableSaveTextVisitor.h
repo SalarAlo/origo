@@ -13,24 +13,24 @@ struct TextEditableSaveTextVisitor {
 	std::string Text;
 
 	void operator()(Origo::Script* script) const {
-		std::ofstream out(script->GetPath());
+		std::ofstream out(script->get_path());
 		out << Text;
-		Origo::ScriptSystem::Register(script->GetID(), script->GetPath(), Text);
-		Origo::ScriptSystem::ReloadAllNecessary();
+		Origo::ScriptSystem::register_script(script->get_id(), script->get_path(), Text);
+		Origo::ScriptSystem::reload_all_necessary();
 	}
 
 	void operator()(Origo::Shader* shader) const {
-		auto pathOpt = TextEditablePathVisitor {}(shader);
+		auto path_opt = TextEditablePathVisitor {}(shader);
 
-		if (!pathOpt) {
+		if (!path_opt) {
 			ORG_ERROR("Shader has no editable path");
 			return;
 		}
 
 		{
-			std::ofstream out(*pathOpt, std::ios::binary);
+			std::ofstream out(*path_opt, std::ios::binary);
 			if (!out.is_open()) {
-				ORG_ERROR("Failed to open shader file: {}", pathOpt->string());
+				ORG_ERROR("Failed to open shader file: {}", path_opt->string());
 				return;
 			}
 
@@ -38,8 +38,8 @@ struct TextEditableSaveTextVisitor {
 			out.flush();
 		}
 
-		shader->UnuseProgram();
-		shader->Resolve();
+		shader->unuse_program();
+		shader->resolve();
 	}
 };
 }

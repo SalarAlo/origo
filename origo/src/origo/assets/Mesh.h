@@ -17,11 +17,11 @@ struct Mesh : public Asset {
 
 	MeshRange Range;
 
-	AssetType GetAssetType() const override {
+	AssetType get_asset_type() const override {
 		return AssetType::Mesh;
 	}
 
-	static AssetType GetClassAssetType() { return AssetType::Mesh; }
+	static AssetType get_class_asset_type() { return AssetType::Mesh; }
 };
 
 }

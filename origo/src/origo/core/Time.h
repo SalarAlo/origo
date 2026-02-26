@@ -8,7 +8,7 @@ using Duration = std::chrono::duration<double>;
 using DurationFloat = std::chrono::duration<float>;
 using DurationInt = std::chrono::duration<int>;
 
-TimePoint GetNow();
-Duration GetTimeSinceStart();
+TimePoint get_now();
+Duration get_time_since_start();
 
 }

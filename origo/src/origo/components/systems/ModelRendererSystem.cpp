@@ -8,12 +8,12 @@
 
 namespace Origo {
 
-void ModelRenderSystem::Render(Scene* scene, RenderContext& context) {
-	scene->View<ModelRendererComponent, TransformComponent>([&](RID, auto& mr, auto& tr) {
+void ModelRenderSystem::render(Scene* scene, RenderContext& context) {
+	scene->view<ModelRendererComponent, TransformComponent>([&](RID, auto& mr, auto& tr) {
 		if (!mr.ModelHandle.has_value())
 			return;
 
-		context.SubmitModel(*mr.ModelHandle, tr.GetModelMatrix());
+		context.submit_model(*mr.ModelHandle, tr.get_model_matrix());
 	});
 }
 }

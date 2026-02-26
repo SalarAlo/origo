@@ -38,33 +38,33 @@ public:
 	FrameBuffer(FrameBuffer&&) = delete;
 	FrameBuffer& operator=(FrameBuffer&&) = delete;
 
-	void Bind() const;
-	void Unbind() const;
+	void bind() const;
+	void unbind() const;
 
-	void Resize(int width, int height);
+	void resize(int width, int height);
 
-	int GetWidth() const { return m_Spec.Width; }
-	int GetHeight() const { return m_Spec.Height; }
-	int GetSamples() const { return m_Spec.Samples; }
-	bool IsMSAA() const { return m_Spec.Samples > 1; }
+	int get_width() const { return m_spec.Width; }
+	int get_height() const { return m_spec.Height; }
+	int get_samples() const { return m_spec.Samples; }
+	bool is_msaa() const { return m_spec.Samples > 1; }
 
-	GLuint GetColorAttachment(size_t index = 0) const;
-	GLuint GetDepthAttachment() const;
+	GLuint get_color_attachment(size_t index = 0) const;
+	GLuint get_depth_attachment() const;
 
-	const FrameBufferSpec& GetSpecification() const { return m_Spec; }
+	const FrameBufferSpec& get_specification() const { return m_spec; }
 
-	void ResolveTo(FrameBuffer& target) const;
-
-private:
-	void Invalidate();
-	void Destroy();
+	void resolve_to(FrameBuffer& target) const;
 
 private:
-	FrameBufferSpec m_Spec;
+	void invalidate();
+	void destroy();
 
-	GLuint m_FBO = 0;
-	std::vector<GLuint> m_ColorTex;
-	GLuint m_DepthTex = 0;
+private:
+	FrameBufferSpec m_spec;
+
+	GLuint m_fbo = 0;
+	std::vector<GLuint> m_color_tex;
+	GLuint m_depth_tex = 0;
 };
 
 }

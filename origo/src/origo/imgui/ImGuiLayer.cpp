@@ -7,7 +7,7 @@
 
 namespace Origo {
 
-void ImGuiLayer::OnAttach(GLFWwindow* window) {
+void ImGuiLayer::on_attach(GLFWwindow* window) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -29,28 +29,28 @@ void ImGuiLayer::OnAttach(GLFWwindow* window) {
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void ImGuiLayer::OnDetach() {
+void ImGuiLayer::on_detach() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void ImGuiLayer::Begin() {
+void ImGuiLayer::begin() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void ImGuiLayer::End() {
+void ImGuiLayer::end() {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-		GLFWwindow* backupContext = glfwGetCurrentContext();
+		GLFWwindow* backup_context = glfwGetCurrentContext();
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		glfwMakeContextCurrent(backupContext);
+		glfwMakeContextCurrent(backup_context);
 	}
 }
 

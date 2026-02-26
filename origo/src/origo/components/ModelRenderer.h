@@ -12,7 +12,7 @@ public:
 	ModelRendererComponent(const AssetHandle& handle)
 	    : ModelHandle(handle) { };
 
-	std::string GetComponentName() const override { return "ModelRenderer"; }
+	std::string get_component_name() const override { return "ModelRenderer"; }
 
 	OptionalAssetHandle ModelHandle {};
 };

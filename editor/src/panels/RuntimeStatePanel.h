@@ -9,13 +9,13 @@ namespace OrigoEditor {
 class RuntimeStatePanel : public EditorPanel {
 public:
 	RuntimeStatePanel(EditorContext& context);
-	const char* GetName() const override { return "RuntimePanel"; }
+	const char* get_name() const override { return "RuntimePanel"; }
 
-	void OnImGuiRender() override;
+	void on_im_gui_render() override;
 
 private:
-	EditorContext& m_Context;
-	EditorRuntimeController m_Controller;
+	EditorContext& m_context;
+	EditorRuntimeController m_controller;
 };
 
 }

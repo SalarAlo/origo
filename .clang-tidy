@@ -1,0 +1,30 @@
+Checks: '-*,readability-identifier-naming'
+
+CheckOptions:
+
+  # Functions → snake_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+
+  # Local variables → snake_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+
+
+  # PRIVATE members → m_snake_case
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: lower_case
+
+
+  # PROTECTED members → m_snake_case (optional)
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.ProtectedMemberCase
+    value: lower_case
+
+
+  # PUBLIC members → PascalCase
+  - key: readability-identifier-naming.PublicMemberCase
+    value: CamelCase

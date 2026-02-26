@@ -7,60 +7,60 @@
 namespace Origo {
 
 template <>
-UniformType Uniform<bool>::GetUniformType() const { return UniformType::Bool; }
+UniformType Uniform<bool>::get_uniform_type() const { return UniformType::Bool; }
 
 template <>
-UniformType Uniform<int>::GetUniformType() const { return UniformType::Int; }
+UniformType Uniform<int>::get_uniform_type() const { return UniformType::Int; }
 
 template <>
-UniformType Uniform<float>::GetUniformType() const { return UniformType::Float; }
+UniformType Uniform<float>::get_uniform_type() const { return UniformType::Float; }
 template <>
-UniformType Uniform<unsigned int>::GetUniformType() const { return UniformType::UnsignedInt; }
+UniformType Uniform<unsigned int>::get_uniform_type() const { return UniformType::UnsignedInt; }
 
 template <>
-UniformType Uniform<Vec2>::GetUniformType() const { return UniformType::Vec2; }
+UniformType Uniform<Vec2>::get_uniform_type() const { return UniformType::Vec2; }
 
 template <>
-UniformType Uniform<Vec3>::GetUniformType() const { return UniformType::Vec3; }
+UniformType Uniform<Vec3>::get_uniform_type() const { return UniformType::Vec3; }
 
 template <>
-UniformType Uniform<glm::mat4>::GetUniformType() const { return UniformType::Mat4; }
+UniformType Uniform<glm::mat4>::get_uniform_type() const { return UniformType::Mat4; }
 
 template <>
-void Uniform<int>::Serialize(ISerializer& backend) const {
-	backend.Write("type", "int");
-	backend.Write("value", m_Value);
+void Uniform<int>::serialize(ISerializer& backend) const {
+	backend.write("type", "int");
+	backend.write("value", m_value);
 };
 
 template <>
-void Uniform<bool>::Serialize(ISerializer& backend) const {
-	backend.Write("type", "bool");
-	backend.Write("value", m_Value ? 1 : 0);
+void Uniform<bool>::serialize(ISerializer& backend) const {
+	backend.write("type", "bool");
+	backend.write("value", m_value ? 1 : 0);
 };
 
 template <>
-void Uniform<float>::Serialize(ISerializer& backend) const {
-	backend.Write("type", "float");
-	backend.Write("value", m_Value);
+void Uniform<float>::serialize(ISerializer& backend) const {
+	backend.write("type", "float");
+	backend.write("value", m_value);
 }
 
 template <>
-void Uniform<Vec2>::Serialize(ISerializer& backend) const {
-	backend.Write("type", "vec2");
-	backend.Write("x", m_Value.x);
-	backend.Write("y", m_Value.y);
+void Uniform<Vec2>::serialize(ISerializer& backend) const {
+	backend.write("type", "vec2");
+	backend.write("x", m_value.x);
+	backend.write("y", m_value.y);
 }
 
 template <>
-void Uniform<Vec3>::Serialize(ISerializer& backend) const {
-	backend.Write("type", "vec3");
-	backend.Write("x", m_Value.x);
-	backend.Write("y", m_Value.y);
-	backend.Write("z", m_Value.z);
+void Uniform<Vec3>::serialize(ISerializer& backend) const {
+	backend.write("type", "vec3");
+	backend.write("x", m_value.x);
+	backend.write("y", m_value.y);
+	backend.write("z", m_value.z);
 }
 
 template <>
-void Uniform<glm::mat4>::Serialize(ISerializer& backend) const {
+void Uniform<glm::mat4>::serialize(ISerializer& backend) const {
 	// TODO: implement this shit. i hate modularisation
 	ORG_ERROR("To be continued...");
 }

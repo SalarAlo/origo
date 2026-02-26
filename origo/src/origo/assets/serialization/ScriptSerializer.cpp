@@ -1,32 +1,33 @@
 #include "origo/assets/serialization/ScriptSerializer.h"
+
 #include "origo/assets/Script.h"
 
 namespace Origo {
 
-void ScriptSerializer::Serialize(const Asset* asset, ISerializer& backend) const {
+void ScriptSerializer::serialize(const Asset* asset, ISerializer& backend) const {
 	ORG_INFO("Seriliazing an asset of type shader");
 	auto script { static_cast<const Script*>(asset) };
-	backend.Write("path", script->GetPath().c_str());
-	backend.Write("id", script->GetID().ToString());
+	backend.write("path", script->get_path().c_str());
+	backend.write("id", script->get_id().to_string());
 }
 
-void ScriptSerializer::Deserialize(ISerializer& backend, Asset& asset) const {
+void ScriptSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	std::string path;
 	std::string id;
 
-	if (!backend.TryRead("id", id)) {
+	if (!backend.try_read("id", id)) {
 		ORG_CORE_ERROR("Unable to deserialize Script Asset because backend has no id entry");
 		return;
 	}
 
-	if (!backend.TryRead("path", path)) {
+	if (!backend.try_read("path", path)) {
 		ORG_CORE_ERROR("Unable to deserialize Script Asset because backend has no source entry");
 		return;
 	}
 
 	auto& script { static_cast<Script&>(asset) };
-	script.SetPath(path);
-	script.SetID(UUID::FromString(id));
+	script.set_path(path);
+	script.set_id(UUID::from_string(id));
 }
 
 }

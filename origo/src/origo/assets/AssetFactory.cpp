@@ -8,7 +8,7 @@
 #include "origo/assets/Texture2D.h"
 
 namespace Origo {
-Scope<Asset> AssetFactory::AllocateHollowAsset(AssetType type) {
+Scope<Asset> AssetFactory::allocate_hollow_asset(AssetType type) {
 	switch (type) {
 	case AssetType::Shader:
 		return MakeScope<Shader>();

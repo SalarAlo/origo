@@ -9,15 +9,15 @@ public:
 	Layer(std::string_view name = "Layer");
 	virtual ~Layer();
 
-	virtual void OnAttach() { };
-	virtual void OnDetach() { };
-	virtual void OnUpdate(double dt) { };
-	virtual void OnEvent(Event& e) { };
+	virtual void on_attach() { };
+	virtual void on_detach() { };
+	virtual void on_update(double dt) { };
+	virtual void on_event(Event& e) { };
 
-	std::string GetName() const { return m_DebugName; }
+	std::string get_name() const { return m_debug_name; }
 
 private:
-	std::string m_DebugName;
+	std::string m_debug_name;
 };
 
 }

@@ -13,10 +13,10 @@ public:
 public:
 	EditorOutlineComponent() { }
 
-	std::string GetComponentName() const override { return "EditorSelection"; }
+	std::string get_component_name() const override { return "EditorSelection"; }
 
 private:
-	inline static Origo::OptionalAssetHandle m_OutlineMaterial {};
+	inline static Origo::OptionalAssetHandle m_outline_material {};
 };
 
 }

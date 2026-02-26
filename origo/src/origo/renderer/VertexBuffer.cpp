@@ -3,83 +3,83 @@
 namespace Origo {
 
 VertexBuffer::VertexBuffer(const std::vector<float>& data)
-    : m_Size(data.size() * sizeof(float))
-    , m_Capacity(m_Size) {
-	m_Data = operator new(m_Capacity);
-	memcpy(m_Data, data.data(), m_Size);
+    : m_size(data.size() * sizeof(float))
+    , m_capacity(m_size) {
+	m_data = operator new(m_capacity);
+	memcpy(m_data, data.data(), m_size);
 
-	GLCall(glGenBuffers(1, &m_BufferId));
-	SetDataOpenGL(true);
+	GLCall(glGenBuffers(1, &m_buffer_id));
+	set_data_open_gl(true);
 }
 
 VertexBuffer::~VertexBuffer() {
-	GLCall(glDeleteBuffers(1, &m_BufferId));
-	operator delete(m_Data);
+	GLCall(glDeleteBuffers(1, &m_buffer_id));
+	operator delete(m_data);
 }
 
-void VertexBuffer::Bind() const {
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_BufferId));
-	s_CurrentlyBound = m_BufferId;
+void VertexBuffer::bind() const {
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_buffer_id));
+	s_currently_bound = m_buffer_id;
 }
 
-void VertexBuffer::Unbind() const {
+void VertexBuffer::unbind() const {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-	s_CurrentlyBound = 0;
+	s_currently_bound = 0;
 }
 
-void VertexBuffer::AddData(const void* data, size_t bytes) {
-	m_SizeBeforeLastAppend = m_Size;
-	size_t newSize = m_Size + bytes;
+void VertexBuffer::add_data(const void* data, size_t bytes) {
+	m_size_before_last_append = m_size;
+	size_t new_size = m_size + bytes;
 
-	if (newSize > m_Capacity) {
-		Resize(newSize);
-		memcpy(static_cast<char*>(m_Data) + m_Size, data, bytes);
+	if (new_size > m_capacity) {
+		resize(new_size);
+		memcpy(static_cast<char*>(m_data) + m_size, data, bytes);
 
-		Bind();
+		bind();
 
-		GLCall(glBufferData(GL_ARRAY_BUFFER, m_Capacity, nullptr, GL_DYNAMIC_DRAW));
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, newSize, m_Data));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, m_capacity, nullptr, GL_DYNAMIC_DRAW));
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, new_size, m_data));
 
-		Unbind();
+		unbind();
 	} else {
-		memcpy(static_cast<char*>(m_Data) + m_Size, data, bytes);
+		memcpy(static_cast<char*>(m_data) + m_size, data, bytes);
 
-		Bind();
+		bind();
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER,
-		    m_SizeBeforeLastAppend,
+		    m_size_before_last_append,
 		    bytes,
 		    static_cast<const char*>(data)));
-		Unbind();
+		unbind();
 	}
 
-	m_Size = newSize;
+	m_size = new_size;
 }
 
-void VertexBuffer::Resize(size_t newSize) {
-	size_t newCapacity = std::max(m_Capacity * 2, newSize);
-	void* newBlock = operator new(newCapacity);
+void VertexBuffer::resize(size_t newSize) {
+	size_t new_capacity = std::max(m_capacity * 2, newSize);
+	void* new_block = operator new(new_capacity);
 
-	memcpy(newBlock, m_Data, m_Size);
-	operator delete(m_Data);
+	memcpy(new_block, m_data, m_size);
+	operator delete(m_data);
 
-	m_Data = newBlock;
-	m_Capacity = newCapacity;
+	m_data = new_block;
+	m_capacity = new_capacity;
 }
 
-void VertexBuffer::SetDataOpenGL(bool initialUpload) {
-	Bind();
+void VertexBuffer::set_data_open_gl(bool initialUpload) {
+	bind();
 
 	if (initialUpload) {
-		GLCall(glBufferData(GL_ARRAY_BUFFER, m_Capacity, nullptr, GL_DYNAMIC_DRAW));
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, m_Size, m_Data));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, m_capacity, nullptr, GL_DYNAMIC_DRAW));
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, m_size, m_data));
 	} else {
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER,
-		    m_SizeBeforeLastAppend,
-		    m_Size - m_SizeBeforeLastAppend,
-		    static_cast<char*>(m_Data) + m_SizeBeforeLastAppend));
+		    m_size_before_last_append,
+		    m_size - m_size_before_last_append,
+		    static_cast<char*>(m_data) + m_size_before_last_append));
 	}
 
-	Unbind();
+	unbind();
 }
 
 }

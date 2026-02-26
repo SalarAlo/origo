@@ -7,8 +7,8 @@ namespace Origo {
 
 class IComponentSerializer {
 public:
-	virtual void Serialize(Component*, ISerializer&) const = 0;
-	virtual void Deserialize(Component*, ISerializer&) = 0;
+	virtual void serialize(Component*, ISerializer&) const = 0;
+	virtual void deserialize(Component*, ISerializer&) = 0;
 };
 
 }

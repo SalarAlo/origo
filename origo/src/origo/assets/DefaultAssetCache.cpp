@@ -10,123 +10,123 @@
 
 namespace Origo {
 
-void DefaultAssetCache::CreateAllDefaults() {
-	GetShader();
-	GetTexture();
-	GetMaterial();
-	GetOutlineMaterial();
-	GetParticleMaterial();
-	GetParticleEmissionDebugMaterial();
+void DefaultAssetCache::create_all_defaults() {
+	get_shader();
+	get_texture();
+	get_material();
+	get_outline_material();
+	get_particle_material();
+	get_particle_emission_debug_material();
 }
 
-AssetHandle DefaultAssetCache::GetShader() {
-	if (m_Shader.has_value())
-		return *m_Shader;
+AssetHandle DefaultAssetCache::get_shader() {
+	if (m_shader.has_value())
+		return *m_shader;
 
-	m_Shader = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Shader>(
+	m_shader = AssetFactory::get_instance().get_instance().create_synthetic_asset<Shader>(
 	    "Default Shader",
-	    UUID::FromHash("ENGINE_DEFAULT_SHADER"));
+	    UUID::from_hash("ENGINE_DEFAULT_SHADER"));
 
-	auto shader = AssetManager::GetInstance().Get<Shader>(*m_Shader);
-	shader->SetSource(MakeScope<ShaderSourceFile>(
+	auto shader = AssetManager::get_instance().get_asset<Shader>(*m_shader);
+	shader->set_source(MakeScope<ShaderSourceFile>(
 	    "./default_resources/default_shader.glsl"));
-	shader->Resolve();
+	shader->resolve();
 
-	return *m_Shader;
+	return *m_shader;
 }
 
-AssetHandle DefaultAssetCache::GetTexture() {
-	if (m_Texture.has_value())
-		return *m_Texture;
+AssetHandle DefaultAssetCache::get_texture() {
+	if (m_texture.has_value())
+		return *m_texture;
 
-	std::vector<unsigned char> whitePixel = { 255, 255, 255, 255 };
+	std::vector<unsigned char> white_pixel = { 255, 255, 255, 255 };
 
-	m_Texture = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Texture2D>(
+	m_texture = AssetFactory::get_instance().get_instance().create_synthetic_asset<Texture2D>(
 	    "Default White Texture",
-	    UUID::FromArbitraryString("DEFAULT_TEXTURE_2D"));
+	    UUID::from_arbitrary_string("DEFAULT_TEXTURE_2D"));
 
-	auto tex = AssetManager::GetInstance().Get<Texture2D>(*m_Texture);
-	tex->SetSource(MakeScope<TextureSourceRaw>(
-	    1, 1, 4, std::move(whitePixel), false));
-	tex->Load();
+	auto tex = AssetManager::get_instance().get_asset<Texture2D>(*m_texture);
+	tex->set_source(MakeScope<TextureSourceRaw>(
+	    1, 1, 4, std::move(white_pixel), false));
+	tex->load();
 
-	return *m_Texture;
+	return *m_texture;
 }
 
-AssetHandle DefaultAssetCache::GetMaterial() {
-	if (m_Material.has_value())
-		return *m_Material;
+AssetHandle DefaultAssetCache::get_material() {
+	if (m_material.has_value())
+		return *m_material;
 
-	m_Material = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
+	m_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
 	    "Default Material",
-	    UUID::FromArbitraryString("DEFAULT_MATERIAL_2D"));
+	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_2D"));
 
-	auto material = AssetManager::GetInstance().Get<Material2D>(*m_Material);
-	material->SetShader(GetShader());
-	material->SetAlbedo(GetTexture());
+	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_material);
+	material->set_shader(get_shader());
+	material->set_albedo(get_texture());
 
-	material->SetUniform("u_UseTexture", true);
-	material->SetUniform("u_UseLight", true);
+	material->set_uniform("u_UseTexture", true);
+	material->set_uniform("u_UseLight", true);
 
-	return *m_Material;
+	return *m_material;
 }
 
-AssetHandle DefaultAssetCache::GetParticleEmissionDebugMaterial() {
-	constexpr Vec3 DEBUG_EMISSION_PARTICLE_COLOR = Vec3 { .1f, .9f, .05f };
+AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
+	constexpr Vec3 debug_emission_particle_color = Vec3 { .1f, .9f, .05f };
 
-	if (m_ParticleEmissionDebugMaterial.has_value())
-		return *m_ParticleEmissionDebugMaterial;
+	if (m_particle_emission_debug_material.has_value())
+		return *m_particle_emission_debug_material;
 
-	m_ParticleEmissionDebugMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
+	m_particle_emission_debug_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
 	    "Emission Shape Material",
-	    UUID::FromArbitraryString("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
+	    UUID::from_arbitrary_string("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
-	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleEmissionDebugMaterial);
-	material->SetShader(GetShader());
-	material->SetColor(DEBUG_EMISSION_PARTICLE_COLOR);
-	material->SetUniform("u_UseTexture", false);
-	material->SetUniform("u_UseLight", false);
+	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_emission_debug_material);
+	material->set_shader(get_shader());
+	material->set_color(debug_emission_particle_color);
+	material->set_uniform("u_UseTexture", false);
+	material->set_uniform("u_UseLight", false);
 
-	return *m_Material;
+	return *m_material;
 }
 
-Origo::AssetHandle DefaultAssetCache::GetOutlineMaterial() {
-	constexpr Vec3 ORANGE_COLOR = Vec3 { 1.0f, (125.0f / 255.0f), 0.0f };
+Origo::AssetHandle DefaultAssetCache::get_outline_material() {
+	constexpr Vec3 orange_color = Vec3 { 1.0f, (125.0f / 255.0f), 0.0f };
 
-	if (m_OutlineMaterial.has_value())
-		return *m_OutlineMaterial;
+	if (m_outline_material.has_value())
+		return *m_outline_material;
 
-	m_OutlineMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
+	m_outline_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
 	    "Outline Material",
-	    UUID::FromArbitraryString("DEFAULT_MATERIAL_OUTLINE_2D"));
+	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_OUTLINE_2D"));
 
-	auto material = AssetManager::GetInstance().Get<Material2D>(*m_OutlineMaterial);
-	material->SetShader(GetShader());
-	material->SetColor(ORANGE_COLOR);
+	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_outline_material);
+	material->set_shader(get_shader());
+	material->set_color(orange_color);
 
-	material->SetUniform("u_UseTexture", false);
-	material->SetUniform("u_UseLight", false);
+	material->set_uniform("u_UseTexture", false);
+	material->set_uniform("u_UseLight", false);
 
-	return *m_OutlineMaterial;
+	return *m_outline_material;
 }
 
-AssetHandle DefaultAssetCache::GetParticleMaterial() {
-	constexpr Vec3 PARTICLE_COLOR = Vec3 { 1.0f, 0.0f, 0.0f };
+AssetHandle DefaultAssetCache::get_particle_material() {
+	constexpr Vec3 particle_color = Vec3 { 1.0f, 0.0f, 0.0f };
 
-	if (m_ParticleMaterial.has_value())
-		return *m_ParticleMaterial;
+	if (m_particle_material.has_value())
+		return *m_particle_material;
 
-	m_ParticleMaterial = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Material2D>(
+	m_particle_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
 	    "Particle Material",
-	    UUID::FromArbitraryString("DEFAULT_PARTICLE_MATERIAL_2D"));
+	    UUID::from_arbitrary_string("DEFAULT_PARTICLE_MATERIAL_2D"));
 
-	auto material = AssetManager::GetInstance().Get<Material2D>(*m_ParticleMaterial);
-	material->SetShader(GetShader());
-	material->SetColor(PARTICLE_COLOR);
-	material->SetUniform("u_UseTexture", true);
-	material->SetUniform("u_UseLight", true);
+	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_material);
+	material->set_shader(get_shader());
+	material->set_color(particle_color);
+	material->set_uniform("u_UseTexture", true);
+	material->set_uniform("u_UseLight", true);
 
-	return *m_Material;
+	return *m_material;
 }
 
 }

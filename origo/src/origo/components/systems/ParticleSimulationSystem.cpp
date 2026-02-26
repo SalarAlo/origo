@@ -9,11 +9,11 @@
 
 namespace Origo {
 
-void ParticleSimulationSystem::Update(Scene* scene, float dt) {
-	scene->View<ParticleComponent, TransformComponent>(
+void ParticleSimulationSystem::update(Scene* scene, float dt) {
+	scene->view<ParticleComponent, TransformComponent>(
 	    [&](RID entity, ParticleComponent& pc, TransformComponent& tr) {
 		    if (pc.Lifetime <= 0.0f) {
-			    scene->ScheduleRemoveEntity(entity);
+			    scene->schedule_remove_entity(entity);
 			    return;
 		    }
 
@@ -30,9 +30,9 @@ void ParticleSimulationSystem::Update(Scene* scene, float dt) {
 			    pc.ForceAccum = Vec3(0.0f);
 		    }
 
-		    tr.SetPosition(tr.GetPosition() + pc.Velocity * dt);
+		    tr.set_position(tr.get_position() + pc.Velocity * dt);
 		    auto scale { glm::mix(Vec3 { pc.EndSize }, Vec3 { pc.StartSize }, pc.Lifetime / pc.MaxLifetime) };
-		    tr.SetScale(scale);
+		    tr.set_scale(scale);
 
 		    pc.Lifetime -= dt;
 	    });

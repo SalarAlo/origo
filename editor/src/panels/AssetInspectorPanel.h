@@ -8,13 +8,13 @@ namespace OrigoEditor {
 class AssetInspectorPanel : public EditorPanel {
 public:
 	AssetInspectorPanel(EditorContext& ctx)
-	    : m_Context(ctx) { }
+	    : m_context(ctx) { }
 
-	const char* GetName() const override { return "Asset Inspector"; }
-	void OnImGuiRender() override;
+	const char* get_name() const override { return "Asset Inspector"; }
+	void on_im_gui_render() override;
 
 private:
-	EditorContext& m_Context;
+	EditorContext& m_context;
 };
 
 }

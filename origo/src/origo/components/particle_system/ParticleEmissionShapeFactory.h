@@ -10,7 +10,7 @@
 
 namespace Origo {
 struct ParticleEmissionShapeFactory {
-	static ParticleEmissionShape CreateDefault(ParticleEmissionShapeKind kind) {
+	static ParticleEmissionShape create_default(ParticleEmissionShapeKind kind) {
 		switch (kind) {
 		case ParticleEmissionShapeKind::Point:
 			return PointEmissionShape {};

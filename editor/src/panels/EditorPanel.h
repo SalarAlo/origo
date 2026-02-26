@@ -5,16 +5,16 @@ class EditorPanel {
 public:
 	virtual ~EditorPanel() = default;
 
-	virtual const char* GetName() const = 0;
-	virtual void OnImGuiRender() = 0;
+	virtual const char* get_name() const = 0;
+	virtual void on_im_gui_render() = 0;
 
-	virtual bool IsOpen() const { return m_Open; }
-	virtual bool& IsOpenRef() { return m_Open; }
-	virtual void SetOpen(bool open) { m_Open = open; }
+	virtual bool is_open() const { return m_open; }
+	virtual bool& is_open_ref() { return m_open; }
+	virtual void set_open(bool open) { m_open = open; }
 
-	virtual bool IsCollapsable() const { return false; }
+	virtual bool is_collapsable() const { return false; }
 
 protected:
-	bool m_Open = true;
+	bool m_open = true;
 };
 }

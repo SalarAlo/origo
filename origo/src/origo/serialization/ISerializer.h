@@ -1,75 +1,76 @@
 #pragma once
 
 #include <filesystem>
+
 namespace Origo {
 
 class ISerializer {
 public:
 	ISerializer(const std::filesystem::path& path)
-	    : m_Path(path) { }
+	    : m_path(path) { }
 	virtual ~ISerializer() = default;
 
-	virtual void SaveToFile() = 0;
-	virtual void LoadFile() = 0;
+	virtual void save_to_file() = 0;
+	virtual void load_file() = 0;
 
-	virtual void BeginObject(std::string_view key) = 0;
-	virtual void EndObject() = 0;
+	virtual void begin_object(std::string_view key) = 0;
+	virtual void end_object() = 0;
 
-	virtual void BeginArray(std::string_view key) = 0;
-	virtual void EndArray() = 0;
+	virtual void begin_array(std::string_view key) = 0;
+	virtual void end_array() = 0;
 
-	virtual void BeginArrayElement() = 0;
-	virtual void EndArrayElement() = 0;
+	virtual void begin_array_element() = 0;
+	virtual void end_array_element() = 0;
 
-	virtual void Write(std::string_view key, int value) = 0;
-	virtual void Write(std::string_view key, float value) = 0;
-	virtual void Write(std::string_view key, std::string_view value) = 0;
+	virtual void write(std::string_view key, int value) = 0;
+	virtual void write(std::string_view key, float value) = 0;
+	virtual void write(std::string_view key, std::string_view value) = 0;
 
-	virtual void Write(int value) = 0;
-	virtual void Write(float value) = 0;
-	virtual void Write(std::string_view value) = 0;
+	virtual void write(int value) = 0;
+	virtual void write(float value) = 0;
+	virtual void write(std::string_view value) = 0;
 
-	virtual bool TryRead(std::string_view key, int& value) = 0;
-	virtual bool TryRead(std::string_view key, float& value) = 0;
-	virtual bool TryRead(std::string_view key, std::string& value) = 0;
+	virtual bool try_read(std::string_view key, int& value) = 0;
+	virtual bool try_read(std::string_view key, float& value) = 0;
+	virtual bool try_read(std::string_view key, std::string& value) = 0;
 
-	virtual bool TryReadArrayElement(int& value) = 0;
-	virtual bool TryReadArrayElement(float& value) = 0;
-	virtual bool TryReadArrayElement(std::string& value) = 0;
-	virtual bool TryBeginArrayElementRead() = 0;
+	virtual bool try_read_array_element(int& value) = 0;
+	virtual bool try_read_array_element(float& value) = 0;
+	virtual bool try_read_array_element(std::string& value) = 0;
+	virtual bool try_begin_array_element_read() = 0;
 
 protected:
-	std::filesystem::path m_Path;
+	std::filesystem::path m_path;
 };
 
 #define SERIALIZER_FWD                                                     \
-	void SaveToFile() override;                                        \
-	void LoadFile() override;                                          \
+	void save_to_file() override;                                      \
+	void load_file() override;                                         \
                                                                            \
-	void BeginObject(std::string_view key) override;                   \
-	void EndObject() override;                                         \
+	void begin_object(std::string_view key) override;                  \
+	void end_object() override;                                        \
                                                                            \
-	void BeginArray(std::string_view key) override;                    \
-	void EndArray() override;                                          \
+	void begin_array(std::string_view key) override;                   \
+	void end_array() override;                                         \
                                                                            \
-	virtual void BeginArrayElement() override;                         \
-	virtual void EndArrayElement() override;                           \
+	virtual void begin_array_element() override;                       \
+	virtual void end_array_element() override;                         \
                                                                            \
-	void Write(std::string_view key, int value) override;              \
-	void Write(std::string_view key, float value) override;            \
-	void Write(std::string_view key, std::string_view value) override; \
+	void write(std::string_view key, int value) override;              \
+	void write(std::string_view key, float value) override;            \
+	void write(std::string_view key, std::string_view value) override; \
                                                                            \
-	void Write(int value) override;                                    \
-	void Write(float value) override;                                  \
-	void Write(std::string_view value) override;                       \
+	void write(int value) override;                                    \
+	void write(float value) override;                                  \
+	void write(std::string_view value) override;                       \
                                                                            \
-	bool TryRead(std::string_view key, int& value) override;           \
-	bool TryRead(std::string_view key, float& value) override;         \
-	bool TryRead(std::string_view key, std::string& value) override;   \
+	bool try_read(std::string_view key, int& value) override;          \
+	bool try_read(std::string_view key, float& value) override;        \
+	bool try_read(std::string_view key, std::string& value) override;  \
                                                                            \
-	bool TryReadArrayElement(int& value) override;                     \
-	bool TryReadArrayElement(float& value) override;                   \
-	bool TryReadArrayElement(std::string& value) override;             \
-	bool TryBeginArrayElementRead() override;
+	bool try_read_array_element(int& value) override;                  \
+	bool try_read_array_element(float& value) override;                \
+	bool try_read_array_element(std::string& value) override;          \
+	bool try_begin_array_element_read() override;
 
 }

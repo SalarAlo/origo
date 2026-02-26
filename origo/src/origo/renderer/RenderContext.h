@@ -14,60 +14,60 @@ namespace Origo {
 class RenderContext {
 public:
 	RenderContext(FrameBuffer* target = nullptr)
-	    : m_Target(target) {
+	    : m_target(target) {
 	}
 
-	void SetTarget(FrameBuffer* target) { m_Target = target; }
-	void SetResolveTarget(FrameBuffer* resolveTarget) { m_ResolveTarget = resolveTarget; }
-	void SetSkyboxMaterial(AssetHandle skyboxMaterial);
+	void set_target(FrameBuffer* target) { m_target = target; }
+	void set_resolve_target(FrameBuffer* resolveTarget) { m_resolve_target = resolveTarget; }
+	void set_skybox_material(AssetHandle skyboxMaterial);
 
-	void PushPointLight(const PointLightData& data);
-	void PushDirectionalLight(const DirectionalLightData& data);
+	void push_point_light(const PointLightData& data);
+	void push_directional_light(const DirectionalLightData& data);
 
-	void SetView(const RenderView& view);
+	void set_view(const RenderView& view);
 
-	void ClearView() { m_HasView = false; }
+	void clear_view() { m_has_view = false; }
 
-	FrameBuffer* GetTarget() const { return m_Target; }
-	FrameBuffer* GetResolveTarget() const { return m_ResolveTarget; }
-	FrameBuffer* GetFinalTarget() const { return m_ResolveTarget ? m_ResolveTarget : m_Target; }
+	FrameBuffer* get_target() const { return m_target; }
+	FrameBuffer* get_resolve_target() const { return m_resolve_target; }
+	FrameBuffer* get_final_target() const { return m_resolve_target ? m_resolve_target : m_target; }
 
-	void BeginFrame();
-	void EndFrame();
+	void begin_frame();
+	void end_frame();
 
-	void SubmitMesh(
+	void submit_mesh(
 	    const AssetHandle& mesh,
 	    const AssetHandle& material,
 	    const glm::mat4& modelMatrix,
 	    RenderPass pass = RenderPass::Geometry,
 	    GLenum drawMethod = GL_TRIANGLES);
-	void SubmitModel(
+	void submit_model(
 	    const AssetHandle& mesh,
 	    const glm::mat4& modelMatrix,
 	    RenderPass pass = RenderPass::Geometry,
 	    const std::optional<AssetHandle>& optionalMaterial = std::nullopt);
-	void Flush();
+	void flush();
 
 private:
-	void Clear();
-	void BindFB();
-	void ExecutePass(RenderPass pass);
-	void ConfigureState(RenderPass pass);
+	void clear();
+	void bind_fb();
+	void execute_pass(RenderPass pass);
+	void configure_state(RenderPass pass);
 
 private:
-	FrameBuffer* m_Target {};
-	FrameBuffer* m_ResolveTarget {};
+	FrameBuffer* m_target {};
+	FrameBuffer* m_resolve_target {};
 
-	std::optional<DirectionalLightData> m_DirectionalLightData;
-	std::vector<PointLightData> m_PointLights;
+	std::optional<DirectionalLightData> m_directional_light_data;
+	std::vector<PointLightData> m_point_lights;
 
-	OptionalAssetHandle m_SkyboxMaterial { std::nullopt };
-	GLuint m_SkyboxVAO {};
+	OptionalAssetHandle m_skybox_material { std::nullopt };
+	GLuint m_skybox_vao {};
 
-	RenderView m_View {};
-	bool m_HasView {};
+	RenderView m_view {};
+	bool m_has_view {};
 
-	std::vector<RenderCommand> m_DrawQueue {};
+	std::vector<RenderCommand> m_draw_queue {};
 };
 
 }

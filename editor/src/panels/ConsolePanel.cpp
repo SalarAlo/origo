@@ -1,17 +1,18 @@
-#include "panels/ConsolePanel.h"
-#include "origo/core/Logger.h"
-
 #include <imgui.h>
+
+#include "panels/ConsolePanel.h"
+
+#include "origo/core/Logger.h"
 
 namespace OrigoEditor {
 
-void ConsolePanel::OnImGuiRender() {
-	DrawToolbar();
+void ConsolePanel::on_im_gui_render() {
+	draw_toolbar();
 	ImGui::Separator();
-	DrawLogView();
+	draw_log_view();
 }
 
-void ConsolePanel::DrawToolbar() {
+void ConsolePanel::draw_toolbar() {
 	auto buffer = Origo::Logger::GetConsoleBuffer();
 
 	if (ImGui::Button("Clear") && buffer) {
@@ -19,10 +20,10 @@ void ConsolePanel::DrawToolbar() {
 	}
 
 	ImGui::SameLine();
-	ImGui::Checkbox("Auto-scroll", &m_AutoScroll);
+	ImGui::Checkbox("Auto-scroll", &m_auto_scroll);
 }
 
-void ConsolePanel::DrawLogView() {
+void ConsolePanel::draw_log_view() {
 	auto buffer = Origo::Logger::GetConsoleBuffer();
 	if (!buffer)
 		return;
@@ -35,18 +36,18 @@ void ConsolePanel::DrawLogView() {
 	    false,
 	    ImGuiWindowFlags_HorizontalScrollbar);
 
-	bool stickToBottom = false;
-	if (m_AutoScroll) {
-		stickToBottom = (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 5.0f);
+	bool stick_to_bottom = false;
+	if (m_auto_scroll) {
+		stick_to_bottom = (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 5.0f);
 	}
 
 	ImGui::PushTextWrapPos(0.0f);
 
 	for (const auto& entry : entries) {
-		const ImVec4 color = LevelToColor(entry.level);
+		const ImVec4 color = level_to_color(entry.level);
 
 		ImGui::PushStyleColor(ImGuiCol_Text, color);
-		ImGui::TextUnformatted(LevelToString(entry.level));
+		ImGui::TextUnformatted(level_to_string(entry.level));
 		ImGui::SameLine();
 		ImGui::TextUnformatted(entry.message.c_str());
 		ImGui::PopStyleColor();
@@ -54,14 +55,14 @@ void ConsolePanel::DrawLogView() {
 
 	ImGui::PopTextWrapPos();
 
-	if (stickToBottom) {
+	if (stick_to_bottom) {
 		ImGui::SetScrollY(ImGui::GetScrollMaxY());
 	}
 
 	ImGui::EndChild();
 }
 
-ImVec4 ConsolePanel::LevelToColor(spdlog::level::level_enum level) {
+ImVec4 ConsolePanel::level_to_color(spdlog::level::level_enum level) {
 	switch (level) {
 	case spdlog::level::trace:
 		return { 0.60f, 0.60f, 0.60f, 1.0f };
@@ -80,7 +81,7 @@ ImVec4 ConsolePanel::LevelToColor(spdlog::level::level_enum level) {
 	}
 }
 
-const char* ConsolePanel::LevelToString(spdlog::level::level_enum level) {
+const char* ConsolePanel::level_to_string(spdlog::level::level_enum level) {
 	switch (level) {
 	case spdlog::level::trace:
 		return "[TRACE]";

@@ -1,99 +1,101 @@
 #include "SceneSerializer.h"
+
 #include "origo/components/NativeComponentRegistry.h"
+
 #include "origo/serialization/JsonSerializer.h"
 
 namespace Origo::SceneSerializer {
 
-void SerializeToFile(Scene& scene, const std::filesystem::path& out) {
+void serialize_to_file(Scene& scene, const std::filesystem::path& out) {
 	JsonSerializer backend(out);
 
-	backend.Write("name", scene.GetName());
+	backend.write("name", scene.get_name());
 
-	backend.BeginArray("entities");
+	backend.begin_array("entities");
 
-	for (RID e : scene.GetEntities()) {
-		backend.BeginArrayElement();
+	for (RID e : scene.get_entities()) {
+		backend.begin_array_element();
 
-		backend.Write("rid", e.ToString());
+		backend.write("rid", e.to_string());
 
-		scene.m_NativeComponentManager.SerializeEntity(e, backend);
+		scene.m_native_component_manager.serialize_entity(e, backend);
 
-		backend.EndArrayElement();
+		backend.end_array_element();
 	}
 
-	backend.EndArray();
+	backend.end_array();
 
-	backend.SaveToFile();
+	backend.save_to_file();
 }
 
-Scope<Scene> DeserializeFromFile(const std::filesystem::path& path) {
+Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 	JsonSerializer backend(path);
-	backend.LoadFile();
+	backend.load_file();
 
-	std::string sceneName = "Unnamed Scene";
-	backend.TryRead("name", sceneName);
+	std::string scene_name = "Unnamed Scene";
+	backend.try_read("name", scene_name);
 
-	auto scene = std::make_unique<Scene>(sceneName);
+	auto scene = std::make_unique<Scene>(scene_name);
 
-	backend.BeginArray("entities");
+	backend.begin_array("entities");
 
-	int entityIndex = 0;
+	int entity_index = 0;
 
-	while (backend.TryBeginArrayElementRead()) {
-		std::string ridStr;
-		if (!backend.TryRead("rid", ridStr)) {
-			ORG_WARN("[Scene] Entity {} has no rid", entityIndex);
-			backend.EndArrayElement();
-			++entityIndex;
+	while (backend.try_begin_array_element_read()) {
+		std::string rid_str;
+		if (!backend.try_read("rid", rid_str)) {
+			ORG_WARN("[Scene] Entity {} has no rid", entity_index);
+			backend.end_array_element();
+			++entity_index;
 			continue;
 		}
 
-		RID entity = scene->CreateEntity(ridStr);
+		RID entity = scene->create_entity(rid_str);
 
-		backend.BeginArray("native_components");
+		backend.begin_array("native_components");
 
-		int compIndex = 0;
+		int comp_index = 0;
 
-		while (backend.TryBeginArrayElementRead()) {
+		while (backend.try_begin_array_element_read()) {
 
-			std::string typeName;
-			if (!backend.TryRead("type", typeName)) {
-				ORG_WARN("[Scene]  Component {} has no type", compIndex);
-				backend.EndArrayElement();
-				++compIndex;
+			std::string type_name;
+			if (!backend.try_read("type", type_name)) {
+				ORG_WARN("[Scene]  Component {} has no type", comp_index);
+				backend.end_array_element();
+				++comp_index;
 				continue;
 			}
 
-			const auto* info = NativeComponentRegistry::GetByName(typeName);
+			const auto* info = NativeComponentRegistry::get_by_name(type_name);
 			if (!info) {
-				ORG_WARN("[Scene]  Unknown component '{}'", typeName);
-				backend.EndArrayElement();
-				++compIndex;
+				ORG_WARN("[Scene]  Unknown component '{}'", type_name);
+				backend.end_array_element();
+				++comp_index;
 				continue;
 			}
 
-			info->Add(scene->m_NativeComponentManager, entity);
+			info->Add(scene->m_native_component_manager, entity);
 
-			void* component = info->Get(scene->m_NativeComponentManager, entity);
+			void* component = info->Get(scene->m_native_component_manager, entity);
 
-			backend.BeginObject("data");
+			backend.begin_object("data");
 
-			info->Serializer->Deserialize(static_cast<Component*>(component), backend);
+			info->Serializer->deserialize(static_cast<Component*>(component), backend);
 
-			backend.EndObject();
+			backend.end_object();
 
-			backend.EndArrayElement();
+			backend.end_array_element();
 
-			++compIndex;
+			++comp_index;
 		}
 
-		backend.EndArray();
-		backend.EndArrayElement();
+		backend.end_array();
+		backend.end_array_element();
 
-		++entityIndex;
+		++entity_index;
 	}
 
-	backend.EndArray();
+	backend.end_array();
 
 	return scene;
 }

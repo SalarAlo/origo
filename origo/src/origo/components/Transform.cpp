@@ -15,93 +15,93 @@
 namespace Origo {
 
 TransformComponent::TransformComponent()
-    : m_Position(0.0f)
-    , m_Rotation(0.0f)
-    , m_Scale(1.0f)
-    , m_Dirty(true) { }
+    : m_position(0.0f)
+    , m_rotation(0.0f)
+    , m_scale(1.0f)
+    , m_dirty(true) { }
 
-void TransformComponent::Translate(const Vec3& delta) {
-	m_Position += delta;
-	m_Dirty = true;
+void TransformComponent::translate(const Vec3& delta) {
+	m_position += delta;
+	m_dirty = true;
 }
 
-void TransformComponent::SetPosition(const Vec3& position) {
-	m_Position = position;
-	m_Dirty = true;
+void TransformComponent::set_position(const Vec3& position) {
+	m_position = position;
+	m_dirty = true;
 }
 
-void TransformComponent::Scale(const Vec3& factor) {
-	m_Scale *= factor;
-	m_Dirty = true;
+void TransformComponent::scale(const Vec3& factor) {
+	m_scale *= factor;
+	m_dirty = true;
 }
 
-void TransformComponent::SetScale(const Vec3& scale) {
-	m_Scale = scale;
-	m_Dirty = true;
+void TransformComponent::set_scale(const Vec3& scale) {
+	m_scale = scale;
+	m_dirty = true;
 }
 
-void TransformComponent::Rotate(const Vec3& eulerDegrees) {
-	m_Rotation += eulerDegrees;
-	m_Dirty = true;
+void TransformComponent::rotate(const Vec3& eulerDegrees) {
+	m_rotation += eulerDegrees;
+	m_dirty = true;
 }
 
-void TransformComponent::SetRotation(const Vec3& eulerDegrees) {
-	m_Rotation = eulerDegrees;
-	m_Dirty = true;
+void TransformComponent::set_rotation(const Vec3& eulerDegrees) {
+	m_rotation = eulerDegrees;
+	m_dirty = true;
 }
 
-const Vec3& TransformComponent::GetPosition() const { return m_Position; }
-const Vec3& TransformComponent::GetRotation() const { return m_Rotation; }
-const Vec3& TransformComponent::GetScale() const { return m_Scale; }
+const Vec3& TransformComponent::get_position() const { return m_position; }
+const Vec3& TransformComponent::get_rotation() const { return m_rotation; }
+const Vec3& TransformComponent::get_scale() const { return m_scale; }
 
-void TransformComponent::SetFromMatrix(const glm::mat4& m) {
-	m_Position = Vec3(m[3]);
+void TransformComponent::set_from_matrix(const glm::mat4& m) {
+	m_position = Vec3(m[3]);
 
 	Vec3 col0 = Vec3(m[0]);
 	Vec3 col1 = Vec3(m[1]);
 	Vec3 col2 = Vec3(m[2]);
 
-	m_Scale.x = glm::length(col0);
-	m_Scale.y = glm::length(col1);
-	m_Scale.z = glm::length(col2);
+	m_scale.x = glm::length(col0);
+	m_scale.y = glm::length(col1);
+	m_scale.z = glm::length(col2);
 
-	if (m_Scale.x != 0.0f)
-		col0 /= m_Scale.x;
-	if (m_Scale.y != 0.0f)
-		col1 /= m_Scale.y;
-	if (m_Scale.z != 0.0f)
-		col2 /= m_Scale.z;
+	if (m_scale.x != 0.0f)
+		col0 /= m_scale.x;
+	if (m_scale.y != 0.0f)
+		col1 /= m_scale.y;
+	if (m_scale.z != 0.0f)
+		col2 /= m_scale.z;
 
-	glm::mat3 rotMat(col0, col1, col2);
-	glm::quat q = glm::quat_cast(rotMat);
+	glm::mat3 rot_mat(col0, col1, col2);
+	glm::quat q = glm::quat_cast(rot_mat);
 
-	m_Rotation = glm::degrees(glm::eulerAngles(q));
+	m_rotation = glm::degrees(glm::eulerAngles(q));
 
-	m_ModelMatrix = m;
-	m_Dirty = false;
+	m_model_matrix = m;
+	m_dirty = false;
 }
 
-const glm::mat4& TransformComponent::GetModelMatrix() {
-	if (m_Dirty)
-		RecalculateModel();
+const glm::mat4& TransformComponent::get_model_matrix() {
+	if (m_dirty)
+		recalculate_model();
 
-	return m_ModelMatrix;
+	return m_model_matrix;
 }
 
-void TransformComponent::RecalculateModel() {
-	glm::mat4 translation = glm::translate(glm::mat4(1.0f), m_Position);
+void TransformComponent::recalculate_model() {
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), m_position);
 
-	glm::quat q = glm::quat(glm::radians(m_Rotation));
+	glm::quat q = glm::quat(glm::radians(m_rotation));
 	glm::mat4 rotation = glm::toMat4(q);
 
-	glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_Scale);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_scale);
 
-	m_ModelMatrix = translation * rotation * scale;
-	m_Dirty = false;
+	m_model_matrix = translation * rotation * scale;
+	m_dirty = false;
 }
 
-void TransformComponent::LookAt(const Vec3& target, const Vec3&) {
-	Vec3 dir = target - m_Position;
+void TransformComponent::look_at(const Vec3& target, const Vec3&) {
+	Vec3 dir = target - m_position;
 	float len = glm::length(dir);
 	if (len < 0.0001f)
 		return;
@@ -111,25 +111,25 @@ void TransformComponent::LookAt(const Vec3& target, const Vec3&) {
 	float yaw = std::atan2(dir.x, -dir.z);
 	float pitch = std::asin(dir.y);
 
-	m_Rotation.x = glm::degrees(pitch);
-	m_Rotation.y = glm::degrees(yaw);
-	m_Rotation.z = 0.0f;
+	m_rotation.x = glm::degrees(pitch);
+	m_rotation.y = glm::degrees(yaw);
+	m_rotation.z = 0.0f;
 
-	m_Dirty = true;
+	m_dirty = true;
 }
 
-Vec3 TransformComponent::GetForward() const {
-	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
+Vec3 TransformComponent::get_forward() const {
+	const glm::mat4& m = const_cast<TransformComponent*>(this)->get_model_matrix();
 	return -glm::normalize(Vec3(m[2]));
 }
 
-Vec3 TransformComponent::GetRight() const {
-	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
+Vec3 TransformComponent::get_right() const {
+	const glm::mat4& m = const_cast<TransformComponent*>(this)->get_model_matrix();
 	return glm::normalize(Vec3(m[0]));
 }
 
-Vec3 TransformComponent::GetUp() const {
-	const glm::mat4& m = const_cast<TransformComponent*>(this)->GetModelMatrix();
+Vec3 TransformComponent::get_up() const {
+	const glm::mat4& m = const_cast<TransformComponent*>(this)->get_model_matrix();
 	return glm::normalize(Vec3(m[1]));
 }
 

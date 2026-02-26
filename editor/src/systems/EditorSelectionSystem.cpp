@@ -1,16 +1,17 @@
 #include "systems/EditorSelectionSystem.h"
+
 #include "components/EditorOutline.h"
 
 namespace OrigoEditor::EditorSelectionSystem {
 
-void Apply(EditorContext& ctx) {
-	for (auto entity : ctx.ActiveScene->GetEntities()) {
-		auto outline = ctx.ActiveScene->GetNativeComponent<EditorOutlineComponent>(entity);
+void apply(EditorContext& ctx) {
+	for (auto entity : ctx.ActiveScene->get_entities()) {
+		auto outline = ctx.ActiveScene->get_native_component<EditorOutlineComponent>(entity);
 
 		if (!outline)
 			continue;
 
-		outline->ShouldOutline = ctx.GetSelectedEntity() && ctx.GetSelectedEntity() == entity;
+		outline->ShouldOutline = ctx.get_selected_entity() && ctx.get_selected_entity() == entity;
 	}
 }
 

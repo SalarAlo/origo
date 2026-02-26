@@ -9,20 +9,20 @@ namespace OrigoEditor {
 class EntityInspectorPanel : public EditorPanel {
 public:
 	EntityInspectorPanel(EditorContext& ctx)
-	    : m_Context(ctx) { InspectorComponentRenderer::Init(&ctx); }
+	    : m_context(ctx) { InspectorComponentRenderer::init(&ctx); }
 
-	const char* GetName() const override { return "Entity Inspector"; }
-	void OnImGuiRender() override;
-
-private:
-	void DrawEntityName();
-	void DrawNativeComponents(Origo::Scene* scene, Origo::RID selectedEntity);
-	void DrawScriptComponents(Origo::Scene* scene, Origo::RID selectedEntity);
-	void DrawAddComponent(Origo::Scene* scene, Origo::RID selectedEntity);
-	void DrawScriptDropTarget(Origo::Scene* scene, Origo::RID selectedEntity);
+	const char* get_name() const override { return "Entity Inspector"; }
+	void on_im_gui_render() override;
 
 private:
-	EditorContext& m_Context;
+	void draw_entity_name();
+	void draw_native_components(Origo::Scene* scene, Origo::RID selectedEntity);
+	void draw_script_components(Origo::Scene* scene, Origo::RID selectedEntity);
+	void draw_add_component(Origo::Scene* scene, Origo::RID selectedEntity);
+	void draw_script_drop_target(Origo::Scene* scene, Origo::RID selectedEntity);
+
+private:
+	EditorContext& m_context;
 };
 
 }

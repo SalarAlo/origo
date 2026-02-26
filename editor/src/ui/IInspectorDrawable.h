@@ -5,8 +5,8 @@ namespace OrigoEditor {
 class IInspectorDrawable {
 public:
 	virtual ~IInspectorDrawable() = default;
-	virtual const char* GetName() const = 0;
-	virtual void Draw(void* componentPtr) = 0;
+	virtual const char* get_name() const = 0;
+	virtual void draw(void* componentPtr) = 0;
 };
 
 };

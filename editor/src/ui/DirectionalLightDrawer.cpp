@@ -7,13 +7,13 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::DirectionalLightComponent>("DirectionalLight", "icons/Light.svg", [](Origo::DirectionalLightComponent& light) {
-		auto& am { Origo::AssetManager::GetInstance() };
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::DirectionalLightComponent>("DirectionalLight", "icons/Light.svg", [](Origo::DirectionalLightComponent& light) {
+		auto& am { Origo::AssetManager::get_instance() };
 
-		ComponentUI::DrawFloatControl("Ambient", light.AmbientFactor);
-		ComponentUI::DrawFloatControl("Intensity", light.Intensity);
-		ComponentUI::DrawColorControl("Color", light.LightColor);
+		ComponentUI::draw_float_control("Ambient", light.AmbientFactor);
+		ComponentUI::draw_float_control("Intensity", light.Intensity);
+		ComponentUI::draw_color_control("Color", light.LightColor);
 	});
 
 	return true;

@@ -7,10 +7,10 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::CameraComponent>("Camera", "./icons/Camera.svg", [](Origo::CameraComponent& cam) {
-		ComponentUI::DrawFloatControl("FOV", cam.CameraObj.FOV);
-		ComponentUI::DrawBoolControl("Is Primary", cam.IsPrimary);
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::CameraComponent>("Camera", "./icons/Camera.svg", [](Origo::CameraComponent& cam) {
+		ComponentUI::draw_float_control("FOV", cam.CameraObj.FOV);
+		ComponentUI::draw_bool_control("Is Primary", cam.IsPrimary);
 	});
 
 	return true;

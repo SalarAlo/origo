@@ -12,10 +12,10 @@ public:
 	VertexArray(VertexArray&&) = delete;
 	VertexArray& operator=(VertexArray&&) = delete;
 
-	void Bind() const;
-	void Unbind() const;
+	void bind() const;
+	void unbind() const;
 
 private:
-	GLuint m_BufferId {};
+	GLuint m_buffer_id {};
 };
 }

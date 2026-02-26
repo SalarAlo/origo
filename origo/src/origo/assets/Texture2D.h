@@ -15,30 +15,30 @@ class Texture2D : public Asset {
 public:
 	Texture2D(TextureType type = TextureType::Albedo);
 
-	void SetSource(Scope<TextureSource> src);
-	TextureSource* GetSource() const { return m_Source.get(); }
+	void set_source(Scope<TextureSource> src);
+	TextureSource* get_source() const { return m_source.get(); }
 
-	void Bind(AssetHandle shaderId) const;
+	void bind(AssetHandle shaderId) const;
 
-	AssetType GetAssetType() const override { return AssetType::Texture2D; }
-	static AssetType GetClassAssetType() { return AssetType::Texture2D; }
+	AssetType get_asset_type() const override { return AssetType::Texture2D; }
+	static AssetType get_class_asset_type() { return AssetType::Texture2D; }
 
-	TextureType GetTextureType() const { return m_TextureType; }
-	void SetTextureType(TextureType type) { m_TextureType = type; }
-	GLuint GetRendererID() { return m_TextureId; }
+	TextureType get_texture_type() const { return m_texture_type; }
+	void set_texture_type(TextureType type) { m_texture_type = type; }
+	GLuint get_renderer_id() { return m_texture_id; }
 
-	void Resolve() override;
+	void resolve() override;
 
-	void Load();
-
-private:
-	void InitTexture(const TextureInitialisationData& data);
+	void load();
 
 private:
-	Scope<TextureSource> m_Source;
+	void init_texture(const TextureInitialisationData& data);
 
-	GLuint m_TextureId = 0;
-	bool m_Loaded { false };
-	TextureType m_TextureType;
+private:
+	Scope<TextureSource> m_source;
+
+	GLuint m_texture_id = 0;
+	bool m_loaded { false };
+	TextureType m_texture_type;
 };
 }

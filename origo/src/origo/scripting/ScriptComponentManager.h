@@ -12,17 +12,17 @@ class ScriptComponentManager {
 public:
 	ScriptComponentManager();
 
-	void Add(RID entity, ScriptComponentID type);
+	void add(RID entity, ScriptComponentID type);
 
-	ScriptComponentInstance* Get(RID entity, ScriptComponentID type);
-	const ScriptComponentInstance* Get(RID entity, ScriptComponentID type) const;
-	bool Has(RID entity, ScriptComponentID type) const;
-	void Remove(RID entity, ScriptComponentID type);
-	bool RemoveIfExists(RID entity, ScriptComponentID type);
-	void MigrateComponent(RID entity, ScriptComponentID);
+	ScriptComponentInstance* get(RID entity, ScriptComponentID type);
+	const ScriptComponentInstance* get(RID entity, ScriptComponentID type) const;
+	bool has(RID entity, ScriptComponentID type) const;
+	void remove(RID entity, ScriptComponentID type);
+	bool remove_if_exists(RID entity, ScriptComponentID type);
+	void migrate_component(RID entity, ScriptComponentID);
 
 private:
-	std::unordered_map<RID, std::vector<ScriptComponentInstance>> m_Data {};
+	std::unordered_map<RID, std::vector<ScriptComponentInstance>> m_data {};
 };
 
 }

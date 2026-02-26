@@ -1,4 +1,5 @@
 #include "origo/events/WindowEvent.h"
+
 #include "origo/events/EventTypes.h"
 
 namespace Origo {
@@ -6,17 +7,17 @@ namespace Origo {
 #pragma region WINDOW_FOCUS_CHANGE
 
 WindowFocusChangeEvent::WindowFocusChangeEvent(bool focusWon)
-    : m_FocusWon(focusWon) {
+    : m_focus_won(focusWon) {
 }
-EventType WindowFocusChangeEvent::GetEventType() const {
-	return GetStaticType();
-}
-
-bool WindowFocusChangeEvent::IsFocusWon() const {
-	return m_FocusWon;
+EventType WindowFocusChangeEvent::get_event_type() const {
+	return get_static_type();
 }
 
-EventType WindowFocusChangeEvent::GetStaticType() {
+bool WindowFocusChangeEvent::is_focus_won() const {
+	return m_focus_won;
+}
+
+EventType WindowFocusChangeEvent::get_static_type() {
 	return EventType::WindowFocusChange;
 }
 
@@ -25,17 +26,17 @@ EventType WindowFocusChangeEvent::GetStaticType() {
 #pragma region WINDOW_RESIZE
 
 WindowResizeEvent::WindowResizeEvent(Vec2 size)
-    : m_Size(size) { };
+    : m_size(size) { };
 
-EventType WindowResizeEvent::GetEventType() const {
-	return GetStaticType();
+EventType WindowResizeEvent::get_event_type() const {
+	return get_static_type();
 }
 
-Vec2 WindowResizeEvent::GetSize() const {
-	return m_Size;
+Vec2 WindowResizeEvent::get_size() const {
+	return m_size;
 }
 
-EventType WindowResizeEvent::GetStaticType() {
+EventType WindowResizeEvent::get_static_type() {
 	return EventType::WindowResize;
 }
 #pragma endregion

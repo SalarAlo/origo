@@ -11,7 +11,7 @@ using namespace Origo;
 
 namespace OrigoEditor {
 
-static void ViewModeToggle(EditorViewMode& mode) {
+static void view_mode_toggle(EditorViewMode& mode) {
 	ImDrawList* draw = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 
@@ -29,9 +29,9 @@ static void ViewModeToggle(EditorViewMode& mode) {
 	for (int i = 0; i < 2; i++)
 		widths[i] = ImGui::CalcTextSize(labels[i]).x + 20.0f;
 
-	float totalWidth = widths[0] + widths[1] + padding * 2;
+	float total_width = widths[0] + widths[1] + padding * 2;
 
-	ImVec2 size(totalWidth, height);
+	ImVec2 size(total_width, height);
 	ImGui::InvisibleButton("##viewmode", size);
 
 	draw->AddRectFilled(
@@ -45,29 +45,29 @@ static void ViewModeToggle(EditorViewMode& mode) {
 	for (int i = 0; i < 2; i++) {
 		bool active = (mode == modes[i]);
 
-		ImVec2 segMin(x, pos.y + padding);
-		ImVec2 segMax(x + widths[i], pos.y + height - padding);
+		ImVec2 seg_min(x, pos.y + padding);
+		ImVec2 seg_max(x + widths[i], pos.y + height - padding);
 
 		if (active) {
 			draw->AddRectFilled(
-			    segMin,
-			    segMax,
+			    seg_min,
+			    seg_max,
 			    IM_COL32(90, 90, 90, 255),
 			    radius);
 		}
 
-		ImVec2 textSize = ImGui::CalcTextSize(labels[i]);
-		ImVec2 textPos(
-		    segMin.x + (widths[i] - textSize.x) * 0.5f,
-		    pos.y + (height - textSize.y) * 0.5f);
+		ImVec2 text_size = ImGui::CalcTextSize(labels[i]);
+		ImVec2 text_pos(
+		    seg_min.x + (widths[i] - text_size.x) * 0.5f,
+		    pos.y + (height - text_size.y) * 0.5f);
 
 		draw->AddText(
-		    textPos,
+		    text_pos,
 		    active ? IM_COL32(255, 255, 255, 255)
 		           : IM_COL32(160, 160, 160, 255),
 		    labels[i]);
 
-		if (ImGui::IsMouseHoveringRect(segMin, segMax) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+		if (ImGui::IsMouseHoveringRect(seg_min, seg_max) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			mode = modes[i];
 		}
 
@@ -75,31 +75,31 @@ static void ViewModeToggle(EditorViewMode& mode) {
 	}
 }
 
-static ImTextureID ToImTextureID(const Ref<Texture2D>& tex) {
-	return (ImTextureID)(intptr_t)tex->GetRendererID();
+static ImTextureID to_im_texture_id(const Ref<Texture2D>& tex) {
+	return (ImTextureID)(intptr_t)tex->get_renderer_id();
 }
 
-static Ref<Texture2D> LoadSVGTexture(const std::string& path, int size = 18) {
+static Ref<Texture2D> load_svg_texture(const std::string& path, int size = 18) {
 	auto texture = MakeRef<Texture2D>(TextureType::UI);
-	texture->SetSource(MakeScope<TextureSourceSVG>(path, size, size));
-	texture->Load();
+	texture->set_source(MakeScope<TextureSourceSVG>(path, size, size));
+	texture->load();
 
 	return texture;
 }
 
-void SceneViewport::OnImGuiRender() {
+void SceneViewport::on_im_gui_render() {
 	constexpr float sensitivity = 0.3f;
-	constexpr float maxDelta = 50.0f;
-	constexpr float smoothAlpha = 0.2f;
+	constexpr float max_delta = 50.0f;
+	constexpr float smooth_alpha = 0.2f;
 
-	if (!m_IconsLoaded) {
-		m_MoveIcon = LoadSVGTexture("icons/ToolMove.svg", 18);
-		m_RotateIcon = LoadSVGTexture("icons/ToolRotate.svg", 18);
-		m_ScaleIcon = LoadSVGTexture("icons/ToolScale.svg", 18);
-		m_IconsLoaded = true;
+	if (!m_icons_loaded) {
+		m_move_icon = load_svg_texture("icons/ToolMove.svg", 18);
+		m_rotate_icon = load_svg_texture("icons/ToolRotate.svg", 18);
+		m_scale_icon = load_svg_texture("icons/ToolScale.svg", 18);
+		m_icons_loaded = true;
 	}
 
-	auto& activeScene { m_Context.ActiveScene };
+	auto& active_scene { m_context.ActiveScene };
 	ImGuizmo::BeginFrame();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -111,71 +111,71 @@ void SceneViewport::OnImGuiRender() {
 		return;
 	}
 
-	static int lastW = 0, lastH = 0;
+	static int last_w = 0, last_h = 0;
 	bool resized = false;
 
-	if (w != lastW || h != lastH) {
-		m_Context.RenderBuffer.Resize(w, h);
-		m_Context.ResolveBuffer.Resize(w, h);
-		lastW = w;
-		lastH = h;
+	if (w != last_w || h != last_h) {
+		m_context.RenderBuffer.resize(w, h);
+		m_context.ResolveBuffer.resize(w, h);
+		last_w = w;
+		last_h = h;
 		resized = true;
 	}
 
 	ImGui::Image(
-	    (ImTextureID)(uintptr_t)m_Context.ResolveBuffer.GetColorAttachment(0),
+	    (ImTextureID)(uintptr_t)m_context.ResolveBuffer.get_color_attachment(0),
 	    size,
 	    ImVec2(0, 1),
 	    ImVec2(1, 0));
 
-	ImVec2 viewportMin = ImGui::GetItemRectMin();
-	ImVec2 viewportMax = ImGui::GetItemRectMax();
-	ImVec2 viewportSize = {
-		viewportMax.x - viewportMin.x,
-		viewportMax.y - viewportMin.y
+	ImVec2 viewport_min = ImGui::GetItemRectMin();
+	ImVec2 viewport_max = ImGui::GetItemRectMax();
+	ImVec2 viewport_size = {
+		viewport_max.x - viewport_min.x,
+		viewport_max.y - viewport_min.y
 	};
 
-	ImGui::SetCursorScreenPos({ viewportMin.x + 8.0f, viewportMin.y + 8.0f });
+	ImGui::SetCursorScreenPos({ viewport_min.x + 8.0f, viewport_min.y + 8.0f });
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 	ImGui::BeginGroup();
 
-	const ImVec4 inactiveTint(0.85f, 0.85f, 0.85f, 1.0f);
-	const ImVec4 activeTint(0.30f, 0.60f, 1.00f, 1.0f);
+	const ImVec4 inactive_tint(0.85f, 0.85f, 0.85f, 1.0f);
+	const ImVec4 active_tint(0.30f, 0.60f, 1.00f, 1.0f);
 
-	auto drawToolButton = [&](const char* id,
-	                          const Ref<Texture2D>& icon,
-	                          ImGuizmo::OPERATION op) {
-		ImVec4 tint = (m_GizmoOperation == op) ? activeTint : inactiveTint;
+	auto draw_tool_button = [&](const char* id,
+	                            const Ref<Texture2D>& icon,
+	                            ImGuizmo::OPERATION op) {
+		ImVec4 tint = (m_gizmo_operation == op) ? active_tint : inactive_tint;
 
 		if (ImGui::ImageButton(
 		        id,
-		        ToImTextureID(icon),
+		        to_im_texture_id(icon),
 		        ImVec2(18, 18),
 		        ImVec2(0, 1),
 		        ImVec2(1, 0),
 		        ImVec4(0, 0, 0, 0),
 		        tint)) {
-			m_GizmoOperation = op;
+			m_gizmo_operation = op;
 		}
 	};
 
-	const bool editingView = (m_Context.ViewMode == EditorViewMode::Editor);
+	const bool editing_view = (m_context.ViewMode == EditorViewMode::Editor);
 
-	if (editingView) {
-		drawToolButton("##Move", m_MoveIcon, ImGuizmo::TRANSLATE);
+	if (editing_view) {
+		draw_tool_button("##Move", m_move_icon, ImGuizmo::TRANSLATE);
 		ImGui::SameLine();
-		drawToolButton("##Rotate", m_RotateIcon, ImGuizmo::ROTATE);
+		draw_tool_button("##Rotate", m_rotate_icon, ImGuizmo::ROTATE);
 		ImGui::SameLine();
-		drawToolButton("##Scale", m_ScaleIcon, ImGuizmo::SCALE);
+		draw_tool_button("##Scale", m_scale_icon, ImGuizmo::SCALE);
 
 		ImGui::SameLine();
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 		ImGui::SameLine();
 
-		if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? "Local" : "World")) {
-			m_GizmoMode = (m_GizmoMode == ImGuizmo::LOCAL)
+		if (ImGui::Button(m_gizmo_mode == ImGuizmo::LOCAL ? "Local" : "World")) {
+			m_gizmo_mode = (m_gizmo_mode == ImGuizmo::LOCAL)
 			    ? ImGuizmo::WORLD
 			    : ImGuizmo::LOCAL;
 		}
@@ -185,45 +185,45 @@ void SceneViewport::OnImGuiRender() {
 		ImGui::SameLine();
 	}
 
-	ViewModeToggle(m_Context.ViewMode);
+	view_mode_toggle(m_context.ViewMode);
 
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (editingView && m_Context.GetSelectedEntity().has_value()) {
-		auto entity = *m_Context.GetSelectedEntity();
-		auto transform = activeScene->GetNativeComponent<TransformComponent>(entity);
+	if (editing_view && m_context.get_selected_entity().has_value()) {
+		auto entity = *m_context.get_selected_entity();
+		auto transform = active_scene->get_native_component<TransformComponent>(entity);
 
-		glm::mat4 model = transform->GetModelMatrix();
-		auto renderView = m_Context.ViewportController.GetAndUpdateActiveRenderView();
-		glm::mat4 view = renderView.View;
-		glm::mat4 proj = renderView.Projection;
+		glm::mat4 model = transform->get_model_matrix();
+		auto render_view = m_context.ViewportController.get_and_update_active_render_view();
+		glm::mat4 view = render_view.View;
+		glm::mat4 proj = render_view.Projection;
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(
-		    viewportMin.x,
-		    viewportMin.y,
-		    viewportSize.x,
-		    viewportSize.y);
+		    viewport_min.x,
+		    viewport_min.y,
+		    viewport_size.x,
+		    viewport_size.y);
 
 		ImGuizmo::Manipulate(
 		    glm::value_ptr(view),
 		    glm::value_ptr(proj),
-		    m_GizmoOperation,
-		    m_GizmoMode,
+		    m_gizmo_operation,
+		    m_gizmo_mode,
 		    glm::value_ptr(model));
 
 		if (ImGuizmo::IsUsing())
-			transform->SetFromMatrix(model);
+			transform->set_from_matrix(model);
 	}
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouse = ImGui::GetMousePos();
 
-	bool hovered = mouse.x >= viewportMin.x && mouse.y >= viewportMin.y && mouse.x <= viewportMax.x && mouse.y <= viewportMax.y;
+	bool hovered = mouse.x >= viewport_min.x && mouse.y >= viewport_min.y && mouse.x <= viewport_max.x && mouse.y <= viewport_max.y;
 
 	static bool dragging = false;
-	static ImVec2 smoothDelta { 0.0f, 0.0f };
+	static ImVec2 smooth_delta { 0.0f, 0.0f };
 
 	if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 		dragging = true;
@@ -237,19 +237,19 @@ void SceneViewport::OnImGuiRender() {
 	if (dragging && !resized && !ImGuizmo::IsUsing()) {
 		ImVec2 delta = io.MouseDelta;
 
-		delta.x = std::clamp(delta.x, -maxDelta, maxDelta);
-		delta.y = std::clamp(delta.y, -maxDelta, maxDelta);
+		delta.x = std::clamp(delta.x, -max_delta, max_delta);
+		delta.y = std::clamp(delta.y, -max_delta, max_delta);
 
-		smoothDelta.x = smoothDelta.x * (1.0f - smoothAlpha) + delta.x * smoothAlpha;
-		smoothDelta.y = smoothDelta.y * (1.0f - smoothAlpha) + delta.y * smoothAlpha;
+		smooth_delta.x = smooth_delta.x * (1.0f - smooth_alpha) + delta.x * smooth_alpha;
+		smooth_delta.y = smooth_delta.y * (1.0f - smooth_alpha) + delta.y * smooth_alpha;
 
-		glm::vec2 smoothDeltaGlm {
-			(smoothDelta * sensitivity).x,
-			(smoothDelta * sensitivity).y
+		glm::vec2 smooth_delta_glm {
+			(smooth_delta * sensitivity).x,
+			(smooth_delta * sensitivity).y
 		};
 
-		if (m_Context.ViewMode == EditorViewMode::Editor)
-			m_Camera.OnMouseDelta(smoothDeltaGlm);
+		if (m_context.ViewMode == EditorViewMode::Editor)
+			m_camera.on_mouse_delta(smooth_delta_glm);
 	}
 }
 }

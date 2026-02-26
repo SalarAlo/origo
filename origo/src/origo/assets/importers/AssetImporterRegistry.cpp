@@ -10,19 +10,19 @@
 
 namespace Origo {
 void AssetImporterRegistry::Register(Scope<IAssetImporter> importer) {
-	m_Importers.emplace_back(std::move(importer));
+	m_importers.emplace_back(std::move(importer));
 }
 
-IAssetImporter* AssetImporterRegistry::GetImporter(const std::filesystem::path& file) {
-	for (const auto& importer : m_Importers) {
-		if (importer->CanImport(file))
+IAssetImporter* AssetImporterRegistry::get_importer(const std::filesystem::path& file) {
+	for (const auto& importer : m_importers) {
+		if (importer->can_import(file))
 			return importer.get();
 	}
 
 	return nullptr;
 }
 
-void AssetImporterRegistry::InitialiseDefaultImporters() {
+void AssetImporterRegistry::initialise_default_importers() {
 	ORG_CORE_TRACE("Registering all default asset importers");
 	Register(MakeScope<TextureImporter>());
 	Register(MakeScope<ShaderImporter>());

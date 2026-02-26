@@ -4,31 +4,31 @@
 namespace Origo {
 
 CubemapTexture::CubemapTexture(CubemapDescription description)
-    : m_Description(description) {
+    : m_description(description) {
 }
 
-void CubemapTexture::Load() {
-	GLCall(glGenTextures(1, &m_TextureID));
-	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID));
+void CubemapTexture::load() {
+	GLCall(glGenTextures(1, &m_texture_id));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture_id));
 
-	const auto& textures = m_Description.GetPaths();
+	const auto& textures = m_description.get_paths();
 
 	for (size_t i = 0; i < 6; i++) {
 		TextureSourceFile source(textures[i].c_str(), false);
-		auto initData = source.GetInitialisationData();
+		auto init_data = source.get_initialisation_data();
 
-		GLenum format = (initData.Channels == 4 ? GL_RGBA : GL_RGB);
+		GLenum format = (init_data.Channels == 4 ? GL_RGBA : GL_RGB);
 
 		GLCall(glTexImage2D(
 		    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 		    0,
 		    format,
-		    initData.Width,
-		    initData.Height,
+		    init_data.Width,
+		    init_data.Height,
 		    0,
 		    format,
 		    GL_UNSIGNED_BYTE,
-		    initData.PixelData.data()));
+		    init_data.PixelData.data()));
 	}
 
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
@@ -39,9 +39,9 @@ void CubemapTexture::Load() {
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 }
 
-void CubemapTexture::Bind(uint32_t slot) const {
+void CubemapTexture::bind(uint32_t slot) const {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture_id));
 }
 
 }

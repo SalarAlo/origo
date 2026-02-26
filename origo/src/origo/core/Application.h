@@ -15,27 +15,27 @@ struct ApplicationSettings {
 class Application {
 public:
 	Application(const ApplicationSettings& settings = {});
-	virtual void Run();
+	virtual void run();
 
-	virtual void OnAwake() { }
-	virtual void OnEndFrame(float dt) { };
-	virtual void OnShutdown() { }
-	void OnEvent(Event& event);
+	virtual void on_awake() { }
+	virtual void on_end_frame(float dt) { };
+	virtual void on_shutdown() { }
+	void on_event(Event& event);
 
-	void PushLayer(Layer*, size_t, bool frozen = false);
-	void PopLayer(size_t);
+	void push_layer(Layer*, size_t, bool frozen = false);
+	void pop_layer(size_t);
 
 private:
-	void InternalAwake();
-	void InternalUpdate(double dt);
-	void InternalShutdown();
+	void internal_awake();
+	void internal_update(double dt);
+	void internal_shutdown();
 
 protected:
-	ScreenWindow m_Window;
-	ApplicationSettings m_Settings {};
-	LayerSystem m_LayerSystem {};
+	ScreenWindow m_window;
+	ApplicationSettings m_settings {};
+	LayerSystem m_layer_system {};
 
-	bool m_Running {};
-	Time::TimePoint m_LastTimeStamp {};
+	bool m_running {};
+	Time::TimePoint m_last_time_stamp {};
 };
 }

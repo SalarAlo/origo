@@ -10,15 +10,15 @@ namespace OrigoEditor {
 class RenderLayer : public Origo::Layer {
 public:
 	RenderLayer(EditorContext& ctx, Origo::RenderContext& rCtx)
-	    : m_Context(ctx)
-	    , m_RenderContext(rCtx) { };
+	    : m_context(ctx)
+	    , m_render_context(rCtx) { };
 
-	void OnAttach() override;
-	void OnUpdate(double dt) override;
+	void on_attach() override;
+	void on_update(double dt) override;
 
 private:
-	EditorContext& m_Context;
-	Origo::RenderContext& m_RenderContext;
+	EditorContext& m_context;
+	Origo::RenderContext& m_render_context;
 };
 
 }

@@ -1,9 +1,10 @@
 #include "origo/events/KeyEvent.h"
+
 #include "origo/events/EventTypes.h"
 
 namespace Origo {
 #pragma region KEY_MAP
-KeyboardKey GlfwKeyToKeyboardKey(int glfwKey) {
+KeyboardKey glfw_key_to_keyboard_key(int glfwKey) {
 	using namespace Origo;
 	using enum KeyboardKey;
 	switch (glfwKey) {
@@ -121,7 +122,7 @@ KeyboardKey GlfwKeyToKeyboardKey(int glfwKey) {
 	}
 }
 
-int KeyboardKeyToGlfwKey(Origo::KeyboardKey key) {
+int keyboard_key_to_glfw_key(Origo::KeyboardKey key) {
 	using namespace Origo;
 	using enum KeyboardKey;
 
@@ -244,24 +245,24 @@ int KeyboardKeyToGlfwKey(Origo::KeyboardKey key) {
 #pragma region KEY_PRESS_EVENT
 
 KeyPressEvent::KeyPressEvent(int glfwKey, KeyPressType keyPressType)
-    : m_KeyPressed(GlfwKeyToKeyboardKey(glfwKey))
-    , m_KeyPressType(keyPressType) {
+    : m_key_pressed(glfw_key_to_keyboard_key(glfwKey))
+    , m_key_press_type(keyPressType) {
 }
 
-KeyboardKey KeyPressEvent::GetKeyPressed() const {
-	return m_KeyPressed;
+KeyboardKey KeyPressEvent::get_key_pressed() const {
+	return m_key_pressed;
 }
 
-EventType KeyPressEvent::GetEventType() const {
-	return GetStaticType();
+EventType KeyPressEvent::get_event_type() const {
+	return get_static_type();
 }
 
-EventType KeyPressEvent::GetStaticType() {
+EventType KeyPressEvent::get_static_type() {
 	return EventType::KeyPress;
 }
 
-KeyPressType KeyPressEvent::GetKeyPressType() const {
-	return m_KeyPressType;
+KeyPressType KeyPressEvent::get_key_press_type() const {
+	return m_key_press_type;
 }
 
 #pragma endregion

@@ -7,41 +7,41 @@
 namespace OrigoEditor {
 
 EditorCamera::EditorCamera(float aspect)
-    : m_Camera(aspect) {
-	UpdateCamera();
+    : m_camera(aspect) {
+	update_camera();
 }
 
-void EditorCamera::OnMouseDelta(glm::vec2 delta) {
-	m_Yaw -= delta.x * m_MouseSensitivity;
-	m_Pitch -= delta.y * m_MouseSensitivity;
+void EditorCamera::on_mouse_delta(glm::vec2 delta) {
+	m_yaw -= delta.x * m_mouse_sensitivity;
+	m_pitch -= delta.y * m_mouse_sensitivity;
 
-	m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
+	m_pitch = std::clamp(m_pitch, -89.0f, 89.0f);
 
-	UpdateCamera();
+	update_camera();
 }
 
-void EditorCamera::OnMove(glm::vec3 direction, float speed) {
-	glm::vec3 forward = m_Transform.GetForward();
-	glm::vec3 right = m_Transform.GetRight();
-	glm::vec3 up = m_Transform.GetUp();
+void EditorCamera::on_move(glm::vec3 direction, float speed) {
+	glm::vec3 forward = m_transform.get_forward();
+	glm::vec3 right = m_transform.get_right();
+	glm::vec3 up = m_transform.get_up();
 
 	glm::vec3 delta = direction.x * right + direction.y * up + direction.z * forward;
 
-	m_Transform.Translate(delta * speed);
+	m_transform.translate(delta * speed);
 
-	UpdateCamera();
+	update_camera();
 }
 
-void EditorCamera::UpdateCamera() {
-	glm::quat yaw = glm::angleAxis(glm::radians(m_Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+void EditorCamera::update_camera() {
+	glm::quat yaw = glm::angleAxis(glm::radians(m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm::vec3 right = yaw * glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::quat pitch = glm::angleAxis(glm::radians(m_Pitch), right);
+	glm::quat pitch = glm::angleAxis(glm::radians(m_pitch), right);
 
 	glm::quat orientation = glm::normalize(pitch * yaw);
 
-	m_Transform.SetRotation(glm::degrees(glm::eulerAngles(orientation)));
-	m_Camera.UpdateFromTransform(m_Transform);
+	m_transform.set_rotation(glm::degrees(glm::eulerAngles(orientation)));
+	m_camera.update_from_transform(m_transform);
 }
 
 }

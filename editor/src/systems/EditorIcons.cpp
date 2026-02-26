@@ -5,96 +5,96 @@
 
 namespace OrigoEditor {
 
-static ImTextureID ToImTextureID(const Origo::Ref<Origo::Texture2D>& tex) {
-	return (ImTextureID)(intptr_t)tex->GetRendererID();
+static ImTextureID to_im_texture_id(const Origo::Ref<Origo::Texture2D>& tex) {
+	return (ImTextureID)(intptr_t)tex->get_renderer_id();
 }
 
-void EditorIcons::Init() {
-	if (m_Initialized)
+void EditorIcons::init() {
+	if (m_initialized)
 		return;
 
-	m_Icons[IconType::Entity] = LoadSVG("icons/Entity.svg");
-	m_Icons[IconType::Unknown] = m_Icons[IconType::Entity];
-	m_Icons[IconType::Script] = LoadSVG("icons/Script.svg");
+	m_icons[IconType::Entity] = load_svg("icons/Entity.svg");
+	m_icons[IconType::Unknown] = m_icons[IconType::Entity];
+	m_icons[IconType::Script] = load_svg("icons/Script.svg");
 
-	m_Icons[IconType::Folder] = LoadSVG("icons/Folder.svg");
-	m_Icons[IconType::File] = LoadSVG("icons/File.svg");
-	m_Icons[IconType::Image] = LoadSVG("icons/Image.svg");
+	m_icons[IconType::Folder] = load_svg("icons/Folder.svg");
+	m_icons[IconType::File] = load_svg("icons/File.svg");
+	m_icons[IconType::Image] = load_svg("icons/Image.svg");
 
-	m_Icons[IconType::Play] = LoadSVG("icons/Play.svg", 18);
-	m_Icons[IconType::Pause] = LoadSVG("icons/Pause.svg", 18);
-	m_Icons[IconType::Stop] = LoadSVG("icons/Stop.svg", 18);
-	m_Icons[IconType::Step] = LoadSVG("icons/Step.svg", 18);
-	m_Icons[IconType::Resume] = LoadSVG("icons/Resume.svg", 18);
+	m_icons[IconType::Play] = load_svg("icons/Play.svg", 18);
+	m_icons[IconType::Pause] = load_svg("icons/Pause.svg", 18);
+	m_icons[IconType::Stop] = load_svg("icons/Stop.svg", 18);
+	m_icons[IconType::Step] = load_svg("icons/Step.svg", 18);
+	m_icons[IconType::Resume] = load_svg("icons/Resume.svg", 18);
 
-	m_Icons[IconType::Texture2D] = m_Icons[IconType::Image];
-	m_Icons[IconType::Mesh] = LoadSVG("icons/Mesh.svg", 18);
-	m_Icons[IconType::Shader] = LoadSVG("icons/Shader.svg", 18);
+	m_icons[IconType::Texture2D] = m_icons[IconType::Image];
+	m_icons[IconType::Mesh] = load_svg("icons/Mesh.svg", 18);
+	m_icons[IconType::Shader] = load_svg("icons/Shader.svg", 18);
 
-	m_Icons[IconType::Menu] = LoadSVG("icons/Menu.svg", 18);
+	m_icons[IconType::Menu] = load_svg("icons/Menu.svg", 18);
 
-	m_Initialized = true;
+	m_initialized = true;
 }
 
-ImTextureID EditorIcons::Get(Origo::AssetType type) {
+ImTextureID EditorIcons::get(Origo::AssetType type) {
 	switch (type) {
 	case Origo::AssetType::Shader:
-		return Get(IconType::Shader);
+		return get(IconType::Shader);
 
 	case Origo::AssetType::Texture2D:
 	case Origo::AssetType::TextureCubemap:
-		return Get(IconType::Image);
+		return get(IconType::Image);
 
 	case Origo::AssetType::Material2D:
 	case Origo::AssetType::SkyboxMaterial:
-		return Get(IconType::Unknown);
+		return get(IconType::Unknown);
 
 	case Origo::AssetType::Mesh:
-		return Get(IconType::Mesh);
+		return get(IconType::Mesh);
 
 	case Origo::AssetType::Model:
-		return Get(IconType::Entity);
+		return get(IconType::Entity);
 
 	case Origo::AssetType::Script:
-		return Get(IconType::Script);
+		return get(IconType::Script);
 
 	default:
-		return Get(IconType::Unknown);
+		return get(IconType::Unknown);
 	}
 }
 
-void EditorIcons::Shutdown() {
-	m_Icons.clear();
-	m_Initialized = false;
+void EditorIcons::shutdown() {
+	m_icons.clear();
+	m_initialized = false;
 }
 
-ImTextureID EditorIcons::Get(IconType type) {
-	if (!m_Initialized)
-		Init();
+ImTextureID EditorIcons::get(IconType type) {
+	if (!m_initialized)
+		init();
 
-	auto it = m_Icons.find(type);
-	if (it == m_Icons.end()) {
+	auto it = m_icons.find(type);
+	if (it == m_icons.end()) {
 		ORG_CORE_WARN("EditorIcons::Get: Asset Icon of type {} not found", magic_enum::enum_name(type));
 		return 0;
 	}
 
-	return ToImTextureID(it->second);
+	return to_im_texture_id(it->second);
 }
 
-Origo::Ref<Origo::Texture2D> EditorIcons::GetTexture(IconType type) {
-	auto it = m_Icons.find(type);
-	if (it == m_Icons.end())
+Origo::Ref<Origo::Texture2D> EditorIcons::get_texture(IconType type) {
+	auto it = m_icons.find(type);
+	if (it == m_icons.end())
 		return nullptr;
 
 	return it->second;
 }
 
 Origo::Ref<Origo::Texture2D>
-EditorIcons::LoadSVG(const std::string& path, int size) {
+EditorIcons::load_svg(const std::string& path, int size) {
 	auto tex = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
-	tex->SetSource(
+	tex->set_source(
 	    Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
-	tex->Load();
+	tex->load();
 	return tex;
 }
 

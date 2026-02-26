@@ -14,26 +14,26 @@ public:
 	PanelManager(EditorContext& ctx);
 
 	template <EditorPanelDerived T, typename... Args>
-	int AddPanel(Args&&... args) {
-		m_Panels.push_back(
+	int add_panel(Args&&... args) {
+		m_panels.push_back(
 		    std::unique_ptr<EditorPanel>(new T(std::forward<Args>(args)...)));
-		return static_cast<int>(m_Panels.size()) - 1;
+		return static_cast<int>(m_panels.size()) - 1;
 	}
 
-	EditorPanel* GetPanel(int id) {
-		if (id < 0 || id >= static_cast<int>(m_Panels.size())) {
-			ORG_ERROR("Invalid panel ID: {} (count = {})", id, m_Panels.size());
+	EditorPanel* get_panel(int id) {
+		if (id < 0 || id >= static_cast<int>(m_panels.size())) {
+			ORG_ERROR("Invalid panel ID: {} (count = {})", id, m_panels.size());
 			return nullptr;
 		}
-		return m_Panels[id].get();
+		return m_panels[id].get();
 	}
 
-	void RenderPanels();
-	void RenderMenuItems();
+	void render_panels();
+	void render_menu_items();
 
 private:
-	EditorContext& m_Context;
-	std::vector<Origo::Scope<EditorPanel>> m_Panels;
+	EditorContext& m_context;
+	std::vector<Origo::Scope<EditorPanel>> m_panels;
 };
 
 }

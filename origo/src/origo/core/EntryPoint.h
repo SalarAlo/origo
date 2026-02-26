@@ -4,12 +4,12 @@
 
 namespace Origo {
 // to be defined by the client
-extern Application* CreateApplication();
+extern Application* create_application();
 }
 
 int main(int argc, char** argv) {
-	auto app = Origo::CreateApplication();
-	app->Run();
-	app->OnShutdown();
+	auto app = Origo::create_application();
+	app->run();
+	app->on_shutdown();
 	delete app;
 }

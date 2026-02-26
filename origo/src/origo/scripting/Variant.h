@@ -40,7 +40,7 @@ public:
 	ORIGO_VARIANT_GETTER(Float, float, VariantType::Float)
 	ORIGO_VARIANT_GETTER(String, std::string, VariantType::String)
 
-	VariantType GetType() const { return m_Type; }
+	VariantType get_type() const { return m_Type; }
 
 private:
 	StdVariantType m_Value;

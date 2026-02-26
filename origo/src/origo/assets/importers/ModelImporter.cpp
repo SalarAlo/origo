@@ -7,20 +7,20 @@
 
 namespace Origo {
 
-bool ModelImporter::CanImport(const std::filesystem::path& path) const {
+bool ModelImporter::can_import(const std::filesystem::path& path) const {
 	auto ext = path.extension().string();
-	ToLowerInPlace(ext);
+	to_lower_in_place(ext);
 	return ext == ".fbx" || ext == ".glb";
 }
 
-AssetType ModelImporter::GetAssetType() const {
+AssetType ModelImporter::get_asset_type() const {
 	return AssetType::Model;
 }
 
-Scope<Asset> ModelImporter::Import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto asset = AssetFactory::GetInstance().AllocateHollowAsset<Model>();
+Scope<Asset> ModelImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
+	auto asset = AssetFactory::get_instance().allocate_hollow_asset<Model>();
 
-	asset->SetPath(path);
+	asset->set_path(path);
 
 	return asset;
 }

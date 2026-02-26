@@ -15,46 +15,46 @@
 namespace OrigoEditor {
 
 EditorUILayer::EditorUILayer(EditorContext& ctx, Origo::ImGuiLayer& controller)
-    : m_Context(ctx)
-    , m_ImGuiController(controller)
-    , m_PanelManager(ctx) {
+    : m_context(ctx)
+    , m_im_gui_controller(controller)
+    , m_panel_manager(ctx) {
 }
 
-void EditorUILayer::OnDetach() {
-	m_ImGuiController.OnDetach();
+void EditorUILayer::on_detach() {
+	m_im_gui_controller.on_detach();
 }
 
-void EditorUILayer::OnAttach() {
-	m_ImGuiController.OnAttach(m_Context.Window);
+void EditorUILayer::on_attach() {
+	m_im_gui_controller.on_attach(m_context.Window);
 
-	UI::ApplyEditorStyle(m_Context.ColorPalette);
-	UI::LoadEditorFont();
+	UI::apply_editor_style(m_context.ColorPalette);
+	UI::load_editor_font();
 
-	m_PanelManager.AddPanel<SceneViewport>(m_Context);
-	m_PanelManager.AddPanel<HierarchyPanel>(m_Context);
-	m_PanelManager.AddPanel<EntityInspectorPanel>(m_Context);
-	m_PanelManager.AddPanel<ConsolePanel>();
-	m_PanelManager.AddPanel<AssetInspectorPanel>(m_Context);
-	m_PanelManager.AddPanel<AssetPanel>(m_Context);
-	m_PanelManager.AddPanel<TextEditorPanel>(m_Context);
-	m_PanelManager.AddPanel<RuntimeStatePanel>(m_Context);
-	m_PanelManager.AddPanel<DebugStatsPanel>(m_Context);
+	m_panel_manager.add_panel<SceneViewport>(m_context);
+	m_panel_manager.add_panel<HierarchyPanel>(m_context);
+	m_panel_manager.add_panel<EntityInspectorPanel>(m_context);
+	m_panel_manager.add_panel<ConsolePanel>();
+	m_panel_manager.add_panel<AssetInspectorPanel>(m_context);
+	m_panel_manager.add_panel<AssetPanel>(m_context);
+	m_panel_manager.add_panel<TextEditorPanel>(m_context);
+	m_panel_manager.add_panel<RuntimeStatePanel>(m_context);
+	m_panel_manager.add_panel<DebugStatsPanel>(m_context);
 	// m_PanelManager.AddPanel<FilesPanel>();
 }
 
-void EditorUILayer::OnUpdate(double dt) {
-	m_ImGuiController.Begin();
+void EditorUILayer::on_update(double dt) {
+	m_im_gui_controller.begin();
 
-	UI::BeginDockspace();
-	UI::DrawMenuBar(m_PanelManager, m_Context);
+	UI::begin_dockspace();
+	UI::draw_menu_bar(m_panel_manager, m_context);
 
-	m_PanelManager.RenderPanels();
+	m_panel_manager.render_panels();
 
-	UI::EndDockspace();
+	UI::end_dockspace();
 
-	m_ImGuiController.End();
+	m_im_gui_controller.end();
 }
-void EditorUILayer::OnEvent(Origo::Event& e) {
+void EditorUILayer::on_event(Origo::Event& e) {
 }
 
 }

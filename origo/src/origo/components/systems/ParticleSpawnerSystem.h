@@ -7,6 +7,6 @@ namespace Origo {
 
 class ParticleSpawnerSystem final : public Origo::IUpdateSystem {
 public:
-	void Update(Origo::Scene* scene, float dt) override;
+	void update(Origo::Scene* scene, float dt) override;
 };
 }

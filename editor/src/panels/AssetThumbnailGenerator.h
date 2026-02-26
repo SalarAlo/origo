@@ -6,7 +6,7 @@ namespace OrigoEditor {
 
 class AssetThumbnailGenerator {
 public:
-	static ImTextureID GetThumbnailID(const AssetEntry* entry);
+	static ImTextureID get_thumbnail_id(const AssetEntry* entry);
 };
 
 }

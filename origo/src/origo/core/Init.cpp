@@ -11,17 +11,17 @@
 #include "origo/scripting/ScriptSystem.h"
 
 namespace Origo {
-void Init() {
+void init() {
 	Origo::Logger::Init();
 
-	AssetSerializationSystem::RegisterAllAssetSerializers();
-	AssetImporterRegistry::GetInstance().InitialiseDefaultImporters();
-	AssetImportPipeline::RunInitialImport();
+	AssetSerializationSystem::register_all_asset_serializers();
+	AssetImporterRegistry::get_instance().initialise_default_importers();
+	AssetImportPipeline::run_initial_import();
 
-	DefaultAssetCache::GetInstance().CreateAllDefaults();
-	PrimitiveShapeCache::GetInstance().CreateAllPrimitiveShapes();
+	DefaultAssetCache::get_instance().create_all_defaults();
+	PrimitiveShapeCache::get_instance().create_all_primitive_shapes();
 
-	ScriptSystem::ReloadAll();
+	ScriptSystem::reload_all();
 
 	ORG_INFO("OpenGL Version {}", (const char*)(glGetString(GL_VERSION)));
 	ORG_INFO("ImGUI version: {} ({})", IMGUI_VERSION, IMGUI_VERSION_NUM);

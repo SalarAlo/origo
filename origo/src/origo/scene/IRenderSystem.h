@@ -7,7 +7,7 @@ namespace Origo {
 
 struct IRenderSystem {
 	virtual ~IRenderSystem() = default;
-	virtual void Render(Scene*, RenderContext&) = 0;
+	virtual void render(Scene*, RenderContext&) = 0;
 };
 
 };

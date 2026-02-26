@@ -8,6 +8,6 @@ namespace Origo {
 
 class PointLightSystem final : public Origo::IRenderSystem {
 public:
-	void Render(Origo::Scene* scene, RenderContext& rCtx) override;
+	void render(Origo::Scene* scene, RenderContext& rCtx) override;
 };
 }

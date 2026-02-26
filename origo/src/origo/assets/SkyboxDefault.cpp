@@ -12,7 +12,7 @@
 
 namespace Origo {
 
-AssetHandle SkyboxDefaults::GetCubemap() {
+AssetHandle SkyboxDefaults::get_cubemap() {
 	static AssetHandle handle = [] {
 		CubemapDescription descr {};
 		descr.Right = "./resources/textures/skybox/Right.png";
@@ -22,14 +22,14 @@ AssetHandle SkyboxDefaults::GetCubemap() {
 		descr.Front = "./resources/textures/skybox/Front.png";
 		descr.Back = "./resources/textures/skybox/Back.png";
 
-		auto cubemap = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<CubemapTexture>(
+		auto cubemap = AssetFactory::get_instance().get_instance().create_synthetic_asset<CubemapTexture>(
 		    "Default Skybox Cubemap",
-		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_CUBEMAP"),
+		    UUID::from_hash("ENGINE_DEFAULT_SKYBOX_CUBEMAP"),
 		    descr);
 
-		AssetManager::GetInstance()
-		    .Get<CubemapTexture>(cubemap)
-		    ->Load();
+		AssetManager::get_instance()
+		    .get_asset<CubemapTexture>(cubemap)
+		    ->load();
 
 		return cubemap;
 	}();
@@ -37,31 +37,31 @@ AssetHandle SkyboxDefaults::GetCubemap() {
 	return handle;
 }
 
-AssetHandle SkyboxDefaults::GetShader() {
+AssetHandle SkyboxDefaults::get_shader() {
 	static AssetHandle handle = [] {
-		auto shaderHandle = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<Shader>(
+		auto shader_handle = AssetFactory::get_instance().get_instance().create_synthetic_asset<Shader>(
 		    "Default Skybox Shader",
-		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_SHADER"));
+		    UUID::from_hash("ENGINE_DEFAULT_SKYBOX_SHADER"));
 
-		auto shader { AssetManager::GetInstance().Get<Shader>(shaderHandle) };
+		auto shader { AssetManager::get_instance().get_asset<Shader>(shader_handle) };
 
-		shader->SetSource(MakeScope<ShaderSourceFile>(
+		shader->set_source(MakeScope<ShaderSourceFile>(
 		    "./resources/shaders/skybox.glsl"));
-		shader->Resolve();
+		shader->resolve();
 
-		return shaderHandle;
+		return shader_handle;
 	}();
 
 	return handle;
 }
 
-AssetHandle SkyboxDefaults::GetMaterial() {
+AssetHandle SkyboxDefaults::get_material() {
 	static AssetHandle handle = [] {
-		auto material = AssetFactory::GetInstance().GetInstance().CreateSyntheticAsset<SkyboxMaterial>(
+		auto material = AssetFactory::get_instance().get_instance().create_synthetic_asset<SkyboxMaterial>(
 		    "Default Skybox Material",
-		    UUID::FromHash("ENGINE_DEFAULT_SKYBOX_MATERIAL"),
-		    GetShader(),
-		    GetCubemap());
+		    UUID::from_hash("ENGINE_DEFAULT_SKYBOX_MATERIAL"),
+		    get_shader(),
+		    get_cubemap());
 
 		return material;
 	}();

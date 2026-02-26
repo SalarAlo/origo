@@ -1,5 +1,5 @@
 #pragma once
 
 namespace Origo {
-void Init();
+void init();
 }

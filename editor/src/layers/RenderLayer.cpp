@@ -9,29 +9,29 @@ using namespace Origo;
 
 namespace OrigoEditor {
 
-void RenderLayer::OnAttach() {
-	m_RenderContext.SetSkyboxMaterial(SkyboxDefaults::GetMaterial());
+void RenderLayer::on_attach() {
+	m_render_context.set_skybox_material(SkyboxDefaults::get_material());
 }
 
-void RenderLayer::OnUpdate(double dt) {
-	const bool editingView = (m_Context.ViewMode == EditorViewMode::Editor);
+void RenderLayer::on_update(double dt) {
+	const bool editing_view = (m_context.ViewMode == EditorViewMode::Editor);
 
-	m_RenderContext.SetView(m_Context.ViewportController.GetAndUpdateActiveRenderView());
+	m_render_context.set_view(m_context.ViewportController.get_and_update_active_render_view());
 
-	m_RenderContext.BeginFrame();
+	m_render_context.begin_frame();
 
-	auto activeScenePtr = m_Context.ActiveScene;
+	auto active_scene_ptr = m_context.ActiveScene;
 
-	SystemScheduler::Get().RunPhase(GamePhase::RenderAlways, activeScenePtr, m_RenderContext);
-	SystemScheduler::Get().RunPhase(GamePhase::UpdateAlways, activeScenePtr, dt);
+	SystemScheduler::get().run_phase(GamePhase::RenderAlways, active_scene_ptr, m_render_context);
+	SystemScheduler::get().run_phase(GamePhase::UpdateAlways, active_scene_ptr, dt);
 
-	if (editingView) {
-		SystemScheduler::Get().RunPhase(GamePhase::RenderEditor, activeScenePtr, m_RenderContext);
+	if (editing_view) {
+		SystemScheduler::get().run_phase(GamePhase::RenderEditor, active_scene_ptr, m_render_context);
 	}
 
-	m_RenderContext.Flush();
+	m_render_context.flush();
 
-	m_RenderContext.EndFrame();
+	m_render_context.end_frame();
 }
 
 }

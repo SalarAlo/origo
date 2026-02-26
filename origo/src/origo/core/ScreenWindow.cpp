@@ -10,7 +10,7 @@
 
 #include "origo/renderer/GlDebug.h"
 
-static void APIENTRY MyCallback(
+static void APIENTRY my_callback(
     GLenum source,
     GLenum type,
     GLuint id,
@@ -33,21 +33,21 @@ static void APIENTRY MyCallback(
 }
 
 namespace Origo {
-bool ScreenWindow::s_SingleInstanceCreated { false };
+bool ScreenWindow::s_single_instance_created { false };
 
 ScreenWindow::~ScreenWindow() {
-	if (m_Window) {
-		glfwDestroyWindow(m_Window);
-		m_Window = nullptr;
+	if (m_window) {
+		glfwDestroyWindow(m_window);
+		m_window = nullptr;
 	}
 
-	if (s_SingleInstanceCreated) {
+	if (s_single_instance_created) {
 		glfwTerminate();
-		s_SingleInstanceCreated = false;
+		s_single_instance_created = false;
 	}
 }
 
-void ScreenWindow::InitGlfw() {
+void ScreenWindow::init_glfw() {
 	if (!glfwInit()) {
 		ORG_CORE_ERROR("[ScreenWindow] Failed to initialize GLFW");
 		throw std::runtime_error("Failed to initialize GLFW");
@@ -63,7 +63,7 @@ void ScreenWindow::InitGlfw() {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 }
 
-void ScreenWindow::InitGlad() {
+void ScreenWindow::init_glad() {
 	if (!glfwGetCurrentContext()) {
 		ORG_CORE_ERROR("[ScreenWindow] No active OpenGL context before GLAD init!");
 		throw std::runtime_error("No active context");
@@ -92,159 +92,159 @@ void ScreenWindow::InitGlad() {
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(MyCallback, nullptr);
+	glDebugMessageCallback(my_callback, nullptr);
 
 	GLCall(glEnable(GL_MULTISAMPLE));
 	GLCall(glClearColor(.04, .04, .067, 1));
 }
 
 ScreenWindow::ScreenWindow(const ScreenWindowSettings& screenWindowConfig)
-    : m_ScreenWindowSettings(screenWindowConfig) {
-	if (s_SingleInstanceCreated) {
+    : m_screen_window_settings(screenWindowConfig) {
+	if (s_single_instance_created) {
 		ORG_CORE_ERROR("[ScreenWindow] There can only be one instance at a time");
 		throw std::runtime_error("There can only be one instance at a time");
 	}
 
-	InitGlfw();
-	m_Window = glfwCreateWindow(m_ScreenWindowSettings.Width, m_ScreenWindowSettings.Height, m_ScreenWindowSettings.Title.c_str(), nullptr, nullptr);
+	init_glfw();
+	m_window = glfwCreateWindow(m_screen_window_settings.Width, m_screen_window_settings.Height, m_screen_window_settings.Title.c_str(), nullptr, nullptr);
 
-	glfwMakeContextCurrent(m_Window);
-	glfwSetWindowUserPointer(m_Window, &m_ScreenWindowSettings);
+	glfwMakeContextCurrent(m_window);
+	glfwSetWindowUserPointer(m_window, &m_screen_window_settings);
 
-	InitGlad();
+	init_glad();
 
-	Input::SetContext(this);
-	Input::SetCursorMode(Input::CursorMode::Locked);
+	Input::set_context(this);
+	Input::set_cursor_mode(Input::CursorMode::Locked);
 
 	glfwSwapInterval(1);
 
-	InitCallback();
+	init_callback();
 
 	GLCall(glViewport(0, 0, screenWindowConfig.Width, screenWindowConfig.Height));
 
-	s_SingleInstanceCreated = true;
+	s_single_instance_created = true;
 }
 
-void ScreenWindow::InitCallback() {
+void ScreenWindow::init_callback() {
 #pragma region MOUSE_MOVE
-	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		MouseMoveEvent mouseMoveEvent { Vec2(static_cast<int>(xpos), static_cast<int>(ypos)) };
-		windowSettings->EventCallback(mouseMoveEvent);
+	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseMoveEvent mouse_move_event { Vec2(static_cast<int>(xpos), static_cast<int>(ypos)) };
+		window_settings->EventCallback(mouse_move_event);
 	});
 #pragma endregion
 
 #pragma region MOUSE_CLICK
-	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
+	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
 		if (action != GLFW_PRESS)
 			return;
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		MouseClickEventType clickType {};
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseClickEventType click_type {};
 		switch (button) {
 		case GLFW_MOUSE_BUTTON_MIDDLE:
-			clickType = MouseClickEventType::Middle;
+			click_type = MouseClickEventType::Middle;
 			break;
 		case GLFW_MOUSE_BUTTON_LEFT:
-			clickType = MouseClickEventType::Left;
+			click_type = MouseClickEventType::Left;
 			break;
 		case GLFW_MOUSE_BUTTON_RIGHT:
-			clickType = MouseClickEventType::Right;
+			click_type = MouseClickEventType::Right;
 			break;
 		}
-		MouseClickEvent mouseClickEvent { clickType };
-		windowSettings->EventCallback(mouseClickEvent);
+		MouseClickEvent mouse_click_event { click_type };
+		window_settings->EventCallback(mouse_click_event);
 	});
 #pragma endregion
 
 #pragma region MOUSE_SCROLL
-	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xScroll, double yScroll) {
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		MouseScrollEvent mouseScrollEvent { yScroll > 0 };
-		windowSettings->EventCallback(mouseScrollEvent);
+	glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xScroll, double yScroll) {
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		MouseScrollEvent mouse_scroll_event { yScroll > 0 };
+		window_settings->EventCallback(mouse_scroll_event);
 	});
 #pragma endregion
 
 #pragma region WINDOW_FOCUS
-	glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focused) {
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		bool focusWon { focused == GLFW_TRUE };
-		WindowFocusChangeEvent windowFocusEvent { focusWon };
-		windowSettings->EventCallback(windowFocusEvent);
+	glfwSetWindowFocusCallback(m_window, [](GLFWwindow* window, int focused) {
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		bool focus_won { focused == GLFW_TRUE };
+		WindowFocusChangeEvent window_focus_event { focus_won };
+		window_settings->EventCallback(window_focus_event);
 	});
 #pragma endregion
 
 #pragma region WINDOW_RESIZE
 
-	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+	glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
 
-		windowSettings->Height = height;
-		windowSettings->Width = width;
+		window_settings->Height = height;
+		window_settings->Width = width;
 
-		WindowResizeEvent windowResizeEvent { Vec2(width, height) };
-		windowSettings->EventCallback(windowResizeEvent);
+		WindowResizeEvent window_resize_event { Vec2(width, height) };
+		window_settings->EventCallback(window_resize_event);
 	});
 
 #pragma endregion
 
 #pragma region KEY_PRESS
-	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-		auto windowSettings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
-		KeyPressType pressType {};
+	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		KeyPressType press_type {};
 		switch (action) {
 		case GLFW_PRESS:
-			pressType = KeyPressType::KeyPressStart;
+			press_type = KeyPressType::KeyPressStart;
 			break;
 		case GLFW_RELEASE:
-			pressType = KeyPressType::KeyPressStop;
+			press_type = KeyPressType::KeyPressStop;
 			break;
 		case GLFW_REPEAT:
-			pressType = KeyPressType::KeyPressRepeat;
+			press_type = KeyPressType::KeyPressRepeat;
 			break;
 		}
-		KeyPressEvent keyPress { key, pressType };
-		windowSettings->EventCallback(keyPress);
+		KeyPressEvent key_press { key, press_type };
+		window_settings->EventCallback(key_press);
 	});
 #pragma endregion
 }
 
 #pragma region SIMPLE_OPERATIONS
 
-bool ScreenWindow::ShouldClose() const {
-	return glfwWindowShouldClose(m_Window);
+bool ScreenWindow::should_close() const {
+	return glfwWindowShouldClose(m_window);
 }
 
-void ScreenWindow::OnUpdate() const {
-	glfwSwapBuffers(m_Window);
+void ScreenWindow::on_update() const {
+	glfwSwapBuffers(m_window);
 	glfwPollEvents();
 }
 
-void ScreenWindow::SetHeight(int height) {
-	m_ScreenWindowSettings.Height = height;
+void ScreenWindow::set_height(int height) {
+	m_screen_window_settings.Height = height;
 }
 
-void ScreenWindow::SetWidth(int width) {
-	m_ScreenWindowSettings.Width = width;
+void ScreenWindow::set_width(int width) {
+	m_screen_window_settings.Width = width;
 }
 
-float ScreenWindow::GetAspectResolution() const {
-	return static_cast<float>(m_ScreenWindowSettings.Width) / m_ScreenWindowSettings.Height;
+float ScreenWindow::get_aspect_resolution() const {
+	return static_cast<float>(m_screen_window_settings.Width) / m_screen_window_settings.Height;
 }
 
-int ScreenWindow::GetHeight() const {
-	return m_ScreenWindowSettings.Height;
+int ScreenWindow::get_height() const {
+	return m_screen_window_settings.Height;
 }
 
-int ScreenWindow::GetWidth() const {
-	return m_ScreenWindowSettings.Width;
+int ScreenWindow::get_width() const {
+	return m_screen_window_settings.Width;
 }
 
-GLFWwindow* ScreenWindow::GetNativeWindow() const {
-	return m_Window;
+GLFWwindow* ScreenWindow::get_native_window() const {
+	return m_window;
 }
 
-void ScreenWindow::SetEventCallback(const EventCallbackFn& fn) {
-	m_ScreenWindowSettings.EventCallback = fn;
+void ScreenWindow::set_event_callback(const EventCallbackFn& fn) {
+	m_screen_window_settings.EventCallback = fn;
 }
 
 #pragma endregion

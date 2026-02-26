@@ -16,55 +16,55 @@
 
 namespace Origo {
 
-void AssetImportPipeline::RunInitialImport() {
-	std::filesystem::path rootAssetDir { "./resources" };
+void AssetImportPipeline::run_initial_import() {
+	std::filesystem::path root_asset_dir { "./resources" };
 
-	if (!std::filesystem::exists(rootAssetDir)) {
+	if (!std::filesystem::exists(root_asset_dir)) {
 		ORG_CORE_WARN("No directory for resources found.");
 		return;
 	}
 
-	int importCount {};
+	int import_count {};
 
-	for (auto& assetFile : std::filesystem::recursive_directory_iterator(rootAssetDir)) {
-		if (!IsImportCandidate(assetFile))
+	for (auto& asset_file : std::filesystem::recursive_directory_iterator(root_asset_dir)) {
+		if (!is_import_candidate(asset_file))
 			continue;
 
-		const auto& assetPath = assetFile.path();
+		const auto& asset_path = asset_file.path();
 
-		IAssetImporter* assetImporter = ResolveImporter(assetPath);
-		if (!assetImporter)
+		IAssetImporter* asset_importer = resolve_importer(asset_path);
+		if (!asset_importer)
 			continue;
 
-		auto meta = LoadOrCreateMetadata(assetPath, assetImporter);
+		auto meta = load_or_create_metadata(asset_path, asset_importer);
 
-		if (IsImportNecessary(assetPath, *meta)) {
-			ImportAsset(assetPath, assetImporter, *meta, importCount);
+		if (is_import_necessary(asset_path, *meta)) {
+			import_asset(asset_path, asset_importer, *meta, import_count);
 		} else {
-			LoadCachedAsset(assetPath.string() + ".import", *meta);
+			load_cached_asset(asset_path.string() + ".import", *meta);
 		}
 	}
 
-	ORG_CORE_TRACE("Initial import complete. {} assets imported.", importCount);
+	ORG_CORE_TRACE("Initial import complete. {} assets imported.", import_count);
 
-	AssetManager::GetInstance().ResolveAll();
+	AssetManager::get_instance().resolve_all();
 }
 
-bool AssetImportPipeline::IsImportCandidate(const std::filesystem::directory_entry& entry) {
+bool AssetImportPipeline::is_import_candidate(const std::filesystem::directory_entry& entry) {
 	if (!entry.is_regular_file())
 		return false;
 
 	return entry.path().extension() != ".import";
 }
 
-IAssetImporter* AssetImportPipeline::ResolveImporter(const std::filesystem::path& path) {
-	return AssetImporterRegistry::GetInstance().GetImporter(path);
+IAssetImporter* AssetImportPipeline::resolve_importer(const std::filesystem::path& path) {
+	return AssetImporterRegistry::get_instance().get_importer(path);
 }
 
-bool AssetImportPipeline::IsImportNecessary(const std::filesystem::path& path, const AssetMetadata& meta) {
-	std::filesystem::path importFile { path.string() + ".import" };
+bool AssetImportPipeline::is_import_necessary(const std::filesystem::path& path, const AssetMetadata& meta) {
+	std::filesystem::path import_file { path.string() + ".import" };
 
-	if (!std::filesystem::exists(importFile))
+	if (!std::filesystem::exists(import_file))
 		return true;
 
 	if (!meta.SourcePath.empty() && meta.ImportedTimestamp < meta.SourceTimestamp)
@@ -73,47 +73,47 @@ bool AssetImportPipeline::IsImportNecessary(const std::filesystem::path& path, c
 	return false;
 }
 
-void AssetImportPipeline::ImportAsset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount) {
-	Scope<Asset> asset = importer->Import(path, meta);
+void AssetImportPipeline::import_asset(const std::filesystem::path& path, IAssetImporter* importer, AssetMetadata& meta, int& importCount) {
+	Scope<Asset> asset = importer->import(path, meta);
 
-	AssetManager::GetInstance().Register(std::move(asset), meta.ID);
+	AssetManager::get_instance().register_asset(std::move(asset), meta.ID);
 	meta.ImportedTimestamp = meta.SourceTimestamp;
 
-	AssetDatabase::GetInstance().RegisterMetadata(meta);
-	AssetDatabase::GetInstance().WriteImportFile(*meta.ID);
+	AssetDatabase::get_instance().register_metadata(meta);
+	AssetDatabase::get_instance().write_import_file(*meta.ID);
 
 	importCount++;
 }
 
-void AssetImportPipeline::LoadCachedAsset(const std::filesystem::path& importFile, AssetMetadata& meta) {
-	auto assetSerializer = AssetSerializationSystem::Get(meta.Type);
+void AssetImportPipeline::load_cached_asset(const std::filesystem::path& importFile, AssetMetadata& meta) {
+	auto asset_serializer = AssetSerializationSystem::get(meta.Type);
 
 	JsonSerializer serializer { importFile.c_str() };
-	serializer.LoadFile();
+	serializer.load_file();
 
-	auto asset = AssetFactory::GetInstance().AllocateHollowAsset(meta.Type);
+	auto asset = AssetFactory::get_instance().allocate_hollow_asset(meta.Type);
 
 	ORG_CORE_TRACE("Beginning deserilaization for {} of type {} and path {}", meta.Name, magic_enum::enum_name(meta.Type), meta.SourcePath.c_str());
 
-	serializer.BeginObject("payload");
-	assetSerializer->Deserialize(serializer, *asset.get());
-	serializer.EndObject();
+	serializer.begin_object("payload");
+	asset_serializer->deserialize(serializer, *asset.get());
+	serializer.end_object();
 
-	AssetFactory::GetInstance().CreateImportedAsset(meta, std::move(asset));
-	AssetDatabase::GetInstance().RegisterMetadata(meta);
+	AssetFactory::get_instance().create_imported_asset(meta, std::move(asset));
+	AssetDatabase::get_instance().register_metadata(meta);
 }
 
-Scope<AssetMetadata> AssetImportPipeline::LoadOrCreateMetadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
-	const std::filesystem::path importPath { sourcePath.string() + ".import" };
+Scope<AssetMetadata> AssetImportPipeline::load_or_create_metadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
+	const std::filesystem::path import_path { sourcePath.string() + ".import" };
 	Scope<AssetMetadata> meta;
 
-	if (std::filesystem::exists(importPath)) {
-		meta = MakeScope<AssetMetadata>(AssetDatabase::GetInstance().LoadImportHeader(importPath));
+	if (std::filesystem::exists(import_path)) {
+		meta = MakeScope<AssetMetadata>(AssetDatabase::get_instance().load_import_header(import_path));
 	} else {
 		meta = MakeScope<AssetMetadata>();
-		meta->ID = UUID::Generate();
+		meta->ID = UUID::generate();
 		meta->Name = sourcePath.stem().string();
-		meta->Type = importer->GetAssetType();
+		meta->Type = importer->get_asset_type();
 		meta->Origin = AssetOrigin::Imported;
 		meta->SourcePath = sourcePath;
 

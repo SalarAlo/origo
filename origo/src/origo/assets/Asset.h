@@ -17,11 +17,11 @@ enum class AssetType {
 class Asset {
 public:
 	virtual ~Asset() = default;
-	virtual AssetType GetAssetType() const = 0;
-	virtual void Resolve() { };
+	virtual AssetType get_asset_type() const = 0;
+	virtual void resolve() { };
 
 protected:
-	AssetType m_AssetType;
+	AssetType m_asset_type;
 };
 
 }

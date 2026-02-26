@@ -1,13 +1,13 @@
 #include "origo/core/Time.h"
 
 namespace Origo::Time {
-TimePoint GetNow() {
+TimePoint get_now() {
 	return SystemClock::now();
 }
 
-Duration GetTimeSinceStart() {
+Duration get_time_since_start() {
 	static TimePoint start = SystemClock::now();
-	return GetNow() - start;
+	return get_now() - start;
 }
 
 }

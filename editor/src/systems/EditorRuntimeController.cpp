@@ -1,73 +1,76 @@
 #include "systems/EditorRuntimeController.h"
+
 #include "layers/LayerType.h"
+
 #include "origo/core/Logger.h"
+
 #include "state/EditorViewMode.h"
 
 namespace OrigoEditor {
 
-static constexpr size_t UPDATE_LAYER_KEY { static_cast<size_t>(LayerType::UpdateLayer) };
+static constexpr size_t update_layer_key { static_cast<size_t>(LayerType::UpdateLayer) };
 
-bool EditorRuntimeController::CanStep() const { return CanResume(); }
-void EditorRuntimeController::Step() {
-	if (!CanStep())
+bool EditorRuntimeController::can_step() const { return can_resume(); }
+void EditorRuntimeController::step() {
+	if (!can_step())
 		return;
-	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY, [&]() { ORG_CORE_TRACE("Step made"); });
+	m_context.LayerSystem.request_activate_layer(update_layer_key, [&]() { ORG_CORE_TRACE("Step made"); });
 }
 
-bool EditorRuntimeController::CanPlay() const { return m_Context.RuntimeState == EditorRuntimeState::Editing; }
-void EditorRuntimeController::Play() {
-	if (!CanPlay())
+bool EditorRuntimeController::can_play() const { return m_context.RuntimeState == EditorRuntimeState::Editing; }
+void EditorRuntimeController::play() {
+	if (!can_play())
 		return;
 
-	m_Context.RuntimeScene = MakeScope<Origo::Scene>(*m_Context.EditorScene);
-	m_Context.ActiveScene = m_Context.RuntimeScene.get();
-	m_Context.RuntimeState = EditorRuntimeState::Running;
-	m_Context.ViewMode = EditorViewMode::Game;
+	m_context.RuntimeScene = MakeScope<Origo::Scene>(*m_context.EditorScene);
+	m_context.ActiveScene = m_context.RuntimeScene.get();
+	m_context.RuntimeState = EditorRuntimeState::Running;
+	m_context.ViewMode = EditorViewMode::Game;
 
-	m_Context.UnselectEntity();
+	m_context.unselect_entity();
 
-	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
+	m_context.LayerSystem.request_activate_layer(update_layer_key);
 
 	ORG_CORE_TRACE("Play mode started");
 }
 
-bool EditorRuntimeController::CanPause() const { return m_Context.RuntimeState == EditorRuntimeState::Running && m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
-void EditorRuntimeController::Pause(bool changeToEditorView) {
-	if (!CanPause())
+bool EditorRuntimeController::can_pause() const { return m_context.RuntimeState == EditorRuntimeState::Running && m_context.LayerSystem.has_active_layer(update_layer_key); }
+void EditorRuntimeController::pause(bool changeToEditorView) {
+	if (!can_pause())
 		return;
-	m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
+	m_context.LayerSystem.request_freeze_layer(update_layer_key);
 	if (changeToEditorView)
-		m_Context.ViewMode = EditorViewMode::Editor;
+		m_context.ViewMode = EditorViewMode::Editor;
 
 	ORG_CORE_TRACE("Pause");
 }
 
-bool EditorRuntimeController::CanResume() const { return m_Context.RuntimeState == EditorRuntimeState::Running && !m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY); }
-void EditorRuntimeController::Resume() {
-	if (!CanResume())
+bool EditorRuntimeController::can_resume() const { return m_context.RuntimeState == EditorRuntimeState::Running && !m_context.LayerSystem.has_active_layer(update_layer_key); }
+void EditorRuntimeController::resume() {
+	if (!can_resume())
 		return;
 
-	m_Context.LayerSystem.RequestActivateLayer(UPDATE_LAYER_KEY);
-	m_Context.ViewMode = EditorViewMode::Game;
+	m_context.LayerSystem.request_activate_layer(update_layer_key);
+	m_context.ViewMode = EditorViewMode::Game;
 
 	ORG_CORE_TRACE("Resume");
 }
 
-bool EditorRuntimeController::CanStop() const { return m_Context.RuntimeState == EditorRuntimeState::Running; }
-void EditorRuntimeController::Stop() {
-	if (!CanStop())
+bool EditorRuntimeController::can_stop() const { return m_context.RuntimeState == EditorRuntimeState::Running; }
+void EditorRuntimeController::stop() {
+	if (!can_stop())
 		return;
 
-	m_Context.RuntimeScene.reset();
-	m_Context.ActiveScene = m_Context.EditorScene.get();
+	m_context.RuntimeScene.reset();
+	m_context.ActiveScene = m_context.EditorScene.get();
 
-	m_Context.RuntimeState = EditorRuntimeState::Editing;
-	m_Context.ViewMode = EditorViewMode::Editor;
+	m_context.RuntimeState = EditorRuntimeState::Editing;
+	m_context.ViewMode = EditorViewMode::Editor;
 
-	if (m_Context.LayerSystem.HasActiveLayer(UPDATE_LAYER_KEY)) {
-		m_Context.LayerSystem.RequestFreezeLayer(UPDATE_LAYER_KEY);
+	if (m_context.LayerSystem.has_active_layer(update_layer_key)) {
+		m_context.LayerSystem.request_freeze_layer(update_layer_key);
 	}
-	m_Context.UnselectEntity();
+	m_context.unselect_entity();
 }
 
 }

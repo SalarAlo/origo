@@ -10,25 +10,25 @@
 #include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
-static ImTextureID GetTextureID(const AssetEntry* entry) {
-	auto& am { Origo::AssetManager::GetInstance() };
-	auto handle { am.GetHandleByUUID(entry->id) };
+static ImTextureID get_texture_id(const AssetEntry* entry) {
+	auto& am { Origo::AssetManager::get_instance() };
+	auto handle { am.get_handle_by_uuid(entry->Id) };
 
 	if (!handle.has_value()) {
 		ORG_ERROR("AssetThumbnailGenerator::GetThumbnailID: AssetEntry of type Texture2D is not found in asset manager!");
 		return 0;
 	}
 
-	auto tex { am.Get<Origo::Texture2D>(*handle) };
-	return static_cast<ImTextureID>((intptr_t)tex->GetRendererID());
+	auto tex { am.get_asset<Origo::Texture2D>(*handle) };
+	return static_cast<ImTextureID>((intptr_t)tex->get_renderer_id());
 }
 
-ImTextureID AssetThumbnailGenerator::GetThumbnailID(const AssetEntry* entry) {
-	switch (entry->type) {
+ImTextureID AssetThumbnailGenerator::get_thumbnail_id(const AssetEntry* entry) {
+	switch (entry->Type) {
 	case Origo::AssetType::Texture2D:
-		return GetTextureID(entry);
+		return get_texture_id(entry);
 	default:
-		return EditorIcons::GetInstance().Get(entry->type);
+		return EditorIcons::get_instance().get(entry->Type);
 	}
 }
 

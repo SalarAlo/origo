@@ -64,20 +64,20 @@ enum class KeyboardKey {
 };
 #pragma endregion
 
-int KeyboardKeyToGlfwKey(KeyboardKey key);
-KeyboardKey GlfwKeyToKeyboardKey(int glfwKey);
+int keyboard_key_to_glfw_key(KeyboardKey key);
+KeyboardKey glfw_key_to_keyboard_key(int glfwKey);
 
 class KeyPressEvent : public Event {
 public:
 	KeyPressEvent(int glfwKey, KeyPressType keyPressType);
-	KeyPressType GetKeyPressType() const;
-	KeyboardKey GetKeyPressed() const;
-	EventType GetEventType() const override;
-	static EventType GetStaticType();
+	KeyPressType get_key_press_type() const;
+	KeyboardKey get_key_pressed() const;
+	EventType get_event_type() const override;
+	static EventType get_static_type();
 
 private:
-	KeyPressType m_KeyPressType;
-	KeyboardKey m_KeyPressed;
+	KeyPressType m_key_press_type;
+	KeyboardKey m_key_pressed;
 };
 
 };

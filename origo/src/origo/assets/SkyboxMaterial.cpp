@@ -1,4 +1,5 @@
 #include "origo/assets/SkyboxMaterial.h"
+
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/CubemapTexture.h"
 #include "origo/assets/Shader.h"
@@ -6,24 +7,24 @@
 namespace Origo {
 
 SkyboxMaterial::SkyboxMaterial(AssetHandle shader, AssetHandle cubemap)
-    : m_Shader(shader)
-    , m_Cubemap(cubemap) { }
+    : m_shader(shader)
+    , m_cubemap(cubemap) { }
 
-void SkyboxMaterial::Bind(const glm::mat4& projection, const glm::mat4& view) {
-	auto& am = AssetManager::GetInstance();
+void SkyboxMaterial::bind(const glm::mat4& projection, const glm::mat4& view) {
+	auto& am = AssetManager::get_instance();
 
-	auto shader = am.Get<Shader>(m_Shader);
-	shader->UseProgram();
+	auto shader = am.get_asset<Shader>(m_shader);
+	shader->use_program();
 
-	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(view));
+	glm::mat4 view_no_translation = glm::mat4(glm::mat3(view));
 
-	shader->SetUniform("u_ProjectionMatrix", projection);
-	shader->SetUniform("u_ViewMatrix", viewNoTranslation);
+	shader->set_uniform("u_ProjectionMatrix", projection);
+	shader->set_uniform("u_ViewMatrix", view_no_translation);
 
-	auto cubemap = am.Get<CubemapTexture>(m_Cubemap);
-	cubemap->Bind(0);
+	auto cubemap = am.get_asset<CubemapTexture>(m_cubemap);
+	cubemap->bind(0);
 
-	shader->SetUniform("skybox", 0);
+	shader->set_uniform("skybox", 0);
 }
 
 }

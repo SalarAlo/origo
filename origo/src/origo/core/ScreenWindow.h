@@ -16,30 +16,30 @@ public:
 	ScreenWindow(ScreenWindow&& other) = delete;
 	ScreenWindow& operator=(ScreenWindow&& other) = delete;
 
-	bool ShouldClose() const;
-	void OnUpdate() const;
+	bool should_close() const;
+	void on_update() const;
 
-	void SetWidth(int width);
-	void SetHeight(int height);
+	void set_width(int width);
+	void set_height(int height);
 
-	int GetWidth() const;
-	int GetHeight() const;
+	int get_width() const;
+	int get_height() const;
 
-	float GetAspectResolution() const;
-	GLFWwindow* GetNativeWindow() const;
+	float get_aspect_resolution() const;
+	GLFWwindow* get_native_window() const;
 
-	void SetEventCallback(const EventCallbackFn& callback);
-
-private:
-	void InitCallback();
-	static void InitGlad();
-	static void InitGlfw();
+	void set_event_callback(const EventCallbackFn& callback);
 
 private:
-	ScreenWindowSettings m_ScreenWindowSettings {};
-	GLFWwindow* m_Window {};
+	void init_callback();
+	static void init_glad();
+	static void init_glfw();
 
-	static bool s_SingleInstanceCreated;
+private:
+	ScreenWindowSettings m_screen_window_settings {};
+	GLFWwindow* m_window {};
+
+	static bool s_single_instance_created;
 };
 
 }

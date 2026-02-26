@@ -5,35 +5,35 @@ namespace Origo {
 class RID {
 public:
 	RID()
-	    : m_ID(-1) { }
+	    : m_id(-1) { }
 
 	RID(const RID& other) {
-		m_ID = other.m_ID;
+		m_id = other.m_id;
 	}
 
 	RID& operator=(const RID& other) {
-		m_ID = other.m_ID;
+		m_id = other.m_id;
 		return *this;
 	}
 
-	static RID New() {
+	static RID new_rid() {
 		static int current = 0;
 		return RID(current++);
 	}
 
-	int GetId() const { return m_ID; }
-	std::string ToString() const { return std::to_string(m_ID); }
+	int get_id() const { return m_id; }
+	std::string to_string() const { return std::to_string(m_id); }
 
 	bool operator==(const RID& other) const noexcept {
-		return m_ID == other.m_ID;
+		return m_id == other.m_id;
 	}
 
 private:
 	explicit RID(int id)
-	    : m_ID(id) { }
+	    : m_id(id) { }
 
 private:
-	int m_ID;
+	int m_id;
 };
 
 }
@@ -43,7 +43,7 @@ namespace std {
 template <>
 struct hash<Origo::RID> {
 	size_t operator()(const Origo::RID& id) const noexcept {
-		return std::hash<int>()(id.GetId());
+		return std::hash<int>()(id.get_id());
 	}
 };
 }

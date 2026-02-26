@@ -10,7 +10,7 @@ public:
 	NameComponent(std::string_view name = "x")
 	    : Name(name) { };
 
-	std::string GetComponentName() const override { return "Name"; }
+	std::string get_component_name() const override { return "Name"; }
 
 	std::string Name;
 };

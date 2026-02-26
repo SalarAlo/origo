@@ -4,7 +4,7 @@
 
 namespace OrigoEditor {
 
-static bool TreeNodeWithIcon(
+static bool tree_node_with_icon(
     const char* label,
     ImTextureID icon,
     ImGuiTreeNodeFlags flags) {
@@ -31,7 +31,7 @@ static bool TreeNodeWithIcon(
 	return open;
 }
 
-static void TreeLeafWithIcon(const char* label, ImTextureID icon) {
+static void tree_leaf_with_icon(const char* label, ImTextureID icon) {
 	ImGui::PushID(label);
 
 	ImGui::TreeNodeEx(
@@ -51,36 +51,36 @@ static void TreeLeafWithIcon(const char* label, ImTextureID icon) {
 	ImGui::PopID();
 }
 
-ImTextureID FilesPanel::GetIconForFile(
+ImTextureID FilesPanel::get_icon_for_file(
     const std::filesystem::path& p) {
 
 	const auto ext = p.extension();
 
 	if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga")
-		return EditorIcons::GetInstance().Get(IconType::Image);
+		return EditorIcons::get_instance().get(IconType::Image);
 
 	if (ext == ".cs" || ext == ".cpp" || ext == ".c" || ext == ".h" || ext == ".hpp" || ext == ".gd" || ext == ".glsl")
-		return EditorIcons::GetInstance().Get(IconType::Script);
+		return EditorIcons::get_instance().get(IconType::Script);
 
-	return EditorIcons::GetInstance().Get(IconType::File);
+	return EditorIcons::get_instance().get(IconType::File);
 }
 
-bool FilesPanel::IsInsideProject(
+bool FilesPanel::is_inside_project(
     const std::filesystem::path& p) {
 
 	auto abs = std::filesystem::weakly_canonical(p);
-	auto root = std::filesystem::weakly_canonical(m_State.ProjectRoot);
+	auto root = std::filesystem::weakly_canonical(m_state.ProjectRoot);
 
-	auto absStr = abs.generic_string();
-	auto rootStr = root.generic_string();
+	auto abs_str = abs.generic_string();
+	auto root_str = root.generic_string();
 
-	return absStr == rootStr || (absStr.starts_with(rootStr) && absStr[rootStr.size()] == '/');
+	return abs_str == root_str || (abs_str.starts_with(root_str) && abs_str[root_str.size()] == '/');
 }
 
-void FilesPanel::DrawFileSystemRecursive(
+void FilesPanel::draw_file_system_recursive(
     const std::filesystem::path& path) {
 
-	if (!IsInsideProject(path))
+	if (!is_inside_project(path))
 		return;
 
 	for (const auto& entry :
@@ -94,9 +94,9 @@ void FilesPanel::DrawFileSystemRecursive(
 				ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding
 			};
 
-			bool open = TreeNodeWithIcon(
+			bool open = tree_node_with_icon(
 			    name.c_str(),
-			    EditorIcons::GetInstance().Get(IconType::Folder),
+			    EditorIcons::get_instance().get(IconType::Folder),
 			    flags);
 
 			if (ImGui::BeginDragDropSource(
@@ -113,16 +113,16 @@ void FilesPanel::DrawFileSystemRecursive(
 			}
 
 			if (open) {
-				DrawFileSystemRecursive(p);
+				draw_file_system_recursive(p);
 				ImGui::TreePop();
 			}
 		} else if (entry.is_regular_file()) {
 			if (p.extension() == ".asset" || p.extension() == ".meta")
 				continue;
 
-			TreeLeafWithIcon(
+			tree_leaf_with_icon(
 			    name.c_str(),
-			    GetIconForFile(p));
+			    get_icon_for_file(p));
 
 			if (ImGui::BeginDragDropSource(
 			        ImGuiDragDropFlags_SourceAllowNullID)) {
@@ -140,24 +140,24 @@ void FilesPanel::DrawFileSystemRecursive(
 	}
 }
 
-void FilesPanel::OnImGuiRender() {
-	if (m_State.ProjectRoot == "./")
-		m_State.ProjectRoot = std::filesystem::current_path();
+void FilesPanel::on_im_gui_render() {
+	if (m_state.ProjectRoot == "./")
+		m_state.ProjectRoot = std::filesystem::current_path();
 
 	ImGui::BeginChild(
 	    "FileSystemPanel",
 	    ImVec2(0, 0),
 	    true);
 
-	ImGuiTreeNodeFlags rootFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
+	ImGuiTreeNodeFlags root_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
 
-	bool open = TreeNodeWithIcon(
-	    m_State.ProjectRoot.filename().string().c_str(),
-	    EditorIcons::GetInstance().Get(IconType::Folder),
-	    rootFlags);
+	bool open = tree_node_with_icon(
+	    m_state.ProjectRoot.filename().string().c_str(),
+	    EditorIcons::get_instance().get(IconType::Folder),
+	    root_flags);
 
 	if (open) {
-		DrawFileSystemRecursive(m_State.ProjectRoot);
+		draw_file_system_recursive(m_state.ProjectRoot);
 		ImGui::TreePop();
 	}
 

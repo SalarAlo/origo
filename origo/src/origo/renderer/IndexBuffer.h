@@ -13,26 +13,26 @@ public:
 	IndexBuffer(IndexBuffer&&) = delete;
 	IndexBuffer& operator=(IndexBuffer&&) = delete;
 
-	void Bind() const;
-	void Unbind() const;
+	void bind() const;
+	void unbind() const;
 
-	void AddData(const std::vector<unsigned int>& data);
+	void add_data(const std::vector<unsigned int>& data);
 
-	size_t GetElementCount() const { return m_Size; }
-
-private:
-	void UploadInitial();
-	void UploadIncremental(size_t oldSize);
+	size_t get_element_count() const { return m_size; }
 
 private:
-	inline static GLuint s_CurrentlyBound = 0;
+	void upload_initial();
+	void upload_incremental(size_t oldSize);
 
-	GLuint m_BufferId {};
-	unsigned int* m_Data = nullptr;
-	size_t m_Size = 0;
-	size_t m_Capacity = 0;
+private:
+	inline static GLuint s_currently_bound = 0;
 
-	size_t m_OldSize = 0;
+	GLuint m_buffer_id {};
+	unsigned int* m_data = nullptr;
+	size_t m_size = 0;
+	size_t m_capacity = 0;
+
+	size_t m_old_size = 0;
 };
 
 }

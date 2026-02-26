@@ -5,19 +5,19 @@
 
 namespace OrigoEditor {
 
-static bool s_Registered = []() {
-	InspectorDrawRegistry::RegisterNativeDrawer<Origo::TransformComponent>("Transform", "./icons/TransformComponent.svg", [](Origo::TransformComponent& t) {
-		glm::vec3 pos = t.GetPosition();
-		glm::vec3 rot = t.GetRotation();
-		glm::vec3 scl = t.GetScale();
+static bool s_registered = []() {
+	InspectorDrawRegistry::register_native_drawer<Origo::TransformComponent>("Transform", "./icons/TransformComponent.svg", [](Origo::TransformComponent& t) {
+		glm::vec3 pos = t.get_position();
+		glm::vec3 rot = t.get_rotation();
+		glm::vec3 scl = t.get_scale();
 
-		ComponentUI::DrawVec3Control("Position", pos);
-		ComponentUI::DrawVec3Control("Rotation", rot);
-		ComponentUI::DrawVec3Control("Scale", scl);
+		ComponentUI::draw_vec3_control("Position", pos);
+		ComponentUI::draw_vec3_control("Rotation", rot);
+		ComponentUI::draw_vec3_control("Scale", scl);
 
-		t.SetPosition(pos);
-		t.SetRotation(rot);
-		t.SetScale(scl);
+		t.set_position(pos);
+		t.set_rotation(rot);
+		t.set_scale(scl);
 	});
 
 	return true;

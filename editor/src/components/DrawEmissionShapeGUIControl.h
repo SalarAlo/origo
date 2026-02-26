@@ -14,16 +14,16 @@ struct DrawEmissionShapeGUIControls {
 	}
 
 	void operator()(Origo::SphereEmissionShape& sp) {
-		ComponentUI::DrawFloatControl("radius", sp.Radius);
+		ComponentUI::draw_float_control("radius", sp.Radius);
 	}
 
 	void operator()(Origo::BoxEmissionShape& b) {
-		ComponentUI::DrawVec3Control("size", b.Size);
+		ComponentUI::draw_vec3_control("size", b.Size);
 	}
 
 	void operator()(Origo::ConeEmissionShape& c) {
-		ComponentUI::DrawFloatControl("length", c.Length);
-		ComponentUI::DrawFloatControl("angle", c.Angle);
+		ComponentUI::draw_float_control("length", c.Length);
+		ComponentUI::draw_float_control("angle", c.Angle);
 	}
 };
 

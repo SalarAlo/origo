@@ -4,28 +4,28 @@
 
 namespace Origo {
 
-void DirectionalLightComponentSerializer::Serialize(Component* comp, ISerializer& backend) const {
+void DirectionalLightComponentSerializer::serialize(Component* comp, ISerializer& backend) const {
 	auto light = static_cast<DirectionalLightComponent*>(comp);
 
-	backend.Write("ambient", light->AmbientFactor);
-	backend.Write("intensity", light->Intensity);
+	backend.write("ambient", light->AmbientFactor);
+	backend.write("intensity", light->Intensity);
 
 	const auto& color = light->LightColor;
-	backend.Write("color_r", color.r);
-	backend.Write("color_g", color.g);
-	backend.Write("color_b", color.b);
+	backend.write("color_r", color.r);
+	backend.write("color_g", color.g);
+	backend.write("color_b", color.b);
 }
 
-void DirectionalLightComponentSerializer::Deserialize(Component* comp, ISerializer& backend) {
+void DirectionalLightComponentSerializer::deserialize(Component* comp, ISerializer& backend) {
 	auto light = static_cast<DirectionalLightComponent*>(comp);
 
-	backend.TryRead("ambient", light->AmbientFactor);
-	backend.TryRead("intensity", light->Intensity);
+	backend.try_read("ambient", light->AmbientFactor);
+	backend.try_read("intensity", light->Intensity);
 
 	auto& color = light->LightColor;
-	backend.TryRead("color_r", color.r);
-	backend.TryRead("color_g", color.g);
-	backend.TryRead("color_b", color.b);
+	backend.try_read("color_r", color.r);
+	backend.try_read("color_g", color.g);
+	backend.try_read("color_b", color.b);
 }
 
 }

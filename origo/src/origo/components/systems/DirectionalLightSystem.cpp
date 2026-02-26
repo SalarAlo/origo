@@ -10,19 +10,19 @@
 
 namespace Origo {
 
-void DirectionalLightSystem::Render(Scene* scene, RenderContext& rCtx) {
-	scene->View<DirectionalLightComponent, TransformComponent>(
+void DirectionalLightSystem::render(Scene* scene, RenderContext& rCtx) {
+	scene->view<DirectionalLightComponent, TransformComponent>(
 	    [&](RID entity,
 	        DirectionalLightComponent& light,
 	        TransformComponent& transform) {
 		    DirectionalLightData data {};
 
-		    data.Direction = transform.GetForward();
+		    data.Direction = transform.get_forward();
 		    data.Ambient = light.AmbientFactor;
 		    data.Color = light.LightColor;
 		    data.Intensity = light.Intensity;
 
-		    rCtx.PushDirectionalLight(data);
+		    rCtx.push_directional_light(data);
 	    });
 }
 

@@ -1,10 +1,12 @@
-#include "origo/serialization/JsonSerializer.h"
-#include "origo/core/Logger.h"
 #include <filesystem>
 #include <string_view>
 
+#include "origo/serialization/JsonSerializer.h"
+
+#include "origo/core/Logger.h"
+
 #define JSON_DEF_WRITE_SERIALIZATION_FN(TYPE)                                                  \
-	void JsonSerializer::Write(std::string_view key, TYPE value) {                         \
+	void JsonSerializer::write(std::string_view key, TYPE value) {                         \
 		nlohmann::json& j = top_json();                                                \
 		if (!j.is_object()) {                                                          \
 			ORG_ERROR("Write('{}') on non-object (type: {})", key, j.type_name()); \
@@ -14,7 +16,7 @@
 	}
 
 #define JSON_DEF_WRITE_SERIALIZATION_FN_ARRAY(TYPE)                                       \
-	void JsonSerializer::Write(TYPE value) {                                          \
+	void JsonSerializer::write(TYPE value) {                                          \
 		nlohmann::json& j = top_json();                                           \
 		if (!j.is_array()) {                                                      \
 			ORG_ERROR("Write(value) on non-array (type: {})", j.type_name()); \
@@ -23,23 +25,23 @@
 		j.push_back(value);                                                       \
 	}
 
-#define JSON_DEF_READ_SERIALIZATION_FN(TYPE)                              \
-	bool JsonSerializer::TryRead(std::string_view key, TYPE& value) { \
-		nlohmann::json& j = top_json();                           \
-		if (!j.contains(std::string(key)))                        \
-			return false;                                     \
-		try {                                                     \
-			value = j[std::string(key)].get<TYPE>();          \
-			return true;                                      \
-		} catch (...) {                                           \
-			return false;                                     \
-		}                                                         \
+#define JSON_DEF_READ_SERIALIZATION_FN(TYPE)                               \
+	bool JsonSerializer::try_read(std::string_view key, TYPE& value) { \
+		nlohmann::json& j = top_json();                            \
+		if (!j.contains(std::string(key)))                         \
+			return false;                                      \
+		try {                                                      \
+			value = j[std::string(key)].get<TYPE>();           \
+			return true;                                       \
+		} catch (...) {                                            \
+			return false;                                      \
+		}                                                          \
 	}
 
 namespace Origo {
 
 template <typename T>
-static bool TryReadArrayElementImpl(std::stack<JsonStackEntry>& stack, T& value) {
+static bool try_read_array_element_impl(std::stack<JsonStackEntry>& stack, T& value) {
 	if (stack.empty())
 		return false;
 
@@ -63,80 +65,80 @@ static bool TryReadArrayElementImpl(std::stack<JsonStackEntry>& stack, T& value)
 
 JsonSerializer::JsonSerializer(const std::filesystem::path& path)
     : ISerializer(path) {
-	m_Root = nlohmann::json::object();
-	while (!m_ObjectsStack.empty())
-		m_ObjectsStack.pop();
-	m_ObjectsStack.push({ &m_Root });
+	m_root = nlohmann::json::object();
+	while (!m_objects_stack.empty())
+		m_objects_stack.pop();
+	m_objects_stack.push({ &m_root });
 }
 
 nlohmann::json& JsonSerializer::top_json() {
-	auto* p = m_ObjectsStack.top().Json;
+	auto* p = m_objects_stack.top().Json;
 	if (!p) {
 		ORG_ERROR("Json stack top was null; reinitializing to root");
-		m_Root = nlohmann::json::object();
-		while (!m_ObjectsStack.empty())
-			m_ObjectsStack.pop();
-		m_ObjectsStack.push({ &m_Root });
-		p = &m_Root;
+		m_root = nlohmann::json::object();
+		while (!m_objects_stack.empty())
+			m_objects_stack.pop();
+		m_objects_stack.push({ &m_root });
+		p = &m_root;
 	}
 	return *p;
 }
 
-void JsonSerializer::SaveToFile() {
-	if (m_ObjectsStack.size() > 1) {
-		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_Path.c_str());
+void JsonSerializer::save_to_file() {
+	if (m_objects_stack.size() > 1) {
+		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_path.c_str());
 		return;
 	}
 
-	std::filesystem::create_directories(m_Path.parent_path());
-	std::ofstream out(m_Path, std::ios::out | std::ios::trunc);
+	std::filesystem::create_directories(m_path.parent_path());
+	std::ofstream out(m_path, std::ios::out | std::ios::trunc);
 	if (!out) {
-		ORG_ERROR("Failed to open output file: {}", m_Path.c_str());
+		ORG_ERROR("Failed to open output file: {}", m_path.c_str());
 		return;
 	}
 	out << top_json().dump(8);
 }
 
-void JsonSerializer::LoadFile() {
-	std::ifstream in(m_Path);
+void JsonSerializer::load_file() {
+	std::ifstream in(m_path);
 	if (!in) {
-		ORG_ERROR("Failed to open input file: {}", m_Path.c_str());
-		m_Root = nlohmann::json::object();
-		while (!m_ObjectsStack.empty())
-			m_ObjectsStack.pop();
-		m_ObjectsStack.push({ &m_Root });
+		ORG_ERROR("Failed to open input file: {}", m_path.c_str());
+		m_root = nlohmann::json::object();
+		while (!m_objects_stack.empty())
+			m_objects_stack.pop();
+		m_objects_stack.push({ &m_root });
 		return;
 	}
 
 	try {
 		nlohmann::json loaded;
 		in >> loaded;
-		m_Root = loaded.is_object() ? std::move(loaded) : nlohmann::json::object();
+		m_root = loaded.is_object() ? std::move(loaded) : nlohmann::json::object();
 	} catch (const std::exception& e) {
-		ORG_ERROR("JSON parse error in {}: {}", m_Path.c_str(), e.what());
-		m_Root = nlohmann::json::object();
+		ORG_ERROR("JSON parse error in {}: {}", m_path.c_str(), e.what());
+		m_root = nlohmann::json::object();
 	}
 
-	while (!m_ObjectsStack.empty())
-		m_ObjectsStack.pop();
-	m_ObjectsStack.push({ &m_Root });
+	while (!m_objects_stack.empty())
+		m_objects_stack.pop();
+	m_objects_stack.push({ &m_root });
 }
 
-void JsonSerializer::BeginObject(std::string_view key) {
+void JsonSerializer::begin_object(std::string_view key) {
 	nlohmann::json& parent = top_json();
 	if (!parent.is_object()) {
 		ORG_ERROR("BeginObject('{}') called on non-object (type: {})", key, parent.type_name());
 		return;
 	}
 
-	nlohmann::json& newObj = parent[std::string(key)];
-	if (!newObj.is_object())
-		newObj = nlohmann::json::object();
+	nlohmann::json& new_obj = parent[std::string(key)];
+	if (!new_obj.is_object())
+		new_obj = nlohmann::json::object();
 
-	m_ObjectsStack.push({ &newObj });
+	m_objects_stack.push({ &new_obj });
 }
 
-void JsonSerializer::BeginArray(std::string_view key) {
+void JsonSerializer::begin_array(std::string_view key) {
 	nlohmann::json& parent = top_json();
 	if (!parent.is_object()) {
 		ORG_ERROR("BeginArray('{}') called on non-object (type: {})",
@@ -144,14 +146,14 @@ void JsonSerializer::BeginArray(std::string_view key) {
 		return;
 	}
 
-	nlohmann::json& newArr = parent[std::string(key)];
-	if (!newArr.is_array())
-		newArr = nlohmann::json::array();
+	nlohmann::json& new_arr = parent[std::string(key)];
+	if (!new_arr.is_array())
+		new_arr = nlohmann::json::array();
 
-	m_ObjectsStack.push({ &newArr, false, 0 });
+	m_objects_stack.push({ &new_arr, false, 0 });
 }
 
-void JsonSerializer::BeginArrayElement() {
+void JsonSerializer::begin_array_element() {
 	nlohmann::json& arr = top_json();
 	if (!arr.is_array()) {
 		ORG_ERROR("BeginArrayElement called on non-array (type: {})", arr.type_name());
@@ -160,59 +162,59 @@ void JsonSerializer::BeginArrayElement() {
 
 	arr.push_back(nlohmann::json::object());
 	size_t index = arr.size() - 1;
-	m_ObjectsStack.push({ &arr[index], true, index });
+	m_objects_stack.push({ &arr[index], true, index });
 }
 
-void JsonSerializer::EndObject() {
-	if (m_ObjectsStack.size() > 1) {
-		m_ObjectsStack.pop();
+void JsonSerializer::end_object() {
+	if (m_objects_stack.size() > 1) {
+		m_objects_stack.pop();
 	} else {
 		ORG_ERROR("Unbalanced EndObject. Resetting to root.");
-		while (!m_ObjectsStack.empty())
-			m_ObjectsStack.pop();
-		m_ObjectsStack.push({ &m_Root });
+		while (!m_objects_stack.empty())
+			m_objects_stack.pop();
+		m_objects_stack.push({ &m_root });
 	}
 }
 
-void JsonSerializer::EndArray() {
-	if (m_ObjectsStack.size() > 1) {
-		m_ObjectsStack.pop();
+void JsonSerializer::end_array() {
+	if (m_objects_stack.size() > 1) {
+		m_objects_stack.pop();
 	} else {
 		ORG_ERROR("Unbalanced EndArray. Resetting to root.");
-		while (!m_ObjectsStack.empty())
-			m_ObjectsStack.pop();
-		m_ObjectsStack.push({ &m_Root });
+		while (!m_objects_stack.empty())
+			m_objects_stack.pop();
+		m_objects_stack.push({ &m_root });
 	}
 }
 
-void JsonSerializer::EndArrayElement() {
-	if (m_ObjectsStack.size() > 1) {
-		m_ObjectsStack.pop();
+void JsonSerializer::end_array_element() {
+	if (m_objects_stack.size() > 1) {
+		m_objects_stack.pop();
 	} else {
 		ORG_ERROR("Unbalanced EndArrayElement. Resetting to root.");
-		while (!m_ObjectsStack.empty())
-			m_ObjectsStack.pop();
-		m_ObjectsStack.push({ &m_Root });
+		while (!m_objects_stack.empty())
+			m_objects_stack.pop();
+		m_objects_stack.push({ &m_root });
 	}
 }
 
-bool JsonSerializer::TryReadArrayElement(int& value) {
-	return TryReadArrayElementImpl(m_ObjectsStack, value);
+bool JsonSerializer::try_read_array_element(int& value) {
+	return try_read_array_element_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::TryReadArrayElement(float& value) {
-	return TryReadArrayElementImpl(m_ObjectsStack, value);
+bool JsonSerializer::try_read_array_element(float& value) {
+	return try_read_array_element_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::TryReadArrayElement(std::string& value) {
-	return TryReadArrayElementImpl(m_ObjectsStack, value);
+bool JsonSerializer::try_read_array_element(std::string& value) {
+	return try_read_array_element_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::TryBeginArrayElementRead() {
-	if (m_ObjectsStack.empty())
+bool JsonSerializer::try_begin_array_element_read() {
+	if (m_objects_stack.empty())
 		return false;
 
-	JsonStackEntry& entry = m_ObjectsStack.top();
+	JsonStackEntry& entry = m_objects_stack.top();
 	nlohmann::json* j = entry.Json;
 
 	if (!j || !j->is_array())
@@ -222,7 +224,7 @@ bool JsonSerializer::TryBeginArrayElementRead() {
 		return false;
 
 	nlohmann::json& elem = (*j)[entry.Index++];
-	m_ObjectsStack.push({ &elem, true, 0 });
+	m_objects_stack.push({ &elem, true, 0 });
 	return true;
 }
 

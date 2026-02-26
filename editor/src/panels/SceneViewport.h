@@ -12,26 +12,26 @@ namespace OrigoEditor {
 class SceneViewport : public EditorPanel {
 public:
 	SceneViewport(EditorContext& ctx)
-	    : m_Context(ctx)
-	    , m_Camera(ctx.EditorViewportCamera) { }
+	    : m_context(ctx)
+	    , m_camera(ctx.EditorViewportCamera) { }
 
-	void OnImGuiRender();
-	const char* GetName() const {
+	void on_im_gui_render();
+	const char* get_name() const {
 		return "Viewport";
 	}
 
 private:
-	EditorContext& m_Context;
-	EditorCamera& m_Camera;
+	EditorContext& m_context;
+	EditorCamera& m_camera;
 
-	ImGuizmo::OPERATION m_GizmoOperation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE m_GizmoMode = ImGuizmo::LOCAL;
+	ImGuizmo::OPERATION m_gizmo_operation = ImGuizmo::TRANSLATE;
+	ImGuizmo::MODE m_gizmo_mode = ImGuizmo::LOCAL;
 
-	Origo::Ref<Origo::Texture2D> m_MoveIcon;
-	Origo::Ref<Origo::Texture2D> m_RotateIcon;
-	Origo::Ref<Origo::Texture2D> m_ScaleIcon;
+	Origo::Ref<Origo::Texture2D> m_move_icon;
+	Origo::Ref<Origo::Texture2D> m_rotate_icon;
+	Origo::Ref<Origo::Texture2D> m_scale_icon;
 
-	bool m_IconsLoaded = false;
+	bool m_icons_loaded = false;
 };
 
 }

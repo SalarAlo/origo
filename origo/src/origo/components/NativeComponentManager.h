@@ -1,9 +1,12 @@
 #pragma once
 
+#include <tuple>
 #include <typeindex>
 
-#include "origo/core/RID.h"
 #include "origo/components/Component.h"
+
+#include "origo/core/RID.h"
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -25,53 +28,47 @@ public:
 	NativeComponentManager(const NativeComponentManager& other);
 	NativeComponentManager& operator=(const NativeComponentManager& other);
 
-	void CloneFrom(const NativeComponentManager& other);
-	bool AddComponentByType(const RID& entity, std::type_index type);
-	static bool CanAddComponentByType(std::type_index type);
+	void clone_from(const NativeComponentManager& other);
+	bool add_component_by_type(const RID& entity, std::type_index type);
+	static bool can_add_component_by_type(std::type_index type);
 
 	template <ComponentType T, typename... Args>
-	T& AddComponent(const RID& entity, Args&&... args) {
-		auto& storage = GetOrCreateStorage<T>();
-		auto [it, inserted] = storage.Data.emplace(entity, T { std::forward<Args>(args)... });
-
-		if (!inserted) {
-			return storage.Data[entity];
-		}
-
+	T& add_component(const RID& entity, Args&&... args) {
+		auto& storage = get_or_create_storage<T>();
+		auto [it, inserted] = storage.Data.try_emplace(entity, std::forward<Args>(args)...);
+		(void)inserted;
 		return it->second;
 	}
 
-	bool RemoveComponentByType(const RID& entity, std::type_index type);
+	bool remove_component_by_type(const RID& entity, std::type_index type);
 
 	template <ComponentType T>
-	bool HasComponent(const RID& entity) const {
-		auto* storage = GetStorage<T>();
-		return storage && storage->Has(entity);
+	bool has_component(const RID& entity) const {
+		auto* storage = get_storage<T>();
+		return storage && storage->has(entity);
 	}
 
 	template <ComponentType T>
-	T* GetComponent(const RID& entity) {
-		auto* storage = GetStorage<T>();
+	T* get_component(const RID& entity) {
+		auto* storage = get_storage<T>();
 		if (!storage)
 			return nullptr;
 
-		auto it = storage->Data.find(entity);
-		return it != storage->Data.end() ? &it->second : nullptr;
+		return storage->get(entity);
 	}
 
 	template <ComponentType T>
-	const T* GetComponent(const RID& entity) const {
-		auto* storage = GetStorage<T>();
+	const T* get_component(const RID& entity) const {
+		auto* storage = get_storage<T>();
 		if (!storage)
 			return nullptr;
 
-		auto it = storage->Data.find(entity);
-		return it != storage->Data.end() ? &it->second : nullptr;
+		return storage->get(entity);
 	}
 
 	template <ComponentType T, typename Func>
-	void ForEach(Func&& func) const {
-		auto* storage = GetStorage<T>();
+	void for_each(Func&& func) const {
+		auto* storage = get_storage<T>();
 		if (!storage)
 			return;
 
@@ -81,99 +78,161 @@ public:
 	}
 
 	template <ComponentType First, ComponentType... Rest, typename Func>
-	void View(Func&& func) {
-		auto* primary = GetStorage<First>();
+	void view(Func&& func) {
+		auto* primary = get_storage<First>();
 		if (!primary)
 			return;
 
-		for (auto& [entity, first] : primary->Data) {
-			if ((HasComponent<Rest>(entity) && ...)) {
-				func(entity, first, *GetComponent<Rest>(entity)...);
+		if constexpr (sizeof...(Rest) > 0) {
+			auto other_storages = std::tuple<Storage<Rest>*...> { get_storage<Rest>()... };
+			if (!std::apply(
+			        [](auto*... storages) { return ((storages != nullptr) && ...); },
+			        other_storages)) {
+				return;
+			}
+
+			for (auto& [entity, first] : primary->Data) {
+				auto rest_ptrs = std::apply(
+				    [&](auto*... storages) {
+					    return std::tuple<Rest*...> { storages->get(entity)... };
+				    },
+				    other_storages);
+
+				if (!std::apply(
+				        [](auto*... ptrs) { return ((ptrs != nullptr) && ...); },
+				        rest_ptrs)) {
+					continue;
+				}
+
+				std::apply(
+				    [&](auto*... ptrs) {
+					    func(entity, first, *ptrs...);
+				    },
+				    rest_ptrs);
+			}
+		} else {
+			for (auto& [entity, first] : primary->Data) {
+				func(entity, first);
 			}
 		}
 	}
 
 	template <ComponentType First, ComponentType... Rest, typename Func>
-	void View(Func&& func) const {
-		auto* primary = GetStorage<First>();
+	void view(Func&& func) const {
+		auto* primary = get_storage<First>();
 		if (!primary)
 			return;
 
-		for (const auto& [entity, first] : primary->Data) {
-			if ((HasComponent<Rest>(entity) && ...)) {
-				func(entity, first, *GetComponent<Rest>(entity)...);
+		if constexpr (sizeof...(Rest) > 0) {
+			auto other_storages = std::tuple<const Storage<Rest>*...> { get_storage<Rest>()... };
+			if (!std::apply(
+			        [](const auto*... storages) { return ((storages != nullptr) && ...); },
+			        other_storages)) {
+				return;
+			}
+
+			for (const auto& [entity, first] : primary->Data) {
+				auto rest_ptrs = std::apply(
+				    [&](const auto*... storages) {
+					    return std::tuple<const Rest*...> { storages->Get(entity)... };
+				    },
+				    other_storages);
+
+				if (!std::apply(
+				        [](const auto*... ptrs) { return ((ptrs != nullptr) && ...); },
+				        rest_ptrs)) {
+					continue;
+				}
+
+				std::apply(
+				    [&](const auto*... ptrs) {
+					    func(entity, first, *ptrs...);
+				    },
+				    rest_ptrs);
+			}
+		} else {
+			for (const auto& [entity, first] : primary->Data) {
+				func(entity, first);
 			}
 		}
 	}
 
-	std::size_t RemoveAllComponents(const RID& entity);
-	bool HasComponent(const RID& entity, std::type_index type) const;
+	std::size_t remove_all_components(const RID& entity);
+	bool has_component(const RID& entity, std::type_index type) const;
 
-	void* GetComponentByType(const RID& entity, std::type_index type) {
-		auto it = m_Storages.find(type);
-		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
+	void* get_component_by_type(const RID& entity, std::type_index type) {
+		auto it = m_storages.find(type);
+		return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
 	}
 
-	const void* GetComponentByType(const RID& entity, std::type_index type) const {
-		auto it = m_Storages.find(type);
-		return it != m_Storages.end() ? it->second->GetRaw(entity) : nullptr;
+	const void* get_component_by_type(const RID& entity, std::type_index type) const {
+		auto it = m_storages.find(type);
+		return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
 	}
 
 	template <typename Func>
-	void ForEachComponentOnEntity(const RID& entity, Func&& func) {
+	void for_each_component_on_entity(const RID& entity, Func&& func) {
 		auto thunk = [](const NativeComponentTypeInfo& info, void* c, void* u) {
 			(*static_cast<std::remove_reference_t<Func>*>(u))(info, c);
 		};
-		this->ForEachComponentOnEntity(entity, thunk, &func);
+		this->for_each_component_on_entity(entity, thunk, &func);
 	}
 
 	template <typename Func>
-	void ForEachComponentOnEntity(const RID& entity, Func&& func) const {
+	void for_each_component_on_entity(const RID& entity, Func&& func) const {
 		auto thunk = [](const NativeComponentTypeInfo& info, const void* c, void* u) {
 			(*static_cast<std::remove_reference_t<Func>*>(u))(info, c);
 		};
-		this->ForEachComponentOnEntity(entity, thunk, &func);
+		this->for_each_component_on_entity(entity, thunk, &func);
 	}
 
-	void ForEachComponentOnEntity(const RID& entity, VisitFn fn, void* user);
-	void ForEachComponentOnEntity(const RID& entity, VisitFnConst fn, void* user) const;
+	void for_each_component_on_entity(const RID& entity, VisitFn fn, void* user);
+	void for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const;
 
-	void SerializeEntity(const RID& entity, ISerializer& backend) const;
-	void DeserializeEntity(const RID& entity, ISerializer& backend);
+	void serialize_entity(const RID& entity, ISerializer& backend) const;
+	void deserialize_entity(const RID& entity, ISerializer& backend);
 
 private:
 	struct IStorage {
 		virtual ~IStorage() = default;
-		virtual bool Has(const RID& entity) const = 0;
-		virtual void* GetRaw(const RID& entity) = 0;
-		virtual const void* GetRaw(const RID& entity) const = 0;
-		virtual bool Remove(const RID& entity) = 0;
-		virtual std::unique_ptr<IStorage> Clone() const = 0;
+		virtual bool has(const RID& entity) const = 0;
+		virtual void* get_raw(const RID& entity) = 0;
+		virtual const void* get_raw(const RID& entity) const = 0;
+		virtual bool remove(const RID& entity) = 0;
+		virtual std::unique_ptr<IStorage> clone() const = 0;
 	};
 
 	template <ComponentType T>
 	struct Storage final : IStorage {
 		std::unordered_map<RID, T> Data;
 
-		bool Has(const RID& entity) const override {
+		bool has(const RID& entity) const override {
 			return Data.find(entity) != Data.end();
 		}
 
-		void* GetRaw(const RID& entity) override {
+		T* get(const RID& entity) {
 			auto it = Data.find(entity);
 			return it != Data.end() ? &it->second : nullptr;
 		}
 
-		const void* GetRaw(const RID& entity) const override {
+		const T* get(const RID& entity) const {
 			auto it = Data.find(entity);
 			return it != Data.end() ? &it->second : nullptr;
 		}
 
-		bool Remove(const RID& entity) override {
+		void* get_raw(const RID& entity) override {
+			return get(entity);
+		}
+
+		const void* get_raw(const RID& entity) const override {
+			return get(entity);
+		}
+
+		bool remove(const RID& entity) override {
 			return Data.erase(entity) > 0;
 		}
 
-		std::unique_ptr<IStorage> Clone() const override {
+		std::unique_ptr<IStorage> clone() const override {
 			auto cloned = std::make_unique<Storage<T>>();
 			cloned->Data = Data;
 			return cloned;
@@ -182,14 +241,14 @@ private:
 
 private:
 	template <ComponentType T>
-	Storage<T>& GetOrCreateStorage() {
+	Storage<T>& get_or_create_storage() {
 		const std::type_index type = typeid(T);
 
-		auto it = m_Storages.find(type);
-		if (it == m_Storages.end()) {
+		auto it = m_storages.find(type);
+		if (it == m_storages.end()) {
 			auto storage = std::make_unique<Storage<T>>();
 			auto* ptr = storage.get();
-			m_Storages.emplace(type, std::move(storage));
+			m_storages.emplace(type, std::move(storage));
 			return *ptr;
 		}
 
@@ -197,25 +256,25 @@ private:
 	}
 
 	template <ComponentType T>
-	Storage<T>* GetStorage() {
+	Storage<T>* get_storage() {
 		const std::type_index type = typeid(T);
-		auto it = m_Storages.find(type);
-		return it != m_Storages.end()
+		auto it = m_storages.find(type);
+		return it != m_storages.end()
 		    ? static_cast<Storage<T>*>(it->second.get())
 		    : nullptr;
 	}
 
 	template <ComponentType T>
-	const Storage<T>* GetStorage() const {
+	const Storage<T>* get_storage() const {
 		const std::type_index type = typeid(T);
-		auto it = m_Storages.find(type);
-		return it != m_Storages.end()
+		auto it = m_storages.find(type);
+		return it != m_storages.end()
 		    ? static_cast<const Storage<T>*>(it->second.get())
 		    : nullptr;
 	}
 
 private:
-	std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_Storages;
+	std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
 };
 
 }
