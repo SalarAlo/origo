@@ -22,7 +22,7 @@ void MaterialSerializer::serialize(const Asset* asset, ISerializer& backend) con
 		if (auto shader_uuid { am.get_uuid(*shader) }; shader_uuid.has_value())
 			backend.write("shader", (*shader_uuid).to_string());
 
-	ORG_INFO("Serializing an asset of type material");
+	ORG_CORE_TRACE("Serializing an asset of type material");
 }
 
 void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {

@@ -1,12 +1,12 @@
 {
         "header": {
-                "imported_time_stamp": "-4666274387318732227",
+                "imported_time_stamp": "-4665496124698100917",
                 "name": "Sample Scene.scene",
                 "origin": "Imported",
                 "source_path": "./resources/scenes/Sample Scene.scene.json",
-                "source_time_stamp": "-4666274387318732227",
+                "source_time_stamp": "-4665496124698100917",
                 "type": "Scene",
-                "uuid": "baa2a9da973d736687c0636fd4fb579f"
+                "uuid": "1d5fbd24df3d4da6fef5ac172e4cdf34"
         },
         "payload": {
                 "path": "./resources/scenes/Sample Scene.scene.json"

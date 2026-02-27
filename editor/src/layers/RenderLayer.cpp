@@ -10,7 +10,7 @@ using namespace Origo;
 namespace OrigoEditor {
 
 void RenderLayer::on_attach() {
-	m_render_context.set_skybox_material(SkyboxDefaults::get_material());
+	m_render_context.set_skybox_material(SkyboxDefaults::get_instance().get_material());
 }
 
 void RenderLayer::on_update(double dt) {
@@ -22,11 +22,11 @@ void RenderLayer::on_update(double dt) {
 
 	auto active_scene_ptr = m_context.ActiveScene;
 
-	SystemScheduler::get().run_phase(GamePhase::RenderAlways, active_scene_ptr, m_render_context);
-	SystemScheduler::get().run_phase(GamePhase::UpdateAlways, active_scene_ptr, dt);
+	SystemScheduler::get_instance().run_phase(GamePhase::RenderAlways, active_scene_ptr, m_render_context);
+	SystemScheduler::get_instance().run_phase(GamePhase::UpdateAlways, active_scene_ptr, dt);
 
 	if (editing_view) {
-		SystemScheduler::get().run_phase(GamePhase::RenderEditor, active_scene_ptr, m_render_context);
+		SystemScheduler::get_instance().run_phase(GamePhase::RenderEditor, active_scene_ptr, m_render_context);
 	}
 
 	m_render_context.flush();

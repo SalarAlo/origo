@@ -13,7 +13,7 @@
 namespace OrigoEditor {
 
 static bool s_registered = []() {
-	InspectorDrawRegistry::register_native_drawer<Origo::ParticleSystemComponent>(
+	InspectorDrawRegistry::get_instance().register_native_drawer<Origo::ParticleSystemComponent>(
 	    "Particle System",
 	    "./icons/ParticleSystem.svg",
 	    [](Origo::ParticleSystemComponent& ps) {

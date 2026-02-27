@@ -1,7 +1,9 @@
 #pragma once
 
-#include "state/EditorContext.h"
 #include "EditorPanel.h"
+
+#include "state/EditorContext.h"
+
 #include "ui/InspectorComponentRenderer.h"
 
 namespace OrigoEditor {
@@ -9,7 +11,7 @@ namespace OrigoEditor {
 class EntityInspectorPanel : public EditorPanel {
 public:
 	EntityInspectorPanel(EditorContext& ctx)
-	    : m_context(ctx) { InspectorComponentRenderer::init(&ctx); }
+	    : m_context(ctx) { InspectorComponentRenderer::get_instance().init(&ctx); }
 
 	const char* get_name() const override { return "Entity Inspector"; }
 	void on_im_gui_render() override;

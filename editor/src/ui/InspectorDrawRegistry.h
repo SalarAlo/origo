@@ -5,6 +5,8 @@
 #include <typeindex>
 #include <unordered_map>
 
+#include "origo/utils/Singleton.h"
+
 #include "ui/IInspectorDrawable.h"
 #include "ui/InspectorDrawable.h"
 
@@ -23,28 +25,28 @@ struct InspectorEntry {
 	Origo::Scope<IInspectorDrawable> Drawer;
 };
 
-class InspectorDrawRegistry {
+class InspectorDrawRegistry : public Origo::Singleton<InspectorDrawRegistry> {
 	using ComponentToDrawerMap = std::unordered_map<std::type_index, InspectorEntry>;
 
 public:
 	template <typename T>
-	static void register_native_drawer(const char* name, const char* iconPath, InspectorDrawable<T>::DrawFn fn) {
+	void register_native_drawer(const char* name, const char* iconPath, InspectorDrawable<T>::DrawFn fn) {
 		InspectorEntry entry;
 		entry.Name = name;
 		entry.IconPath = iconPath;
 		entry.Drawer = Origo::MakeScope<InspectorDrawable<T>>(name, std::move(fn));
-		s_entries[typeid(T)] = std::move(entry);
+		m_entries[typeid(T)] = std::move(entry);
 	}
 
-	static InspectorEntry* get(std::type_index type);
-	static const ComponentToDrawerMap& get_entries() { return s_entries; }
+	InspectorEntry* get_inspector_entry(std::type_index type);
+	const ComponentToDrawerMap& get_entries() { return m_entries; }
 
 	template <typename TComponent>
-	static InspectorEntry* get() {
-		return get(std::type_index(typeid(TComponent)));
+	InspectorEntry* get_inspector_entry() {
+		return get_inspector_entry(std::type_index(typeid(TComponent)));
 	}
 
 private:
-	inline static ComponentToDrawerMap s_entries;
+	ComponentToDrawerMap m_entries {};
 };
 }

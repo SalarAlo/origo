@@ -1,13 +1,16 @@
 #pragma once
 
 #include "origo/assets/AssetManager.h"
+
+#include "origo/utils/Singleton.h"
+
 namespace Origo {
 
-class SkyboxDefaults {
+class SkyboxDefaults : public Singleton<SkyboxDefaults> {
 public:
-	static AssetHandle get_cubemap();
-	static AssetHandle get_shader();
-	static AssetHandle get_material();
+	AssetHandle get_cubemap();
+	AssetHandle get_shader();
+	AssetHandle get_material();
 };
 
 }

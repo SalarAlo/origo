@@ -18,53 +18,53 @@ struct SerializeEmissionShape {
 	    : Backend(backend) { };
 
 	void operator()(PointEmissionShape shape) {
-		Backend.Write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Point));
+		Backend.write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Point));
 	}
 
 	void operator()(ConeEmissionShape shape) {
-		Backend.Write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Cone));
-		Backend.Write("angle", shape.Angle);
-		Backend.Write("length", shape.Length);
+		Backend.write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Cone));
+		Backend.write("angle", shape.Angle);
+		Backend.write("length", shape.Length);
 	}
 
 	void operator()(SphereEmissionShape shape) {
-		Backend.Write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Sphere));
-		Backend.Write("radius", shape.Radius);
+		Backend.write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Sphere));
+		Backend.write("radius", shape.Radius);
 	}
 
 	void operator()(BoxEmissionShape shape) {
-		Backend.Write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Box));
-		Backend.Write("x", shape.Position.x);
-		Backend.Write("y", shape.Position.y);
-		Backend.Write("z", shape.Position.z);
+		Backend.write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Box));
+		Backend.write("x", shape.Position.x);
+		Backend.write("y", shape.Position.y);
+		Backend.write("z", shape.Position.z);
 	}
 
-	ParticleEmissionShape operator()(ISerializer& backend) {
-		if (std::string type_str {}; backend.TryRead("type", type_str)) {
+	ParticleEmissionShape operator()() {
+		if (std::string type_str {}; Backend.try_read("type", type_str)) {
 			auto type { magic_enum::enum_cast<ParticleEmissionShapeKind>(type_str) };
 
 			if (!type.has_value())
-				return ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Point);
+				return ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Point);
 
 			switch (*type) {
 			case ParticleEmissionShapeKind::Point:
-				return ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Point);
+				return ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Point);
 			case ParticleEmissionShapeKind::Sphere: {
-				auto sphere { ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Sphere) };
-				backend.TryRead("radius", std::get<SphereEmissionShape>(sphere).Radius);
+				auto sphere { ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Sphere) };
+				Backend.try_read("radius", std::get<SphereEmissionShape>(sphere).Radius);
 				return sphere;
 			}
 			case ParticleEmissionShapeKind::Cone: {
-				auto cone { ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Cone) };
-				backend.TryRead("angle", std::get<ConeEmissionShape>(cone).Angle);
-				backend.TryRead("length", std::get<ConeEmissionShape>(cone).Length);
+				auto cone { ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Cone) };
+				Backend.try_read("angle", std::get<ConeEmissionShape>(cone).Angle);
+				Backend.try_read("length", std::get<ConeEmissionShape>(cone).Length);
 				return cone;
 			}
 			case ParticleEmissionShapeKind::Box: {
-				auto box { ParticleEmissionShapeFactory::CreateDefault(ParticleEmissionShapeKind::Box) };
-				backend.TryRead("x", std::get<BoxEmissionShape>(box).Position.x);
-				backend.TryRead("y", std::get<BoxEmissionShape>(box).Position.y);
-				backend.TryRead("z", std::get<BoxEmissionShape>(box).Position.z);
+				auto box { ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Box) };
+				Backend.try_read("x", std::get<BoxEmissionShape>(box).Position.x);
+				Backend.try_read("y", std::get<BoxEmissionShape>(box).Position.y);
+				Backend.try_read("z", std::get<BoxEmissionShape>(box).Position.z);
 				return box;
 			}
 			}

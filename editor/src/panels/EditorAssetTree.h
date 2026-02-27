@@ -1,7 +1,9 @@
 #pragma once
 
 #include <ankerl/unordered_dense.h>
+
 #include "origo/assets/Metadata.h"
+
 #include "origo/core/UUID.h"
 
 namespace OrigoEditor {

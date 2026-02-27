@@ -32,6 +32,8 @@ public:
 	void bind();
 	void write_model(const glm::mat4& model);
 
+	void set_textured();
+
 	template <typename T>
 	Material2D& set_shader_directly(std::string_view name, const T& val) {
 		if (!m_shader.has_value()) {

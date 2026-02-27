@@ -11,7 +11,7 @@
 namespace OrigoEditor {
 
 static bool s_registered = []() {
-	InspectorDrawRegistry::register_native_drawer<Origo::ModelRendererComponent>("Model Renderer", "icons/Paint.svg", [](Origo::ModelRendererComponent& renderer) {
+	InspectorDrawRegistry::get_instance().register_native_drawer<Origo::ModelRendererComponent>("Model Renderer", "icons/Paint.svg", [](Origo::ModelRendererComponent& renderer) {
 		auto& am { Origo::AssetManager::get_instance() };
 
 		auto handle { renderer.ModelHandle };

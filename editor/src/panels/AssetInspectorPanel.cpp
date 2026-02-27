@@ -24,7 +24,7 @@ void AssetInspectorPanel::on_im_gui_render() {
 	ImGui::SeparatorText(name.c_str());
 
 	ImGui::SetWindowFontScale(0.9f);
-	AssetInspectorDrawer::draw_asset(md);
+	AssetInspectorDrawer::get_instance().draw_asset(md);
 	ImGui::SetWindowFontScale(1.0f);
 }
 

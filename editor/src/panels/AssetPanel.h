@@ -23,6 +23,7 @@ private:
 	void draw_folder_contents(FolderEntry* folder);
 	void draw_folder_tile(FolderEntry* folder, ImDrawList* drawList);
 	void draw_asset_tile(AssetEntry*& asset, ImDrawList* drawList);
+	void draw_create_asset_context_menu();
 
 private:
 	EditorContext& m_context;

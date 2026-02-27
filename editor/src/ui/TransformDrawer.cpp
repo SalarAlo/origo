@@ -1,12 +1,14 @@
-#include "ui/ComponentUI.h"
-#include "origo/components/Transform.h"
-#include "ui/InspectorDrawRegistry.h"
 #include <glm/vec3.hpp>
+
+#include "origo/components/Transform.h"
+
+#include "ui/ComponentUI.h"
+#include "ui/InspectorDrawRegistry.h"
 
 namespace OrigoEditor {
 
 static bool s_registered = []() {
-	InspectorDrawRegistry::register_native_drawer<Origo::TransformComponent>("Transform", "./icons/TransformComponent.svg", [](Origo::TransformComponent& t) {
+	InspectorDrawRegistry::get_instance().register_native_drawer<Origo::TransformComponent>("Transform", "./icons/TransformComponent.svg", [](Origo::TransformComponent& t) {
 		glm::vec3 pos = t.get_position();
 		glm::vec3 rot = t.get_rotation();
 		glm::vec3 scl = t.get_scale();

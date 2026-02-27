@@ -99,12 +99,12 @@ void EntityInspectorPanel::draw_entity_name() {
 }
 
 void EntityInspectorPanel::draw_native_components(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	for (const auto& [type, entry] : InspectorDrawRegistry::get_entries()) {
+	for (const auto& [type, entry] : InspectorDrawRegistry::get_instance().get_entries()) {
 		if (!activeScene->has_native_component_by_type(selectedEntity, type))
 			continue;
 
 		void* component_ptr = activeScene->get_native_component_by_type(selectedEntity, type);
-		InspectorComponentRenderer::draw_native_component(selectedEntity, component_ptr, type);
+		InspectorComponentRenderer::get_instance().draw_native_component(selectedEntity, component_ptr, type);
 	}
 }
 
@@ -114,7 +114,7 @@ void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Ori
 			continue;
 
 		auto& instance = *activeScene->get_script_component(selectedEntity, id);
-		InspectorComponentRenderer::draw_script_component(instance);
+		InspectorComponentRenderer::get_instance().draw_script_component(instance);
 	}
 }
 
@@ -147,11 +147,11 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 		ImGui::TextDisabled("Available Components");
 		ImGui::Separator();
 
-		for (const auto& [type, entry] : InspectorDrawRegistry::get_entries()) {
+		for (const auto& [type, entry] : InspectorDrawRegistry::get_instance().get_entries()) {
 			if (activeScene->has_native_component_by_type(selectedEntity, type))
 				continue;
 
-			const bool is_registered = Origo::NativeComponentRegistry::get(type) != nullptr;
+			const bool is_registered = Origo::NativeComponentRegistry::get_instance().get_component_info(type) != nullptr;
 
 			if (!is_registered) {
 				ImGui::PushStyleColor(

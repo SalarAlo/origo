@@ -1,9 +1,10 @@
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+
 #include "origo/core/Logger.h"
+
 #include "origo/core/ConsoleLogBuffer.h"
 #include "origo/core/ConsoleSink.h"
-
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Origo::Logger {
 

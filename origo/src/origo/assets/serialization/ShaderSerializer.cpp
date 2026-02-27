@@ -5,7 +5,7 @@
 namespace Origo {
 
 void ShaderSerializer::serialize(const Asset* asset, ISerializer& backend) const {
-	ORG_INFO("Seriliazing an asset of type shader");
+	ORG_CORE_TRACE("Seriliazing an asset of type shader");
 	auto shader { static_cast<const Shader*>(asset) };
 	auto source { shader->get_source() };
 	source->serialize(backend);

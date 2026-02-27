@@ -8,10 +8,12 @@ Component.define("HealthComponent", {
 		default = 100
 	},
 	is_dead = {
-		type = "bool",
-		default = false
+		type = "float",
+		default = 20
 	},
 })
+
+
 
 
 

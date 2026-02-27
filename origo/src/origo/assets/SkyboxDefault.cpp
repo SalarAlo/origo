@@ -56,7 +56,7 @@ AssetHandle SkyboxDefaults::get_shader() {
 }
 
 AssetHandle SkyboxDefaults::get_material() {
-	static AssetHandle handle = [] {
+	static AssetHandle handle = [this] {
 		auto material = AssetFactory::get_instance().get_instance().create_synthetic_asset<SkyboxMaterial>(
 		    "Default Skybox Material",
 		    UUID::from_hash("ENGINE_DEFAULT_SKYBOX_MATERIAL"),

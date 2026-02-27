@@ -113,7 +113,7 @@ void AssetManager::resolve_all(std::optional<std::function<bool(Asset*)>> resolv
 			continue;
 
 		std::string path_str = entry.Path ? entry.Path->string() : "<no path>";
-		ORG_INFO("Resolving asset of type '{}' with path '{}'",
+		ORG_CORE_TRACE("Resolving asset of type '{}' with path '{}'",
 		    magic_enum::enum_name(entry.AssetPtr->get_asset_type()),
 		    path_str);
 

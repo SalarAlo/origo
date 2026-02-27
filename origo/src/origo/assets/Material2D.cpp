@@ -65,11 +65,18 @@ void Material2D::resolve() {
 	if (!m_albedo.has_value()) {
 		m_albedo = ac.get_texture();
 	}
+
+	set_textured();
 }
 
 void Material2D::set_color(Vec3 color) {
 	m_color = color;
 	m_uniform_list.add_uniform("m_Color", color);
+}
+
+void Material2D::set_textured() {
+	set_uniform("u_UseTexture", true);
+	set_uniform("u_UseLight", true);
 }
 
 }

@@ -13,7 +13,7 @@ void TextureSerializer::serialize(const Asset* asset, ISerializer& backend) cons
 
 	backend.write("texture_type", magic_enum::enum_name(texture->get_texture_type()));
 	texture->get_source()->serialize(backend);
-	ORG_INFO("Seriliazing an asset of type texture");
+	ORG_CORE_TRACE("Seriliazing an asset of type texture");
 }
 
 void TextureSerializer::deserialize(ISerializer& backend, Asset& asset) const {

@@ -225,6 +225,9 @@ void Model::load_from_assimp() {
 		    *m_model_shader_handle,
 		    texture_handle);
 
+		auto material { AssetManager::get_instance().get_asset<Material2D>(material_handle) };
+		material->set_textured();
+
 		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();
 		m_sub_meshes.push_back({ mesh_handle, material_handle });
 	}

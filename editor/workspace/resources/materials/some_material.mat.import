@@ -1,0 +1,15 @@
+{
+        "header": {
+                "imported_time_stamp": "-4665496023444786159",
+                "name": "some_material",
+                "origin": "Imported",
+                "source_path": "./resources/materials/some_material.mat",
+                "source_time_stamp": "-4665496023444786159",
+                "type": "Material2D",
+                "uuid": "9c4d8e1d57cacf742a69c75002517a09"
+        },
+        "payload": {
+                "albedo": "eef1f77be839d2d1fe04befcf50e1166",
+                "shader": "e1beba6e7aa762f38a0720983812e54a"
+        }
+}

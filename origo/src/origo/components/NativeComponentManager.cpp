@@ -24,11 +24,11 @@ void NativeComponentManager::clone_from(const NativeComponentManager& other) {
 }
 
 bool NativeComponentManager::can_add_component_by_type(std::type_index type) {
-	return NativeComponentRegistry::get(type) != nullptr;
+	return NativeComponentRegistry::get_instance().get_component_info(type) != nullptr;
 }
 
 bool NativeComponentManager::add_component_by_type(const RID& entity, std::type_index type) {
-	auto* info = NativeComponentRegistry::get(type);
+	auto* info = NativeComponentRegistry::get_instance().get_component_info(type);
 	if (!info)
 		return false;
 
@@ -64,7 +64,7 @@ bool NativeComponentManager::remove_component_by_type(
 }
 
 void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFn fn, void* user) {
-	for (const auto& [type, info] : NativeComponentRegistry::get_all()) {
+	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all()) {
 		if (!info.Has(*this, entity))
 			continue;
 
@@ -77,7 +77,7 @@ void NativeComponentManager::for_each_component_on_entity(const RID& entity, Vis
 }
 
 void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const {
-	for (const auto& [type, info] : NativeComponentRegistry::get_all()) {
+	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all()) {
 		if (!info.Has(*this, entity))
 			continue;
 

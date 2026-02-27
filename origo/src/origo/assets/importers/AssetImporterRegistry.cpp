@@ -9,7 +9,7 @@
 #include "origo/assets/importers/TextureImporter.h"
 
 namespace Origo {
-void AssetImporterRegistry::Register(Scope<IAssetImporter> importer) {
+void AssetImporterRegistry::register_importer(Scope<IAssetImporter> importer) {
 	m_importers.emplace_back(std::move(importer));
 }
 
@@ -24,12 +24,12 @@ IAssetImporter* AssetImporterRegistry::get_importer(const std::filesystem::path&
 
 void AssetImporterRegistry::initialise_default_importers() {
 	ORG_CORE_TRACE("Registering all default asset importers");
-	Register(MakeScope<TextureImporter>());
-	Register(MakeScope<ShaderImporter>());
-	Register(MakeScope<ScriptImporter>());
-	Register(MakeScope<ModelImporter>());
-	Register(MakeScope<MaterialImporter>());
-	Register(MakeScope<SceneAssetImporter>());
+	register_importer(MakeScope<TextureImporter>());
+	register_importer(MakeScope<ShaderImporter>());
+	register_importer(MakeScope<ScriptImporter>());
+	register_importer(MakeScope<ModelImporter>());
+	register_importer(MakeScope<MaterialImporter>());
+	register_importer(MakeScope<SceneAssetImporter>());
 }
 
 }

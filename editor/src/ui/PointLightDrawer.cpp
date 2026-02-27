@@ -8,7 +8,7 @@
 namespace OrigoEditor {
 
 static bool s_registered = []() {
-	InspectorDrawRegistry::register_native_drawer<Origo::PointLightComponent>(
+	InspectorDrawRegistry::get_instance().register_native_drawer<Origo::PointLightComponent>(
 	    "PointLight",
 	    "icons/Light.svg",
 	    [](Origo::PointLightComponent& light) {

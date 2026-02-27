@@ -66,7 +66,7 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 				continue;
 			}
 
-			const auto* info = NativeComponentRegistry::get_by_name(type_name);
+			const auto* info = NativeComponentRegistry::get_instance().get_component_info_by_name(type_name);
 			if (!info) {
 				ORG_WARN("[Scene]  Unknown component '{}'", type_name);
 				backend.end_array_element();

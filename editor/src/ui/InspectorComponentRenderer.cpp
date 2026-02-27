@@ -14,11 +14,11 @@
 
 namespace OrigoEditor {
 void InspectorComponentRenderer::init(EditorContext* ctx) {
-	s_context = ctx;
+	m_context = ctx;
 }
 
 void InspectorComponentRenderer::draw_native_component(const Origo::RID& entity, void* componentPtr, std::type_index type) {
-	auto* entry = InspectorDrawRegistry::get(type);
+	auto* entry = InspectorDrawRegistry::get_instance().get_inspector_entry(type);
 
 	if (!entry) {
 		draw_unknown(componentPtr);
@@ -37,12 +37,12 @@ void InspectorComponentRenderer::draw_native_component(const Origo::RID& entity,
 void InspectorComponentRenderer::draw_script_component(Origo::ScriptComponentInstance& instance) {
 	auto& desc = Origo::ScriptComponentRegistry::get(instance.ID);
 
-	if (!s_script_icon)
-		s_script_icon = load_icon("./icons/Script.svg");
+	if (!m_script_icon)
+		m_script_icon = load_icon("./icons/Script.svg");
 
 	std::string label = desc.Name + "##" + std::to_string(reinterpret_cast<uintptr_t>(&instance));
 
-	if (!draw_header_scripted(&instance, label.c_str(), s_script_icon))
+	if (!draw_header_scripted(&instance, label.c_str(), m_script_icon))
 		return;
 
 	for (auto& field_desc : desc.Fields) {
@@ -134,7 +134,7 @@ bool InspectorComponentRenderer::draw_header_native(const Origo::RID& entity, vo
 
 		if (ImGui::BeginPopup("##component_menu")) {
 			if (ImGui::MenuItem("Remove Component")) {
-				s_context->ActiveScene->schedule_remove_native_component(entity, type);
+				m_context->ActiveScene->schedule_remove_native_component(entity, type);
 			}
 			ImGui::EndPopup();
 		}
@@ -158,8 +158,8 @@ bool InspectorComponentRenderer::draw_header_scripted(void* id, const char* labe
 }
 
 void InspectorComponentRenderer::draw_unknown(void* componentPtr) {
-	if (!s_unknown_icon)
-		s_unknown_icon = load_icon("./icons/Entity.svg");
+	if (!m_unknown_icon)
+		m_unknown_icon = load_icon("./icons/Entity.svg");
 
 	std::string label = "Unknown Component##" + std::to_string(reinterpret_cast<uintptr_t>(componentPtr));
 

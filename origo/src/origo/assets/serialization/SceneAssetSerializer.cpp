@@ -9,7 +9,7 @@
 namespace Origo {
 
 void SceneAssetSerializer::serialize(const Asset* asset, ISerializer& backend) const {
-	ORG_INFO("Seriliazing an asset of type model");
+	ORG_CORE_TRACE("Seriliazing an asset of type model");
 
 	auto model { static_cast<const SceneAsset*>(asset) };
 

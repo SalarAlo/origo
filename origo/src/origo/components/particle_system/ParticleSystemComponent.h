@@ -30,7 +30,6 @@ struct ParticleSystemComponent : public Component {
 	Origo::OptionalAssetHandle ParticleMesh {};
 	Origo::OptionalAssetHandle ParticleMaterial {};
 
-	// TODO: SERIALIZE
 	ParticleEmissionShape Shape {};
 
 	float SpawnAccumulator = 0.0f;

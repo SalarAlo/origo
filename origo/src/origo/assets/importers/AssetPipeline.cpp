@@ -67,7 +67,7 @@ bool AssetImportPipeline::is_import_necessary(const std::filesystem::path& path,
 	if (!std::filesystem::exists(import_file))
 		return true;
 
-	if (!meta.SourcePath.empty() && meta.ImportedTimestamp < meta.SourceTimestamp)
+	if (meta.ImportedTimestamp < meta.SourceTimestamp)
 		return true;
 
 	return false;
