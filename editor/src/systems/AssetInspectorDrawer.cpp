@@ -5,6 +5,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Material2D.h"
+#include "origo/assets/Material2DSource.h"
 
 #include "ui/ComponentUI.h"
 
@@ -36,21 +37,26 @@ void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType t
 }
 
 void AssetInspectorDrawer::draw_material(Origo::Material2D* material) {
-	auto albedo_handle { material->get_albedo() };
-	auto shader_handle { material->get_shader() };
+	auto material_data { material->get_data() };
+
+	if (!material_data.has_value()) {
+		return;
+	}
+
+	Origo::OptionalAssetHandle albedo_handle = material_data->AlbedoHandle;
+	Origo::OptionalAssetHandle shader_handle = material_data->ShaderHandle;
 
 	ComponentUI::draw_asset_control("Albedo", albedo_handle, Origo::AssetType::Texture2D);
 	ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
 
-	if (albedo_handle.has_value())
-		material->set_albedo(*albedo_handle);
-
-	if (shader_handle.has_value())
-		material->set_shader(*shader_handle);
+	if (material_data->ShaderHandle != shader_handle || material_data->AlbedoHandle != albedo_handle) {
+		Origo::Material2DSourceRaw new_source { *albedo_handle, *shader_handle };
+	}
 
 	Origo::Vec3 color { material->get_color() };
 	ComponentUI::draw_color_control("Color", color);
-	material->set_color(color);
+	if (material->get_color() != color)
+		material->set_color(color);
 }
 
 }

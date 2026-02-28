@@ -1,82 +1,88 @@
 #include "origo/assets/Material2D.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/DefaultAssetCache.h"
+#include "origo/assets/Material2DSource.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/UniformList.hpp"
 
 #include "origo/core/Logger.h"
+#include "origo/core/Typedefs.h"
 
 namespace Origo {
 
-Material2D::Material2D() {
-	m_shader = DefaultAssetCache::get_instance().get_shader();
-	m_albedo = DefaultAssetCache::get_instance().get_texture();
-}
-
-Material2D::Material2D(AssetHandle shader, OptionalAssetHandle texture)
-    : m_uniform_list()
-    , m_shader(shader)
-    , m_albedo(texture) {
-	if (!m_albedo.has_value())
-		return;
-
-	auto albedo_ptr { AssetManager::get_instance().get_asset<Texture2D>(*m_albedo) };
-	if (albedo_ptr->get_texture_type() != TextureType::Albedo) {
-		ORG_CORE_ERROR(
-		    "Material::Material: Expected a Texture Type of Albedo. Received a Texture Type of {}",
-		    magic_enum::enum_name(albedo_ptr->get_texture_type()));
-	}
-}
-
 void Material2D::bind() {
-	auto& am { AssetManager::get_instance() };
-	auto shader { am.get_asset<Shader>(*m_shader) };
-	shader->use_program();
-	shader->set_uniform("u_Color", m_color);
-	m_uniform_list.upload_all(shader);
-
-	if (m_albedo.has_value()) {
-		auto albedo { am.get_asset<Texture2D>(*m_albedo) };
-		albedo->bind(*m_shader);
+	if (!m_resolved) {
+		ORG_CORE_ERROR("Can not bound unresolved material. call resolve after set_source.");
+		return;
 	}
+
+	m_shader->use_program();
+	m_shader->set_uniform("u_Color", m_color);
+
+	m_uniform_list.upload_all(m_shader);
+
+	m_albedo->bind(m_data->ShaderHandle);
 }
 
 void Material2D::write_model(const glm::mat4& modelMatrix) {
-	if (!m_shader.has_value()) {
-		ORG_TRACE("Material2D::WriteModel: Can not Write Model if no shader exists");
+	if (!m_resolved) {
+		ORG_CORE_ERROR("Can not bound unresolved material. call resolve after set_source.");
 		return;
 	}
 
-	auto shader { AssetManager::get_instance().get_asset<Shader>(*m_shader) };
-	shader->set_uniform("u_ModelMatrix", modelMatrix);
+	m_shader->set_uniform("u_ModelMatrix", modelMatrix);
 }
 
 void Material2D::resolve() {
+	if (!m_source) {
+		ORG_CORE_ERROR("Can not resolve material with unset source");
+		return;
+	}
+
 	auto& am = AssetManager::get_instance();
-	auto& ac { DefaultAssetCache::get_instance() };
 
-	m_shader = !m_shader_uuid.has_value() ? ac.get_shader() : am.get_handle_by_uuid(*m_shader_uuid);
-	if (!m_shader.has_value()) {
-		m_shader = ac.get_shader();
+	m_resolved = false;
+	m_shader = nullptr;
+	m_albedo = nullptr;
+
+	m_data = m_source->get_material_data();
+
+	m_shader = am.get_asset<Shader>(m_data->ShaderHandle);
+	m_albedo = am.get_asset<Texture2D>(m_data->AlbedoHandle);
+
+	if (!m_shader || !m_albedo) {
+		ORG_CORE_ERROR("Material resolve failed");
+		m_resolved = false;
+		return;
 	}
 
-	m_albedo = !m_albedo_uuid.has_value() ? ac.get_texture() : am.get_handle_by_uuid(*m_albedo_uuid);
-	if (!m_albedo.has_value()) {
-		m_albedo = ac.get_texture();
-	}
-
-	set_textured();
+	m_resolved = true;
 }
 
 void Material2D::set_color(Vec3 color) {
 	m_color = color;
-	m_uniform_list.add_uniform("m_Color", color);
 }
 
-void Material2D::set_textured() {
+void Material2D::make_textured_material() {
 	set_uniform("u_UseTexture", true);
 	set_uniform("u_UseLight", true);
+}
+
+void Material2D::set_source(Scope<Material2DSource> source) {
+	m_source = std::move(source);
+
+	m_resolved = false;
+	m_shader = nullptr;
+	m_albedo = nullptr;
+	m_data.reset();
+}
+
+Material2DSource* Material2D::get_source() const {
+	return m_source.get();
+}
+
+std::optional<MaterialData> Material2D::get_data() const {
+	return m_data;
 }
 
 }

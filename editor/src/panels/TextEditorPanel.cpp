@@ -110,33 +110,28 @@ void TextEditorPanel::display_uneditable_asset(const std::string& assetTypeName)
 		ImGui::TextUnformatted(txt);
 	};
 
-	// Icon
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1));
 	center_text(icon);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 12));
 
-	// Title
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1));
 	center_text(title);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 6));
 
-	// Subtitle
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1));
 	center_text(subtitle);
 	ImGui::PopStyleColor();
 
 	ImGui::Dummy(ImVec2(0, 18));
 
-	// Asset type label
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.4f, 0.4f, 1));
 	center_text("Asset Type");
 	ImGui::PopStyleColor();
 
-	// Asset type value
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.55f, 0.35f, 1));
 	center_text(assetTypeName.c_str());
 	ImGui::PopStyleColor();

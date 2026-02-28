@@ -13,6 +13,12 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
+#include "origo/assets/AssetManager.h"
+#include "origo/assets/DefaultAssetCache.h"
+
+#include "origo/assets/serialization/AssetSerializer.h"
+
+#include "origo/serialization/JsonSerializer.h"
 
 #include "systems/EditorIcons.h"
 
@@ -268,6 +274,21 @@ namespace {
 		add_image_rotated(draw_list, asset.Icon, center, size, 0.0f);
 	}
 
+	static std::filesystem::path make_unique_material_path(const std::filesystem::path& folder) {
+		int i = 0;
+		std::filesystem::path path;
+
+		do {
+			std::string name = i == 0 ? "material.mat"
+			                          : "material_" + std::to_string(i) + ".mat";
+
+			path = folder / name;
+			i++;
+		} while (std::filesystem::exists(path));
+
+		return path;
+	}
+
 }
 
 AssetPanel::AssetPanel(EditorContext& ctx)
@@ -439,6 +460,8 @@ void AssetPanel::draw_asset_tile(AssetEntry*& asset, ImDrawList* drawList) {
 }
 
 void AssetPanel::draw_create_asset_context_menu() {
+	using namespace Origo;
+
 	if (!ImGui::BeginPopupContextWindow("AssetPanelContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 		return;
 
@@ -447,6 +470,16 @@ void AssetPanel::draw_create_asset_context_menu() {
 			if (!std::filesystem::exists(m_current_folder->Path)) {
 				ORG_ERROR("Unable to create materials within a virtual path");
 			}
+
+			auto material_path = make_unique_material_path(m_current_folder->Path);
+			Origo::JsonSerializer backend { material_path };
+			auto handle { Origo::DefaultAssetCache::get_instance().get_material() };
+
+			Origo::AssetSerializationSystem::
+			    get(Origo::AssetType::Material2D)
+			        ->serialize(Origo::AssetManager::get_instance().get(handle), backend);
+
+			backend.save_to_file();
 		}
 		if (ImGui::MenuItem("Script")) {
 			if (!std::filesystem::exists(m_current_folder->Path)) {

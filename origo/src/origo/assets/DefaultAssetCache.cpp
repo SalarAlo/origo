@@ -39,7 +39,7 @@ AssetHandle DefaultAssetCache::get_texture() {
 	if (m_texture.has_value())
 		return *m_texture;
 
-	std::vector<unsigned char> white_pixel = { 255, 255, 255, 255 };
+	std::vector<unsigned char> white_pixel_rgba = { 255, 255, 255, 255 };
 
 	m_texture = AssetFactory::get_instance().get_instance().create_synthetic_asset<Texture2D>(
 	    "Default White Texture",
@@ -47,7 +47,7 @@ AssetHandle DefaultAssetCache::get_texture() {
 
 	auto tex = AssetManager::get_instance().get_asset<Texture2D>(*m_texture);
 	tex->set_source(MakeScope<TextureSourceRaw>(
-	    1, 1, 4, std::move(white_pixel), false));
+	    1, 1, 4, std::move(white_pixel_rgba), false));
 	tex->load();
 
 	return *m_texture;
@@ -62,11 +62,13 @@ AssetHandle DefaultAssetCache::get_material() {
 	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_2D"));
 
 	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_material);
-	material->set_shader(get_shader());
-	material->set_albedo(get_texture());
+	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
 
 	material->set_uniform("u_UseTexture", true);
 	material->set_uniform("u_UseLight", true);
+
+	material->set_source(std::move(material_source));
+	material->resolve();
 
 	return *m_material;
 }
@@ -82,10 +84,14 @@ AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
 	    UUID::from_arbitrary_string("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
 	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_emission_debug_material);
-	material->set_shader(get_shader());
+	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
+
 	material->set_color(debug_emission_particle_color);
 	material->set_uniform("u_UseTexture", false);
 	material->set_uniform("u_UseLight", false);
+
+	material->set_source(std::move(material_source));
+	material->resolve();
 
 	return *m_material;
 }
@@ -101,11 +107,14 @@ Origo::AssetHandle DefaultAssetCache::get_outline_material() {
 	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_OUTLINE_2D"));
 
 	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_outline_material);
-	material->set_shader(get_shader());
+	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
 	material->set_color(orange_color);
 
 	material->set_uniform("u_UseTexture", false);
 	material->set_uniform("u_UseLight", false);
+
+	material->set_source(std::move(material_source));
+	material->resolve();
 
 	return *m_outline_material;
 }
@@ -121,10 +130,14 @@ AssetHandle DefaultAssetCache::get_particle_material() {
 	    UUID::from_arbitrary_string("DEFAULT_PARTICLE_MATERIAL_2D"));
 
 	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_material);
-	material->set_shader(get_shader());
+	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
+
 	material->set_color(particle_color);
 	material->set_uniform("u_UseTexture", true);
 	material->set_uniform("u_UseLight", true);
+
+	material->set_source(std::move(material_source));
+	material->resolve();
 
 	return *m_material;
 }

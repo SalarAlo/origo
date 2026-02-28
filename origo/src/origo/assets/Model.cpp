@@ -10,6 +10,7 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/Material2D.h"
+#include "origo/assets/Material2DSource.h"
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
@@ -221,12 +222,13 @@ void Model::load_from_assimp() {
 		}
 
 		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<Material2D>(
-		    "ModelMat_" + std::to_string(i),
-		    *m_model_shader_handle,
-		    texture_handle);
+		    "ModelMat_" + std::to_string(i));
 
 		auto material { AssetManager::get_instance().get_asset<Material2D>(material_handle) };
-		material->set_textured();
+
+		material->make_textured_material();
+		material->set_source(MakeScope<Material2DSourceRaw>(texture_handle, *m_model_shader_handle));
+		material->resolve();
 
 		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();
 		m_sub_meshes.push_back({ mesh_handle, material_handle });

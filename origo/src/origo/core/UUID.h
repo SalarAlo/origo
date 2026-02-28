@@ -1,13 +1,18 @@
 #pragma once
 
 #include <cstdint>
+
+#include <iomanip>
 #include <random>
 #include <sstream>
-#include <iomanip>
 
 namespace Origo {
 
 struct UUID {
+	static UUID bad() {
+		return UUID(0, 0);
+	}
+
 	static UUID generate() {
 		static std::random_device rd;
 		static std::mt19937_64 gen(rd());

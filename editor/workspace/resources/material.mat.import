@@ -1,0 +1,18 @@
+{
+        "header": {
+                "imported_time_stamp": "-4665408052424177176",
+                "name": "material",
+                "origin": "Imported",
+                "source_path": "./resources/material.mat",
+                "source_time_stamp": "-4665408052424177176",
+                "type": "Material2D",
+                "uuid": "565b492954efc4c41e99e35098e69849"
+        },
+        "payload": {
+                "data": {
+                        "albedo": "00000000000000000000000000000000",
+                        "shader": "00000000000000000000000000000000"
+                },
+                "type": "ID"
+        }
+}

@@ -61,7 +61,6 @@ void Uniform<Vec3>::serialize(ISerializer& backend) const {
 
 template <>
 void Uniform<glm::mat4>::serialize(ISerializer& backend) const {
-	// TODO: implement this shit. i hate modularisation
 	ORG_ERROR("To be continued...");
 }
 

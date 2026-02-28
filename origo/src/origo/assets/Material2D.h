@@ -3,45 +3,42 @@
 #include <optional>
 
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Material2DSource.h"
 #include "origo/assets/Shader.h"
+#include "origo/assets/Texture2D.h"
 #include "origo/assets/UniformList.hpp"
 
 namespace Origo {
 
 class Material2D : public Asset {
 public:
-	Material2D();
-	Material2D(AssetHandle shader, OptionalAssetHandle texture = std::nullopt);
-	Material2D(UUID shader, UUID material);
+	Material2D() = default;
 
 	void resolve() override;
+	void bind();
+	void write_model(const glm::mat4& model);
+	void make_textured_material();
 
 	void set_color(Vec3 color);
 	Vec3 get_color() const { return m_color; }
 
-	OptionalAssetHandle get_shader() const { return m_shader; }
-	void set_shader(const AssetHandle& handle) { m_shader = handle; }
-	void set_shader_uuid(const UUID& uuid) { m_shader_uuid = uuid; };
-
 	UniformList& get_uniform_list() { return m_uniform_list; }
 
-	OptionalAssetHandle get_albedo() const { return m_albedo; }
-	void set_albedo_uuid(const UUID& uuid) { m_albedo_uuid = uuid; };
-	void set_albedo(const AssetHandle& handle) { m_albedo = handle; }
+	Material2DSource* get_source() const;
+	void set_source(Scope<Material2DSource> source);
+	std::optional<MaterialData> get_data() const;
 
-	void bind();
-	void write_model(const glm::mat4& model);
-
-	void set_textured();
+	AssetType get_asset_type() const override { return AssetType::Material2D; }
+	static AssetType get_class_asset_type() { return AssetType::Material2D; }
 
 	template <typename T>
 	Material2D& set_shader_directly(std::string_view name, const T& val) {
-		if (!m_shader.has_value()) {
+		if (!m_resolved) {
 			ORG_CORE_TRACE("Material2D::SetShaderDirectly: Can not set value on shader if no asset handle");
 			return *this;
 		}
 
-		auto shader { AssetManager::get_instance().get_asset<Shader>(*m_shader) };
+		auto shader { AssetManager::get_instance().get_asset<Shader>(m_data->ShaderHandle) };
 		shader->set_uniform(name, val);
 		return *this;
 	}
@@ -52,15 +49,13 @@ public:
 		return *this;
 	}
 
-	AssetType get_asset_type() const override { return AssetType::Material2D; }
-	static AssetType get_class_asset_type() { return AssetType::Material2D; }
-
 private:
-	OptionalAssetHandle m_shader { std::nullopt };
-	OptionalAssetHandle m_albedo { std::nullopt };
+	Scope<Material2DSource> m_source { nullptr };
+	std::optional<MaterialData> m_data {};
+	bool m_resolved { false };
 
-	OptionalUUID m_shader_uuid { std::nullopt };
-	OptionalUUID m_albedo_uuid { std::nullopt };
+	Shader* m_shader { nullptr };
+	Texture2D* m_albedo { nullptr };
 
 	Vec3 m_color { 1.0f };
 
