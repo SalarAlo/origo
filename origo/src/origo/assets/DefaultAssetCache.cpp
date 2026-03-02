@@ -11,8 +11,8 @@
 namespace Origo {
 
 void DefaultAssetCache::create_all_defaults() {
-	get_shader();
 	get_texture();
+	get_shader();
 	get_material();
 	get_outline_material();
 	get_particle_material();

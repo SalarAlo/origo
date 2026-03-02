@@ -22,6 +22,7 @@ public:
 	void set_color(Vec3 color);
 	Vec3 get_color() const { return m_color; }
 
+	const UniformList& get_uniform_list() const { return m_uniform_list; }
 	UniformList& get_uniform_list() { return m_uniform_list; }
 
 	Material2DSource* get_source() const;

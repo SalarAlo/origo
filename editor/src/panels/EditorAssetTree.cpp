@@ -1,5 +1,7 @@
 #include "EditorAssetTree.h"
+
 #include "EditorAssetVirtualPath.h"
+
 #include "panels/AssetThumbnailGenerator.h"
 
 namespace OrigoEditor {
@@ -50,6 +52,40 @@ void EditorAssetTree::build(const std::vector<Origo::AssetMetadata>& metadata) {
 
 		folder->Assets.push_back(asset.get());
 		m_assets.push_back(std::move(asset));
+	}
+}
+
+FolderEntry* EditorAssetTree::find_folder(const std::filesystem::path& path) const {
+	auto it = m_folder_map.find(path);
+	if (it != m_folder_map.end())
+		return it->second;
+
+	return nullptr;
+}
+
+void EditorAssetTree::build_path(FolderEntry* folder, std::vector<FolderEntry*>& outPath) const {
+	outPath.clear();
+
+	if (!folder) {
+		return;
+	}
+
+	outPath.push_back(m_root.get());
+
+	const std::filesystem::path& full = folder->Path;
+
+	if (full.empty())
+		return;
+
+	std::filesystem::path current;
+
+	for (const auto& part : full) {
+		current /= part;
+
+		auto it = m_folder_map.find(current);
+		if (it != m_folder_map.end()) {
+			outPath.push_back(it->second);
+		}
 	}
 }
 

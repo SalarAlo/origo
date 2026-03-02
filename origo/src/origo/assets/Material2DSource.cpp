@@ -64,10 +64,12 @@ Scope<Material2DSource> Material2DSource::deserialize(ISerializer& backend) {
 		return nullptr;
 	}
 
+	backend.begin_object("data");
 	switch (*type) {
 	case MaterialSourceType::File: {
 		std::string path;
 		backend.try_read("path", path);
+		backend.end_object();
 		return MakeScope<Material2DSourceFile>(path);
 	}
 	case MaterialSourceType::Raw:
@@ -77,11 +79,14 @@ Scope<Material2DSource> Material2DSource::deserialize(ISerializer& backend) {
 		std::string shader_id_str;
 		backend.try_read("albedo", albedo_id_str);
 		backend.try_read("shader", shader_id_str);
+		backend.end_object();
 
 		return MakeScope<Material2DSourceID>(
 		    UUID::from_string(albedo_id_str),
 		    UUID::from_string(shader_id_str));
 	}
+
+	backend.end_object();
 
 	return nullptr;
 }

@@ -22,8 +22,8 @@ std::string asset_type_to_string(Origo::AssetType type) {
 }
 
 std::filesystem::path compute_virtual_asset_path(const Origo::AssetMetadata& metadata) {
-	if (!metadata.SourcePath.empty())
-		return metadata.SourcePath.lexically_normal();
+	if (metadata.SourcePath)
+		return metadata.SourcePath->lexically_normal();
 
 	std::filesystem::path root = "generated";
 

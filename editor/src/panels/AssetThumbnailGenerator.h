@@ -2,11 +2,8 @@
 
 #include "panels/EditorAssetTree.h"
 
-namespace OrigoEditor {
+namespace OrigoEditor::AssetThumbnailGenerator {
 
-class AssetThumbnailGenerator {
-public:
-	static ImTextureID get_thumbnail_id(const AssetEntry* entry);
-};
+ImTextureID get_thumbnail_id(const AssetEntry* entry);
 
 }

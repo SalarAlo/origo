@@ -50,7 +50,9 @@ void AssetInspectorDrawer::draw_material(Origo::Material2D* material) {
 	ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
 
 	if (material_data->ShaderHandle != shader_handle || material_data->AlbedoHandle != albedo_handle) {
-		Origo::Material2DSourceRaw new_source { *albedo_handle, *shader_handle };
+		auto source { Origo::MakeScope<Origo::Material2DSourceRaw>(*albedo_handle, *shader_handle) };
+		material->set_source(std::move(source));
+		material->resolve();
 	}
 
 	Origo::Vec3 color { material->get_color() };

@@ -18,6 +18,7 @@ enum class UniformType {
 
 class UniformBase {
 public:
+	static Scope<UniformBase> deserialize(ISerializer& backend);
 	virtual void upload(Shader* shader, std::string_view name) const = 0;
 	virtual ~UniformBase() = default;
 
@@ -66,8 +67,6 @@ public:
 	}
 
 	void serialize(ISerializer& backend) const {
-		backend.begin_array("uniform_list");
-
 		for (const auto& [name, base] : m_uniforms) {
 			backend.begin_array_element();
 			backend.write("name", name);
@@ -75,7 +74,22 @@ public:
 
 			backend.end_array_element();
 		}
-		backend.end_array();
+	}
+
+	void deserialize(ISerializer& backend) {
+		m_uniforms.clear();
+
+		while (backend.try_begin_array_element_read()) {
+			std::string name;
+			if (!backend.try_read("name", name))
+				continue;
+
+			auto uniform = UniformBase::deserialize(backend);
+			if (!uniform)
+				continue;
+
+			m_uniforms[name] = std::move(uniform);
+		}
 	}
 
 	const auto& get_uniforms() const { return m_uniforms; }

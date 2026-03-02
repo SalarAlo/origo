@@ -5,6 +5,10 @@
 
 #include "EditorPanel.h"
 
+#include "panels/AssetBrowserState.h"
+#include "panels/AssetCreationService.h"
+#include "panels/AssetInteraction.h"
+#include "panels/AssetTileRenderer.h"
 #include "panels/EditorAssetTree.h"
 
 #include "state/EditorContext.h"
@@ -19,20 +23,21 @@ public:
 
 private:
 	void draw_top_bar();
-	void draw_breadcrumb_bar(float availableWidth);
+	void draw_breadcrumb_bar(float available_width);
 	void draw_folder_contents(FolderEntry* folder);
-	void draw_folder_tile(FolderEntry* folder, ImDrawList* drawList);
-	void draw_asset_tile(AssetEntry*& asset, ImDrawList* drawList);
+	void draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list);
+	void draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list);
 	void draw_create_asset_context_menu();
+	void rebuild_tree();
 
 private:
 	EditorContext& m_context;
 	EditorAssetTree m_tree;
-
-	FolderEntry* m_current_folder = nullptr;
-	std::vector<FolderEntry*> m_path;
-
-	std::string m_search;
+	AssetBrowserState m_browser_state;
+	AssetTileRenderer m_tile_renderer;
+	AssetInteraction m_interaction;
+	AssetCreationService m_creation_service;
+	bool m_tree_dirty { false };
 };
 
 }

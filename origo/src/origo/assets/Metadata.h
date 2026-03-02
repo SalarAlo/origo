@@ -1,12 +1,14 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
+
 #include "origo/core/UUID.h"
 
 namespace Origo {
 
 enum class AssetOrigin {
-	Imported, // Has a source file (png, fbx, blablabla...)
+	Imported, // External data requiring transformation into runtime form (payload stored in .import)
+	Authored, // Engine-native data resolved directly from source (.import holds metadata only)
 	Runtime, // Created by the editor or at runtime (materials, prefabs, ...)
 	Synthetic // Engine built asset (default shaders, fallback textures)
 };
@@ -17,7 +19,7 @@ struct AssetMetadata {
 	AssetType Type {};
 	AssetOrigin Origin {};
 
-	std::filesystem::path SourcePath {};
+	std::optional<std::filesystem::path> SourcePath {};
 
 	std::filesystem::file_time_type SourceTimestamp {};
 	std::filesystem::file_time_type ImportedTimestamp {};

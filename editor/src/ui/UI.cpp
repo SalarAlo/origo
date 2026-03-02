@@ -201,8 +201,9 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 			Origo::SceneSerializer::serialize_to_file(*ctx.EditorScene, path);
 		}
 
-		if (ImGui::MenuItem("Save Generated Assets"))
-			Origo::AssetDatabase::get_instance().save_all();
+		if (ImGui::MenuItem("Save Assets")) {
+			Origo::AssetDatabase::get_instance().save_assets();
+		}
 
 		if (ImGui::MenuItem("Reload Scripts")) {
 			Origo::AssetManager::get_instance().resolve_all(

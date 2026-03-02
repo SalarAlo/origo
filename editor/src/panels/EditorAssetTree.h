@@ -29,6 +29,8 @@ class EditorAssetTree {
 public:
 	void build(const std::vector<Origo::AssetMetadata>& metadata);
 	FolderEntry* get_root() const { return m_root.get(); }
+	FolderEntry* find_folder(const std::filesystem::path& path) const;
+	void build_path(FolderEntry* folder, std::vector<FolderEntry*>& outPath) const;
 
 private:
 	std::unique_ptr<FolderEntry> m_root;

@@ -83,22 +83,22 @@ private:
 
 class Material2DSourceFile : public Material2DSource {
 public:
-	Material2DSourceFile(std::string_view path)
+	Material2DSourceFile(const std::filesystem::path& path)
 	    : m_path(path) { };
 
 	MaterialData get_material_data() const override;
-	std::string get_path() const { return m_path; }
+	const std::filesystem::path& get_path() const { return m_path; }
 
 	MaterialSourceType get_source_type() const override {
 		return MaterialSourceType::File;
 	}
 
 	void serialize_body(ISerializer& backend) const override {
-		backend.write("path", m_path);
+		backend.write("path", m_path.c_str());
 	}
 
 private:
-	std::string m_path;
+	std::filesystem::path m_path;
 };
 
 }

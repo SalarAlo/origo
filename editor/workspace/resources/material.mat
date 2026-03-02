@@ -1,7 +1,11 @@
 {
+        "color_b": 0.3637046813964844,
+        "color_g": 0.586776852607727,
+        "color_r": 0.3637046813964844,
         "data": {
                 "albedo": "eef1f77be839d2d1fe04befcf50e1166",
                 "shader": "e1beba6e7aa762f38a0720983812e54a"
         },
-        "type": "Raw"
+        "type": "ID",
+        "uniform_list": []
 }

@@ -6,6 +6,20 @@
 
 namespace OrigoEditor {
 
+namespace {
+
+constexpr spdlog::level::level_enum s_log_levels[] = {
+	spdlog::level::trace,
+	spdlog::level::debug,
+	spdlog::level::info,
+	spdlog::level::warn,
+	spdlog::level::err,
+	spdlog::level::critical,
+};
+constexpr int s_log_level_count = sizeof(s_log_levels) / sizeof(s_log_levels[0]);
+
+}
+
 void ConsolePanel::on_im_gui_render() {
 	draw_toolbar();
 	ImGui::Separator();
@@ -21,6 +35,34 @@ void ConsolePanel::draw_toolbar() {
 
 	ImGui::SameLine();
 	ImGui::Checkbox("Auto-scroll", &m_auto_scroll);
+
+	ImGui::SameLine();
+	int current_level_index = 0;
+	for (int i = 0; i < s_log_level_count; ++i) {
+		if (s_log_levels[i] == m_warn_level) {
+			current_level_index = i;
+			break;
+		}
+	}
+
+	ImGui::SameLine();
+	ImGui::TextUnformatted("Min level");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(120.0f);
+	if (ImGui::BeginCombo("##ConsoleWarnLevel", level_to_string(m_warn_level))) {
+		for (int i = 0; i < s_log_level_count; ++i) {
+			const bool selected = current_level_index == i;
+			if (ImGui::Selectable(level_to_string(s_log_levels[i]), selected)) {
+				m_warn_level = s_log_levels[i];
+			}
+
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndCombo();
+	}
 }
 
 void ConsolePanel::draw_log_view() {
@@ -44,6 +86,10 @@ void ConsolePanel::draw_log_view() {
 	ImGui::PushTextWrapPos(0.0f);
 
 	for (const auto& entry : entries) {
+		if (!should_display_level(entry.level, m_warn_level)) {
+			continue;
+		}
+
 		const ImVec4 color = level_to_color(entry.level);
 
 		ImGui::PushStyleColor(ImGuiCol_Text, color);
@@ -60,6 +106,12 @@ void ConsolePanel::draw_log_view() {
 	}
 
 	ImGui::EndChild();
+}
+
+bool ConsolePanel::should_display_level(
+    spdlog::level::level_enum level,
+    spdlog::level::level_enum minimum_level) {
+	return level >= minimum_level;
 }
 
 ImVec4 ConsolePanel::level_to_color(spdlog::level::level_enum level) {
