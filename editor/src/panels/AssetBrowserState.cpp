@@ -1,6 +1,6 @@
-#include "panels/AssetBrowserState.h"
-
 #include <cctype>
+
+#include "panels/AssetBrowserState.h"
 
 namespace OrigoEditor {
 

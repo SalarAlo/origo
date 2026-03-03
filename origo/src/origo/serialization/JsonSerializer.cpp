@@ -202,6 +202,10 @@ bool JsonSerializer::try_read_array_element(int& value) {
 	return try_read_array_element_impl(m_objects_stack, value);
 }
 
+bool JsonSerializer::try_read_array_element(unsigned int& value) {
+	return try_read_array_element_impl(m_objects_stack, value);
+}
+
 bool JsonSerializer::try_read_array_element(float& value) {
 	return try_read_array_element_impl(m_objects_stack, value);
 }
@@ -230,14 +234,17 @@ bool JsonSerializer::try_begin_array_element_read() {
 
 JSON_DEF_WRITE_SERIALIZATION_FN(std::string_view)
 JSON_DEF_WRITE_SERIALIZATION_FN(int)
+JSON_DEF_WRITE_SERIALIZATION_FN(unsigned int)
 JSON_DEF_WRITE_SERIALIZATION_FN(float)
 
 JSON_DEF_READ_SERIALIZATION_FN(std::string)
 JSON_DEF_READ_SERIALIZATION_FN(int)
+JSON_DEF_READ_SERIALIZATION_FN(unsigned int)
 JSON_DEF_READ_SERIALIZATION_FN(float)
 
 JSON_DEF_WRITE_SERIALIZATION_FN_ARRAY(std::string_view)
 JSON_DEF_WRITE_SERIALIZATION_FN_ARRAY(int)
+JSON_DEF_WRITE_SERIALIZATION_FN_ARRAY(unsigned int)
 JSON_DEF_WRITE_SERIALIZATION_FN_ARRAY(float)
 
 }

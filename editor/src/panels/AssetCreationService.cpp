@@ -11,6 +11,7 @@
 #include "origo/assets/serialization/AssetSerializer.h"
 
 #include "origo/serialization/JsonSerializer.h"
+#include "ui/EditorNotificationSystem.h"
 
 namespace OrigoEditor {
 
@@ -43,6 +44,10 @@ bool AssetCreationService::ensure_physical_folder(const FolderEntry* current_fol
 		return true;
 
 	ORG_ERROR(error_message);
+	EditorNotificationSystem::get_instance().warning(
+	    "Create Asset Failed",
+	    error_message,
+	    4.8f);
 	return false;
 }
 
@@ -70,14 +75,22 @@ bool AssetCreationService::create_material(FolderEntry* current_folder) const {
 	JsonSerializer backend { unique_path };
 	serializer->serialize(material, backend);
 	backend.save_to_file();
+	EditorNotificationSystem::get_instance().success(
+	    "Material Created",
+	    "Created " + unique_path.filename().string(),
+	    2.1f);
 
 	return true;
 }
 
 bool AssetCreationService::create_script(FolderEntry* current_folder) const {
-	if (!ensure_physical_folder(current_folder, "Unable to create shaders within a virtual path"))
+	if (!ensure_physical_folder(current_folder, "Unable to create scripts within a virtual path"))
 		return false;
 
+	EditorNotificationSystem::get_instance().warning(
+	    "Script Creation Unavailable",
+	    "Script asset creation is not implemented yet.",
+	    4.8f);
 	return false;
 }
 
@@ -85,6 +98,10 @@ bool AssetCreationService::create_shader(FolderEntry* current_folder) const {
 	if (!ensure_physical_folder(current_folder, "Unable to create shaders within a virtual path"))
 		return false;
 
+	EditorNotificationSystem::get_instance().warning(
+	    "Shader Creation Unavailable",
+	    "Shader asset creation is not implemented yet.",
+	    4.8f);
 	return false;
 }
 

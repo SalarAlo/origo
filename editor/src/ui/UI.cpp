@@ -14,7 +14,15 @@
 
 #include "systems/EditorRuntimeController.h"
 
+#include "ui/EditorNotificationSystem.h"
+
 namespace OrigoEditor::UI {
+
+namespace {
+	constexpr float confirmation_duration_seconds = 0.8f;
+	constexpr float standard_duration_seconds = 1.5f;
+	constexpr float important_duration_seconds = 4.8f;
+}
 
 ImFont* ui_font = nullptr;
 ImFont* code_font = nullptr;
@@ -186,11 +194,23 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 
 				if (std::filesystem::exists(scene_path)) {
 					ctx.PendingScene = Origo::SceneSerializer::deserialize_from_file(scene_path);
+					EditorNotificationSystem::get_instance().success(
+					    "Scene Loaded",
+					    "Opened " + scene_path.filename().string(),
+					    important_duration_seconds);
 				} else {
 					ORG_CORE_ERROR("Scene file does not exist: {}", scene_path.string());
+					EditorNotificationSystem::get_instance().error(
+					    "Open Scene Failed",
+					    "Scene file does not exist on disk.",
+					    important_duration_seconds);
 				}
 			} else if (result == NFD_ERROR) {
 				ORG_CORE_ERROR("NFD error: {}", NFD_GetError());
+				EditorNotificationSystem::get_instance().error(
+				    "Open Scene Failed",
+				    NFD_GetError(),
+				    important_duration_seconds);
 			}
 		}
 
@@ -199,10 +219,18 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 			path += ctx.EditorScene->get_name();
 			path += ".scene.json";
 			Origo::SceneSerializer::serialize_to_file(*ctx.EditorScene, path);
+			EditorNotificationSystem::get_instance().success(
+			    "Scene Saved",
+			    "Serialized " + ctx.EditorScene->get_name() + " to disk.",
+			    confirmation_duration_seconds);
 		}
 
 		if (ImGui::MenuItem("Save Assets")) {
 			Origo::AssetDatabase::get_instance().save_assets();
+			EditorNotificationSystem::get_instance().success(
+			    "Assets Saved",
+			    "Asset database changes were written to disk.",
+			    confirmation_duration_seconds);
 		}
 
 		if (ImGui::MenuItem("Reload Scripts")) {
@@ -211,6 +239,10 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 				    return a->get_asset_type() == Origo::AssetType::Script;
 			    });
 			Origo::ScriptSystem::reload_all();
+			EditorNotificationSystem::get_instance().info(
+			    "Scripts Reloaded",
+			    "All script assets were resolved and reloaded.",
+			    standard_duration_seconds);
 		}
 
 		ImGui::Separator();

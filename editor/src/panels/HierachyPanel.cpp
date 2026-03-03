@@ -17,7 +17,13 @@
 
 #include "systems/EditorIcons.h"
 
+#include "ui/EditorNotificationSystem.h"
+
 namespace OrigoEditor {
+
+namespace {
+	constexpr float confirmation_duration_seconds = 0.8f;
+}
 
 HierarchyPanel::HierarchyPanel(EditorContext& ctx)
     : m_context(ctx) { }
@@ -37,6 +43,10 @@ void HierarchyPanel::on_im_gui_render() {
 		if (ImGui::IsItemClicked()) {
 			auto ent { m_context.ActiveScene->create_entity("Entity") };
 			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(ent);
+			EditorNotificationSystem::get_instance().success(
+			    "Entity Created",
+			    "Added Entity to the scene.",
+			    confirmation_duration_seconds);
 		}
 
 		ImGui::Separator();
@@ -48,24 +58,36 @@ void HierarchyPanel::on_im_gui_render() {
 			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
 			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_cube_mesh();
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
+			EditorNotificationSystem::get_instance().success(
+			    "Entity Created",
+			    "Added Cube to the scene.",
+			    confirmation_duration_seconds);
 		}
 
 		ImGui::MenuItem("Cone");
 		if (ImGui::IsItemClicked()) {
-			auto cube { m_context.ActiveScene->create_entity("Cube") };
-			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cube);
-			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
+			auto cone { m_context.ActiveScene->create_entity("Cone") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cone);
+			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cone) };
 			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_cone_mesh();
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
+			EditorNotificationSystem::get_instance().success(
+			    "Entity Created",
+			    "Added Cone to the scene.",
+			    confirmation_duration_seconds);
 		}
 
 		ImGui::MenuItem("Sphere");
 		if (ImGui::IsItemClicked()) {
-			auto cube { m_context.ActiveScene->create_entity("Sphere") };
-			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(cube);
-			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(cube) };
+			auto sphere { m_context.ActiveScene->create_entity("Sphere") };
+			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(sphere);
+			auto mesh_renderer { m_context.ActiveScene->add_native_component<Origo::MeshRendererComponent>(sphere) };
 			mesh_renderer->MeshHandle = Origo::PrimitiveShapeCache::get_instance().get_sphere_mesh();
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
+			EditorNotificationSystem::get_instance().success(
+			    "Entity Created",
+			    "Added Sphere to the scene.",
+			    confirmation_duration_seconds);
 		}
 
 		ImGui::EndPopup();
@@ -75,6 +97,8 @@ void HierarchyPanel::on_im_gui_render() {
 		if (m_context.ActiveScene->has_native_component<Origo::EditorHiddenComponent>(entity_id)) {
 			continue;
 		}
+
+		auto* name_comp = m_context.ActiveScene->get_native_component<Origo::NameComponent>(entity_id);
 
 		ImGui::PushID(entity_id.get_id());
 
@@ -88,8 +112,13 @@ void HierarchyPanel::on_im_gui_render() {
 		if (ImGui::BeginPopupContextItem("EntityContextPopup")) {
 			ImGui::MenuItem("Remove");
 			if (ImGui::IsItemClicked()) {
+				const std::string entity_name = name_comp->Name;
 				m_context.ActiveScene->schedule_remove_entity(entity_id);
 				m_context.unselect_entity();
+				EditorNotificationSystem::get_instance().info(
+				    "Entity Removed",
+				    "Removed " + entity_name + " from the scene.",
+				    confirmation_duration_seconds);
 			}
 			ImGui::EndPopup();
 		}
@@ -101,7 +130,6 @@ void HierarchyPanel::on_im_gui_render() {
 
 		ImGui::SameLine(0.0f, 6.0f);
 
-		auto* name_comp = m_context.ActiveScene->get_native_component<Origo::NameComponent>(entity_id);
 		ImGui::TextUnformatted(name_comp->Name.c_str());
 
 		ImGui::PopID();

@@ -23,18 +23,22 @@ public:
 	virtual void end_array_element() = 0;
 
 	virtual void write(std::string_view key, int value) = 0;
+	virtual void write(std::string_view key, unsigned int value) = 0;
 	virtual void write(std::string_view key, float value) = 0;
 	virtual void write(std::string_view key, std::string_view value) = 0;
 
 	virtual void write(int value) = 0;
+	virtual void write(unsigned int value) = 0;
 	virtual void write(float value) = 0;
 	virtual void write(std::string_view value) = 0;
 
 	virtual bool try_read(std::string_view key, int& value) = 0;
+	virtual bool try_read(std::string_view key, unsigned int& value) = 0;
 	virtual bool try_read(std::string_view key, float& value) = 0;
 	virtual bool try_read(std::string_view key, std::string& value) = 0;
 
 	virtual bool try_read_array_element(int& value) = 0;
+	virtual bool try_read_array_element(unsigned int& value) = 0;
 	virtual bool try_read_array_element(float& value) = 0;
 	virtual bool try_read_array_element(std::string& value) = 0;
 	virtual bool try_begin_array_element_read() = 0;
@@ -57,18 +61,22 @@ protected:
 	virtual void end_array_element() override;                         \
                                                                            \
 	void write(std::string_view key, int value) override;              \
+	void write(std::string_view key, unsigned int value) override;     \
 	void write(std::string_view key, float value) override;            \
 	void write(std::string_view key, std::string_view value) override; \
                                                                            \
 	void write(int value) override;                                    \
+	void write(unsigned int value) override;                           \
 	void write(float value) override;                                  \
 	void write(std::string_view value) override;                       \
                                                                            \
 	bool try_read(std::string_view key, int& value) override;          \
+	bool try_read(std::string_view key, unsigned int& value) override; \
 	bool try_read(std::string_view key, float& value) override;        \
 	bool try_read(std::string_view key, std::string& value) override;  \
                                                                            \
 	bool try_read_array_element(int& value) override;                  \
+	bool try_read_array_element(unsigned int& value) override;         \
 	bool try_read_array_element(float& value) override;                \
 	bool try_read_array_element(std::string& value) override;          \
 	bool try_begin_array_element_read() override;

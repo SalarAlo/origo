@@ -166,6 +166,7 @@ void AssetPanel::draw_folder_contents(FolderEntry* folder) {
 	for (FolderEntry* child : folder->Children) {
 		if (!m_browser_state.matches_search(child->Name))
 			continue;
+
 		draw_folder_tile(child, draw_list);
 		ImGui::NextColumn();
 	}

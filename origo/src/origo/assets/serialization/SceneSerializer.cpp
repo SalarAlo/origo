@@ -50,7 +50,7 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 			continue;
 		}
 
-		RID entity = scene->create_entity(rid_str);
+		RID entity = scene->create_entity_with_rid(RID::from_string(rid_str));
 
 		backend.begin_array("native_components");
 

@@ -10,6 +10,7 @@
 #include "panels/SceneViewport.h"
 #include "panels/TextEditorPanel.h"
 
+#include "ui/EditorNotificationSystem.h"
 #include "ui/UI.h"
 
 namespace OrigoEditor {
@@ -49,6 +50,7 @@ void EditorUILayer::on_update(double dt) {
 	UI::draw_menu_bar(m_panel_manager, m_context);
 
 	m_panel_manager.render_panels();
+	EditorNotificationSystem::get_instance().render(m_context.ColorPalette);
 
 	UI::end_dockspace();
 

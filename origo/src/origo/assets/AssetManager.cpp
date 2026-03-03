@@ -40,7 +40,20 @@ auto AssetManager::get_next_free_handle() -> AssetHandle {
 }
 
 void AssetManager::destroy(const AssetHandle& handle) {
-};
+	if (!is_valid(handle))
+		return;
+
+	auto& entry = m_asset_entries[handle.Index];
+
+	if (entry.Uuid.has_value())
+		m_uuid_to_handle.erase(*entry.Uuid);
+
+	entry.AssetPtr.reset();
+	entry.Uuid.reset();
+	entry.Path.reset();
+
+	m_free.push_back(handle.Index);
+}
 
 bool AssetManager::is_valid(const AssetHandle& handle) const {
 	if (handle.Index >= m_asset_entries.size())

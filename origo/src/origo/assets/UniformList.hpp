@@ -1,6 +1,11 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
 #include "origo/assets/Shader.h"
+
+#include "origo/core/Logger.h"
 
 #include "origo/serialization/ISerializer.h"
 
@@ -67,29 +72,52 @@ public:
 	}
 
 	void serialize(ISerializer& backend) const {
-		for (const auto& [name, base] : m_uniforms) {
+		backend.begin_array("uniforms");
+
+		std::vector<std::string> names;
+		names.reserve(m_uniforms.size());
+		for (const auto& [name, _] : m_uniforms)
+			names.push_back(name);
+
+		std::sort(names.begin(), names.end());
+
+		for (const auto& name : names) {
 			backend.begin_array_element();
 			backend.write("name", name);
-			base->serialize(backend);
+			m_uniforms.at(name)->serialize(backend);
 
 			backend.end_array_element();
 		}
+
+		backend.end_array();
 	}
 
 	void deserialize(ISerializer& backend) {
 		m_uniforms.clear();
 
+		backend.begin_array("uniforms");
+
 		while (backend.try_begin_array_element_read()) {
 			std::string name;
-			if (!backend.try_read("name", name))
+			if (!backend.try_read("name", name)) {
+				ORG_WARN("Skipping uniform entry without a valid 'name'");
+				backend.end_array_element();
 				continue;
+			}
 
 			auto uniform = UniformBase::deserialize(backend);
-			if (!uniform)
+			if (!uniform) {
+				ORG_WARN("Skipping uniform '{}' because it failed to deserialize", name);
+				backend.end_array_element();
 				continue;
+			}
 
 			m_uniforms[name] = std::move(uniform);
+
+			backend.end_array_element();
 		}
+
+		backend.end_array();
 	}
 
 	const auto& get_uniforms() const { return m_uniforms; }

@@ -2,8 +2,6 @@
 
 #include "origo/assets/Mesh.h"
 
-#include "origo/core/Logger.h"
-
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -17,7 +15,6 @@ void MeshSerializer::serialize(const Asset* asset, ISerializer& backend) const {
 	auto mesh { dynamic_cast<const Mesh*>(asset) };
 
 	// TODO
-	ORG_CORE_TRACE("Serializing an asset of type mesh");
 }
 
 }

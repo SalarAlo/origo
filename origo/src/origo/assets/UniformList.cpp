@@ -1,5 +1,3 @@
-#include <limits>
-
 #include "origo/assets/UniformList.hpp"
 
 #include "magic_enum/magic_enum.hpp"
@@ -45,12 +43,7 @@ void Uniform<int>::serialize(ISerializer& backend) const {
 template <>
 void Uniform<unsigned int>::serialize(ISerializer& backend) const {
 	backend.write("type", magic_enum::enum_name(get_uniform_type()));
-	if (m_value > static_cast<unsigned int>(std::numeric_limits<int>::max())) {
-		ORG_ERROR("Uniform<unsigned int> value too large for serializer int");
-		backend.write("value", std::numeric_limits<int>::max());
-		return;
-	}
-	backend.write("value", static_cast<int>(m_value));
+	backend.write("value", m_value);
 }
 
 template <>
@@ -98,12 +91,16 @@ void Uniform<glm::mat4>::serialize(ISerializer& backend) const {
 
 Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 	std::string type_str;
-	if (!backend.try_read("type", type_str))
+	if (!backend.try_read("type", type_str)) {
+		ORG_ERROR("Uniform entry missing 'type'");
 		return nullptr;
+	}
 
 	auto type_opt = magic_enum::enum_cast<UniformType>(type_str);
-	if (!type_opt)
+	if (!type_opt) {
+		ORG_ERROR("Unknown uniform type '{}'", type_str);
 		return nullptr;
+	}
 
 	switch (*type_opt) {
 	case UniformType::Int: {
@@ -115,12 +112,12 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 	}
 
 	case UniformType::UnsignedInt: {
-		int v {};
-		if (!backend.try_read("value", v))
+		unsigned int v {};
+		if (!backend.try_read("value", v)) {
+			ORG_ERROR("Uniform<unsigned int> missing or invalid 'value'");
 			return nullptr;
-		if (v < 0)
-			return nullptr;
-		auto u = MakeScope<Uniform<unsigned int>>(static_cast<unsigned int>(v));
+		}
+		auto u = MakeScope<Uniform<unsigned int>>(v);
 		return u;
 	}
 

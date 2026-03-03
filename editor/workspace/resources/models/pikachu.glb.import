@@ -1,15 +1,15 @@
 {
         "header": {
-                "imported_time_stamp": "-4670049764874286515",
+                "imported_time_stamp": "-4665152391591361381",
                 "name": "pikachu",
                 "origin": "Imported",
                 "source_path": "./resources/models/pikachu.glb",
-                "source_time_stamp": "-4670049764874286515",
+                "source_time_stamp": "-4665152391591361381",
                 "type": "Model",
                 "uuid": "3bfeaf6581e63aef31d877626757ba5e"
         },
         "payload": {
                 "path": "./resources/models/pikachu.glb",
-                "shader_id": "00000000000000000000000000000000"
+                "shader_id": "e1beba6e7aa762f38a0720983812e54a"
         }
 }

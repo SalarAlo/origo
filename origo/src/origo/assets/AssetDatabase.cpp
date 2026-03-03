@@ -8,6 +8,9 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Metadata.h"
 
+#include "origo/assets/importers/AssetImporterRegistry.h"
+#include "origo/assets/importers/AssetTruthLocation.h"
+
 #include "origo/assets/serialization/AssetSerializer.h"
 
 #include "origo/core/Logger.h"
@@ -153,20 +156,32 @@ void AssetDatabase::save_assets() {
 	auto& am = AssetManager::get_instance();
 
 	for (const auto& [uuid, handle] : am.get_uuid_map()) {
-		auto md = m_metadata[uuid];
-
-		if (md.Origin != AssetOrigin::Authored)
-			continue;
+		const auto& md = m_metadata[uuid];
 
 		if (!md.SourcePath)
 			continue;
 
-		auto asset = am.get(handle);
-		JsonSerializer serializer { *md.SourcePath };
+		if (md.Origin == AssetOrigin::Synthetic)
+			continue;
 
-		AssetSerializationSystem::get(asset->get_asset_type())->serialize(asset, serializer);
+		Asset* asset = am.get(handle);
 
-		serializer.save_to_file();
+		auto* importer = AssetImporterRegistry::get_instance().get_importer(*md.SourcePath);
+
+		if (!importer)
+			continue;
+
+		auto truth = importer->get_truth_location();
+
+		if (truth == AssetTruthLocation::SourceFile) {
+			JsonSerializer serializer { *md.SourcePath };
+
+			AssetSerializationSystem::get(md.Type)->serialize(asset, serializer);
+
+			serializer.save_to_file();
+		} else if (truth == AssetTruthLocation::ImportPayload) {
+			write_import_file(uuid);
+		}
 	}
 }
 

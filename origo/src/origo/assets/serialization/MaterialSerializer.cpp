@@ -21,15 +21,12 @@ void MaterialSerializer::serialize(const Asset* asset, ISerializer& backend) con
 
 	source->serialize(backend);
 	auto rgb { material->get_color() };
+
 	backend.write("color_r", rgb.r);
 	backend.write("color_g", rgb.g);
 	backend.write("color_b", rgb.b);
 
-	backend.begin_array("uniform_list");
 	material->get_uniform_list().serialize(backend);
-	backend.end_array();
-
-	ORG_CORE_TRACE("Serializing an asset of type material");
 }
 
 void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
@@ -42,8 +39,6 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 		return;
 	}
 
-	// no need to call resolve since importer pipeline
-	// will do so later
 	material.set_source(std::move(deserialized));
 
 	Vec3 rgb { 1.0 };
@@ -51,9 +46,7 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	backend.try_read("color_g", rgb.g);
 	backend.try_read("color_b", rgb.b);
 
-	backend.begin_array("uniform_list");
 	material.get_uniform_list().deserialize(backend);
-	backend.end_array();
 
 	material.set_color(rgb);
 }

@@ -115,6 +115,7 @@ public:
 #pragma endregion
 
 private:
+	RID create_entity_with_rid(const RID& rid, std::string_view name = "Entity");
 	void flush();
 	void remove_entity(const RID&);
 
@@ -123,7 +124,7 @@ private:
 
 	NativeComponentManager m_native_component_manager;
 	ScriptComponentManager m_script_component_manager;
-	std::vector<SceneCommand*> m_commands;
+	std::vector<std::unique_ptr<SceneCommand>> m_commands;
 	std::vector<RID> m_entities;
 };
 

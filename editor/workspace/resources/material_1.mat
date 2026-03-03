@@ -1,15 +1,20 @@
 {
-        "color_b": 0.3126835525035858,
-        "color_g": 0.3126835525035858,
-        "color_r": 0.6942148804664612,
+        "color_b": 0.23563963174819946,
+        "color_g": 0.8264462947845459,
+        "color_r": 0.3039973974227905,
         "data": {
-                "albedo": "eef1f77be839d2d1fe04befcf50e1166",
+                "albedo": "1a8eeb58a4a1b4f100f5b97e320d795d",
                 "shader": "e1beba6e7aa762f38a0720983812e54a"
         },
         "type": "ID",
-        "uniform_list": [
+        "uniforms": [
                 {
                         "name": "u_UseLight",
+                        "type": "Bool",
+                        "value": 1
+                },
+                {
+                        "name": "u_UseTexture",
                         "type": "Bool",
                         "value": 1
                 }

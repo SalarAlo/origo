@@ -24,6 +24,8 @@ void cleanup() {
 	for (const auto& kv : get_registry()) {
 		delete kv.second;
 	}
+
+	get_registry().clear();
 }
 
 AssetSerializer* get(AssetType type) {

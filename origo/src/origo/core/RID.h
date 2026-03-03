@@ -17,8 +17,17 @@ public:
 	}
 
 	static RID new_rid() {
-		static int current = 0;
-		return RID(current++);
+		return RID(next_id()++);
+	}
+
+	static RID from_id(int id) {
+		if (id >= 0 && next_id() <= id)
+			next_id() = id + 1;
+		return RID(id);
+	}
+
+	static RID from_string(const std::string& str) {
+		return from_id(std::stoi(str));
 	}
 
 	int get_id() const { return m_id; }
@@ -29,6 +38,11 @@ public:
 	}
 
 private:
+	static int& next_id() {
+		static int current = 0;
+		return current;
+	}
+
 	explicit RID(int id)
 	    : m_id(id) { }
 

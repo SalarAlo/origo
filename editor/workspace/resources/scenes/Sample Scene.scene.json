@@ -68,6 +68,31 @@
                                 }
                         ],
                         "rid": "1"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos_x": 0.0,
+                                                "pos_y": 0.0,
+                                                "pos_z": 0.0,
+                                                "rot_x": 0.0,
+                                                "rot_y": 0.0,
+                                                "rot_z": 0.0,
+                                                "scale_x": 1.0,
+                                                "scale_y": 1.0,
+                                                "scale_z": 1.0
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Entity"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "2"
                 }
         ],
         "name": "Sample Scene"

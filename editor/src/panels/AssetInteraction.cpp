@@ -1,6 +1,6 @@
-#include "panels/AssetInteraction.h"
-
 #include <imgui.h>
+
+#include "panels/AssetInteraction.h"
 
 #include "panels/AssetBrowserState.h"
 

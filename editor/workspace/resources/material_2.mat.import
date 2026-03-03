@@ -1,11 +1,11 @@
 {
         "header": {
                 "imported_time_stamp": "-6437664000000000000",
-                "name": "material",
+                "name": "material_2",
                 "origin": "Authored",
-                "source_path": "./resources/material.mat",
+                "source_path": "./resources/material_2.mat",
                 "source_time_stamp": "-4665119379700135349",
                 "type": "Material2D",
-                "uuid": "39ca7099b1045a2aff51cb5ff4ca4a00"
+                "uuid": "4eb04fbe4fd17b49b4889b1575cace39"
         }
 }

@@ -23,36 +23,38 @@ Scene::Scene(const Scene& other)
 }
 
 RID Scene::create_entity(std::string_view name) {
-	m_entities.push_back(RID::new_rid());
+	return create_entity_with_rid(RID::new_rid(), name);
+}
+
+RID Scene::create_entity_with_rid(const RID& rid, std::string_view name) {
+	m_entities.push_back(rid);
 	add_native_component<NameComponent>(m_entities.back(), name);
 	add_native_component<TransformComponent>(m_entities.back());
 	return m_entities.back();
 }
 
 void Scene::schedule_remove_entity(const RID& rid) {
-	m_commands.emplace_back(new RemoveEntityCommand { rid });
+	m_commands.emplace_back(std::make_unique<RemoveEntityCommand>(rid));
 }
 
 void Scene::schedule_remove_native_component(const RID& entity, const std::type_index& type) {
-	m_commands.emplace_back(new RemoveEntityNativeComponentCommand { entity, type });
+	m_commands.emplace_back(std::make_unique<RemoveEntityNativeComponentCommand>(entity, type));
 }
 
 void Scene::flush() {
 	for (auto& cmd : m_commands) {
 		switch (cmd->Type) {
 		case SceneCommandType::RemoveEntity: {
-			auto remove_cmd { static_cast<RemoveEntityCommand*>(cmd) };
+			auto remove_cmd { static_cast<RemoveEntityCommand*>(cmd.get()) };
 			remove_entity(remove_cmd->EntityToRemove);
 			break;
 		}
 		case SceneCommandType::RemoveEntityNativeComponent: {
-			auto remove_cmd { static_cast<RemoveEntityNativeComponentCommand*>(cmd) };
+			auto remove_cmd { static_cast<RemoveEntityNativeComponentCommand*>(cmd.get()) };
 			m_native_component_manager.remove_component_by_type(remove_cmd->EntityToRemoveComponent, remove_cmd->ComponentToRemove);
 			break;
 		}
 		}
-
-		delete cmd;
 	}
 
 	m_commands.clear();
@@ -70,9 +72,8 @@ void Scene::remove_entity(const RID& rid) {
 }
 
 Scene::~Scene() {
-	for (const auto& e : m_entities) {
-		remove_entity(e);
-	}
+	while (!m_entities.empty())
+		remove_entity(m_entities.back());
 };
 
 }
