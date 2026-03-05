@@ -6,12 +6,13 @@ enum class AssetType {
 	Shader,
 	Texture2D,
 	TextureCubemap,
-	Material2D,
+	MaterialPBR,
 	SkyboxMaterial,
 	Mesh,
 	Model,
 	Script,
-	Scene
+	Scene,
+	MaterialPbr
 };
 
 class Asset {

@@ -87,9 +87,16 @@
                                 },
                                 {
                                         "data": {
-                                                "name": "Entity"
+                                                "name": "Cube"
                                         },
                                         "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                        },
+                                        "type": "MeshRenderer"
                                 }
                         ],
                         "rid": "2"

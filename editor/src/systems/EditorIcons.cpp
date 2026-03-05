@@ -45,7 +45,7 @@ ImTextureID EditorIcons::get(Origo::AssetType type) {
 	case Origo::AssetType::TextureCubemap:
 		return get(IconType::Image);
 
-	case Origo::AssetType::Material2D:
+	case Origo::AssetType::MaterialPBR:
 	case Origo::AssetType::SkyboxMaterial:
 		return get(IconType::Unknown);
 
@@ -91,9 +91,9 @@ Origo::Ref<Origo::Texture2D> EditorIcons::get_texture(IconType type) {
 
 Origo::Ref<Origo::Texture2D>
 EditorIcons::load_svg(const std::string& path, int size) {
-	auto tex = Origo::MakeRef<Origo::Texture2D>(Origo::TextureType::UI);
+	auto tex = Origo::make_ref<Origo::Texture2D>(Origo::TextureType::UI);
 	tex->set_source(
-	    Origo::MakeScope<Origo::TextureSourceSVG>(path, size, size));
+	    Origo::make_scope<Origo::TextureSourceSVG>(path, size, size));
 	tex->load();
 	return tex;
 }

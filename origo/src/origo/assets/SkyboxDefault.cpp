@@ -45,7 +45,7 @@ AssetHandle SkyboxDefaults::get_shader() {
 
 		auto shader { AssetManager::get_instance().get_asset<Shader>(shader_handle) };
 
-		shader->set_source(MakeScope<ShaderSourceFile>(
+		shader->set_source(make_scope<ShaderSourceFile>(
 		    "./resources/shaders/skybox.glsl"));
 		shader->resolve();
 

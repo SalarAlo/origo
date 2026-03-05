@@ -79,7 +79,7 @@ Scope<ShaderSource> ShaderSource::deserialize(ISerializer& backend) {
 		backend.try_read("shader_path", path);
 		backend.end_object();
 
-		return MakeScope<ShaderSourceFile>(path);
+		return make_scope<ShaderSourceFile>(path);
 	}
 
 	case ShaderSourceType::Raw: {
@@ -88,7 +88,7 @@ Scope<ShaderSource> ShaderSource::deserialize(ISerializer& backend) {
 		backend.try_read("vertex_shader", vert);
 		backend.try_read("fragment_shader", frag);
 		backend.end_object();
-		return MakeScope<ShaderSourceRaw>(vert, frag);
+		return make_scope<ShaderSourceRaw>(vert, frag);
 	}
 	default: {
 		backend.end_object();

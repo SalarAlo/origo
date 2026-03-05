@@ -1,6 +1,6 @@
 #include "AssetFactory.h"
 
-#include "origo/assets/Material2D.h"
+#include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/Model.h"
 #include "origo/assets/SceneAsset.h"
 #include "origo/assets/Script.h"
@@ -11,17 +11,17 @@ namespace Origo {
 Scope<Asset> AssetFactory::allocate_hollow_asset(AssetType type) {
 	switch (type) {
 	case AssetType::Shader:
-		return MakeScope<Shader>();
+		return make_scope<Shader>();
 	case AssetType::Texture2D:
-		return MakeScope<Texture2D>();
-	case AssetType::Material2D:
-		return MakeScope<Material2D>();
+		return make_scope<Texture2D>();
+	case AssetType::MaterialPBR:
+		return make_scope<MaterialPBR>();
 	case AssetType::Script:
-		return MakeScope<Script>();
+		return make_scope<Script>();
 	case AssetType::Model:
-		return MakeScope<Model>();
+		return make_scope<Model>();
 	case AssetType::Scene:
-		return MakeScope<SceneAsset>();
+		return make_scope<SceneAsset>();
 	default:
 		ORG_ERROR("AssetFactory: Unknown asset type");
 		return nullptr;

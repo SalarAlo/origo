@@ -26,7 +26,7 @@ public:
 
 		AssetDatabase::get_instance().register_metadata(meta);
 
-		auto asset = MakeScope<T>(std::forward<Args>(args)...);
+		auto asset = make_scope<T>(std::forward<Args>(args)...);
 		return AssetManager::get_instance().register_asset(std::move(asset), meta.ID);
 	}
 
@@ -42,7 +42,7 @@ public:
 
 		AssetDatabase::get_instance().register_metadata(meta);
 
-		auto asset = MakeScope<T>(std::forward<Args>(args)...);
+		auto asset = make_scope<T>(std::forward<Args>(args)...);
 		return AssetManager::get_instance().register_asset(std::move(asset), meta.ID);
 	}
 
@@ -56,7 +56,7 @@ public:
 
 		AssetDatabase::get_instance().register_metadata(meta);
 
-		auto asset = MakeScope<T>(std::forward<Args>(args)...);
+		auto asset = make_scope<T>(std::forward<Args>(args)...);
 		return AssetManager::get_instance().register_asset(std::move(asset), uuid);
 	}
 
@@ -73,7 +73,7 @@ public:
 
 	template <AssetConcept T>
 	Scope<T> allocate_hollow_asset() {
-		return MakeScope<T>();
+		return make_scope<T>();
 	}
 };
 

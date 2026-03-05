@@ -1,7 +1,7 @@
 #include "origo/renderer/RenderContext.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material2D.h"
+#include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Model.h"
 #include "origo/assets/SkyboxMaterial.h"
@@ -16,7 +16,7 @@ namespace Origo {
 
 static void draw_mesh(const RenderCommand& cmd) {
 	auto& am { AssetManager::get_instance() };
-	auto material { am.get_asset<Material2D>(cmd.get_material()) };
+	auto material { am.get_asset<MaterialPBR>(cmd.get_material()) };
 	auto mesh { am.get_asset<Mesh>(cmd.get_mesh()) };
 
 	constexpr float outline_thickness { 0.1f };
@@ -113,7 +113,7 @@ void RenderContext::execute_pass(RenderPass pass) {
 		return;
 	}
 
-	Material2D* current_material {};
+	MaterialPBR* current_material {};
 	OptionalAssetHandle current_material_id {};
 
 	for (auto& cmd : m_draw_queue) {
@@ -121,17 +121,17 @@ void RenderContext::execute_pass(RenderPass pass) {
 			continue;
 
 		if (!current_material_id.has_value() || cmd.get_material() != current_material_id) {
-			auto material { AssetManager::get_instance().get_asset<Material2D>(cmd.get_material()) };
+			auto material { AssetManager::get_instance().get_asset<MaterialPBR>(cmd.get_material()) };
 			material->bind();
 
 			current_material = material;
 			current_material_id = cmd.get_material();
 
 			current_material
-			    ->set_shader_directly("u_ProjectionMatrix", m_view.Projection)
-			    .set_shader_directly("u_ViewMatrix", m_view.View)
-			    .set_shader_directly("u_CameraForward", m_view.CameraForward)
-			    .set_shader_directly("u_ViewPos", m_view.CameraPosition);
+			    ->set_uniform_directly("u_ProjectionMatrix", m_view.Projection)
+			    .set_uniform_directly("u_ViewMatrix", m_view.View)
+			    .set_uniform_directly("u_CameraForward", m_view.CameraForward)
+			    .set_uniform_directly("u_ViewPos", m_view.CameraPosition);
 
 			if (!m_directional_light_data)
 				m_directional_light_data = DirectionalLightData {};
@@ -139,26 +139,26 @@ void RenderContext::execute_pass(RenderPass pass) {
 			auto l { *m_directional_light_data };
 
 			current_material
-			    ->set_shader_directly("u_DirLight.direction", l.Direction)
-			    .set_shader_directly("u_DirLight.color", l.Color)
-			    .set_shader_directly("u_DirLight.intensity", l.Intensity)
-			    .set_shader_directly("u_Ambient", l.Ambient);
+			    ->set_uniform_directly("u_DirLight.direction", l.Direction)
+			    .set_uniform_directly("u_DirLight.color", l.Color)
+			    .set_uniform_directly("u_DirLight.intensity", l.Intensity)
+			    .set_uniform_directly("u_Ambient", l.Ambient);
 
 			const int count = std::min<int>(m_point_lights.size(), 8);
 
-			current_material->set_shader_directly("u_PointLightCount", count);
+			current_material->set_uniform_directly("u_PointLightCount", count);
 
 			for (int i = 0; i < count; ++i) {
 				const auto& l = m_point_lights[i];
 				const std::string base = "u_PointLights[" + std::to_string(i) + "]";
 
 				current_material
-				    ->set_shader_directly(base + ".position", l.Position)
-				    .set_shader_directly(base + ".color", l.Color)
-				    .set_shader_directly(base + ".intensity", l.Intensity)
-				    .set_shader_directly(base + ".constant", l.Constant)
-				    .set_shader_directly(base + ".linear", l.Linear)
-				    .set_shader_directly(base + ".quadratic", l.Quadratic);
+				    ->set_uniform_directly(base + ".position", l.Position)
+				    .set_uniform_directly(base + ".color", l.Color)
+				    .set_uniform_directly(base + ".intensity", l.Intensity)
+				    .set_uniform_directly(base + ".constant", l.Constant)
+				    .set_uniform_directly(base + ".linear", l.Linear)
+				    .set_uniform_directly(base + ".quadratic", l.Quadratic);
 			}
 		}
 

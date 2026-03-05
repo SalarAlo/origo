@@ -4,8 +4,8 @@
                 "name": "material_2",
                 "origin": "Authored",
                 "source_path": "./resources/material_2.mat",
-                "source_time_stamp": "-4665119379700135349",
-                "type": "Material2D",
+                "source_time_stamp": "-4664972488217572644",
+                "type": "MaterialPBR",
                 "uuid": "4eb04fbe4fd17b49b4889b1575cace39"
         }
 }

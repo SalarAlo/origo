@@ -95,7 +95,7 @@ void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& ba
 	for_each_component_on_entity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
 		if (!info.Serializer)
 			return;
-		backend.begin_array_element();
+		backend.begin_array_object();
 
 		backend.write("type", info.DisplayName);
 
@@ -103,7 +103,7 @@ void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& ba
 		info.Serializer->serialize(static_cast<Component*>(const_cast<void*>(c)), backend);
 		backend.end_object();
 
-		backend.end_array_element();
+		backend.end_array_object();
 	});
 
 	backend.end_array();

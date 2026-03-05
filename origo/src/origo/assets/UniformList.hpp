@@ -62,7 +62,7 @@ public:
 
 	template <typename T>
 	void add_uniform(const std::string& name, const T& value) {
-		m_uniforms[name] = MakeScope<Uniform<T>>(value);
+		m_uniforms[name] = make_scope<Uniform<T>>(value);
 	}
 
 	void upload_all(Shader* shader) const {
@@ -82,11 +82,11 @@ public:
 		std::sort(names.begin(), names.end());
 
 		for (const auto& name : names) {
-			backend.begin_array_element();
+			backend.begin_array_object();
 			backend.write("name", name);
 			m_uniforms.at(name)->serialize(backend);
 
-			backend.end_array_element();
+			backend.end_array_object();
 		}
 
 		backend.end_array();
@@ -97,24 +97,24 @@ public:
 
 		backend.begin_array("uniforms");
 
-		while (backend.try_begin_array_element_read()) {
+		while (backend.try_begin_array_object_read()) {
 			std::string name;
 			if (!backend.try_read("name", name)) {
 				ORG_WARN("Skipping uniform entry without a valid 'name'");
-				backend.end_array_element();
+				backend.end_array_object();
 				continue;
 			}
 
 			auto uniform = UniformBase::deserialize(backend);
 			if (!uniform) {
 				ORG_WARN("Skipping uniform '{}' because it failed to deserialize", name);
-				backend.end_array_element();
+				backend.end_array_object();
 				continue;
 			}
 
 			m_uniforms[name] = std::move(uniform);
 
-			backend.end_array_element();
+			backend.end_array_object();
 		}
 
 		backend.end_array();

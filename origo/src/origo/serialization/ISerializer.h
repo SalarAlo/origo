@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#include "origo/assets/AssetManager.h"
+
 namespace Origo {
 
 class ISerializer {
@@ -19,29 +21,36 @@ public:
 	virtual void begin_array(std::string_view key) = 0;
 	virtual void end_array() = 0;
 
-	virtual void begin_array_element() = 0;
-	virtual void end_array_element() = 0;
+	virtual void begin_array_object() = 0;
+	virtual void end_array_object() = 0;
 
 	virtual void write(std::string_view key, int value) = 0;
 	virtual void write(std::string_view key, unsigned int value) = 0;
 	virtual void write(std::string_view key, float value) = 0;
 	virtual void write(std::string_view key, std::string_view value) = 0;
+	void write(std::string_view key, const Vec3& value);
+	void write(std::string_view key, const OptionalAssetHandle& asset);
 
 	virtual void write(int value) = 0;
 	virtual void write(unsigned int value) = 0;
 	virtual void write(float value) = 0;
 	virtual void write(std::string_view value) = 0;
+	void write(const Vec3& value);
+	void write(const OptionalAssetHandle& asset);
 
 	virtual bool try_read(std::string_view key, int& value) = 0;
 	virtual bool try_read(std::string_view key, unsigned int& value) = 0;
 	virtual bool try_read(std::string_view key, float& value) = 0;
 	virtual bool try_read(std::string_view key, std::string& value) = 0;
+	bool try_read(std::string_view key, Vec3& value);
 
-	virtual bool try_read_array_element(int& value) = 0;
-	virtual bool try_read_array_element(unsigned int& value) = 0;
-	virtual bool try_read_array_element(float& value) = 0;
-	virtual bool try_read_array_element(std::string& value) = 0;
-	virtual bool try_begin_array_element_read() = 0;
+	virtual bool try_read_array_object(int& value) = 0;
+	virtual bool try_read_array_object(unsigned int& value) = 0;
+	virtual bool try_read_array_object(float& value) = 0;
+	virtual bool try_read_array_object(std::string& value) = 0;
+	bool try_read_array_object(Vec3& value);
+
+	virtual bool try_begin_array_object_read() = 0;
 
 protected:
 	std::filesystem::path m_path;
@@ -57,8 +66,8 @@ protected:
 	void begin_array(std::string_view key) override;                   \
 	void end_array() override;                                         \
                                                                            \
-	virtual void begin_array_element() override;                       \
-	virtual void end_array_element() override;                         \
+	virtual void begin_array_object() override;                        \
+	virtual void end_array_object() override;                          \
                                                                            \
 	void write(std::string_view key, int value) override;              \
 	void write(std::string_view key, unsigned int value) override;     \
@@ -75,10 +84,14 @@ protected:
 	bool try_read(std::string_view key, float& value) override;        \
 	bool try_read(std::string_view key, std::string& value) override;  \
                                                                            \
-	bool try_read_array_element(int& value) override;                  \
-	bool try_read_array_element(unsigned int& value) override;         \
-	bool try_read_array_element(float& value) override;                \
-	bool try_read_array_element(std::string& value) override;          \
-	bool try_begin_array_element_read() override;
+	bool try_read_array_object(int& value) override;                   \
+	bool try_read_array_object(unsigned int& value) override;          \
+	bool try_read_array_object(float& value) override;                 \
+	bool try_read_array_object(std::string& value) override;           \
+	bool try_begin_array_object_read() override;                       \
+                                                                           \
+	using ISerializer::try_read;                                       \
+	using ISerializer::try_read_array_object;                          \
+	using ISerializer::write;
 
 }

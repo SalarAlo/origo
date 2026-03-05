@@ -2,9 +2,10 @@
 
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material2D.h"
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
+
+#include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/core/Typedefs.h"
 
@@ -28,7 +29,7 @@ AssetHandle DefaultAssetCache::get_shader() {
 	    UUID::from_hash("ENGINE_DEFAULT_SHADER"));
 
 	auto shader = AssetManager::get_instance().get_asset<Shader>(*m_shader);
-	shader->set_source(MakeScope<ShaderSourceFile>(
+	shader->set_source(make_scope<ShaderSourceFile>(
 	    "./default_resources/default_shader.glsl"));
 	shader->resolve();
 
@@ -46,7 +47,7 @@ AssetHandle DefaultAssetCache::get_texture() {
 	    UUID::from_arbitrary_string("DEFAULT_TEXTURE_2D"));
 
 	auto tex = AssetManager::get_instance().get_asset<Texture2D>(*m_texture);
-	tex->set_source(MakeScope<TextureSourceRaw>(
+	tex->set_source(make_scope<TextureSourceRaw>(
 	    1, 1, 4, std::move(white_pixel_rgba), false));
 	tex->load();
 
@@ -57,17 +58,17 @@ AssetHandle DefaultAssetCache::get_material() {
 	if (m_material.has_value())
 		return *m_material;
 
-	m_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
+	m_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialPBR>(
 	    "Default Material",
 	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_2D"));
 
-	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_material);
-	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_material);
+	material->set_shader(get_shader());
+	material->set_albedo(get_texture());
 
 	material->set_uniform("u_UseTexture", true);
 	material->set_uniform("u_UseLight", true);
 
-	material->set_source(std::move(material_source));
 	material->resolve();
 
 	return *m_material;
@@ -79,21 +80,21 @@ AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
 	if (m_particle_emission_debug_material.has_value())
 		return *m_particle_emission_debug_material;
 
-	m_particle_emission_debug_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
+	m_particle_emission_debug_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialPBR>(
 	    "Emission Shape Material",
 	    UUID::from_arbitrary_string("DEFAULT_DEBUG_PARTICLE_MATERIAL_2D"));
 
-	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_emission_debug_material);
-	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_particle_emission_debug_material);
+	material->set_shader(get_shader());
+	material->set_albedo(get_texture());
+	material->get_data().PBRParams.BaseColor = debug_emission_particle_color;
 
-	material->set_color(debug_emission_particle_color);
 	material->set_uniform("u_UseTexture", false);
 	material->set_uniform("u_UseLight", false);
 
-	material->set_source(std::move(material_source));
 	material->resolve();
 
-	return *m_material;
+	return *m_particle_emission_debug_material;
 }
 
 Origo::AssetHandle DefaultAssetCache::get_outline_material() {
@@ -102,18 +103,18 @@ Origo::AssetHandle DefaultAssetCache::get_outline_material() {
 	if (m_outline_material.has_value())
 		return *m_outline_material;
 
-	m_outline_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
+	m_outline_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialPBR>(
 	    "Outline Material",
 	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_OUTLINE_2D"));
 
-	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_outline_material);
-	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
-	material->set_color(orange_color);
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_outline_material);
+
+	material->set_shader(get_shader());
+	material->get_data().PBRParams.BaseColor = orange_color;
 
 	material->set_uniform("u_UseTexture", false);
 	material->set_uniform("u_UseLight", false);
 
-	material->set_source(std::move(material_source));
 	material->resolve();
 
 	return *m_outline_material;
@@ -125,21 +126,23 @@ AssetHandle DefaultAssetCache::get_particle_material() {
 	if (m_particle_material.has_value())
 		return *m_particle_material;
 
-	m_particle_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<Material2D>(
+	m_particle_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialPBR>(
 	    "Particle Material",
 	    UUID::from_arbitrary_string("DEFAULT_PARTICLE_MATERIAL_2D"));
 
-	auto material = AssetManager::get_instance().get_asset<Material2D>(*m_particle_material);
-	auto material_source = MakeScope<Material2DSourceRaw>(get_texture(), get_shader());
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_particle_material);
 
-	material->set_color(particle_color);
+	material->set_shader(get_shader());
+	material->set_albedo(get_texture());
+
+	material->get_data().PBRParams.BaseColor = particle_color;
+
 	material->set_uniform("u_UseTexture", true);
 	material->set_uniform("u_UseLight", true);
 
-	material->set_source(std::move(material_source));
 	material->resolve();
 
-	return *m_material;
+	return *m_particle_material;
 }
 
 }

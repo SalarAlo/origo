@@ -18,8 +18,8 @@ AssetType ShaderImporter::get_asset_type() const {
 }
 
 Scope<Asset> ShaderImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto shader = MakeScope<Shader>();
-	shader->set_source(MakeScope<ShaderSourceFile>(path.string()));
+	auto shader = make_scope<Shader>();
+	shader->set_source(make_scope<ShaderSourceFile>(path.string()));
 	return shader;
 }
 

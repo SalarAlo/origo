@@ -4,10 +4,9 @@
 
 #include "components/EditorOutline.h"
 
-#include "origo/components/Transform.h"
-
 #include "state/EditorContext.h"
 
+#include "ui/EditorNotificationSystem.h"
 #include "ui/UI.h"
 
 namespace OrigoEditor {
@@ -18,6 +17,15 @@ PanelManager::PanelManager(EditorContext& context)
 
 void PanelManager::render_menu_items() {
 	if (ImGui::BeginMenu("View")) {
+		static bool enabled { EditorNotificationSystem::get_instance().is_enabled() };
+
+		ImGui::MenuItem("Notifications Enabled", nullptr, &enabled);
+
+		if (enabled)
+			EditorNotificationSystem::get_instance().set_enabled();
+		else
+			EditorNotificationSystem::get_instance().set_disabled();
+
 		if (ImGui::BeginMenu("Panels")) {
 			for (const auto& panel : m_panels) {
 				ImGui::MenuItem(panel->get_name(), nullptr, &panel->is_open_ref());

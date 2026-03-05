@@ -41,7 +41,7 @@
 namespace Origo {
 
 template <typename T>
-static bool try_read_array_element_impl(std::stack<JsonStackEntry>& stack, T& value) {
+static bool try_read_array_object_impl(std::stack<JsonStackEntry>& stack, T& value) {
 	if (stack.empty())
 		return false;
 
@@ -153,10 +153,10 @@ void JsonSerializer::begin_array(std::string_view key) {
 	m_objects_stack.push({ &new_arr, false, 0 });
 }
 
-void JsonSerializer::begin_array_element() {
+void JsonSerializer::begin_array_object() {
 	nlohmann::json& arr = top_json();
 	if (!arr.is_array()) {
-		ORG_ERROR("BeginArrayElement called on non-array (type: {})", arr.type_name());
+		ORG_ERROR("BeginArrayobject called on non-array (type: {})", arr.type_name());
 		return;
 	}
 
@@ -187,34 +187,34 @@ void JsonSerializer::end_array() {
 	}
 }
 
-void JsonSerializer::end_array_element() {
+void JsonSerializer::end_array_object() {
 	if (m_objects_stack.size() > 1) {
 		m_objects_stack.pop();
 	} else {
-		ORG_ERROR("Unbalanced EndArrayElement. Resetting to root.");
+		ORG_ERROR("Unbalanced EndArrayobject. Resetting to root.");
 		while (!m_objects_stack.empty())
 			m_objects_stack.pop();
 		m_objects_stack.push({ &m_root });
 	}
 }
 
-bool JsonSerializer::try_read_array_element(int& value) {
-	return try_read_array_element_impl(m_objects_stack, value);
+bool JsonSerializer::try_read_array_object(int& value) {
+	return try_read_array_object_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::try_read_array_element(unsigned int& value) {
-	return try_read_array_element_impl(m_objects_stack, value);
+bool JsonSerializer::try_read_array_object(unsigned int& value) {
+	return try_read_array_object_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::try_read_array_element(float& value) {
-	return try_read_array_element_impl(m_objects_stack, value);
+bool JsonSerializer::try_read_array_object(float& value) {
+	return try_read_array_object_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::try_read_array_element(std::string& value) {
-	return try_read_array_element_impl(m_objects_stack, value);
+bool JsonSerializer::try_read_array_object(std::string& value) {
+	return try_read_array_object_impl(m_objects_stack, value);
 }
 
-bool JsonSerializer::try_begin_array_element_read() {
+bool JsonSerializer::try_begin_array_object_read() {
 	if (m_objects_stack.empty())
 		return false;
 

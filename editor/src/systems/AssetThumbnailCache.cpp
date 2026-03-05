@@ -7,8 +7,8 @@ static ImTextureID to_im_texture_id(const Ref<Texture2D>& tex) {
 }
 
 static Ref<Texture2D> load_svg_texture(const std::string& path, int size = 18) {
-	auto texture = MakeRef<Texture2D>(TextureType::UI);
-	texture->set_source(MakeScope<TextureSourceSVG>(path, size, size));
+	auto texture = make_ref<Texture2D>(TextureType::UI);
+	texture->set_source(make_scope<TextureSourceSVG>(path, size, size));
 	texture->load();
 	return texture;
 }

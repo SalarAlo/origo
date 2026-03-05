@@ -14,13 +14,7 @@ void ModelSerializer::serialize(const Asset* asset, ISerializer& backend) const 
 
 	auto model { static_cast<const Model*>(asset) };
 
-	if (auto shader_handle { model->get_shader_handle() }; shader_handle.has_value()) {
-		auto shader_id { AssetManager::get_instance().get_uuid(*shader_handle) };
-		if (shader_id.has_value())
-			backend.write("shader_id", (*shader_id).to_string());
-	} else {
-		backend.write("shader_id", "0");
-	}
+	backend.write("shader_id", model->get_shader_handle());
 
 	auto path { model->get_path() };
 	backend.write("path", path.c_str());

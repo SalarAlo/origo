@@ -17,7 +17,7 @@ static bool s_registered = []() {
 		auto material { renderer.MaterialHandle };
 		auto mesh { renderer.MeshHandle };
 
-		ComponentUI::draw_asset_control("Material", material, Origo::AssetType::Material2D);
+		ComponentUI::draw_asset_control("Material", material, Origo::AssetType::MaterialPBR);
 		ComponentUI::draw_asset_control("Mesh", mesh, Origo::AssetType::Mesh);
 
 		if (mesh != renderer.MeshHandle && mesh.has_value())

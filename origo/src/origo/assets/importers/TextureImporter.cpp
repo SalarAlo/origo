@@ -19,8 +19,8 @@ AssetType TextureImporter::get_asset_type() const {
 Scope<Asset> TextureImporter::import(
     const std::filesystem::path& path,
     const AssetMetadata& meta) {
-	auto texture = MakeScope<Texture2D>(TextureType::Albedo);
-	texture->set_source(MakeScope<TextureSourceFile>(path.string()));
+	auto texture = make_scope<Texture2D>(TextureType::Albedo);
+	texture->set_source(make_scope<TextureSourceFile>(path.string()));
 	return texture;
 }
 

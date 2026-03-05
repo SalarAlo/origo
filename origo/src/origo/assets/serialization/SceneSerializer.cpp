@@ -14,13 +14,13 @@ void serialize_to_file(Scene& scene, const std::filesystem::path& out) {
 	backend.begin_array("entities");
 
 	for (RID e : scene.get_entities()) {
-		backend.begin_array_element();
+		backend.begin_array_object();
 
 		backend.write("rid", e.to_string());
 
 		scene.m_native_component_manager.serialize_entity(e, backend);
 
-		backend.end_array_element();
+		backend.end_array_object();
 	}
 
 	backend.end_array();
@@ -41,11 +41,11 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 
 	int entity_index = 0;
 
-	while (backend.try_begin_array_element_read()) {
+	while (backend.try_begin_array_object_read()) {
 		std::string rid_str;
 		if (!backend.try_read("rid", rid_str)) {
 			ORG_WARN("[Scene] Entity {} has no rid", entity_index);
-			backend.end_array_element();
+			backend.end_array_object();
 			++entity_index;
 			continue;
 		}
@@ -56,12 +56,12 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 
 		int comp_index = 0;
 
-		while (backend.try_begin_array_element_read()) {
+		while (backend.try_begin_array_object_read()) {
 
 			std::string type_name;
 			if (!backend.try_read("type", type_name)) {
 				ORG_WARN("[Scene]  Component {} has no type", comp_index);
-				backend.end_array_element();
+				backend.end_array_object();
 				++comp_index;
 				continue;
 			}
@@ -69,7 +69,7 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 			const auto* info = NativeComponentRegistry::get_instance().get_component_info_by_name(type_name);
 			if (!info) {
 				ORG_WARN("[Scene]  Unknown component '{}'", type_name);
-				backend.end_array_element();
+				backend.end_array_object();
 				++comp_index;
 				continue;
 			}
@@ -84,13 +84,13 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 
 			backend.end_object();
 
-			backend.end_array_element();
+			backend.end_array_object();
 
 			++comp_index;
 		}
 
 		backend.end_array();
-		backend.end_array_element();
+		backend.end_array_object();
 
 		++entity_index;
 	}

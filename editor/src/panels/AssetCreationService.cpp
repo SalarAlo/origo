@@ -5,12 +5,13 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/DefaultAssetCache.h"
-#include "origo/assets/Material2D.h"
-#include "origo/assets/Material2DSource.h"
+
+#include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/assets/serialization/AssetSerializer.h"
 
 #include "origo/serialization/JsonSerializer.h"
+
 #include "ui/EditorNotificationSystem.h"
 
 namespace OrigoEditor {
@@ -46,8 +47,7 @@ bool AssetCreationService::ensure_physical_folder(const FolderEntry* current_fol
 	ORG_ERROR(error_message);
 	EditorNotificationSystem::get_instance().warning(
 	    "Create Asset Failed",
-	    error_message,
-	    4.8f);
+	    error_message);
 	return false;
 }
 
@@ -59,26 +59,23 @@ bool AssetCreationService::create_material(FolderEntry* current_folder) const {
 
 	const auto unique_path = make_unique_asset_path(current_folder->Path, "material", ".mat");
 
-	const auto material_handle = AssetFactory::get_instance().create_pathed_runtime_asset<Material2D>(unique_path.stem().string(), unique_path);
-	auto material = AssetManager::get_instance().get_asset<Material2D>(material_handle);
+	const auto material_handle = AssetFactory::get_instance().create_pathed_runtime_asset<MaterialPBR>(unique_path.stem().string(), unique_path);
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(material_handle);
 
-	auto material_source = MakeScope<Material2DSourceRaw>(
-	    DefaultAssetCache::get_instance().get_texture(),
-	    DefaultAssetCache::get_instance().get_shader());
+	material->set_shader(DefaultAssetCache::get_instance().get_shader());
+	material->set_albedo(DefaultAssetCache::get_instance().get_texture());
 
-	material->set_source(std::move(material_source));
 	material->make_textured_material();
 	material->resolve();
 
-	auto serializer { Origo::AssetSerializationSystem::get(AssetType::Material2D) };
+	auto serializer { Origo::AssetSerializationSystem::get(AssetType::MaterialPBR) };
 
 	JsonSerializer backend { unique_path };
 	serializer->serialize(material, backend);
 	backend.save_to_file();
 	EditorNotificationSystem::get_instance().success(
 	    "Material Created",
-	    "Created " + unique_path.filename().string(),
-	    2.1f);
+	    "Created " + unique_path.filename().string());
 
 	return true;
 }
@@ -89,8 +86,7 @@ bool AssetCreationService::create_script(FolderEntry* current_folder) const {
 
 	EditorNotificationSystem::get_instance().warning(
 	    "Script Creation Unavailable",
-	    "Script asset creation is not implemented yet.",
-	    4.8f);
+	    "Script asset creation is not implemented yet.");
 	return false;
 }
 
@@ -100,8 +96,7 @@ bool AssetCreationService::create_shader(FolderEntry* current_folder) const {
 
 	EditorNotificationSystem::get_instance().warning(
 	    "Shader Creation Unavailable",
-	    "Shader asset creation is not implemented yet.",
-	    4.8f);
+	    "Shader asset creation is not implemented yet.");
 	return false;
 }
 

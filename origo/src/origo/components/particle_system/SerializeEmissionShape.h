@@ -34,9 +34,7 @@ struct SerializeEmissionShape {
 
 	void operator()(BoxEmissionShape shape) {
 		Backend.write("type", magic_enum::enum_name(ParticleEmissionShapeKind::Box));
-		Backend.write("x", shape.Position.x);
-		Backend.write("y", shape.Position.y);
-		Backend.write("z", shape.Position.z);
+		Backend.write("size", shape.Size);
 	}
 
 	ParticleEmissionShape operator()() {
@@ -62,9 +60,7 @@ struct SerializeEmissionShape {
 			}
 			case ParticleEmissionShapeKind::Box: {
 				auto box { ParticleEmissionShapeFactory::create_default(ParticleEmissionShapeKind::Box) };
-				Backend.try_read("x", std::get<BoxEmissionShape>(box).Position.x);
-				Backend.try_read("y", std::get<BoxEmissionShape>(box).Position.y);
-				Backend.try_read("z", std::get<BoxEmissionShape>(box).Position.z);
+				Backend.try_read("size", std::get<BoxEmissionShape>(box).Size);
 				return box;
 			}
 			}

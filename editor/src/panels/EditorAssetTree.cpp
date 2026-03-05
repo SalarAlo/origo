@@ -42,7 +42,7 @@ void EditorAssetTree::build(const std::vector<Origo::AssetMetadata>& metadata) {
 			}
 		}
 
-		auto asset = Origo::MakeScope<AssetEntry>();
+		auto asset = Origo::make_scope<AssetEntry>();
 		asset->Id = *md.ID;
 		asset->Type = md.Type;
 		asset->Origin = md.Origin;

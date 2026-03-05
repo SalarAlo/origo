@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4665152391589361287",
+                "imported_time_stamp": "-4664976734225017774",
                 "name": "origo_logo",
                 "origin": "Imported",
                 "source_path": "./resources/textures/origo_logo.png",
-                "source_time_stamp": "-4665152391589361287",
+                "source_time_stamp": "-4664976734225017774",
                 "type": "Texture2D",
                 "uuid": "90aae7be1183c41b464cc72b95d0322e"
         },

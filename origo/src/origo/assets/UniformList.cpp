@@ -107,7 +107,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 		int v {};
 		if (!backend.try_read("value", v))
 			return nullptr;
-		auto u = MakeScope<Uniform<int>>(v);
+		auto u = make_scope<Uniform<int>>(v);
 		return u;
 	}
 
@@ -117,7 +117,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 			ORG_ERROR("Uniform<unsigned int> missing or invalid 'value'");
 			return nullptr;
 		}
-		auto u = MakeScope<Uniform<unsigned int>>(v);
+		auto u = make_scope<Uniform<unsigned int>>(v);
 		return u;
 	}
 
@@ -125,7 +125,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 		float v {};
 		if (!backend.try_read("value", v))
 			return nullptr;
-		auto u = MakeScope<Uniform<float>>(v);
+		auto u = make_scope<Uniform<float>>(v);
 		return u;
 	}
 
@@ -133,7 +133,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 		int v {};
 		if (!backend.try_read("value", v))
 			return nullptr;
-		auto u = MakeScope<Uniform<bool>>(v);
+		auto u = make_scope<Uniform<bool>>(v);
 		return u;
 	}
 
@@ -143,7 +143,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 			return nullptr;
 		if (!backend.try_read("y", y))
 			return nullptr;
-		auto u = MakeScope<Uniform<Vec2>>(Vec2 { x, y });
+		auto u = make_scope<Uniform<Vec2>>(Vec2 { x, y });
 		return u;
 	}
 
@@ -155,7 +155,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 			return nullptr;
 		if (!backend.try_read("z", z))
 			return nullptr;
-		auto u = MakeScope<Uniform<Vec3>>(Vec3 { x, y, z });
+		auto u = make_scope<Uniform<Vec3>>(Vec3 { x, y, z });
 		return u;
 	}
 
@@ -167,7 +167,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 		for (int c = 0; c < 4; ++c) {
 			for (int r = 0; r < 4; ++r) {
 				float v {};
-				if (!backend.try_read_array_element(v)) {
+				if (!backend.try_read_array_object(v)) {
 					backend.end_array();
 					return nullptr;
 				}
@@ -177,7 +177,7 @@ Scope<UniformBase> UniformBase::deserialize(ISerializer& backend) {
 
 		backend.end_array();
 
-		auto u = MakeScope<Uniform<glm::mat4>>(m);
+		auto u = make_scope<Uniform<glm::mat4>>(m);
 		return u;
 	}
 	}

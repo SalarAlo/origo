@@ -1,12 +1,18 @@
 {
-        "color_b": 0.3015674948692322,
-        "color_g": 0.3015674948692322,
-        "color_r": 0.8388429880142212,
-        "data": {
-                "albedo": "22f443e5ae79a0f7d9ebf8c18c31e692",
-                "shader": "e1beba6e7aa762f38a0720983812e54a"
+        "parameters": {
+                "ao": 1.0,
+                "base_color": {
+                        "x": 0.8388429880142212,
+                        "y": 0.3015674948692322,
+                        "z": 0.3015674948692322
+                },
+                "metallic": 0.0,
+                "roughness": 1.0
         },
-        "type": "ID",
+        "shader": "e1beba6e7aa762f38a0720983812e54a",
+        "textures": {
+                "albedo": "22f443e5ae79a0f7d9ebf8c18c31e692"
+        },
         "uniforms": [
                 {
                         "name": "u_UseLight",

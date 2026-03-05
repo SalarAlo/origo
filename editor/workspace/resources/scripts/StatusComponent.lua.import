@@ -1,10 +1,10 @@
 {
         "header": {
-                "imported_time_stamp": "-4665152391591361381",
+                "imported_time_stamp": "-4664976734221252541",
                 "name": "StatusComponent",
                 "origin": "Imported",
                 "source_path": "./resources/scripts/StatusComponent.lua",
-                "source_time_stamp": "-4665152391591361381",
+                "source_time_stamp": "-4664976734221252541",
                 "type": "Script",
                 "uuid": "c29bc4fe21da04c6d446fd68a4c3b8ac"
         },

@@ -160,7 +160,7 @@ Scope<TextureSource> TextureSource::deserialize(ISerializer& backend) {
 		backend.try_read("path", path);
 		backend.end_object();
 
-		return MakeScope<TextureSourceFile>(path);
+		return make_scope<TextureSourceFile>(path);
 	}
 
 	case TextureSourceType::Embedded:

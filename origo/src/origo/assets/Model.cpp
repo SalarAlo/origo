@@ -9,11 +9,11 @@
 #include "origo/assets/AssetFactory.h"
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/DefaultAssetCache.h"
-#include "origo/assets/Material2D.h"
-#include "origo/assets/Material2DSource.h"
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
+
+#include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/VertexLayout.h"
@@ -195,7 +195,7 @@ void Model::load_from_assimp() {
 							std::vector<unsigned char> compressed(
 							    reinterpret_cast<unsigned char*>(embedded->pcData),
 							    reinterpret_cast<unsigned char*>(embedded->pcData) + embedded->mWidth);
-							tex->set_source(MakeScope<TextureSourceEmbedded>(std::move(compressed)));
+							tex->set_source(make_scope<TextureSourceEmbedded>(std::move(compressed)));
 						} else {
 							const int w = embedded->mWidth;
 							const int h = embedded->mHeight;
@@ -210,24 +210,24 @@ void Model::load_from_assimp() {
 								pixels[p * 4 + 3] = src[p].a;
 							}
 
-							tex->set_source(MakeScope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
+							tex->set_source(make_scope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
 						}
 					}
 				}
 			} else {
-				tex->set_source(MakeScope<TextureSourceFile>((m_path.parent_path() / path).string()));
+				tex->set_source(make_scope<TextureSourceFile>((m_path.parent_path() / path).string()));
 			}
 
 			tex->load();
 		}
 
-		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<Material2D>(
+		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<MaterialPBR>(
 		    "ModelMat_" + std::to_string(i));
 
-		auto material { AssetManager::get_instance().get_asset<Material2D>(material_handle) };
+		auto material { AssetManager::get_instance().get_asset<MaterialPBR>(material_handle) };
 
 		material->make_textured_material();
-		material->set_source(MakeScope<Material2DSourceRaw>(texture_handle, *m_model_shader_handle));
+		material->set_albedo(texture_handle).set_shader(*m_model_shader_handle);
 		material->resolve();
 
 		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();

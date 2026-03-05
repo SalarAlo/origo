@@ -203,11 +203,11 @@ void InspectorComponentRenderer::draw_script_field(const Origo::ScriptFieldDescr
 }
 
 Origo::Ref<Origo::Texture2D> InspectorComponentRenderer::load_icon(const std::string& path) {
-	auto tex = Origo::MakeRef<Origo::Texture2D>(
+	auto tex = Origo::make_ref<Origo::Texture2D>(
 	    Origo::TextureType::UI);
 
 	tex->set_source(
-	    Origo::MakeScope<Origo::TextureSourceSVG>(
+	    Origo::make_scope<Origo::TextureSourceSVG>(
 	        path, 14, 14));
 
 	tex->load();

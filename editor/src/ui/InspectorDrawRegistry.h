@@ -34,7 +34,7 @@ public:
 		InspectorEntry entry;
 		entry.Name = name;
 		entry.IconPath = iconPath;
-		entry.Drawer = Origo::MakeScope<InspectorDrawable<T>>(name, std::move(fn));
+		entry.Drawer = Origo::make_scope<InspectorDrawable<T>>(name, std::move(fn));
 		m_entries[typeid(T)] = std::move(entry);
 	}
 

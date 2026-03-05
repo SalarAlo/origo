@@ -111,7 +111,7 @@ AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& pat
 
 	backend.begin_array("dependencies");
 	std::string dep;
-	while (backend.try_read_array_element(dep)) {
+	while (backend.try_read_array_object(dep)) {
 		meta.Dependencies.push_back(UUID::from_string(dep));
 	}
 	backend.end_array();

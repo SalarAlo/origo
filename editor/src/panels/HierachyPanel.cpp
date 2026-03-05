@@ -21,10 +21,6 @@
 
 namespace OrigoEditor {
 
-namespace {
-	constexpr float confirmation_duration_seconds = 0.8f;
-}
-
 HierarchyPanel::HierarchyPanel(EditorContext& ctx)
     : m_context(ctx) { }
 
@@ -45,8 +41,7 @@ void HierarchyPanel::on_im_gui_render() {
 			m_context.ActiveScene->add_native_component<EditorOutlineComponent>(ent);
 			EditorNotificationSystem::get_instance().success(
 			    "Entity Created",
-			    "Added Entity to the scene.",
-			    confirmation_duration_seconds);
+			    "Added Entity to the scene.");
 		}
 
 		ImGui::Separator();
@@ -60,8 +55,7 @@ void HierarchyPanel::on_im_gui_render() {
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 			EditorNotificationSystem::get_instance().success(
 			    "Entity Created",
-			    "Added Cube to the scene.",
-			    confirmation_duration_seconds);
+			    "Added Cube to the scene.");
 		}
 
 		ImGui::MenuItem("Cone");
@@ -73,8 +67,7 @@ void HierarchyPanel::on_im_gui_render() {
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 			EditorNotificationSystem::get_instance().success(
 			    "Entity Created",
-			    "Added Cone to the scene.",
-			    confirmation_duration_seconds);
+			    "Added Cone to the scene.");
 		}
 
 		ImGui::MenuItem("Sphere");
@@ -86,8 +79,7 @@ void HierarchyPanel::on_im_gui_render() {
 			mesh_renderer->MaterialHandle = Origo::DefaultAssetCache::get_instance().get_material();
 			EditorNotificationSystem::get_instance().success(
 			    "Entity Created",
-			    "Added Sphere to the scene.",
-			    confirmation_duration_seconds);
+			    "Added Sphere to the scene.");
 		}
 
 		ImGui::EndPopup();
@@ -117,8 +109,7 @@ void HierarchyPanel::on_im_gui_render() {
 				m_context.unselect_entity();
 				EditorNotificationSystem::get_instance().info(
 				    "Entity Removed",
-				    "Removed " + entity_name + " from the scene.",
-				    confirmation_duration_seconds);
+				    "Removed " + entity_name + " from the scene.");
 			}
 			ImGui::EndPopup();
 		}

@@ -6,7 +6,7 @@ std::string asset_type_to_string(Origo::AssetType type) {
 	switch (type) {
 	case Origo::AssetType::Texture2D:
 		return "Textures";
-	case Origo::AssetType::Material2D:
+	case Origo::AssetType::MaterialPBR:
 		return "Materials";
 	case Origo::AssetType::Mesh:
 		return "Meshes";

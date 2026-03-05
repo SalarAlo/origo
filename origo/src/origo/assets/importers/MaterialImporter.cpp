@@ -18,14 +18,14 @@ bool MaterialImporter::can_import(const std::filesystem::path& path) const {
 }
 
 AssetType MaterialImporter::get_asset_type() const {
-	return AssetType::Material2D;
+	return AssetType::MaterialPBR;
 }
 
 Scope<Asset> MaterialImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
 	JsonSerializer backend { meta.SourcePath->c_str() };
 	backend.load_file();
-	auto serializer { AssetSerializationSystem::get(AssetType::Material2D) };
-	auto material { AssetFactory::get_instance().allocate_hollow_asset(AssetType::Material2D) };
+	auto serializer { AssetSerializationSystem::get(AssetType::MaterialPBR) };
+	auto material { AssetFactory::get_instance().allocate_hollow_asset(AssetType::MaterialPBR) };
 	serializer->deserialize(backend, *material.get());
 	return material;
 }

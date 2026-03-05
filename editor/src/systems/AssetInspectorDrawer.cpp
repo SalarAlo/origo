@@ -4,8 +4,9 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Material2D.h"
-#include "origo/assets/Material2DSource.h"
+
+#include "origo/assets/material/MaterialPBR.h"
+#include "origo/assets/material/MaterialPBRSource.h"
 
 #include "ui/ComponentUI.h"
 
@@ -26,8 +27,8 @@ void AssetInspectorDrawer::draw_asset(const Origo::AssetMetadata& md) {
 
 void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType type) {
 	switch (type) {
-	case Origo::AssetType::Material2D:
-		draw_material(dynamic_cast<Origo::Material2D*>(asset));
+	case Origo::AssetType::MaterialPBR:
+		draw_material(dynamic_cast<Origo::MaterialPBR*>(asset));
 		break;
 	default: {
 		std::string asset_type_str { magic_enum::enum_name(type) };
@@ -36,29 +37,21 @@ void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType t
 	}
 }
 
-void AssetInspectorDrawer::draw_material(Origo::Material2D* material) {
-	auto material_data { material->get_data() };
+void AssetInspectorDrawer::draw_material(Origo::MaterialPBR* material) {
+	auto& material_data { material->get_data() };
 
-	if (!material_data.has_value()) {
-		return;
-	}
-
-	Origo::OptionalAssetHandle albedo_handle = material_data->AlbedoHandle;
-	Origo::OptionalAssetHandle shader_handle = material_data->ShaderHandle;
+	Origo::OptionalAssetHandle albedo_handle = material_data.PBRTexs.Albedo;
+	Origo::OptionalAssetHandle shader_handle = material_data.ShaderHandle;
 
 	ComponentUI::draw_asset_control("Albedo", albedo_handle, Origo::AssetType::Texture2D);
 	ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
 
-	if (material_data->ShaderHandle != shader_handle || material_data->AlbedoHandle != albedo_handle) {
-		auto source { Origo::MakeScope<Origo::Material2DSourceRaw>(*albedo_handle, *shader_handle) };
-		material->set_source(std::move(source));
-		material->resolve();
-	}
+	material->set_albedo(albedo_handle).set_shader(shader_handle);
 
-	Origo::Vec3 color { material->get_color() };
+	Origo::Vec3 color { material_data.PBRParams.BaseColor };
 	ComponentUI::draw_color_control("Color", color);
-	if (material->get_color() != color)
-		material->set_color(color);
+	if (material_data.PBRParams.BaseColor != color)
+		material_data.PBRParams.BaseColor = color;
 }
 
 }

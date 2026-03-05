@@ -5,15 +5,12 @@
 #include "origo/core/Logger.h"
 
 #include "state/EditorViewMode.h"
+
 #include "ui/EditorNotificationSystem.h"
 
 namespace OrigoEditor {
 
 static constexpr size_t update_layer_key { static_cast<size_t>(LayerType::UpdateLayer) };
-namespace {
-	constexpr float confirmation_duration_seconds = 2.2f;
-	constexpr float important_duration_seconds = 4.5f;
-}
 
 bool EditorRuntimeController::can_step() const { return can_resume(); }
 void EditorRuntimeController::step() {
@@ -22,8 +19,7 @@ void EditorRuntimeController::step() {
 	m_context.LayerSystem.request_activate_layer(update_layer_key, [&]() { ORG_CORE_TRACE("Step made"); });
 	EditorNotificationSystem::get_instance().info(
 	    "Step",
-	    "Advanced the runtime by one frame.",
-	    confirmation_duration_seconds);
+	    "Advanced the runtime by one frame.");
 }
 
 bool EditorRuntimeController::can_play() const { return m_context.RuntimeState == EditorRuntimeState::Editing; }
@@ -31,7 +27,7 @@ void EditorRuntimeController::play() {
 	if (!can_play())
 		return;
 
-	m_context.RuntimeScene = MakeScope<Origo::Scene>(*m_context.EditorScene);
+	m_context.RuntimeScene = make_scope<Origo::Scene>(*m_context.EditorScene);
 	m_context.ActiveScene = m_context.RuntimeScene.get();
 	m_context.RuntimeState = EditorRuntimeState::Running;
 	m_context.ViewMode = EditorViewMode::Game;
@@ -43,8 +39,7 @@ void EditorRuntimeController::play() {
 	ORG_CORE_TRACE("Play mode started");
 	EditorNotificationSystem::get_instance().info(
 	    "Game Started",
-	    "Entered play mode and switched to the game view.",
-	    important_duration_seconds);
+	    "Entered play mode and switched to the game view.");
 }
 
 bool EditorRuntimeController::can_pause() const { return m_context.RuntimeState == EditorRuntimeState::Running && m_context.LayerSystem.has_active_layer(update_layer_key); }
@@ -58,8 +53,7 @@ void EditorRuntimeController::pause(bool changeToEditorView) {
 	ORG_CORE_TRACE("Pause");
 	EditorNotificationSystem::get_instance().info(
 	    "Game Paused",
-	    changeToEditorView ? "Runtime paused and returned to the editor view." : "Runtime paused.",
-	    confirmation_duration_seconds);
+	    changeToEditorView ? "Runtime paused and returned to the editor view." : "Runtime paused.");
 }
 
 bool EditorRuntimeController::can_resume() const { return m_context.RuntimeState == EditorRuntimeState::Running && !m_context.LayerSystem.has_active_layer(update_layer_key); }
@@ -73,8 +67,7 @@ void EditorRuntimeController::resume() {
 	ORG_CORE_TRACE("Resume");
 	EditorNotificationSystem::get_instance().info(
 	    "Game Resumed",
-	    "Runtime updates resumed.",
-	    confirmation_duration_seconds);
+	    "Runtime updates resumed.");
 }
 
 bool EditorRuntimeController::can_stop() const { return m_context.RuntimeState == EditorRuntimeState::Running; }
@@ -94,8 +87,7 @@ void EditorRuntimeController::stop() {
 	m_context.unselect_entity();
 	EditorNotificationSystem::get_instance().success(
 	    "Game Stopped",
-	    "Returned to editing mode.",
-	    confirmation_duration_seconds);
+	    "Returned to editing mode.");
 }
 
 }

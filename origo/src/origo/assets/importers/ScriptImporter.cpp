@@ -15,7 +15,7 @@ AssetType ScriptImporter::get_asset_type() const {
 }
 
 Scope<Asset> ScriptImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	auto asset = MakeScope<Script>(path, *meta.ID);
+	auto asset = make_scope<Script>(path, *meta.ID);
 
 	return asset;
 }

@@ -150,11 +150,11 @@ Scope<AssetMetadata> AssetImportPipeline::load_or_create_metadata(const std::fil
 
 	if (std::filesystem::exists(import_path)) {
 		ORG_CORE_INFO("[META] Found existing import file");
-		meta = MakeScope<AssetMetadata>(AssetDatabase::get_instance().load_import_header(import_path));
+		meta = make_scope<AssetMetadata>(AssetDatabase::get_instance().load_import_header(import_path));
 	} else {
 		ORG_CORE_TRACE("[META] Creating new metadata for {}", sourcePath.string());
 
-		meta = MakeScope<AssetMetadata>();
+		meta = make_scope<AssetMetadata>();
 		meta->ID = UUID::generate();
 		meta->Name = sourcePath.stem().string();
 		meta->Type = importer->get_asset_type();
