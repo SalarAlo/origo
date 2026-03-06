@@ -41,17 +41,56 @@ void AssetInspectorDrawer::draw_material(Origo::MaterialPBR* material) {
 	auto& material_data { material->get_data() };
 
 	Origo::OptionalAssetHandle albedo_handle = material_data.PBRTexs.Albedo;
+	Origo::OptionalAssetHandle normal_handle = material_data.PBRTexs.Normal;
+	Origo::OptionalAssetHandle metallic_roughness_handle = material_data.PBRTexs.MetallicRoughness;
+	Origo::OptionalAssetHandle ao_handle = material_data.PBRTexs.Ao;
+	Origo::OptionalAssetHandle emissive_handle = material_data.PBRTexs.Emissive;
 	Origo::OptionalAssetHandle shader_handle = material_data.ShaderHandle;
 
-	ComponentUI::draw_asset_control("Albedo", albedo_handle, Origo::AssetType::Texture2D);
-	ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
-
-	material->set_albedo(albedo_handle).set_shader(shader_handle);
+	bool textures_open = ComponentUI::start_region("Texture Maps", true);
+	if (textures_open) {
+		ComponentUI::draw_asset_control("Albedo", albedo_handle, Origo::AssetType::Texture2D);
+		ComponentUI::draw_asset_control("Normal", normal_handle, Origo::AssetType::Texture2D);
+		ComponentUI::draw_asset_control("Metallic Roughness", metallic_roughness_handle, Origo::AssetType::Texture2D);
+		ComponentUI::draw_asset_control("AO", ao_handle, Origo::AssetType::Texture2D);
+		ComponentUI::draw_asset_control("Emissive", emissive_handle, Origo::AssetType::Texture2D);
+	}
+	ComponentUI::end_region(textures_open);
 
 	Origo::Vec3 color { material_data.PBRParams.BaseColor };
-	ComponentUI::draw_color_control("Color", color);
+	float metallic { material_data.PBRParams.Metallic };
+	float roughness { material_data.PBRParams.Roughness };
+	float ao { material_data.PBRParams.AO };
+
+	bool surface_open = ComponentUI::start_region("Surface", true);
+	if (surface_open) {
+		ComponentUI::draw_color_control("Color", color);
+		ComponentUI::draw_float_slider_control("Metallic", metallic, 0.0f, 1.0f);
+		ComponentUI::draw_float_slider_control("Roughness", roughness, 0.0f, 1.0f);
+		ComponentUI::draw_float_slider_control("AO", ao, 0.0f, 1.0f);
+	}
+	ComponentUI::end_region(surface_open);
+
+	bool shader_open = ComponentUI::start_region("Shader", false);
+	if (shader_open) {
+		ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
+	}
+	ComponentUI::end_region(shader_open);
+
+	material->set_albedo(albedo_handle).set_shader(shader_handle);
+	material_data.PBRTexs.Normal = normal_handle;
+	material_data.PBRTexs.MetallicRoughness = metallic_roughness_handle;
+	material_data.PBRTexs.Ao = ao_handle;
+	material_data.PBRTexs.Emissive = emissive_handle;
+
 	if (material_data.PBRParams.BaseColor != color)
 		material_data.PBRParams.BaseColor = color;
+	if (material_data.PBRParams.Metallic != metallic)
+		material_data.PBRParams.Metallic = metallic;
+	if (material_data.PBRParams.Roughness != roughness)
+		material_data.PBRParams.Roughness = roughness;
+	if (material_data.PBRParams.AO != ao)
+		material_data.PBRParams.AO = ao;
 }
 
 }

@@ -8,6 +8,10 @@ namespace Origo {
 
 enum class TextureType {
 	Albedo,
+	Normal,
+	MetallicRoughness,
+	Ao,
+	Emissive,
 	UI
 };
 

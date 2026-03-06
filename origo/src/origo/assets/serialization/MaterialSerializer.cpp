@@ -1,9 +1,9 @@
 #include "origo/assets/serialization/MaterialSerializer.h"
 
+#include "origo/assets/AssetManager.h"
+
 #include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/material/MaterialPBRSource.h"
-
-#include "origo/assets/AssetManager.h"
 
 #include "origo/renderer/PBRParameters.h"
 
@@ -45,10 +45,6 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	material.get_data().PBRParams = PBRParameters::deserialize(backend);
 	backend.end_object();
 
-	// Backward compatibility for legacy .mat schema:
-	// {
-	//   "color_r/g/b", "data": { "shader", "albedo" }
-	// }
 	if (!deps.Shader) {
 		backend.begin_object("data");
 		if (std::string legacy_shader_id; backend.try_read("shader", legacy_shader_id)) {
@@ -80,6 +76,26 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 		auto albedo_handle = am.get_handle_by_uuid(*deps.Albedo);
 		if (albedo_handle)
 			material.get_data().PBRTexs.Albedo = *albedo_handle;
+	}
+	if (deps.Normal) {
+		auto normal_handle = am.get_handle_by_uuid(*deps.Normal);
+		if (normal_handle)
+			material.get_data().PBRTexs.Normal = *normal_handle;
+	}
+	if (deps.MetallicRoughness) {
+		auto metallic_roughness_handle = am.get_handle_by_uuid(*deps.MetallicRoughness);
+		if (metallic_roughness_handle)
+			material.get_data().PBRTexs.MetallicRoughness = *metallic_roughness_handle;
+	}
+	if (deps.Ao) {
+		auto ao_handle = am.get_handle_by_uuid(*deps.Ao);
+		if (ao_handle)
+			material.get_data().PBRTexs.Ao = *ao_handle;
+	}
+	if (deps.Emissive) {
+		auto emissive_handle = am.get_handle_by_uuid(*deps.Emissive);
+		if (emissive_handle)
+			material.get_data().PBRTexs.Emissive = *emissive_handle;
 	}
 }
 

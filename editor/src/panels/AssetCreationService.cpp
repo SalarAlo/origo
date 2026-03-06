@@ -65,7 +65,7 @@ bool AssetCreationService::create_material(FolderEntry* current_folder) const {
 	material->set_shader(DefaultAssetCache::get_instance().get_shader());
 	material->set_albedo(DefaultAssetCache::get_instance().get_texture());
 
-	material->make_textured_material();
+	// should use texture
 	material->resolve();
 
 	auto serializer { Origo::AssetSerializationSystem::get(AssetType::MaterialPBR) };

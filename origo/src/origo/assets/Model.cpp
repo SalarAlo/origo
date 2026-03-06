@@ -1,7 +1,9 @@
 #include <assimp/Importer.hpp>
+#include <assimp/material.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include <cmath>
 #include <optional>
 
 #include "Model.h"
@@ -52,6 +54,84 @@ static void make_fallback_model(std::vector<Model::Node>& nodes, int& rootNode) 
 	n.Children.clear();
 
 	rootNode = 0;
+}
+
+static OptionalAssetHandle try_load_material_texture(
+    const aiScene* scene,
+    aiMaterial* ai_mat,
+    aiTextureType ai_texture_type,
+    TextureType texture_type,
+    const std::filesystem::path& model_parent_path,
+    const std::string& debug_name) {
+	if (!scene || !ai_mat)
+		return std::nullopt;
+
+	aiString tex_path;
+	if (ai_mat->GetTexture(ai_texture_type, 0, &tex_path) != AI_SUCCESS)
+		return std::nullopt;
+
+	const std::string path = tex_path.C_Str();
+	auto texture_handle = AssetFactory::get_instance().create_runtime_asset<Texture2D>(
+	    debug_name,
+	    texture_type);
+
+	auto tex = AssetManager::get_instance().get_asset<Texture2D>(texture_handle);
+	if (!tex)
+		return std::nullopt;
+
+	if (!path.empty() && path[0] == '*') {
+		const int idx = std::atoi(path.c_str() + 1);
+		if (idx >= 0 && idx < (int)scene->mNumTextures) {
+			aiTexture* embedded = scene->mTextures[idx];
+			if (embedded) {
+				if (embedded->mHeight == 0) {
+					std::vector<unsigned char> compressed(
+					    reinterpret_cast<unsigned char*>(embedded->pcData),
+					    reinterpret_cast<unsigned char*>(embedded->pcData) + embedded->mWidth);
+					tex->set_source(make_scope<TextureSourceEmbedded>(std::move(compressed)));
+				} else {
+					const int w = embedded->mWidth;
+					const int h = embedded->mHeight;
+
+					std::vector<unsigned char> pixels((size_t)w * h * 4);
+					const aiTexel* src = reinterpret_cast<const aiTexel*>(embedded->pcData);
+
+					for (int p = 0; p < w * h; ++p) {
+						pixels[p * 4 + 0] = src[p].r;
+						pixels[p * 4 + 1] = src[p].g;
+						pixels[p * 4 + 2] = src[p].b;
+						pixels[p * 4 + 3] = src[p].a;
+					}
+
+					tex->set_source(make_scope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
+				}
+			}
+		}
+	} else {
+		tex->set_source(make_scope<TextureSourceFile>((model_parent_path / path).string()));
+	}
+
+	tex->load();
+	return OptionalAssetHandle { texture_handle };
+}
+
+static aiVector3D normalize_safe(const aiVector3D& v) {
+	const float len2 = v.x * v.x + v.y * v.y + v.z * v.z;
+	if (len2 <= 0.000001f)
+		return aiVector3D(0.0f, 1.0f, 0.0f);
+	const float inv = 1.0f / std::sqrt(len2);
+	return aiVector3D(v.x * inv, v.y * inv, v.z * inv);
+}
+
+static aiVector3D cross3(const aiVector3D& a, const aiVector3D& b) {
+	return aiVector3D(
+	    a.y * b.z - a.z * b.y,
+	    a.z * b.x - a.x * b.z,
+	    a.x * b.y - a.y * b.x);
+}
+
+static float dot3(const aiVector3D& a, const aiVector3D& b) {
+	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 Model::Model()
@@ -124,7 +204,7 @@ void Model::load_from_assimp() {
 		std::vector<float> vertices;
 		std::vector<uint32_t> indices;
 
-		vertices.reserve(mesh->mNumVertices * 8);
+		vertices.reserve(mesh->mNumVertices * 12);
 
 		for (uint32_t v = 0; v < mesh->mNumVertices; ++v) {
 			const auto& p = mesh->mVertices[v];
@@ -139,12 +219,33 @@ void Model::load_from_assimp() {
 			vertices.push_back(n.z);
 
 			if (mesh->mTextureCoords[0]) {
-				vertices.push_back(1.0f - mesh->mTextureCoords[0][v].x);
+				vertices.push_back(mesh->mTextureCoords[0][v].x);
 				vertices.push_back(1.0f - mesh->mTextureCoords[0][v].y);
 			} else {
 				vertices.push_back(0.0f);
 				vertices.push_back(0.0f);
 			}
+
+			aiVector3D tangent = aiVector3D(1.0f, 0.0f, 0.0f);
+			float tangent_handedness = 1.0f;
+			const aiVector3D normal = normalize_safe(mesh->mNormals[v]);
+
+			if (mesh->HasTangentsAndBitangents()) {
+				tangent = normalize_safe(mesh->mTangents[v]);
+				const aiVector3D bitangent = normalize_safe(mesh->mBitangents[v]);
+				const aiVector3D expected_bitangent = normalize_safe(cross3(normal, tangent));
+				if (dot3(expected_bitangent, bitangent) < 0.0f)
+					tangent_handedness = -1.0f;
+			} else {
+				const aiVector3D up(0.0f, 1.0f, 0.0f);
+				const aiVector3D right(1.0f, 0.0f, 0.0f);
+				tangent = normalize_safe(std::abs(normal.y) < 0.999f ? cross3(up, normal) : cross3(normal, right));
+			}
+
+			vertices.push_back(tangent.x);
+			vertices.push_back(tangent.y);
+			vertices.push_back(tangent.z);
+			vertices.push_back(tangent_handedness);
 		}
 
 		for (uint32_t f = 0; f < mesh->mNumFaces; ++f) {
@@ -156,14 +257,14 @@ void Model::load_from_assimp() {
 			indices.push_back(face.mIndices[2]);
 		}
 
-		int layout_id = VertexLayout::get_static_mesh_layout();
+		int layout_id = VertexLayout::get_static_mesh_tangent_layout();
 		int heap_id = GeometryHeapRegistry::get_or_create_static_mesh_heap(layout_id);
 		GeometryHeap* heap = GeometryHeapRegistry::get_heap(heap_id);
 
 		auto range = heap->allocate(
 		    vertices.data(),
 		    vertices.size() * sizeof(float),
-		    8 * sizeof(float),
+		    12 * sizeof(float),
 		    indices.data(),
 		    indices.size());
 
@@ -173,61 +274,105 @@ void Model::load_from_assimp() {
 		    heap_id,
 		    range);
 
-		OptionalAssetHandle texture_handle {};
 		aiMaterial* ai_mat = scene->mMaterials[mesh->mMaterialIndex];
-
-		aiString tex_path;
-		if (ai_mat && ai_mat->GetTexture(aiTextureType_DIFFUSE, 0, &tex_path) == AI_SUCCESS) {
-			std::string path = tex_path.C_Str();
-
-			texture_handle = AssetFactory::get_instance().create_runtime_asset<Texture2D>(
-			    "ModelTex_" + std::to_string(i),
-			    TextureType::Albedo);
-
-			auto tex = AssetManager::get_instance().get_asset<Texture2D>(*texture_handle);
-
-			if (!path.empty() && path[0] == '*') {
-				int idx = std::atoi(path.c_str() + 1);
-				if (idx >= 0 && idx < (int)scene->mNumTextures) {
-					aiTexture* embedded = scene->mTextures[idx];
-					if (embedded) {
-						if (embedded->mHeight == 0) {
-							std::vector<unsigned char> compressed(
-							    reinterpret_cast<unsigned char*>(embedded->pcData),
-							    reinterpret_cast<unsigned char*>(embedded->pcData) + embedded->mWidth);
-							tex->set_source(make_scope<TextureSourceEmbedded>(std::move(compressed)));
-						} else {
-							const int w = embedded->mWidth;
-							const int h = embedded->mHeight;
-
-							std::vector<unsigned char> pixels((size_t)w * h * 4);
-							const aiTexel* src = reinterpret_cast<const aiTexel*>(embedded->pcData);
-
-							for (int p = 0; p < w * h; ++p) {
-								pixels[p * 4 + 0] = src[p].r;
-								pixels[p * 4 + 1] = src[p].g;
-								pixels[p * 4 + 2] = src[p].b;
-								pixels[p * 4 + 3] = src[p].a;
-							}
-
-							tex->set_source(make_scope<TextureSourceEmbedded>(w, h, 4, std::move(pixels)));
-						}
-					}
-				}
-			} else {
-				tex->set_source(make_scope<TextureSourceFile>((m_path.parent_path() / path).string()));
-			}
-
-			tex->load();
+		OptionalAssetHandle albedo_texture_handle = try_load_material_texture(
+		    scene,
+		    ai_mat,
+		    aiTextureType_BASE_COLOR,
+		    TextureType::Albedo,
+		    m_path.parent_path(),
+		    "ModelTex_Albedo_" + std::to_string(i));
+		if (!albedo_texture_handle) {
+			albedo_texture_handle = try_load_material_texture(
+			    scene,
+			    ai_mat,
+			    aiTextureType_DIFFUSE,
+			    TextureType::Albedo,
+			    m_path.parent_path(),
+			    "ModelTex_Albedo_" + std::to_string(i));
 		}
+
+		OptionalAssetHandle normal_texture_handle = try_load_material_texture(
+		    scene,
+		    ai_mat,
+		    aiTextureType_NORMALS,
+		    TextureType::Normal,
+		    m_path.parent_path(),
+		    "ModelTex_Normal_" + std::to_string(i));
+		if (!normal_texture_handle) {
+			normal_texture_handle = try_load_material_texture(
+			    scene,
+			    ai_mat,
+			    aiTextureType_HEIGHT,
+			    TextureType::Normal,
+			    m_path.parent_path(),
+			    "ModelTex_Normal_" + std::to_string(i));
+		}
+
+		OptionalAssetHandle metallic_roughness_texture_handle = try_load_material_texture(
+		    scene,
+		    ai_mat,
+		    aiTextureType_METALNESS,
+		    TextureType::MetallicRoughness,
+		    m_path.parent_path(),
+		    "ModelTex_MetallicRoughness_" + std::to_string(i));
+		if (!metallic_roughness_texture_handle) {
+			metallic_roughness_texture_handle = try_load_material_texture(
+			    scene,
+			    ai_mat,
+			    aiTextureType_DIFFUSE_ROUGHNESS,
+			    TextureType::MetallicRoughness,
+			    m_path.parent_path(),
+			    "ModelTex_MetallicRoughness_" + std::to_string(i));
+		}
+
+		OptionalAssetHandle ao_texture_handle = try_load_material_texture(
+		    scene,
+		    ai_mat,
+		    aiTextureType_AMBIENT_OCCLUSION,
+		    TextureType::Ao,
+		    m_path.parent_path(),
+		    "ModelTex_AO_" + std::to_string(i));
+
+		OptionalAssetHandle emissive_texture_handle = try_load_material_texture(
+		    scene,
+		    ai_mat,
+		    aiTextureType_EMISSIVE,
+		    TextureType::Emissive,
+		    m_path.parent_path(),
+		    "ModelTex_Emissive_" + std::to_string(i));
 
 		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<MaterialPBR>(
 		    "ModelMat_" + std::to_string(i));
 
 		auto material { AssetManager::get_instance().get_asset<MaterialPBR>(material_handle) };
 
-		material->make_textured_material();
-		material->set_albedo(texture_handle).set_shader(*m_model_shader_handle);
+		if (ai_mat) {
+			aiColor4D base_color {};
+			if (aiGetMaterialColor(ai_mat, AI_MATKEY_BASE_COLOR, &base_color) == AI_SUCCESS) {
+				material->get_data().PBRParams.BaseColor = Vec3(base_color.r, base_color.g, base_color.b);
+			} else {
+				aiColor4D diffuse_color {};
+				if (aiGetMaterialColor(ai_mat, AI_MATKEY_COLOR_DIFFUSE, &diffuse_color) == AI_SUCCESS)
+					material->get_data().PBRParams.BaseColor = Vec3(diffuse_color.r, diffuse_color.g, diffuse_color.b);
+			}
+
+			float metallic = material->get_data().PBRParams.Metallic;
+			if (aiGetMaterialFloat(ai_mat, AI_MATKEY_METALLIC_FACTOR, &metallic) == AI_SUCCESS)
+				material->get_data().PBRParams.Metallic = metallic;
+
+			float roughness = material->get_data().PBRParams.Roughness;
+			if (aiGetMaterialFloat(ai_mat, AI_MATKEY_ROUGHNESS_FACTOR, &roughness) == AI_SUCCESS)
+				material->get_data().PBRParams.Roughness = roughness;
+		}
+
+		material
+		    ->set_albedo(albedo_texture_handle)
+		    .set_normal(normal_texture_handle)
+		    .set_metallic_roughness(metallic_roughness_texture_handle)
+		    .set_ao(ao_texture_handle)
+		    .set_emissive(emissive_texture_handle)
+		    .set_shader(*m_model_shader_handle);
 		material->resolve();
 
 		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();

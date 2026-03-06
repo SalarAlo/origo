@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #include "ui/ComponentUI.h"
 
 #include "imgui.h"
@@ -5,6 +7,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Texture2D.h"
 
 static bool begin_inspector_region(const char* label, bool defaultOpen = true) {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
@@ -142,6 +145,36 @@ void draw_float_control(std::string_view label, float& value, float speed) {
 	ImGui::PopID();
 }
 
+void draw_float_slider_control(std::string_view label, float& value, float min, float max, const char* format) {
+	ImGui::PushID(label.data());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+
+	const float field_width = 140.0f;
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label.data());
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float next_x = ImGui::GetCursorPosX() + avail - field_width;
+	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
+	if (next_x < min_x)
+		next_x = min_x;
+
+	ImGui::SameLine(next_x);
+
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+	ImGui::SetNextItemWidth(field_width);
+	ImGui::SliderFloat("##slider", &value, min, max, format);
+
+	ImGui::PopStyleColor(4);
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
+
 void draw_int_control(std::string_view label, int& value, float speed) {
 	ImGui::PushID(label.data());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
@@ -272,7 +305,54 @@ void draw_asset_control(std::string_view label, Origo::OptionalAssetHandle& hand
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
 
 	std::string display = handle ? md.Name : "None";
-	ImGui::Button(display.c_str(), ImVec2(field_width, field_height));
+	bool is_texture_field = (assetValidationType && *assetValidationType == Origo::AssetType::Texture2D) || (handle && md.Type == Origo::AssetType::Texture2D);
+	if (is_texture_field) {
+		ImTextureID preview_id = 0;
+		if (handle && md.Type == Origo::AssetType::Texture2D) {
+			if (auto* texture = am.get_asset<Origo::Texture2D>(*handle))
+				preview_id = static_cast<ImTextureID>((intptr_t)texture->get_renderer_id());
+		}
+
+		const float padding = 6.0f;
+		const float control_height = 82.0f;
+		const float preview_size = control_height - padding * 2.0f;
+		ImGui::InvisibleButton("##TextureAssetField", ImVec2(field_width, control_height));
+
+		ImVec2 card_min = ImGui::GetItemRectMin();
+		ImVec2 card_max = ImGui::GetItemRectMax();
+		ImVec2 preview_min = ImVec2(card_min.x + padding, card_min.y + padding);
+		ImVec2 preview_max = ImVec2(preview_min.x + preview_size, preview_min.y + preview_size);
+
+		ImU32 bg_col = ImGui::GetColorU32(ImGui::IsItemHovered() ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+		ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
+		ImU32 text_col = ImGui::GetColorU32(ImGuiCol_Text);
+		ImU32 text_dim_col = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+		ImU32 preview_bg_col = IM_COL32(35, 35, 35, 255);
+
+		auto truncate_text = [](const std::string& text, size_t max_chars) {
+			if (text.size() <= max_chars)
+				return text;
+			return text.substr(0, max_chars - 3) + "...";
+		};
+
+		ImGui::GetWindowDrawList()->AddRectFilled(card_min, card_max, bg_col, 4.0f);
+		ImGui::GetWindowDrawList()->AddRect(card_min, card_max, border_col, 4.0f);
+
+		if (preview_id) {
+			// Rotate preview by 180 degrees to compensate for default flipped orientation.
+			ImGui::GetWindowDrawList()->AddImage(preview_id, preview_min, preview_max, ImVec2(1.0f, 1.0f), ImVec2(0.0f, 0.0f));
+		} else {
+			ImGui::GetWindowDrawList()->AddRectFilled(preview_min, preview_max, preview_bg_col, 2.0f);
+			ImGui::GetWindowDrawList()->AddText(ImVec2(preview_min.x + 10.0f, preview_min.y + preview_size * 0.42f), text_dim_col, "No Tex");
+		}
+
+		ImVec2 text_pos = ImVec2(preview_max.x + 8.0f, card_min.y + 10.0f);
+		std::string title = truncate_text(display, 20);
+		ImGui::GetWindowDrawList()->AddText(text_pos, text_col, title.c_str());
+		ImGui::GetWindowDrawList()->AddText(ImVec2(text_pos.x, text_pos.y + 22.0f), text_dim_col, "Texture");
+	} else {
+		ImGui::Button(display.c_str(), ImVec2(field_width, field_height));
+	}
 
 	ImGui::PopStyleColor(4);
 

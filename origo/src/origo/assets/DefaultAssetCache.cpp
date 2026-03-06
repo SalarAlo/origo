@@ -66,9 +66,6 @@ AssetHandle DefaultAssetCache::get_material() {
 	material->set_shader(get_shader());
 	material->set_albedo(get_texture());
 
-	material->set_uniform("u_UseTexture", true);
-	material->set_uniform("u_UseLight", true);
-
 	material->resolve();
 
 	return *m_material;
@@ -89,9 +86,6 @@ AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
 	material->set_albedo(get_texture());
 	material->get_data().PBRParams.BaseColor = debug_emission_particle_color;
 
-	material->set_uniform("u_UseTexture", false);
-	material->set_uniform("u_UseLight", false);
-
 	material->resolve();
 
 	return *m_particle_emission_debug_material;
@@ -111,9 +105,6 @@ Origo::AssetHandle DefaultAssetCache::get_outline_material() {
 
 	material->set_shader(get_shader());
 	material->get_data().PBRParams.BaseColor = orange_color;
-
-	material->set_uniform("u_UseTexture", false);
-	material->set_uniform("u_UseLight", false);
 
 	material->resolve();
 
@@ -136,9 +127,6 @@ AssetHandle DefaultAssetCache::get_particle_material() {
 	material->set_albedo(get_texture());
 
 	material->get_data().PBRParams.BaseColor = particle_color;
-
-	material->set_uniform("u_UseTexture", true);
-	material->set_uniform("u_UseLight", true);
 
 	material->resolve();
 

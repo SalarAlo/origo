@@ -5,7 +5,8 @@ enum class VertexAttributeSemantic {
 	None,
 	Position,
 	Normal,
-	TexCoord
+	TexCoord,
+	Tangent
 };
 
 struct VertexAttribute {

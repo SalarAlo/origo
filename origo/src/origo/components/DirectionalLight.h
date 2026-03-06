@@ -7,7 +7,7 @@ namespace Origo {
 class DirectionalLightComponent : public Component {
 public:
 	DirectionalLightComponent() = default;
-	DirectionalLightComponent(int intensity, Vec3 lightColor, float ambientFactor)
+	DirectionalLightComponent(float intensity, Vec3 lightColor, float ambientFactor)
 	    : Intensity(intensity)
 	    , LightColor(lightColor)
 	    , AmbientFactor(ambientFactor) { }

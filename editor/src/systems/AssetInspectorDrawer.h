@@ -1,8 +1,9 @@
 #pragma once
 
 #include "origo/assets/Asset.h"
-#include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/Metadata.h"
+
+#include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/utils/Singleton.h"
 

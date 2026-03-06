@@ -18,7 +18,6 @@ public:
 	void bind();
 
 	void write_model(const glm::mat4& model);
-	void make_textured_material();
 
 	MaterialDeps& get_deps() { return m_uuid_deps; };
 
@@ -42,6 +41,10 @@ public:
 
 	MaterialPBR& set_shader(const OptionalAssetHandle& shader);
 	MaterialPBR& set_albedo(const OptionalAssetHandle& albedo);
+	MaterialPBR& set_normal(const OptionalAssetHandle& normal);
+	MaterialPBR& set_metallic_roughness(const OptionalAssetHandle& metallicRoughness);
+	MaterialPBR& set_ao(const OptionalAssetHandle& ao);
+	MaterialPBR& set_emissive(const OptionalAssetHandle& emissive);
 
 	template <typename T>
 	MaterialPBR& set_uniform(std::string_view name, const T& val) {
@@ -52,6 +55,10 @@ public:
 private:
 	void resolve_shader();
 	void resolve_albedo();
+	void resolve_normal();
+	void resolve_metallic_roughness();
+	void resolve_ao();
+	void resolve_emissive();
 
 private:
 	MaterialData m_data {};
@@ -59,6 +66,10 @@ private:
 
 	Shader* m_shader { nullptr };
 	Texture2D* m_albedo { nullptr };
+	Texture2D* m_normal { nullptr };
+	Texture2D* m_metallic_roughness { nullptr };
+	Texture2D* m_ao { nullptr };
+	Texture2D* m_emissive { nullptr };
 
 	UniformList m_uniform_list {};
 };

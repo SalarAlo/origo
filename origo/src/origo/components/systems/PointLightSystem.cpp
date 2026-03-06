@@ -11,19 +11,16 @@ namespace Origo {
 void PointLightSystem::render(Origo::Scene* scene, RenderContext& rCtx) {
 	scene->view<Origo::PointLightComponent, Origo::TransformComponent>(
 	    [&](Origo::RID, Origo::PointLightComponent& light, Origo::TransformComponent& transform) {
-		    scene->view<PointLightComponent, TransformComponent>(
-		        [&](RID, PointLightComponent& light, TransformComponent& transform) {
-			        PointLightData data;
+		    PointLightData data;
 
-			        data.Position = transform.get_position();
-			        data.Color = light.Color;
-			        data.Intensity = light.Intensity;
-			        data.Constant = light.Constant;
-			        data.Linear = light.Linear;
-			        data.Quadratic = light.Quadratic;
+		    data.Position = transform.get_position();
+		    data.Color = light.Color;
+		    data.Intensity = light.Intensity;
+		    data.Constant = light.Constant;
+		    data.Linear = light.Linear;
+		    data.Quadratic = light.Quadratic;
 
-			        rCtx.push_point_light(data);
-		        });
+		    rCtx.push_point_light(data);
 	    });
 }
 

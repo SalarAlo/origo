@@ -17,6 +17,7 @@ void draw_min_max_range_control(std::string_view label, glm::vec2& values, float
 
 void draw_float_control(std::string_view label, float& value, float speed = 0.1f);
 void draw_float_control(std::string_view label, float& value, float speed, const char* format);
+void draw_float_slider_control(std::string_view label, float& value, float min, float max, const char* format = "%.3f");
 
 void draw_int_control(std::string_view label, int& value, float speed = 0.1f);
 

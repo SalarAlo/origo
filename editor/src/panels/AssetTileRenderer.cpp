@@ -1,6 +1,6 @@
-#include "panels/AssetTileRenderer.h"
-
 #include <cmath>
+
+#include "panels/AssetTileRenderer.h"
 
 #include "origo/assets/Asset.h"
 

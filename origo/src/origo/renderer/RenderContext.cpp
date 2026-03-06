@@ -1,10 +1,11 @@
 #include "origo/renderer/RenderContext.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/Mesh.h"
 #include "origo/assets/Model.h"
 #include "origo/assets/SkyboxMaterial.h"
+
+#include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/components/DirectionalLightData.h"
 
@@ -128,10 +129,10 @@ void RenderContext::execute_pass(RenderPass pass) {
 			current_material_id = cmd.get_material();
 
 			current_material
-			    ->set_uniform_directly("u_ProjectionMatrix", m_view.Projection)
-			    .set_uniform_directly("u_ViewMatrix", m_view.View)
-			    .set_uniform_directly("u_CameraForward", m_view.CameraForward)
-			    .set_uniform_directly("u_ViewPos", m_view.CameraPosition);
+			    ->set_uniform_directly("u_projection_matrix", m_view.Projection)
+			    .set_uniform_directly("u_view_matrix", m_view.View)
+			    .set_uniform_directly("u_camera_forward", m_view.CameraForward)
+			    .set_uniform_directly("u_view_pos", m_view.CameraPosition);
 
 			if (!m_directional_light_data)
 				m_directional_light_data = DirectionalLightData {};
@@ -139,18 +140,18 @@ void RenderContext::execute_pass(RenderPass pass) {
 			auto l { *m_directional_light_data };
 
 			current_material
-			    ->set_uniform_directly("u_DirLight.direction", l.Direction)
-			    .set_uniform_directly("u_DirLight.color", l.Color)
-			    .set_uniform_directly("u_DirLight.intensity", l.Intensity)
-			    .set_uniform_directly("u_Ambient", l.Ambient);
+			    ->set_uniform_directly("u_dir_light.direction", l.Direction)
+			    .set_uniform_directly("u_dir_light.color", l.Color)
+			    .set_uniform_directly("u_dir_light.intensity", l.Intensity)
+			    .set_uniform_directly("u_ambient", l.Ambient);
 
 			const int count = std::min<int>(m_point_lights.size(), 8);
 
-			current_material->set_uniform_directly("u_PointLightCount", count);
+			current_material->set_uniform_directly("u_point_light_count", count);
 
 			for (int i = 0; i < count; ++i) {
 				const auto& l = m_point_lights[i];
-				const std::string base = "u_PointLights[" + std::to_string(i) + "]";
+				const std::string base = "u_point_lights[" + std::to_string(i) + "]";
 
 				current_material
 				    ->set_uniform_directly(base + ".position", l.Position)

@@ -9,6 +9,26 @@
 #include "origo/renderer/GlDebug.h"
 
 namespace Origo {
+namespace {
+const char* get_texture_uniform_name(TextureType textureType) {
+	switch (textureType) {
+	case TextureType::Albedo:
+		return "u_texture_albedo";
+	case TextureType::Normal:
+		return "u_texture_normal";
+	case TextureType::MetallicRoughness:
+		return "u_texture_metallic_roughness";
+	case TextureType::Ao:
+		return "u_texture_ao";
+	case TextureType::Emissive:
+		return "u_texture_emissive";
+	case TextureType::UI:
+		return "u_texture_ui";
+	}
+
+	return "u_texture_albedo";
+}
+}
 
 Texture2D::Texture2D(TextureType type)
     : m_texture_type(type)
@@ -88,10 +108,7 @@ void Texture2D::bind(AssetHandle shaderId) const {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_texture_id));
 
-	std::string uniform_name = "u_Texture_";
-	uniform_name += std::string(magic_enum::enum_name(m_texture_type));
-
-	shader->set_uniform(uniform_name, slot);
+	shader->set_uniform(get_texture_uniform_name(m_texture_type), slot);
 }
 
 }
