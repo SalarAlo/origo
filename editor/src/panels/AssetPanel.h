@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "EditorPanel.h"
@@ -25,8 +26,13 @@ private:
 	void draw_top_bar();
 	void draw_breadcrumb_bar(float available_width);
 	void draw_folder_contents(FolderEntry* folder);
+	void draw_folder_tree_node(FolderEntry& folder);
 	void draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list);
 	void draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list);
+	void draw_asset_hierarchy(FolderEntry* folder);
+	void draw_asset_hierarchy_node(
+	    AssetEntry& asset,
+	    const std::unordered_map<Origo::UUID, std::vector<AssetEntry*>>& children_by_parent);
 	void draw_create_asset_context_menu();
 	void rebuild_tree();
 

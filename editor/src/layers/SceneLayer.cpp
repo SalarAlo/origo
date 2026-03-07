@@ -31,6 +31,7 @@ void SceneLayer::on_attach() {
 	auto light_entity { scene->create_entity("Light") };
 	auto light_transform_component { scene->get_native_component<TransformComponent>(light_entity) };
 	auto light_component { scene->add_native_component<Origo::DirectionalLightComponent>(light_entity) };
+	light_component->Intensity = 10;
 	light_transform_component->set_position({ 4.0, 4.0, 3.0 });
 	light_transform_component->look_at({ 0, 0, 0 });
 

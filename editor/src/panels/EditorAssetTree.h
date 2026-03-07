@@ -11,6 +11,7 @@ namespace OrigoEditor {
 struct AssetEntry {
 	AssetEntry() = default;
 	Origo::UUID Id { Origo::UUID::generate() };
+	OptionalUUID ParentId { std::nullopt };
 	Origo::AssetType Type;
 	Origo::AssetOrigin Origin;
 	std::string Name;

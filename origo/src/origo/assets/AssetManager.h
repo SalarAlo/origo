@@ -63,6 +63,7 @@ public:
 	void destroy(const AssetHandle& handle);
 	bool is_valid(const AssetHandle& handle) const;
 	OptionalUUID get_uuid(const AssetHandle& handle) const;
+	OptionalUUID get_uuid(const Asset* asset) const;
 	OptionalAssetHandle get_handle_by_uuid(const UUID& uuid) const;
 	void resolve_all(std::optional<std::function<bool(Asset*)>> = std::nullopt);
 	const ankerl::unordered_dense::map<UUID, AssetHandle>& get_uuid_map() { return m_uuid_to_handle; }

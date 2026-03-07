@@ -45,6 +45,7 @@ public:
 	MaterialPBR& set_metallic_roughness(const OptionalAssetHandle& metallicRoughness);
 	MaterialPBR& set_ao(const OptionalAssetHandle& ao);
 	MaterialPBR& set_emissive(const OptionalAssetHandle& emissive);
+	MaterialPBR& set_unlit(bool unlit);
 
 	template <typename T>
 	MaterialPBR& set_uniform(std::string_view name, const T& val) {

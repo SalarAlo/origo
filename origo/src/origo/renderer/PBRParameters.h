@@ -13,6 +13,7 @@ struct PBRParameters {
 	float Metallic { 0.0f };
 	float Roughness { 1.0f };
 	float AO { 1.0f };
+	bool Unlit { false };
 
 	void serialize(ISerializer& backend) const;
 	static PBRParameters deserialize(ISerializer& backend);

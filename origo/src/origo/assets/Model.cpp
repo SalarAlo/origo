@@ -2,8 +2,8 @@
 #include <assimp/material.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-
 #include <cmath>
+
 #include <optional>
 
 #include "Model.h"
@@ -56,7 +56,7 @@ static void make_fallback_model(std::vector<Model::Node>& nodes, int& rootNode) 
 	rootNode = 0;
 }
 
-static OptionalAssetHandle try_load_material_texture(
+OptionalAssetHandle Model::try_load_material_texture(
     const aiScene* scene,
     aiMaterial* ai_mat,
     aiTextureType ai_texture_type,
@@ -71,10 +71,15 @@ static OptionalAssetHandle try_load_material_texture(
 		return std::nullopt;
 
 	const std::string path = tex_path.C_Str();
-	auto texture_handle = AssetFactory::get_instance().create_runtime_asset<Texture2D>(
-	    debug_name,
-	    texture_type);
-
+	auto model_id = AssetManager::get_instance().get_uuid(this);
+	auto texture_handle = model_id
+	    ? AssetFactory::get_instance().create_runtime_asset_with_parent<Texture2D>(
+	          debug_name,
+	          *model_id,
+	          texture_type)
+	    : AssetFactory::get_instance().create_runtime_asset<Texture2D>(
+	          debug_name,
+	          texture_type);
 	auto tex = AssetManager::get_instance().get_asset<Texture2D>(texture_handle);
 	if (!tex)
 		return std::nullopt;
@@ -111,6 +116,7 @@ static OptionalAssetHandle try_load_material_texture(
 		tex->set_source(make_scope<TextureSourceFile>((model_parent_path / path).string()));
 	}
 
+	tex->set_owner(this);
 	tex->load();
 	return OptionalAssetHandle { texture_handle };
 }
@@ -190,6 +196,8 @@ void Model::load_from_assimp() {
 		return;
 	}
 
+	const auto model_id = AssetManager::get_instance().get_uuid(this);
+
 	m_assimp_mesh_to_sub_mesh.assign(scene->mNumMeshes, -1);
 	m_sub_meshes.reserve(scene->mNumMeshes);
 
@@ -268,11 +276,21 @@ void Model::load_from_assimp() {
 		    indices.data(),
 		    indices.size());
 
-		AssetHandle mesh_handle = AssetFactory::get_instance().create_runtime_asset<Mesh>(
-		    "ModelMesh_" + std::to_string(i),
-		    layout_id,
-		    heap_id,
-		    range);
+		AssetHandle mesh_handle = model_id
+		    ? AssetFactory::get_instance().create_runtime_asset_with_parent<Mesh>(
+		          "ModelMesh_" + std::to_string(i),
+		          *model_id,
+		          layout_id,
+		          heap_id,
+		          range)
+		    : AssetFactory::get_instance().create_runtime_asset<Mesh>(
+		          "ModelMesh_" + std::to_string(i),
+		          layout_id,
+		          heap_id,
+		          range);
+		auto current_mesh = AssetManager::get_instance().get_asset<Mesh>(mesh_handle);
+		if (current_mesh)
+			current_mesh->set_owner(this);
 
 		aiMaterial* ai_mat = scene->mMaterials[mesh->mMaterialIndex];
 		OptionalAssetHandle albedo_texture_handle = try_load_material_texture(
@@ -342,8 +360,12 @@ void Model::load_from_assimp() {
 		    m_path.parent_path(),
 		    "ModelTex_Emissive_" + std::to_string(i));
 
-		AssetHandle material_handle = AssetFactory::get_instance().create_runtime_asset<MaterialPBR>(
-		    "ModelMat_" + std::to_string(i));
+		AssetHandle material_handle = model_id
+		    ? AssetFactory::get_instance().create_runtime_asset_with_parent<MaterialPBR>(
+		          "ModelMat_" + std::to_string(i),
+		          *model_id)
+		    : AssetFactory::get_instance().create_runtime_asset<MaterialPBR>(
+		          "ModelMat_" + std::to_string(i));
 
 		auto material { AssetManager::get_instance().get_asset<MaterialPBR>(material_handle) };
 
@@ -372,7 +394,8 @@ void Model::load_from_assimp() {
 		    .set_metallic_roughness(metallic_roughness_texture_handle)
 		    .set_ao(ao_texture_handle)
 		    .set_emissive(emissive_texture_handle)
-		    .set_shader(*m_model_shader_handle);
+		    .set_shader(*m_model_shader_handle)
+		    .set_owner(this);
 		material->resolve();
 
 		m_assimp_mesh_to_sub_mesh[i] = (int)m_sub_meshes.size();

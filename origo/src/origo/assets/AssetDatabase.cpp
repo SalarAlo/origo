@@ -40,6 +40,8 @@ void AssetDatabase::write_import_file(const UUID& id) {
 	serializer.write("name", meta.Name);
 	serializer.write("type", magic_enum::enum_name(meta.Type));
 	serializer.write("origin", magic_enum::enum_name(meta.Origin));
+	if (meta.ParentID)
+		serializer.write("parent_id", meta.ParentID->to_string());
 
 	if (meta.SourcePath)
 		serializer.write("source_path", meta.SourcePath->string());
@@ -49,6 +51,11 @@ void AssetDatabase::write_import_file(const UUID& id) {
 
 	serializer.write("imported_time_stamp",
 	    std::to_string(meta.ImportedTimestamp.time_since_epoch().count()));
+
+	serializer.begin_array("dependencies");
+	for (const UUID& dependency : meta.Dependencies)
+		serializer.write(dependency.to_string());
+	serializer.end_array();
 	serializer.end_object();
 
 	// Payload only necessary in .import file if imported file
@@ -100,10 +107,15 @@ AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& pat
 	if (auto o = magic_enum::enum_cast<AssetOrigin>(origin_str))
 		meta.Origin = *o;
 
+	std::string parent_id_str;
+	if (backend.try_read("parent_id", parent_id_str) && !parent_id_str.empty())
+		meta.ParentID = UUID::from_string(parent_id_str);
+
 	std::string source;
 	if (backend.try_read("source_path", source))
 		meta.SourceTimestamp = std::filesystem::last_write_time(source);
-	meta.SourcePath = source;
+	if (!source.empty())
+		meta.SourcePath = source;
 
 	std::string imported_stamp;
 	backend.try_read("imported_time_stamp", imported_stamp);
@@ -111,9 +123,8 @@ AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& pat
 
 	backend.begin_array("dependencies");
 	std::string dep;
-	while (backend.try_read_array_object(dep)) {
+	while (backend.try_read_array_object(dep))
 		meta.Dependencies.push_back(UUID::from_string(dep));
-	}
 	backend.end_array();
 
 	backend.end_object();

@@ -70,6 +70,7 @@ uniform vec3 u_base_color_factor = vec3(1.0);
 uniform float u_metallic_factor = 0.0;
 uniform float u_roughness_factor = 1.0;
 uniform float u_ao_factor = 1.0;
+uniform bool u_unlit = false;
 uniform bool u_has_normal_map = false;
 
 uniform float u_ambient = 0.03;
@@ -183,25 +184,26 @@ void main() {
         }
 
         vec3 Lo = vec3(0.0);
+        if (!u_unlit) {
+                vec3 dir_L = normalize(-u_dir_light.direction);
+                vec3 dir_radiance = u_dir_light.color * u_dir_light.intensity;
+                Lo += evaluate_pbr(dir_radiance, N, V, dir_L, albedo, metallic, roughness);
 
-        vec3 dir_L = normalize(-u_dir_light.direction);
-        vec3 dir_radiance = u_dir_light.color * u_dir_light.intensity;
-        Lo += evaluate_pbr(dir_radiance, N, V, dir_L, albedo, metallic, roughness);
+                for (int i = 0; i < u_point_light_count; ++i) {
+                        point_light light = u_point_lights[i];
+                        vec3 L = light.position - v_frag_pos;
+                        float distance = length(L);
+                        L = normalize(L);
 
-        for (int i = 0; i < u_point_light_count; ++i) {
-                point_light light = u_point_lights[i];
-                vec3 L = light.position - v_frag_pos;
-                float distance = length(L);
-                L = normalize(L);
+                        float attenuation =
+                                1.0 / max(light.constant + light.linear * distance + light.quadratic * distance * distance, 0.0001);
 
-                float attenuation =
-                        1.0 / max(light.constant + light.linear * distance + light.quadratic * distance * distance, 0.0001);
-
-                vec3 radiance = light.color * light.intensity * attenuation;
-                Lo += evaluate_pbr(radiance, N, V, L, albedo, metallic, roughness);
+                        vec3 radiance = light.color * light.intensity * attenuation;
+                        Lo += evaluate_pbr(radiance, N, V, L, albedo, metallic, roughness);
+                }
         }
 
-        vec3 ambient = u_ambient * albedo * ao;
+        vec3 ambient = u_unlit ? albedo : (u_ambient * albedo * ao);
         vec3 color = ambient + Lo + emissive;
 
         color = color / (color + vec3(1.0));

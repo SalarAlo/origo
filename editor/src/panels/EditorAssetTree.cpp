@@ -1,5 +1,7 @@
 #include "EditorAssetTree.h"
 
+#include <unordered_map>
+
 #include "EditorAssetVirtualPath.h"
 
 #include "panels/AssetThumbnailGenerator.h"
@@ -17,8 +19,15 @@ void EditorAssetTree::build(const std::vector<Origo::AssetMetadata>& metadata) {
 
 	m_folder_map[""] = m_root.get();
 
+	std::unordered_map<Origo::UUID, const Origo::AssetMetadata*> metadata_index;
+	metadata_index.reserve(metadata.size());
 	for (const auto& md : metadata) {
-		std::filesystem::path virtual_path = compute_virtual_asset_path(md);
+		if (md.ID)
+			metadata_index[*md.ID] = &md;
+	}
+
+	for (const auto& md : metadata) {
+		std::filesystem::path virtual_path = compute_virtual_asset_path(md, metadata_index);
 		std::filesystem::path folder_path = virtual_path.parent_path();
 
 		FolderEntry* folder = m_root.get();
@@ -44,6 +53,7 @@ void EditorAssetTree::build(const std::vector<Origo::AssetMetadata>& metadata) {
 
 		auto asset = Origo::make_scope<AssetEntry>();
 		asset->Id = *md.ID;
+		asset->ParentId = md.ParentID;
 		asset->Type = md.Type;
 		asset->Origin = md.Origin;
 		asset->Name = md.Name;

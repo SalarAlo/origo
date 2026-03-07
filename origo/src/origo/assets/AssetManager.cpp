@@ -77,6 +77,19 @@ OptionalUUID AssetManager::get_uuid(const AssetHandle& handle) const {
 	return m_asset_entries[handle.Index].Uuid;
 }
 
+OptionalUUID AssetManager::get_uuid(const Asset* asset) const {
+	if (!asset)
+		return std::nullopt;
+
+	for (const auto& entry : m_asset_entries) {
+		if (entry.AssetPtr.get() != asset)
+			continue;
+		return entry.Uuid;
+	}
+
+	return std::nullopt;
+}
+
 OptionalAssetHandle AssetManager::get_handle_by_uuid(const UUID& id) const {
 	auto it = m_uuid_to_handle.find(id);
 	if (it == m_uuid_to_handle.end()) {

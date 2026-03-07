@@ -17,3 +17,11 @@ TEST_CASE("RID restoration advances the generator to avoid collisions") {
 	CHECK(restored.get_id() == 1000);
 	CHECK(generated.get_id() > restored.get_id());
 }
+
+TEST_CASE("RID ToString / from_string roundtrip") {
+	RID original = RID::new_rid();
+	std::string serialized = original.to_string();
+	RID parsed = RID::from_string(serialized);
+
+	CHECK(original == parsed);
+}

@@ -6,6 +6,8 @@ project(OrigoTests LANGUAGES CXX)
 add_executable(OrigoTests
 	src/Main.cpp
 	src/RIDTest.cpp
+	src/SceneAssetSerializationTest.cpp
+	src/ScriptAssetSerializationTest.cpp
 	src/UUIDTest.cpp
 )
 

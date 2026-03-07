@@ -4,15 +4,21 @@
                         "native_components": [
                                 {
                                         "data": {
-                                                "pos_x": -3.5,
-                                                "pos_y": 4.0,
-                                                "pos_z": 5.0,
-                                                "rot_x": -33.0,
-                                                "rot_y": -33.0,
-                                                "rot_z": 0.0,
-                                                "scale_x": 1.0,
-                                                "scale_y": 1.0,
-                                                "scale_z": 1.0
+                                                "pos": {
+                                                        "x": -3.5,
+                                                        "y": 4.0,
+                                                        "z": 5.0
+                                                },
+                                                "rot": {
+                                                        "x": -33.0,
+                                                        "y": -66.5,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
                                         },
                                         "type": "Transform"
                                 },
@@ -38,15 +44,21 @@
                         "native_components": [
                                 {
                                         "data": {
-                                                "pos_x": 4.0,
-                                                "pos_y": 4.0,
-                                                "pos_z": 3.0,
-                                                "rot_x": -38.65980911254883,
-                                                "rot_y": -53.130104064941406,
-                                                "rot_z": 0.0,
-                                                "scale_x": 1.0,
-                                                "scale_y": 1.0,
-                                                "scale_z": 1.0
+                                                "pos": {
+                                                        "x": 4.0,
+                                                        "y": 4.0,
+                                                        "z": 3.0
+                                                },
+                                                "rot": {
+                                                        "x": -38.65980911254883,
+                                                        "y": -53.130104064941406,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
                                         },
                                         "type": "Transform"
                                 },
@@ -62,7 +74,7 @@
                                                 "color_b": 1.0,
                                                 "color_g": 1.0,
                                                 "color_r": 1.0,
-                                                "intensity": 1.0
+                                                "intensity": 10.0
                                         },
                                         "type": "Directional Light"
                                 }
@@ -73,33 +85,38 @@
                         "native_components": [
                                 {
                                         "data": {
-                                                "pos_x": 0.0,
-                                                "pos_y": 0.0,
-                                                "pos_z": 0.0,
-                                                "rot_x": 0.0,
-                                                "rot_y": 0.0,
-                                                "rot_z": 0.0,
-                                                "scale_x": 1.0,
-                                                "scale_y": 1.0,
-                                                "scale_z": 1.0
+                                                "pos": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
                                         },
                                         "type": "Transform"
                                 },
                                 {
                                         "data": {
-                                                "name": "Cube"
+                                                "name": "Entity"
                                         },
                                         "type": "Name"
                                 },
                                 {
                                         "data": {
-                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
-                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                                "material": "3bfeaf6581e63aef31d877626757ba5e"
                                         },
-                                        "type": "MeshRenderer"
+                                        "type": "ModelRenderer"
                                 }
                         ],
-                        "rid": "2"
+                        "rid": "3"
                 }
         ],
         "name": "Sample Scene"

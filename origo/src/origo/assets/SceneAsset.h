@@ -8,7 +8,6 @@ class SceneAsset : public Asset {
 public:
 	SceneAsset(const std::optional<std::filesystem::path>& path = std::nullopt)
 	    : m_path(path) {
-		m_asset_type = AssetType::Scene;
 	}
 
 	AssetType get_asset_type() const override { return AssetType::Scene; }

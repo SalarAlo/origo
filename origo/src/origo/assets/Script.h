@@ -15,7 +15,6 @@ public:
 	Script(const std::filesystem::path& path = "/", const UUID& id = UUID::generate())
 	    : m_path(path)
 	    , m_id(id) {
-		m_asset_type = AssetType::Script;
 	}
 
 	AssetType get_asset_type() const override { return AssetType::Script; }

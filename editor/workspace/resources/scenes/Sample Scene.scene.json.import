@@ -1,10 +1,11 @@
 {
         "header": {
-                "imported_time_stamp": "-4664976734228482757",
+                "dependencies": [],
+                "imported_time_stamp": "-4664775681495334077",
                 "name": "Sample Scene.scene",
                 "origin": "Imported",
                 "source_path": "./resources/scenes/Sample Scene.scene.json",
-                "source_time_stamp": "-4664976734228482757",
+                "source_time_stamp": "-4664775681495334077",
                 "type": "Scene",
                 "uuid": "1d5fbd24df3d4da6fef5ac172e4cdf34"
         },

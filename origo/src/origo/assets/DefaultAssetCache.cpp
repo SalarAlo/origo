@@ -85,6 +85,7 @@ AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
 	material->set_shader(get_shader());
 	material->set_albedo(get_texture());
 	material->get_data().PBRParams.BaseColor = debug_emission_particle_color;
+	material->set_unlit(true);
 
 	material->resolve();
 
@@ -105,6 +106,7 @@ Origo::AssetHandle DefaultAssetCache::get_outline_material() {
 
 	material->set_shader(get_shader());
 	material->get_data().PBRParams.BaseColor = orange_color;
+	material->set_unlit(true);
 
 	material->resolve();
 
@@ -127,6 +129,7 @@ AssetHandle DefaultAssetCache::get_particle_material() {
 	material->set_albedo(get_texture());
 
 	material->get_data().PBRParams.BaseColor = particle_color;
+	material->set_unlit(false);
 
 	material->resolve();
 

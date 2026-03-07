@@ -49,6 +49,7 @@ void PBRParameters::serialize(ISerializer& backend) const {
 	backend.write("metallic", Metallic);
 	backend.write("roughness", Roughness);
 	backend.write("ao", AO);
+	backend.write("unlit", static_cast<int>(Unlit));
 }
 
 PBRParameters PBRParameters::deserialize(ISerializer& backend) {
@@ -58,6 +59,9 @@ PBRParameters PBRParameters::deserialize(ISerializer& backend) {
 	backend.try_read("metallic", parameters.Metallic);
 	backend.try_read("roughness", parameters.Roughness);
 	backend.try_read("ao", parameters.AO);
+	int unlit = parameters.Unlit ? 1 : 0;
+	if (backend.try_read("unlit", unlit))
+		parameters.Unlit = unlit != 0;
 
 	return parameters;
 }

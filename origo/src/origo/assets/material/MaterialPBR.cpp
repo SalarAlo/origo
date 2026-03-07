@@ -18,6 +18,7 @@ void MaterialPBR::bind() {
 	m_shader->set_uniform("u_metallic_factor", m_data.PBRParams.Metallic);
 	m_shader->set_uniform("u_roughness_factor", m_data.PBRParams.Roughness);
 	m_shader->set_uniform("u_ao_factor", m_data.PBRParams.AO);
+	m_shader->set_uniform("u_unlit", m_data.PBRParams.Unlit);
 
 	if (m_albedo && m_data.ShaderHandle)
 		m_albedo->bind(*m_data.ShaderHandle);
@@ -164,6 +165,11 @@ MaterialPBR& MaterialPBR::set_emissive(const OptionalAssetHandle& emissive) {
 	m_data.PBRTexs.Emissive = emissive;
 	m_emissive = nullptr;
 	resolve_emissive();
+	return *this;
+}
+
+MaterialPBR& MaterialPBR::set_unlit(bool unlit) {
+	m_data.PBRParams.Unlit = unlit;
 	return *this;
 }
 

@@ -12,7 +12,6 @@ enum class AssetType {
 	Model,
 	Script,
 	Scene,
-	MaterialPbr
 };
 
 class Asset {
@@ -21,8 +20,12 @@ public:
 	virtual AssetType get_asset_type() const = 0;
 	virtual void resolve() { };
 
+	bool has_owner() const { return static_cast<bool>(m_owner); };
+	Asset* get_owner() const { return m_owner; };
+	void set_owner(Asset* owner) { m_owner = owner; };
+
 protected:
-	AssetType m_asset_type;
+	Asset* m_owner { nullptr };
 };
 
 }

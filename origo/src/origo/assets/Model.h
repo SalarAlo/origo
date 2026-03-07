@@ -5,8 +5,12 @@
 #include <filesystem>
 #include <vector>
 
+#include "assimp/material.h"
+#include "assimp/scene.h"
+
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/Texture2D.h"
 
 struct aiNode;
 
@@ -51,6 +55,7 @@ public:
 	void ensure_shader();
 
 private:
+	OptionalAssetHandle try_load_material_texture(const aiScene* scene, aiMaterial* ai_mat, aiTextureType ai_texture_type, TextureType texture_type, const std::filesystem::path& model_parent_path, const std::string& debug_name);
 	void load_from_assimp();
 	void clear();
 
