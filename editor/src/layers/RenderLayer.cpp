@@ -17,6 +17,7 @@ void RenderLayer::on_update(double dt) {
 	const bool editing_view = (m_context.ViewMode == EditorViewMode::Editor);
 
 	m_render_context.set_view(m_context.ViewportController.get_and_update_active_render_view());
+	m_render_context.set_editor_grid_enabled(editing_view);
 
 	m_render_context.begin_frame();
 

@@ -27,15 +27,14 @@ public:
 	~Scene();
 	Scene& operator=(const Scene&) = delete;
 
-	RID create_entity(std::string_view name);
-
-	void schedule_remove_entity(const RID&);
-	void schedule_remove_native_component(const RID&, const std::type_index&);
-
-	const std::vector<RID>& get_entities() const { return m_entities; }
+	void end_frame();
 	const std::string& get_name() const { return m_name; }
 
-	void end_frame();
+	RID create_entity(std::string_view name);
+	const std::vector<RID>& get_entities() const { return m_entities; }
+	void schedule_remove_entity(const RID&);
+
+	void schedule_remove_native_component(const RID&, const std::type_index&);
 
 #pragma region FORWARDING
 	template <ComponentType T, typename... Args>
@@ -116,16 +115,17 @@ public:
 
 private:
 	RID create_entity_with_rid(const RID& rid, std::string_view name = "Entity");
-	void flush();
+	void flush_commands();
 	void remove_entity(const RID&);
 
 private:
 	std::string m_name;
 
-	NativeComponentManager m_native_component_manager;
-	ScriptComponentManager m_script_component_manager;
-	std::vector<std::unique_ptr<SceneCommand>> m_commands;
-	std::vector<RID> m_entities;
+	NativeComponentManager m_native_component_manager {};
+	ScriptComponentManager m_script_component_manager {};
+
+	std::vector<Scope<SceneCommand>> m_commands {};
+	std::vector<RID> m_entities {};
 };
 
 }

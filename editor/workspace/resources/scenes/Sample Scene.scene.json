@@ -5,13 +5,13 @@
                                 {
                                         "data": {
                                                 "pos": {
-                                                        "x": -3.5,
-                                                        "y": 4.0,
-                                                        "z": 5.0
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
                                                 },
                                                 "rot": {
-                                                        "x": -33.0,
-                                                        "y": -66.5,
+                                                        "x": 0.0,
+                                                        "y": 0.0,
                                                         "z": 0.0
                                                 },
                                                 "scale": {
@@ -38,20 +38,20 @@
                                         "type": "Camera"
                                 }
                         ],
-                        "rid": "0"
+                        "rid": "3"
                 },
                 {
                         "native_components": [
                                 {
                                         "data": {
                                                 "pos": {
-                                                        "x": 4.0,
-                                                        "y": 4.0,
-                                                        "z": 3.0
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
                                                 },
                                                 "rot": {
-                                                        "x": -38.65980911254883,
-                                                        "y": -53.130104064941406,
+                                                        "x": 0.0,
+                                                        "y": 0.0,
                                                         "z": 0.0
                                                 },
                                                 "scale": {
@@ -74,12 +74,12 @@
                                                 "color_b": 1.0,
                                                 "color_g": 1.0,
                                                 "color_r": 1.0,
-                                                "intensity": 10.0
+                                                "intensity": 1.0
                                         },
                                         "type": "Directional Light"
                                 }
                         ],
-                        "rid": "1"
+                        "rid": "4"
                 },
                 {
                         "native_components": [
@@ -116,7 +116,50 @@
                                         "type": "ModelRenderer"
                                 }
                         ],
-                        "rid": "3"
+                        "rid": "5"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 0.6762315034866333,
+                                                        "y": 7.7126617431640625,
+                                                        "z": 3.9375836849212646
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "atten_constant": 1.0,
+                                                "atten_linear": 0.09000000357627869,
+                                                "atten_quadratic": 0.03200000151991844,
+                                                "color_b": 0.0,
+                                                "color_g": 1.0,
+                                                "color_r": 0.0,
+                                                "intensity": 7.300000190734863
+                                        },
+                                        "type": "Point Light"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Entity"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "6"
                 }
         ],
         "name": "Sample Scene"

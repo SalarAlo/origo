@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "origo/core/RID.h"
+
 #include "origo/scripting/ScriptComponentInstance.h"
 
 namespace Origo {

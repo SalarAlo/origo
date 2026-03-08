@@ -5,7 +5,8 @@
 namespace Origo {
 
 NativeComponentManager::NativeComponentManager(const NativeComponentManager& other) {
-	clone_from(other);
+	if (this != &other)
+		clone_from(other);
 }
 
 NativeComponentManager& NativeComponentManager::operator=(const NativeComponentManager& other) {
@@ -39,12 +40,10 @@ bool NativeComponentManager::add_component_by_type(const RID& entity, std::type_
 	return true;
 }
 
-std::size_t NativeComponentManager::remove_all_components(const RID& entity) {
-	std::size_t removed = 0;
+void NativeComponentManager::remove_all_components(const RID& entity) {
 	for (auto& [_, storage] : m_storages) {
-		removed += storage->remove(entity) ? 1 : 0;
+		storage->remove(entity);
 	}
-	return removed;
 }
 
 bool NativeComponentManager::has_component(const RID& entity, std::type_index type) const {
@@ -95,6 +94,7 @@ void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& ba
 	for_each_component_on_entity(entity, [&](const NativeComponentTypeInfo& info, const void* c) {
 		if (!info.Serializer)
 			return;
+
 		backend.begin_array_object();
 
 		backend.write("type", info.DisplayName);
@@ -107,6 +107,16 @@ void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& ba
 	});
 
 	backend.end_array();
+}
+
+void* NativeComponentManager::get_component_by_type(const RID& entity, std::type_index type) {
+	auto it = m_storages.find(type);
+	return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
+}
+
+const void* NativeComponentManager::get_component_by_type(const RID& entity, std::type_index type) const {
+	auto it = m_storages.find(type);
+	return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
 }
 
 }

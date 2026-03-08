@@ -30,19 +30,19 @@ private:
 	void draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list);
 	void draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list);
 	void draw_asset_hierarchy(FolderEntry* folder);
-	void draw_asset_hierarchy_node(
-	    AssetEntry& asset,
-	    const std::unordered_map<Origo::UUID, std::vector<AssetEntry*>>& children_by_parent);
-	void draw_create_asset_context_menu();
+	void draw_asset_hierarchy_node(AssetEntry& asset, const std::unordered_map<Origo::UUID, std::vector<AssetEntry*>>& children_by_parent);
+	void draw_create_asset_context_menu(FolderEntry* target_folder);
 	void rebuild_tree();
 
 private:
 	EditorContext& m_context;
 	EditorAssetTree m_tree;
+
 	AssetBrowserState m_browser_state;
 	AssetTileRenderer m_tile_renderer;
 	AssetInteraction m_interaction;
 	AssetCreationService m_creation_service;
+
 	bool m_tree_dirty { false };
 };
 

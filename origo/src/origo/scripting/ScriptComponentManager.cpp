@@ -1,7 +1,9 @@
+#include <cassert>
+
 #include "origo/scripting/ScriptComponentManager.h"
+
 #include "origo/scripting/ScriptComponentInstance.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
-#include <cassert>
 
 namespace Origo {
 
@@ -124,11 +126,13 @@ bool ScriptComponentManager::remove_if_exists(RID entity, ScriptComponentID type
 	        }),
 	    components.end());
 
+	const bool removed = components.size() != old_size;
+
 	if (components.empty()) {
 		m_data.erase(it);
 	}
 
-	return components.size() != old_size;
+	return removed;
 }
 
 void ScriptComponentManager::migrate_component(RID entity, ScriptComponentID type) {

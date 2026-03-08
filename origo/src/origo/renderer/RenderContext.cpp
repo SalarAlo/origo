@@ -2,7 +2,7 @@
 
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Mesh.h"
-#include "origo/assets/Model.h"
+#include "origo/assets/model/Model.h"
 #include "origo/assets/SkyboxMaterial.h"
 
 #include "origo/assets/material/MaterialPBR.h"
@@ -10,6 +10,7 @@
 #include "origo/components/DirectionalLightData.h"
 
 #include "origo/renderer/GlDebug.h"
+#include "origo/renderer/GridRenderer.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/VaoCache.h"
 
@@ -48,6 +49,8 @@ void RenderContext::begin_frame() {
 	if (m_skybox_vao == 0) {
 		glGenVertexArrays(1, &m_skybox_vao);
 	}
+	if (m_editor_grid_enabled)
+		m_grid_renderer.initialize();
 
 	FrameBuffer* fb = m_target;
 	if (!fb)
@@ -69,6 +72,8 @@ void RenderContext::flush() {
 	clear();
 
 	execute_pass(RenderPass::Skybox);
+	if (m_editor_grid_enabled)
+		execute_pass(RenderPass::Grid);
 	execute_pass(RenderPass::Geometry);
 	execute_pass(RenderPass::Outline);
 }
@@ -111,6 +116,10 @@ void RenderContext::execute_pass(RenderPass pass) {
 
 		glBindVertexArray(m_skybox_vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		return;
+	}
+	if (pass == RenderPass::Grid) {
+		m_grid_renderer.render(m_view);
 		return;
 	}
 
@@ -180,6 +189,7 @@ void RenderContext::configure_state(RenderPass pass) {
 	case RenderPass::Geometry: {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+		glDisable(GL_BLEND);
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -193,10 +203,23 @@ void RenderContext::configure_state(RenderPass pass) {
 
 		break;
 	}
+	case RenderPass::Grid: {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_FALSE);
+
+		glDisable(GL_STENCIL_TEST);
+		glDisable(GL_CULL_FACE);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
+	}
 
 	case RenderPass::Outline: {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
+		glDisable(GL_BLEND);
 
 		glEnable(GL_STENCIL_TEST);
 
@@ -214,6 +237,7 @@ void RenderContext::configure_state(RenderPass pass) {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
 
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_CULL_FACE);

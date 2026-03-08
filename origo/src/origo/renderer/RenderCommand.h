@@ -6,6 +6,7 @@ namespace Origo {
 
 enum class RenderPass {
 	Geometry,
+	Grid,
 	Outline,
 	Skybox
 };

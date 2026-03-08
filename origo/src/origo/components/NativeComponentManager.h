@@ -28,9 +28,21 @@ public:
 	NativeComponentManager(const NativeComponentManager& other);
 	NativeComponentManager& operator=(const NativeComponentManager& other);
 
-	void clone_from(const NativeComponentManager& other);
-	bool add_component_by_type(const RID& entity, std::type_index type);
 	static bool can_add_component_by_type(std::type_index type);
+
+	bool add_component_by_type(const RID& entity, std::type_index type);
+	bool remove_component_by_type(const RID& entity, std::type_index type);
+	void remove_all_components(const RID& entity);
+
+	bool has_component(const RID& entity, std::type_index type) const;
+	void* get_component_by_type(const RID& entity, std::type_index type);
+	const void* get_component_by_type(const RID& entity, std::type_index type) const;
+
+	void for_each_component_on_entity(const RID& entity, VisitFn fn, void* user);
+	void for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const;
+
+	void serialize_entity(const RID& entity, ISerializer& backend) const;
+	void deserialize_entity(const RID& entity, ISerializer& backend);
 
 	template <ComponentType T, typename... Args>
 	T& add_component(const RID& entity, Args&&... args) {
@@ -39,8 +51,6 @@ public:
 		(void)inserted;
 		return it->second;
 	}
-
-	bool remove_component_by_type(const RID& entity, std::type_index type);
 
 	template <ComponentType T>
 	bool has_component(const RID& entity) const {
@@ -60,6 +70,7 @@ public:
 	template <ComponentType T>
 	const T* get_component(const RID& entity) const {
 		auto* storage = get_storage<T>();
+
 		if (!storage)
 			return nullptr;
 
@@ -134,7 +145,7 @@ public:
 			for (const auto& [entity, first] : primary->Data) {
 				auto rest_ptrs = std::apply(
 				    [&](const auto*... storages) {
-					    return std::tuple<const Rest*...> { storages->Get(entity)... };
+					    return std::tuple<const Rest*...> { storages->get(entity)... };
 				    },
 				    other_storages);
 
@@ -157,19 +168,6 @@ public:
 		}
 	}
 
-	std::size_t remove_all_components(const RID& entity);
-	bool has_component(const RID& entity, std::type_index type) const;
-
-	void* get_component_by_type(const RID& entity, std::type_index type) {
-		auto it = m_storages.find(type);
-		return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
-	}
-
-	const void* get_component_by_type(const RID& entity, std::type_index type) const {
-		auto it = m_storages.find(type);
-		return it != m_storages.end() ? it->second->get_raw(entity) : nullptr;
-	}
-
 	template <typename Func>
 	void for_each_component_on_entity(const RID& entity, Func&& func) {
 		auto thunk = [](const NativeComponentTypeInfo& info, void* c, void* u) {
@@ -186,11 +184,8 @@ public:
 		this->for_each_component_on_entity(entity, thunk, &func);
 	}
 
-	void for_each_component_on_entity(const RID& entity, VisitFn fn, void* user);
-	void for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const;
-
-	void serialize_entity(const RID& entity, ISerializer& backend) const;
-	void deserialize_entity(const RID& entity, ISerializer& backend);
+private:
+	void clone_from(const NativeComponentManager& other);
 
 private:
 	struct IStorage {
@@ -274,7 +269,7 @@ private:
 	}
 
 private:
-	std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
+	std::unordered_map<std::type_index, Scope<IStorage>> m_storages;
 };
 
 }

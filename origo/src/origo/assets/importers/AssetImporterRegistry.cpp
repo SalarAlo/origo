@@ -24,6 +24,7 @@ IAssetImporter* AssetImporterRegistry::get_importer(const std::filesystem::path&
 
 void AssetImporterRegistry::initialise_default_importers() {
 	ORG_CORE_TRACE("Registering all default asset importers");
+
 	register_importer(make_scope<TextureImporter>());
 	register_importer(make_scope<ShaderImporter>());
 	register_importer(make_scope<ScriptImporter>());

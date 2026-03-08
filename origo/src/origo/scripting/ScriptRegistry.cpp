@@ -1,7 +1,7 @@
-#include "origo/scripting/ScriptComponentRegistry.h"
-
 #include "origo/core/Logger.h"
+
 #include "origo/scripting/ScriptComponentInstance.h"
+#include "origo/scripting/ScriptComponentRegistry.h"
 
 namespace Origo {
 

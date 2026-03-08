@@ -22,7 +22,7 @@ public:
 	virtual void on_shutdown() { }
 	void on_event(Event& event);
 
-	void push_layer(Layer*, size_t, bool frozen = false);
+	void push_layer(Scope<Layer>, size_t, bool frozen = false);
 	void pop_layer(size_t);
 
 private:

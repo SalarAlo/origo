@@ -1,12 +1,15 @@
 #pragma once
 
+#include <string>
+#include <unordered_map>
+
 #include "origo/core/Action.h"
 #include "origo/core/UUID.h"
+
 #include "origo/scripting/ScriptComponentDescriptor.h"
 #include "origo/scripting/ScriptComponentInstance.h"
+
 #include "sol/table.hpp"
-#include <unordered_map>
-#include <string>
 
 namespace Origo {
 

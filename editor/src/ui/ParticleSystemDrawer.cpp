@@ -107,6 +107,7 @@ static bool s_registered = []() {
 
 		    if (appearance_open) {
 			    ComponentUI::draw_asset_control("Particle Mesh", ps.ParticleMesh, Origo::AssetType::Mesh);
+			    ComponentUI::draw_asset_control("Particle Material", ps.ParticleMaterial, Origo::AssetType::MaterialPBR);
 		    }
 
 		    ComponentUI::end_region(appearance_open);

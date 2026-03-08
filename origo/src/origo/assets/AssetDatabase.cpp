@@ -67,9 +67,14 @@ void AssetDatabase::write_import_file(const UUID& id) {
 			ORG_WARN("Skipping payload save: asset {} not loaded", id.to_string());
 		} else {
 			Asset* asset = am.get(*handle);
+			auto asset_serializer = AssetSerializationSystem::get(meta.Type);
+			if (!asset_serializer) {
+				ORG_ERROR("Skipping payload save: no serializer for asset type {}", magic_enum::enum_name(meta.Type));
+				serializer.save_to_file();
+				return;
+			}
 
 			serializer.begin_object("payload");
-			auto asset_serializer = AssetSerializationSystem::get(meta.Type);
 			asset_serializer->serialize(asset, serializer);
 			serializer.end_object();
 		}
@@ -153,6 +158,10 @@ Asset* AssetDatabase::load_asset(const UUID& id) {
 	backend.begin_object("payload");
 
 	auto serializer = AssetSerializationSystem::get(meta.Type);
+	if (!serializer) {
+		ORG_ERROR("AssetDatabase::load_asset: no serializer for asset type {}", magic_enum::enum_name(meta.Type));
+		return nullptr;
+	}
 	auto asset { AssetFactory::get_instance().allocate_hollow_asset(meta.Type) };
 	serializer->deserialize(backend, *asset);
 
@@ -184,10 +193,15 @@ void AssetDatabase::save_assets() {
 
 		auto truth = importer->get_truth_location();
 
-		if (truth == AssetTruthLocation::SourceFile) {
-			JsonSerializer serializer { *md.SourcePath };
+			if (truth == AssetTruthLocation::SourceFile) {
+				JsonSerializer serializer { *md.SourcePath };
+				auto* asset_serializer = AssetSerializationSystem::get(md.Type);
+				if (!asset_serializer) {
+					ORG_ERROR("AssetDatabase::save_assets: no serializer for asset type {}", magic_enum::enum_name(md.Type));
+					continue;
+				}
 
-			AssetSerializationSystem::get(md.Type)->serialize(asset, serializer);
+				asset_serializer->serialize(asset, serializer);
 
 			serializer.save_to_file();
 		} else if (truth == AssetTruthLocation::ImportPayload) {

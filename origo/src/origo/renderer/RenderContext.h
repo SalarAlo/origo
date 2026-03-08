@@ -6,6 +6,7 @@
 #include "origo/components/PointLightData.h"
 
 #include "origo/renderer/FrameBuffer.h"
+#include "origo/renderer/GridRenderer.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/RenderView.h"
 
@@ -25,6 +26,7 @@ public:
 	void push_directional_light(const DirectionalLightData& data);
 
 	void set_view(const RenderView& view);
+	void set_editor_grid_enabled(bool enabled) { m_editor_grid_enabled = enabled; }
 
 	void clear_view() { m_has_view = false; }
 
@@ -55,6 +57,8 @@ private:
 
 	OptionalAssetHandle m_skybox_material { std::nullopt };
 	GLuint m_skybox_vao {};
+	GridRenderer m_grid_renderer {};
+	bool m_editor_grid_enabled {};
 
 	RenderView m_view {};
 	bool m_has_view {};

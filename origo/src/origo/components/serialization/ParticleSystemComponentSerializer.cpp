@@ -30,6 +30,12 @@ void ParticleSystemComponentSerializer::serialize(Component* comp, ISerializer& 
 			s.write("particle_mesh", uuid->to_string());
 	}
 
+	if (ps->ParticleMaterial.has_value()) {
+		auto uuid = AssetManager::get_instance().get_uuid(ps->ParticleMaterial.value());
+		if (uuid.has_value())
+			s.write("particle_material", uuid->to_string());
+	}
+
 	s.begin_object("shape");
 	auto shape_serializer { SerializeEmissionShape { s } };
 	std::visit(shape_serializer, ps->Shape);
@@ -65,6 +71,12 @@ void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer
 		auto uuid = UUID::from_string(mesh_id);
 		auto handle = AssetManager::get_instance().get_handle_by_uuid(uuid);
 		ps->ParticleMesh = handle;
+	}
+
+	if (std::string material_id; s.try_read("particle_material", material_id)) {
+		auto uuid = UUID::from_string(material_id);
+		auto handle = AssetManager::get_instance().get_handle_by_uuid(uuid);
+		ps->ParticleMaterial = handle;
 	}
 
 	s.begin_object("shape");

@@ -1,7 +1,7 @@
 #include "origo/assets/importers/ModelImporter.h"
 
 #include "origo/assets/AssetFactory.h"
-#include "origo/assets/Model.h"
+#include "origo/assets/model/Model.h"
 
 #include "origo/renderer/Helpers.h"
 

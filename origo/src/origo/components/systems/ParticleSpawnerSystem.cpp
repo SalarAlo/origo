@@ -1,5 +1,7 @@
 #include "origo/components/systems/ParticleSpawnerSystem.h"
 
+#include <algorithm>
+
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
 
@@ -20,14 +22,17 @@
 namespace Origo {
 
 void ParticleSpawnerSystem::update(Origo::Scene* scene, float dt) {
+	constexpr int max_spawn_per_frame = 2048;
+
 	scene->view<ParticleSystemComponent, TransformComponent, NameComponent>(
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf,
 	        NameComponent& nc) {
-		    particleSystem.SpawnAccumulator += particleSystem.SpawnRate * dt;
+		    particleSystem.SpawnAccumulator += std::max(0.0f, particleSystem.SpawnRate) * dt;
 
 		    int spawn_count = (int)particleSystem.SpawnAccumulator;
+		    spawn_count = std::min(spawn_count, max_spawn_per_frame);
 		    particleSystem.SpawnAccumulator -= spawn_count;
 
 		    for (size_t i = 0; i < spawn_count; i++) {
@@ -69,9 +74,14 @@ void ParticleSpawnerSystem::update(Origo::Scene* scene, float dt) {
 			    }
 			    auto mesh = *particleSystem.ParticleMesh;
 
+			    if (!particleSystem.ParticleMaterial.has_value()) {
+				    particleSystem.ParticleMaterial = DefaultAssetCache::get_instance().get_particle_material();
+			    }
+			    auto material = *particleSystem.ParticleMaterial;
+
 			    scene->add_native_component<MeshRendererComponent>(
 			        particle,
-			        DefaultAssetCache::get_instance().get_particle_material(),
+			        material,
 			        mesh);
 		    }
 	    });

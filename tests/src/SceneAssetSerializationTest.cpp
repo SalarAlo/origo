@@ -12,8 +12,7 @@
 namespace {
 std::filesystem::path make_temp_path(std::string_view tag) {
 	auto base = std::filesystem::temp_directory_path();
-	const auto unique = std::to_string(
-	    std::filesystem::file_time_type::clock::now().time_since_epoch().count());
+	const auto unique = std::to_string(std::filesystem::file_time_type::clock::now().time_since_epoch().count());
 	return base / ("origo_" + std::string(tag) + "_" + unique + ".json");
 }
 }

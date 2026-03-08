@@ -73,6 +73,12 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 				++comp_index;
 				continue;
 			}
+			if (!info->Serializer) {
+				ORG_WARN("[Scene]  Component '{}' has no serializer", type_name);
+				backend.end_array_object();
+				++comp_index;
+				continue;
+			}
 
 			info->Add(scene->m_native_component_manager, entity);
 

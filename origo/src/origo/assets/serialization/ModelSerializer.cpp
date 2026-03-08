@@ -1,7 +1,7 @@
 #include "origo/assets/serialization/ModelSerializer.h"
 
 #include "origo/assets/AssetManager.h"
-#include "origo/assets/Model.h"
+#include "origo/assets/model/Model.h"
 
 #include "origo/core/Logger.h"
 

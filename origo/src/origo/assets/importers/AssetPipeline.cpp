@@ -119,6 +119,10 @@ void AssetImportPipeline::import_asset(const std::filesystem::path& path, IAsset
 
 void AssetImportPipeline::load_cached_asset(const std::filesystem::path& importFile, AssetMetadata& meta, const IAssetImporter& importer) {
 	auto asset_serializer = AssetSerializationSystem::get(meta.Type);
+	if (!asset_serializer) {
+		ORG_ERROR("AssetImportPipeline::load_cached_asset: no serializer for asset type {}", magic_enum::enum_name(meta.Type));
+		return;
+	}
 
 	JsonSerializer serializer { importFile.c_str() };
 	serializer.load_file();
@@ -194,6 +198,10 @@ void AssetImportPipeline::register_authored_asset(const std::filesystem::path& p
 	auto asset = AssetFactory::get_instance().allocate_hollow_asset(meta.Type);
 
 	auto serializer = AssetSerializationSystem::get(meta.Type);
+	if (!serializer) {
+		ORG_ERROR("AssetImportPipeline::register_authored_asset: no serializer for asset type {}", magic_enum::enum_name(meta.Type));
+		return;
+	}
 
 	JsonSerializer source { path.c_str() };
 	source.load_file();

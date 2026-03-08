@@ -5,20 +5,20 @@
 #include "origo/components/Name.h"
 #include "origo/components/Transform.h"
 
+#include "origo/core/Typedefs.h"
+
 #include "origo/scene/SceneCommand.h"
 
 namespace Origo {
+
 Scene::Scene(std::string_view name)
     : m_name(name) {
 }
 
-Scene::Scene(const Scene& other)
-    : m_name(other.get_name()) {
-	for (const auto& entity : other.m_entities) {
-		m_entities.push_back(entity);
-	}
+Scene::Scene(const Scene& other) {
+	m_entities = other.m_entities;
 
-	m_native_component_manager.clone_from(other.m_native_component_manager);
+	m_native_component_manager = other.m_native_component_manager;
 	m_script_component_manager = other.m_script_component_manager;
 }
 
@@ -34,14 +34,14 @@ RID Scene::create_entity_with_rid(const RID& rid, std::string_view name) {
 }
 
 void Scene::schedule_remove_entity(const RID& rid) {
-	m_commands.emplace_back(std::make_unique<RemoveEntityCommand>(rid));
+	m_commands.emplace_back(make_scope<RemoveEntityCommand>(rid));
 }
 
 void Scene::schedule_remove_native_component(const RID& entity, const std::type_index& type) {
-	m_commands.emplace_back(std::make_unique<RemoveEntityNativeComponentCommand>(entity, type));
+	m_commands.emplace_back(make_scope<RemoveEntityNativeComponentCommand>(entity, type));
 }
 
-void Scene::flush() {
+void Scene::flush_commands() {
 	for (auto& cmd : m_commands) {
 		switch (cmd->Type) {
 		case SceneCommandType::RemoveEntity: {
@@ -61,7 +61,7 @@ void Scene::flush() {
 }
 
 void Scene::end_frame() {
-	flush();
+	flush_commands();
 }
 
 void Scene::remove_entity(const RID& rid) {

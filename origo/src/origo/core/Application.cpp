@@ -19,8 +19,8 @@ Application::Application(const ApplicationSettings& settings)
 	m_window.set_event_callback(std::bind(&Application::on_event, this, std::placeholders::_1));
 }
 
-void Application::push_layer(Layer* layer, size_t key, bool frozen) {
-	m_layer_system.request_push_layer(layer, key, frozen);
+void Application::push_layer(Scope<Layer> layer, size_t key, bool frozen) {
+	m_layer_system.request_push_layer(std::move(layer), key, frozen);
 }
 
 void Application::internal_update(double dt) {
