@@ -63,11 +63,12 @@ bool NativeComponentManager::remove_component_by_type(
 }
 
 void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFn fn, void* user) {
-	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all()) {
+	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all_components()) {
 		if (!info.Has(*this, entity))
 			continue;
 
 		void* ptr = info.Get(*this, entity);
+
 		if (!ptr)
 			continue;
 
@@ -76,7 +77,7 @@ void NativeComponentManager::for_each_component_on_entity(const RID& entity, Vis
 }
 
 void NativeComponentManager::for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const {
-	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all()) {
+	for (const auto& [type, info] : NativeComponentRegistry::get_instance().get_all_components()) {
 		if (!info.Has(*this, entity))
 			continue;
 

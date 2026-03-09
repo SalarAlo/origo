@@ -36,7 +36,7 @@ struct RenderEmissionShapeDebug {
 
 		RenderCtx.submit_mesh(
 		    PrimitiveShapeCache::get_instance().get_sphere_mesh(),
-		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
+		    DefaultAssetCache::get_instance().get_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_TRIANGLES);
@@ -57,8 +57,8 @@ struct RenderEmissionShapeDebug {
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(c.Position)) * glm::toMat4(rot) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f * c.Length, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * radius, c.Length, 2.0f * radius));
 
 		RenderCtx.submit_mesh(
-		    PrimitiveShapeCache::get_instance().get_cone_mesh(),
-		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
+		    PrimitiveShapeCache::get_instance().get_wire_cone_mesh(),
+		    DefaultAssetCache::get_instance().get_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_LINES);
@@ -71,23 +71,24 @@ struct RenderEmissionShapeDebug {
 
 		RenderCtx.submit_mesh(
 		    PrimitiveShapeCache::get_instance().get_sphere_mesh(),
-		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
+		    DefaultAssetCache::get_instance().get_debug_material(),
 		    model,
 		    RenderPass::Geometry,
 		    GL_LINES);
 	}
 
 	void operator()(const BoxEmissionShape& b) const {
-		glm::mat4 local = glm::scale(glm::mat4(1.0f), glm::vec3(b.Size));
+		glm::mat4 local = glm::translate(glm::mat4(1.0f), glm::vec3(b.Position))
+		    * glm::scale(glm::mat4(1.0f), glm::vec3(b.Size));
 
 		glm::mat4 model = get_emitter_matrix() * local;
 
 		RenderCtx.submit_mesh(
-		    PrimitiveShapeCache::get_instance().get_cube_mesh(),
-		    DefaultAssetCache::get_instance().get_particle_emission_debug_material(),
+		    PrimitiveShapeCache::get_instance().get_wire_cube_mesh(),
+		    DefaultAssetCache::get_instance().get_debug_material(),
 		    model,
 		    RenderPass::Geometry,
-		    GL_LINE_LOOP);
+		    GL_LINES);
 	}
 };
 

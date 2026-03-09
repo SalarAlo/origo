@@ -7,12 +7,15 @@
 
 #include "origo/core/Typedefs.h"
 
+#include "origo/physics/PhysicsWorld.h"
+
 #include "origo/scene/SceneCommand.h"
 
 namespace Origo {
 
 Scene::Scene(std::string_view name)
-    : m_name(name) {
+    : m_name(name)
+    , m_physics_world(make_scope<PhysicsWorld>()) {
 }
 
 Scene::Scene(const Scene& other) {
@@ -20,6 +23,7 @@ Scene::Scene(const Scene& other) {
 
 	m_native_component_manager = other.m_native_component_manager;
 	m_script_component_manager = other.m_script_component_manager;
+	m_physics_world = make_scope<PhysicsWorld>();
 }
 
 RID Scene::create_entity(std::string_view name) {
@@ -62,6 +66,14 @@ void Scene::flush_commands() {
 
 void Scene::end_frame() {
 	flush_commands();
+}
+
+PhysicsWorld& Scene::get_physics_world() {
+	return *m_physics_world;
+}
+
+const PhysicsWorld& Scene::get_physics_world() const {
+	return *m_physics_world;
 }
 
 void Scene::remove_entity(const RID& rid) {

@@ -5,6 +5,8 @@
 namespace Origo {
 enum class PrimitiveShape {
 	Cube,
+	WireCube,
+	WireCone,
 	Sphere,
 	Triangle,
 	Quad,

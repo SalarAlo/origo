@@ -21,6 +21,16 @@ bool ISerializer::try_read(std::string_view key, Vec3& value) {
 	return ok;
 }
 
+bool ISerializer::try_read(std::string_view key, bool& value) {
+	int num_value {};
+
+	if (!try_read(key, num_value))
+		return false;
+
+	value = num_value == 1;
+	return true;
+}
+
 bool ISerializer::try_read_array_object(Vec3& value) {
 	if (!try_begin_array_object_read())
 		return false;
@@ -29,6 +39,18 @@ bool ISerializer::try_read_array_object(Vec3& value) {
 
 	end_array_object();
 	return ok;
+}
+
+bool ISerializer::try_read_array_object(bool& value) {
+	if (!try_begin_array_object_read())
+		return false;
+
+	int num_value {};
+	if (!try_read_array_object(num_value))
+		return false;
+
+	value = num_value == 1;
+	return true;
 }
 
 void ISerializer::write(std::string_view key, const Vec3& value) {
@@ -69,6 +91,14 @@ void ISerializer::write(const OptionalAssetHandle& opt_handle) {
 		write(uuid->to_string());
 	else
 		write("0");
+}
+
+void ISerializer::write(std::string_view key, const bool& value) {
+	write(key, value ? 1 : 0);
+}
+
+void ISerializer::write(const bool& value) {
+	write(value ? 1 : 0);
 }
 
 }

@@ -68,6 +68,97 @@ static const std::vector<unsigned int> cube_indices = {
     20, 23, 22
 };
 
+static const std::vector<float> wire_cube_vertices {
+    // X,     Y,     Z,      NX, NY, NZ,   U,    V
+    -0.5f, -0.5f, -0.5f,    0,  0, -1,    0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,    0,  0, -1,    1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,    0,  0, -1,    1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,    0,  0, -1,    0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,    0,  0,  1,    0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,    0,  0,  1,    1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,    0,  0,  1,    1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,    0,  0,  1,    0.0f, 1.0f,
+};
+
+static const std::vector<unsigned int> wire_cube_indices {
+    // back face
+    0, 1,
+    1, 2,
+    2, 3,
+    3, 0,
+    // front face
+    4, 5,
+    5, 6,
+    6, 7,
+    7, 4,
+    // connecting edges
+    0, 4,
+    1, 5,
+    2, 6,
+    3, 7,
+};
+
+static const std::vector<float> wire_cone_vertices = [] {
+    const int sectors = 32;
+    const float pi = 3.14159265359f;
+    const float radius = 0.5f;
+    const float half_height = 0.5f;
+
+    std::vector<float> v;
+    v.reserve((sectors + 2) * 8);
+
+    // tip
+    v.insert(v.end(), {
+        0.0f,  half_height, 0.0f,
+        0.0f,  1.0f,        0.0f,
+        0.5f,  1.0f
+    });
+
+    // base ring
+    for (int i = 0; i <= sectors; i++) {
+        const float t = static_cast<float>(i) / static_cast<float>(sectors);
+        const float a = t * 2.0f * pi;
+        const float x = radius * cosf(a);
+        const float z = radius * sinf(a);
+
+        v.push_back(x);
+        v.push_back(-half_height);
+        v.push_back(z);
+
+        v.push_back(0.0f);
+        v.push_back(-1.0f);
+        v.push_back(0.0f);
+
+        v.push_back(t);
+        v.push_back(0.0f);
+    }
+
+    return v;
+}();
+
+static const std::vector<unsigned int> wire_cone_indices = [] {
+    const int sectors = 32;
+    const unsigned int tip_index = 0;
+    const unsigned int base_ring_start = 1;
+    const int side_segments = 8;
+    const int sector_step = sectors / side_segments;
+
+    std::vector<unsigned int> idx;
+    idx.reserve((sectors * 2 + side_segments * 2) * 2);
+
+    for (int i = 0; i < sectors; i++) {
+        idx.push_back(base_ring_start + i);
+        idx.push_back(base_ring_start + i + 1);
+    }
+
+    for (int i = 0; i < sectors; i += sector_step) {
+        idx.push_back(tip_index);
+        idx.push_back(base_ring_start + i);
+    }
+
+    return idx;
+}();
+
 static const std::vector<float> triangle_vertices {
     0.0f,  0.5f, 0.0f,   0, 0, 1,  0.5f, 1.0f,
    -0.5f, -0.5f, 0.0f,   0, 0, 1,  0.0f, 0.0f,
@@ -284,6 +375,10 @@ MeshData get_data_from_shape(PrimitiveShape shape) {
 	switch (shape) {
 	case PrimitiveShape::Cube:
 		return { cube_vertices, cube_indices };
+	case PrimitiveShape::WireCube:
+		return { wire_cube_vertices, wire_cube_indices };
+	case PrimitiveShape::WireCone:
+		return { wire_cone_vertices, wire_cone_indices };
 	case PrimitiveShape::Triangle:
 		return { triangle_vertices, triangle_indices };
 	case PrimitiveShape::Sphere:

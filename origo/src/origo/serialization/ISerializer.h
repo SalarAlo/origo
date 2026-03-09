@@ -28,8 +28,10 @@ public:
 	virtual void write(std::string_view key, unsigned int value) = 0;
 	virtual void write(std::string_view key, float value) = 0;
 	virtual void write(std::string_view key, std::string_view value) = 0;
+
 	void write(std::string_view key, const Vec3& value);
 	void write(std::string_view key, const OptionalAssetHandle& asset);
+	void write(std::string_view key, const bool& value);
 
 	virtual void write(int value) = 0;
 	virtual void write(unsigned int value) = 0;
@@ -37,18 +39,21 @@ public:
 	virtual void write(std::string_view value) = 0;
 	void write(const Vec3& value);
 	void write(const OptionalAssetHandle& asset);
+	void write(const bool& value);
 
 	virtual bool try_read(std::string_view key, int& value) = 0;
 	virtual bool try_read(std::string_view key, unsigned int& value) = 0;
 	virtual bool try_read(std::string_view key, float& value) = 0;
 	virtual bool try_read(std::string_view key, std::string& value) = 0;
 	bool try_read(std::string_view key, Vec3& value);
+	bool try_read(std::string_view key, bool& value);
 
 	virtual bool try_read_array_object(int& value) = 0;
 	virtual bool try_read_array_object(unsigned int& value) = 0;
 	virtual bool try_read_array_object(float& value) = 0;
 	virtual bool try_read_array_object(std::string& value) = 0;
 	bool try_read_array_object(Vec3& value);
+	bool try_read_array_object(bool& value);
 
 	virtual bool try_begin_array_object_read() = 0;
 

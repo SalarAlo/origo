@@ -17,7 +17,7 @@ void DefaultAssetCache::create_all_defaults() {
 	get_material();
 	get_outline_material();
 	get_particle_material();
-	get_particle_emission_debug_material();
+	get_debug_material();
 }
 
 AssetHandle DefaultAssetCache::get_shader() {
@@ -71,7 +71,7 @@ AssetHandle DefaultAssetCache::get_material() {
 	return *m_material;
 }
 
-AssetHandle DefaultAssetCache::get_particle_emission_debug_material() {
+AssetHandle DefaultAssetCache::get_debug_material() {
 	constexpr Vec3 debug_emission_particle_color = Vec3 { .1f, .9f, .05f };
 
 	if (m_particle_emission_debug_material.has_value())

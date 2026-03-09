@@ -91,9 +91,6 @@ void EditorApplication::on_end_frame(float dt) {
 	if (!m_context.PendingScene)
 		return;
 
-	// TODO: still keep selection between runs
-	m_context.unselect_entity();
-
 	if (m_context.RuntimeState == EditorRuntimeState::Running)
 		m_runtime_controller.stop();
 
@@ -104,8 +101,6 @@ void EditorApplication::on_end_frame(float dt) {
 	m_context.ViewMode = EditorViewMode::Editor;
 
 	m_context.RuntimeScene.reset();
-
-	m_context.unselect_entity();
 }
 
 }

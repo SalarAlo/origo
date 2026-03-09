@@ -1,0 +1,203 @@
+{
+        "entities": [
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -3.5,
+                                                        "y": 4.0,
+                                                        "z": 5.0
+                                                },
+                                                "rot": {
+                                                        "x": -33.0,
+                                                        "y": -33.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Main Camera"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "far": 400.0,
+                                                "fov": 90.0,
+                                                "is_primary": 1,
+                                                "near": 0.10000000149011612
+                                        },
+                                        "type": "Camera"
+                                }
+                        ],
+                        "rid": "0"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 4.0,
+                                                        "y": 4.0,
+                                                        "z": 3.0
+                                                },
+                                                "rot": {
+                                                        "x": -38.65980911254883,
+                                                        "y": -53.130104064941406,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Light"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "ambient": 0.20000000298023224,
+                                                "color_b": 1.0,
+                                                "color_g": 1.0,
+                                                "color_r": 1.0,
+                                                "intensity": 10.0
+                                        },
+                                        "type": "Directional Light"
+                                }
+                        ],
+                        "rid": "1"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -1.4324523210525513,
+                                                        "y": 0.441830039024353,
+                                                        "z": -0.3562743067741394
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Heart"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "a756d07513dff536c4165c65e536c1f0"
+                                        },
+                                        "type": "ModelRenderer"
+                                }
+                        ],
+                        "rid": "2"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -1.2089389562606812,
+                                                        "y": 0.3568331003189087,
+                                                        "z": 0.6007909774780273
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "atten_constant": 1.0,
+                                                "atten_linear": 0.09000000357627869,
+                                                "atten_quadratic": 0.03200000151991844,
+                                                "color_b": 0.0,
+                                                "color_g": 0.0,
+                                                "color_r": 1.0,
+                                                "intensity": 10.0
+                                        },
+                                        "type": "Point Light"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Entity"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "3"
+                },
+                {
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 3.8429393768310547,
+                                                        "y": 0.0,
+                                                        "z": -0.3796491026878357
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 4.0,
+                                                        "y": 4.0,
+                                                        "z": 4.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Bag"
+                                        },
+                                        "type": "Name"
+                                },
+                                {
+                                        "data": {
+                                                "material": "2433fad7f9ad0a77933973283d50cc11"
+                                        },
+                                        "type": "ModelRenderer"
+                                }
+                        ],
+                        "rid": "4"
+                }
+        ],
+        "name": "Sample Scene"
+}

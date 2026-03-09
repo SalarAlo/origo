@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/renderer/RenderContext.h"
+
 #include "origo/scene/Scene.h"
 
 namespace Origo {

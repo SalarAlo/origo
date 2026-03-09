@@ -21,8 +21,7 @@
 namespace Origo {
 
 namespace {
-
-	constexpr unsigned int kAssimpLoadFlags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_ImproveCacheLocality | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure;
+	constexpr unsigned int k_assimp_load_flags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_ImproveCacheLocality | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure;
 
 	struct ImportedTextureHandles {
 		OptionalAssetHandle Albedo;
@@ -196,7 +195,7 @@ namespace {
 
 void Model::load_from_assimp() {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(m_path.string(), kAssimpLoadFlags);
+	const aiScene* scene = importer.ReadFile(m_path.string(), k_assimp_load_flags);
 
 	if (!scene || !scene->mRootNode) {
 		ORG_CORE_ERROR("Assimp failed to load '{}': {}", m_path.string(), importer.GetErrorString());

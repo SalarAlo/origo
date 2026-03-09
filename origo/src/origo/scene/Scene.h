@@ -11,6 +11,7 @@
 
 namespace Origo {
 class Scene;
+class PhysicsWorld;
 
 namespace SceneSerializer {
 	void serialize_to_file(Scene& scene, const std::filesystem::path& out);
@@ -29,6 +30,8 @@ public:
 
 	void end_frame();
 	const std::string& get_name() const { return m_name; }
+	PhysicsWorld& get_physics_world();
+	const PhysicsWorld& get_physics_world() const;
 
 	RID create_entity(std::string_view name);
 	const std::vector<RID>& get_entities() const { return m_entities; }
@@ -123,6 +126,7 @@ private:
 
 	NativeComponentManager m_native_component_manager {};
 	ScriptComponentManager m_script_component_manager {};
+	Scope<PhysicsWorld> m_physics_world {};
 
 	std::vector<Scope<SceneCommand>> m_commands {};
 	std::vector<RID> m_entities {};

@@ -15,7 +15,7 @@ public:
 
 	AssetHandle get_material();
 	AssetHandle get_outline_material();
-	AssetHandle get_particle_emission_debug_material();
+	AssetHandle get_debug_material();
 	AssetHandle get_particle_material();
 
 private:

@@ -83,6 +83,7 @@ include_directories(
 option(ORIGO_ENABLE_TESTS "Build Origo tests" ON)
 
 if (ORIGO_ENABLE_TESTS)
+    enable_testing()
     include(FetchContent)
 
     FetchContent_Declare(

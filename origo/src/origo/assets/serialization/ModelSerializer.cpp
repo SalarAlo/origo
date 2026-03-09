@@ -17,7 +17,7 @@ void ModelSerializer::serialize(const Asset* asset, ISerializer& backend) const 
 	backend.write("shader_id", model->get_shader_handle());
 
 	auto path { model->get_path() };
-	backend.write("path", path.c_str());
+	backend.write("path", path.string());
 }
 
 void ModelSerializer::deserialize(ISerializer& backend, Asset& asset) const {

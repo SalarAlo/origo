@@ -16,6 +16,7 @@ bool EditorRuntimeController::can_step() const { return can_resume(); }
 void EditorRuntimeController::step() {
 	if (!can_step())
 		return;
+
 	m_context.LayerSystem.request_activate_layer(update_layer_key, [&]() { ORG_CORE_TRACE("Step made"); });
 	EditorNotificationSystem::get_instance().info(
 	    "Step",
@@ -31,8 +32,6 @@ void EditorRuntimeController::play() {
 	m_context.ActiveScene = m_context.RuntimeScene.get();
 	m_context.RuntimeState = EditorRuntimeState::Running;
 	m_context.ViewMode = EditorViewMode::Game;
-
-	m_context.unselect_entity();
 
 	m_context.LayerSystem.request_activate_layer(update_layer_key);
 
@@ -71,6 +70,7 @@ void EditorRuntimeController::resume() {
 }
 
 bool EditorRuntimeController::can_stop() const { return m_context.RuntimeState == EditorRuntimeState::Running; }
+
 void EditorRuntimeController::stop() {
 	if (!can_stop())
 		return;
@@ -84,7 +84,7 @@ void EditorRuntimeController::stop() {
 	if (m_context.LayerSystem.has_active_layer(update_layer_key)) {
 		m_context.LayerSystem.request_freeze_layer(update_layer_key);
 	}
-	m_context.unselect_entity();
+
 	EditorNotificationSystem::get_instance().success(
 	    "Game Stopped",
 	    "Returned to editing mode.");

@@ -1,5 +1,6 @@
 {
         "header": {
+                "dependencies": [],
                 "imported_time_stamp": "-4664786866126336920",
                 "name": "crate_box",
                 "origin": "Imported",
@@ -10,6 +11,6 @@
         },
         "payload": {
                 "path": "./resources/models/crate_box.glb",
-                "shader_id": "0"
+                "shader_id": "e1beba6e7aa762f38a0720983812e54a"
         }
 }

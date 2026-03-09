@@ -12,10 +12,10 @@ struct NativeComponentTypeInfo {
 	std::string DisplayName;
 	std::type_index Type;
 
-	void (*Add)(NativeComponentManager&, RID);
-	void (*Remove)(NativeComponentManager&, RID);
-	bool (*Has)(const NativeComponentManager&, RID);
-	void* (*Get)(NativeComponentManager&, RID);
+	std::function<void(NativeComponentManager&, RID)> Add;
+	std::function<void(NativeComponentManager&, RID)> Remove;
+	std::function<bool(const NativeComponentManager&, RID)> Has;
+	std::function<void*(NativeComponentManager&, RID)> Get;
 
 	IComponentSerializer* Serializer;
 };
@@ -58,7 +58,9 @@ public:
 		return get_component_info(it->second);
 	}
 
-	const auto& get_all() { return m_map; }
+	const auto& get_all_components() {
+		return m_map;
+	}
 
 	const NativeComponentTypeInfo* get_component_info(std::type_index type) {
 		auto it = m_map.find(type);

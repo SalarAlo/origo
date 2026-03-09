@@ -2,10 +2,11 @@
 
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Mesh.h"
-#include "origo/assets/model/Model.h"
 #include "origo/assets/SkyboxMaterial.h"
 
 #include "origo/assets/material/MaterialPBR.h"
+
+#include "origo/assets/model/Model.h"
 
 #include "origo/components/DirectionalLightData.h"
 
@@ -22,6 +23,7 @@ static void draw_mesh(const RenderCommand& cmd) {
 	auto mesh { am.get_asset<Mesh>(cmd.get_mesh()) };
 
 	constexpr float outline_thickness { 0.1f };
+
 	glm::mat4 model = cmd.get_render_pass() == RenderPass::Skybox ? glm::mat4(1.0f) : cmd.get_model_matrix();
 	if (cmd.get_render_pass() == RenderPass::Outline)
 		model = glm::scale(model, Vec3(1.0f + outline_thickness));
@@ -72,8 +74,10 @@ void RenderContext::flush() {
 	clear();
 
 	execute_pass(RenderPass::Skybox);
+
 	if (m_editor_grid_enabled)
 		execute_pass(RenderPass::Grid);
+
 	execute_pass(RenderPass::Geometry);
 	execute_pass(RenderPass::Outline);
 }
@@ -118,6 +122,7 @@ void RenderContext::execute_pass(RenderPass pass) {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		return;
 	}
+
 	if (pass == RenderPass::Grid) {
 		m_grid_renderer.render(m_view);
 		return;

@@ -14,7 +14,7 @@ void SceneAssetSerializer::serialize(const Asset* asset, ISerializer& backend) c
 	auto model { static_cast<const SceneAsset*>(asset) };
 
 	auto path { model->get_path() };
-	backend.write("path", path->c_str());
+	backend.write("path", path ? path->string() : std::string());
 }
 
 void SceneAssetSerializer::deserialize(ISerializer& backend, Asset& asset) const {

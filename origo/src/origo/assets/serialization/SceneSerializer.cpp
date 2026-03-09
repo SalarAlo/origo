@@ -57,7 +57,6 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 		int comp_index = 0;
 
 		while (backend.try_begin_array_object_read()) {
-
 			std::string type_name;
 			if (!backend.try_read("type", type_name)) {
 				ORG_WARN("[Scene]  Component {} has no type", comp_index);
@@ -67,6 +66,7 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 			}
 
 			const auto* info = NativeComponentRegistry::get_instance().get_component_info_by_name(type_name);
+
 			if (!info) {
 				ORG_WARN("[Scene]  Unknown component '{}'", type_name);
 				backend.end_array_object();
