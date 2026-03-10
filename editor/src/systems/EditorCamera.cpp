@@ -1,8 +1,9 @@
-#include "systems/EditorCamera.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 #include <algorithm>
+
+#include "systems/EditorCamera.h"
 
 namespace OrigoEditor {
 

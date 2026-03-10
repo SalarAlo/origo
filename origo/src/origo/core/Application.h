@@ -1,6 +1,9 @@
 #pragma once
 
+#include <filesystem>
+
 #include "origo/core/LayerSystem.h"
+#include "origo/core/PathContext.h"
 #include "origo/core/ScreenWindow.h"
 #include "origo/core/Time.h"
 
@@ -8,7 +11,9 @@
 
 namespace Origo {
 struct ApplicationSettings {
-	std::string WorkingDirectory {};
+	std::filesystem::path WorkingDirectory {};
+	std::filesystem::path EditorResourceRoot {};
+	std::filesystem::path ProjectRoot {};
 	ScreenWindowSettings WindowSettings {};
 };
 

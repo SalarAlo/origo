@@ -1,5 +1,7 @@
 #include "panels/FilesPanel.h"
 
+#include "origo/core/PathContext.h"
+
 #include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
@@ -141,8 +143,8 @@ void FilesPanel::draw_file_system_recursive(
 }
 
 void FilesPanel::on_im_gui_render() {
-	if (m_state.ProjectRoot == "./")
-		m_state.ProjectRoot = std::filesystem::current_path();
+	if (m_state.ProjectRoot.empty())
+		m_state.ProjectRoot = Origo::PathContextService::get_instance().project().Root;
 
 	ImGui::BeginChild(
 	    "FileSystemPanel",

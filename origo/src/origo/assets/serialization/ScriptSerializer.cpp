@@ -2,6 +2,8 @@
 
 #include "origo/assets/Script.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 namespace Origo {
@@ -9,7 +11,7 @@ namespace Origo {
 void ScriptSerializer::serialize(const Asset* asset, ISerializer& backend) const {
 	ORG_CORE_TRACE("Seriliazing an asset of type shader");
 	auto script { static_cast<const Script*>(asset) };
-	backend.write("path", script->get_path().string());
+	backend.write("path", PathContextService::get_instance().serialize_path(script->get_path()).string());
 	backend.write("id", script->get_id().to_string());
 }
 
@@ -28,7 +30,7 @@ void ScriptSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	}
 
 	auto& script { static_cast<Script&>(asset) };
-	script.set_path(path);
+	script.set_path(PathContextService::get_instance().resolve_serialized_path(path));
 	script.set_id(UUID::from_string(id));
 }
 

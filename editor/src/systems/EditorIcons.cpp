@@ -2,6 +2,7 @@
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/TextureSource.h"
+#include "origo/core/PathContext.h"
 
 namespace OrigoEditor {
 
@@ -93,7 +94,10 @@ Origo::Ref<Origo::Texture2D>
 EditorIcons::load_svg(const std::string& path, int size) {
 	auto tex = Origo::make_ref<Origo::Texture2D>(Origo::TextureType::UI);
 	tex->set_source(
-	    Origo::make_scope<Origo::TextureSourceSVG>(path, size, size));
+	    Origo::make_scope<Origo::TextureSourceSVG>(
+	        Origo::PathContextService::get_instance().editor().resolve(path).string(),
+	        size,
+	        size));
 	tex->load();
 	return tex;
 }

@@ -43,6 +43,8 @@ struct RigidbodyComponent : public Component {
 	Vec3 RuntimePosition { 0.0f };
 	Vec3 RuntimeRotation { 0.0f };
 	Vec3 RuntimeScale { 1.0f };
+	Vec3 RuntimeColliderOffset { 0.0f };
+	Vec3 RuntimeColliderSize { 1.0f };
 
 	std::string get_component_name() const { return "Rigidbody"; }
 };

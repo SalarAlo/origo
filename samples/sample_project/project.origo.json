@@ -1,0 +1,5 @@
+{
+        "name": "Sample Project",
+        "resources_root": "resources",
+        "generated_assets_root": "assets"
+}

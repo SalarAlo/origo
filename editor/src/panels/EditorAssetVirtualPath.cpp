@@ -1,5 +1,7 @@
 #include "EditorAssetVirtualPath.h"
 
+#include "origo/core/PathContext.h"
+
 namespace OrigoEditor {
 
 std::string asset_type_to_string(Origo::AssetType type) {
@@ -30,7 +32,7 @@ std::filesystem::path compute_virtual_asset_path(
     const Origo::AssetMetadata& metadata,
     const std::unordered_map<Origo::UUID, const Origo::AssetMetadata*>& metadata_index) {
 	if (metadata.SourcePath)
-		return metadata.SourcePath->lexically_normal();
+		return Origo::PathContextService::get_instance().serialize_path(*metadata.SourcePath);
 
 	if (metadata.ParentID) {
 		auto parent_it = metadata_index.find(*metadata.ParentID);
@@ -41,7 +43,7 @@ std::filesystem::path compute_virtual_asset_path(
 	}
 
 	std::filesystem::path root = metadata.Origin == Origo::AssetOrigin::Synthetic
-	    ? std::filesystem::path("_engine")
+	    ? std::filesystem::path("_editor")
 	    : std::filesystem::path("_runtime");
 
 	root /= asset_type_to_string(metadata.Type);

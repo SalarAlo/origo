@@ -12,13 +12,14 @@
 #include "origo/assets/serialization/AssetSerializer.h"
 
 #include "origo/core/Logger.h"
+#include "origo/core/PathContext.h"
 
 #include "origo/serialization/JsonSerializer.h"
 
 namespace Origo {
 
 void AssetImportPipeline::run_initial_import() {
-	std::filesystem::path root_asset_dir { "./resources" };
+	const std::filesystem::path root_asset_dir = PathContextService::get_instance().project().resources_root();
 
 	ORG_CORE_INFO("[PIPELINE] Starting initial import scan at {}", root_asset_dir.string());
 

@@ -2,6 +2,8 @@
 
 #include "origo/assets/ShaderData.h"
 
+#include <filesystem>
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -49,22 +51,20 @@ private:
 
 class ShaderSourceFile : public ShaderSource {
 public:
-	ShaderSourceFile(std::string_view path)
+	ShaderSourceFile(const std::filesystem::path& path)
 	    : m_path(path) { };
 
 	ShaderData get_shader_data() const override;
-	std::string get_path() const { return m_path; }
+	const std::filesystem::path& get_path() const { return m_path; }
 
 	ShaderSourceType get_source_type() const override {
 		return ShaderSourceType::File;
 	}
 
-	void serialize_body(ISerializer& backend) const override {
-		backend.write("shader_path", m_path);
-	}
+	void serialize_body(ISerializer& backend) const override;
 
 private:
-	std::string m_path;
+	std::filesystem::path m_path;
 };
 
 }

@@ -236,6 +236,8 @@ void EntityInspectorPanel::draw_script_drop_target(
 			activeScene->add_script_component(selectedEntity, script_id.ID);
 		}
 	}
+
+	ImGui::EndDragDropTarget();
 }
 
 }

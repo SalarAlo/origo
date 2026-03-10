@@ -1,0 +1,15 @@
+{
+        "header": {
+                "dependencies": [],
+                "imported_time_stamp": "-4664595513597083437",
+                "name": "Model_Scene.scene",
+                "origin": "Imported",
+                "source_path": "resources/scenes/Model_Scene.scene.json",
+                "source_time_stamp": "-4664595513597083437",
+                "type": "Scene",
+                "uuid": "dfb75058ee14ba14a919d4f5e12a24b2"
+        },
+        "payload": {
+                "path": "resources/scenes/Model_Scene.scene.json"
+        }
+}

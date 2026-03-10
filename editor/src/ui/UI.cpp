@@ -8,6 +8,8 @@
 
 #include "origo/assets/serialization/SceneSerializer.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/scripting/ScriptSystem.h"
 
 #include "panels/PanelManager.h"
@@ -110,13 +112,16 @@ void apply_editor_style(const EditorPalette& p) {
 
 void load_editor_font() {
 	ImGuiIO& io = ImGui::GetIO();
+	const auto& editor_paths = Origo::PathContextService::get_instance().editor();
+	const auto ui_font_path = editor_paths.fonts_root() / "Inter.ttf";
+	const auto code_font_path = editor_paths.fonts_root() / "JetBrainsMono-Regular.ttf";
 
 	ui_font = io.Fonts->AddFontFromFileTTF(
-	    "resources/fonts/Inter.ttf",
+	    ui_font_path.string().c_str(),
 	    17.0f);
 
 	code_font = io.Fonts->AddFontFromFileTTF(
-	    "resources/fonts/JetBrainsMono-Regular.ttf",
+	    code_font_path.string().c_str(),
 	    17.0f);
 
 	io.FontDefault = ui_font;
@@ -176,11 +181,13 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 				{ "Origo Scene", "scene.json" }
 			};
 
+			const auto scene_root = Origo::PathContextService::get_instance().project().scenes_root().string();
+
 			nfdresult_t result = NFD_OpenDialog(
 			    &out_path,
 			    filters,
 			    1,
-			    "./resources/scenes");
+			    scene_root.c_str());
 
 			if (result == NFD_OKAY) {
 				std::filesystem::path scene_path = out_path;
@@ -206,9 +213,7 @@ void draw_menu_bar(PanelManager& manager, EditorContext& ctx) {
 		}
 
 		if (ImGui::MenuItem("Save Scene")) {
-			std::string path = "./resources/scenes/";
-			path += ctx.EditorScene->get_name();
-			path += ".scene.json";
+			auto path = Origo::PathContextService::get_instance().project().scenes_root() / (ctx.EditorScene->get_name() + ".scene.json");
 			Origo::SceneSerializer::serialize_to_file(*ctx.EditorScene, path);
 			EditorNotificationSystem::get_instance().success(
 			    "Scene Saved",

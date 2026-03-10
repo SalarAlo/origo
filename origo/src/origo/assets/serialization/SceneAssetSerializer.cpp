@@ -2,6 +2,8 @@
 
 #include "origo/assets/SceneAsset.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 #include "origo/serialization/ISerializer.h"
@@ -14,7 +16,7 @@ void SceneAssetSerializer::serialize(const Asset* asset, ISerializer& backend) c
 	auto model { static_cast<const SceneAsset*>(asset) };
 
 	auto path { model->get_path() };
-	backend.write("path", path ? path->string() : std::string());
+	backend.write("path", path ? PathContextService::get_instance().serialize_path(*path).string() : std::string());
 }
 
 void SceneAssetSerializer::deserialize(ISerializer& backend, Asset& asset) const {
@@ -26,7 +28,7 @@ void SceneAssetSerializer::deserialize(ISerializer& backend, Asset& asset) const
 
 	auto& model { static_cast<SceneAsset&>(asset) };
 
-	model.set_path(path);
+	model.set_path(PathContextService::get_instance().resolve_serialized_path(path));
 }
 
 }

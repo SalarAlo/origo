@@ -2,6 +2,7 @@
 #pragma once
 
 #include "origo/assets/Metadata.h"
+#include "origo/core/PathContext.h"
 
 #include "origo/utils/Singleton.h"
 
@@ -18,9 +19,6 @@ public:
 	AssetMetadata load_import_header(const std::filesystem::path& path);
 	Asset* load_asset(const UUID& id);
 	void save_assets();
-
-public:
-	const std::filesystem::path ROOT { "./assets" };
 
 private:
 	std::filesystem::path get_import_path(const AssetMetadata& meta);

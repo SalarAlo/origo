@@ -1,5 +1,7 @@
 #include "origo/assets/ShaderSource.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 #pragma region IO_RELATED
@@ -50,7 +52,11 @@ static Origo::ShaderData get_data(std::string_view path) {
 namespace Origo {
 
 ShaderData ShaderSourceFile::get_shader_data() const {
-	return get_data(m_path);
+	return get_data(m_path.string());
+}
+
+void ShaderSourceFile::serialize_body(ISerializer& backend) const {
+	backend.write("shader_path", PathContextService::get_instance().serialize_path(m_path).string());
 }
 
 void ShaderSource::serialize(ISerializer& backend) const {
@@ -79,7 +85,7 @@ Scope<ShaderSource> ShaderSource::deserialize(ISerializer& backend) {
 		backend.try_read("shader_path", path);
 		backend.end_object();
 
-		return make_scope<ShaderSourceFile>(path);
+		return make_scope<ShaderSourceFile>(PathContextService::get_instance().resolve_serialized_path(path));
 	}
 
 	case ShaderSourceType::Raw: {

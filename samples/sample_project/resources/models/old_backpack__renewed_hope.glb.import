@@ -1,0 +1,16 @@
+{
+        "header": {
+                "dependencies": [],
+                "imported_time_stamp": "-4664668201766129419",
+                "name": "old_backpack__renewed_hope",
+                "origin": "Imported",
+                "source_path": "resources/models/old_backpack__renewed_hope.glb",
+                "source_time_stamp": "-4664668201766129419",
+                "type": "Model",
+                "uuid": "2433fad7f9ad0a77933973283d50cc11"
+        },
+        "payload": {
+                "path": "resources/models/old_backpack__renewed_hope.glb",
+                "shader_id": "e1beba6e7aa762f38a0720983812e54a"
+        }
+}

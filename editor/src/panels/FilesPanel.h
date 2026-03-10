@@ -8,7 +8,7 @@
 namespace OrigoEditor {
 
 struct FilesPanelState {
-	std::filesystem::path ProjectRoot { "./" };
+	std::filesystem::path ProjectRoot {};
 };
 
 class FilesPanel : public EditorPanel {

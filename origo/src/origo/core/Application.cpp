@@ -28,7 +28,18 @@ void Application::internal_update(double dt) {
 }
 
 void Application::internal_awake() {
-	std::filesystem::current_path(m_settings.WorkingDirectory);
+	EditorResourcePathContext editor_context = m_settings.EditorResourceRoot.empty()
+	    ? make_default_editor_resource_context()
+	    : EditorResourcePathContext { m_settings.EditorResourceRoot };
+
+	ProjectPathContext project_context = m_settings.ProjectRoot.empty()
+	    ? make_default_project_path_context()
+	    : ProjectPathContext { m_settings.ProjectRoot };
+
+	PathContextService::get_instance().configure(editor_context, project_context);
+
+	if (!m_settings.WorkingDirectory.empty())
+		std::filesystem::current_path(m_settings.WorkingDirectory);
 
 	Origo::init();
 

@@ -3,6 +3,8 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/model/Model.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 #include "origo/serialization/ISerializer.h"
@@ -17,7 +19,7 @@ void ModelSerializer::serialize(const Asset* asset, ISerializer& backend) const 
 	backend.write("shader_id", model->get_shader_handle());
 
 	auto path { model->get_path() };
-	backend.write("path", path.string());
+	backend.write("path", PathContextService::get_instance().serialize_path(path).string());
 }
 
 void ModelSerializer::deserialize(ISerializer& backend, Asset& asset) const {
@@ -34,7 +36,7 @@ void ModelSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 
 	auto& model { static_cast<Model&>(asset) };
 
-	model.set_path(path);
+	model.set_path(PathContextService::get_instance().resolve_serialized_path(path));
 	model.set_shader_uuid(UUID::from_string(shader_id));
 }
 

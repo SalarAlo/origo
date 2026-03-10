@@ -7,6 +7,8 @@
 
 #include "origo/assets/material/MaterialPBR.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Typedefs.h"
 
 namespace Origo {
@@ -30,7 +32,7 @@ AssetHandle DefaultAssetCache::get_shader() {
 
 	auto shader = AssetManager::get_instance().get_asset<Shader>(*m_shader);
 	shader->set_source(make_scope<ShaderSourceFile>(
-	    "./default_resources/default_shader.glsl"));
+	    PathContextService::get_instance().editor().fallback_root() / "shaders" / "default_shader.glsl"));
 	shader->resolve();
 
 	return *m_shader;

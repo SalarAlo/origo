@@ -4,6 +4,8 @@
 
 #include "origo/assets/Texture2D.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/scripting/ScriptComponentRegistry.h"
 
 #include "state/EditorContext.h"
@@ -208,7 +210,9 @@ Origo::Ref<Origo::Texture2D> InspectorComponentRenderer::load_icon(const std::st
 
 	tex->set_source(
 	    Origo::make_scope<Origo::TextureSourceSVG>(
-	        path, 14, 14));
+	        Origo::PathContextService::get_instance().editor().resolve(path).string(),
+	        14,
+	        14));
 
 	tex->load();
 	return tex;

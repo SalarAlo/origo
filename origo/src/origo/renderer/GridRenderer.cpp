@@ -1,19 +1,13 @@
 #include "origo/renderer/GridRenderer.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/renderer/GlDebug.h"
 #include "origo/renderer/Helpers.h"
 
 namespace Origo {
 
 namespace {
-
-	static std::string load_shader_source(const std::filesystem::path& primary_path, const std::filesystem::path& fallback_path) {
-		try {
-			return read_file(primary_path);
-		} catch (...) {
-			return read_file(fallback_path);
-		}
-	}
 
 	static GLuint compile_shader(GLenum type, const std::string& source) {
 		GLuint shader = glCreateShader(type);
@@ -36,12 +30,9 @@ namespace {
 	}
 
 	static GLuint create_grid_program() {
-		const std::string grid_vertex_src = load_shader_source(
-		    "./default_resources/grid.vert",
-		    "./editor/workspace/default_resources/grid.vert");
-		const std::string grid_fragment_src = load_shader_source(
-		    "./default_resources/grid.frag",
-		    "./editor/workspace/default_resources/grid.frag");
+		const auto fallback_root = Origo::PathContextService::get_instance().editor().fallback_root() / "shaders";
+		const std::string grid_vertex_src = read_file(fallback_root / "grid.vert");
+		const std::string grid_fragment_src = read_file(fallback_root / "grid.frag");
 
 		GLuint vertex = compile_shader(GL_VERTEX_SHADER, grid_vertex_src);
 		GLuint fragment = compile_shader(GL_FRAGMENT_SHADER, grid_fragment_src);

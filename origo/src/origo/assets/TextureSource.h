@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include "origo/serialization/ISerializer.h"
 
 namespace Origo {
@@ -41,7 +43,7 @@ protected:
 
 class TextureSourceFile : public TextureSource {
 public:
-	TextureSourceFile(std::string_view path, bool flip = true)
+	TextureSourceFile(const std::filesystem::path& path, bool flip = true)
 	    : Path(path)
 	    , Flip(flip) { }
 
@@ -49,7 +51,7 @@ public:
 	TextureSourceType get_type() const override { return TextureSourceType::File; }
 	TextureInitialisationData get_initialisation_data() const override;
 
-	std::string Path;
+	std::filesystem::path Path;
 	bool Flip;
 };
 
@@ -67,7 +69,7 @@ public:
 
 class TextureSourceSVG : public TextureSource {
 public:
-	TextureSourceSVG(std::string_view path, int w, int h)
+	TextureSourceSVG(const std::filesystem::path& path, int w, int h)
 	    : Width(w)
 	    , Height(h)
 	    , Path(path) {
@@ -77,7 +79,7 @@ public:
 	TextureSourceType get_type() const override { return TextureSourceType::Svg; }
 	TextureInitialisationData get_initialisation_data() const override;
 
-	std::string Path;
+	std::filesystem::path Path;
 	int Width;
 	int Height;
 };

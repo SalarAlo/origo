@@ -1,6 +1,6 @@
-# Ignore the entire build directory
+# Ignore generated and local-only directories
 /build/
-/notes/
+/docs/notes/
 
 # Common CMake-generated files
 CMakeCache.txt
@@ -18,7 +18,5 @@ compile_commands.json
 # profiler output
 callgrind.out.*
 
-# helper scripts
-overview.sh
-run.sh
-generate.sh
+# local helper scripts
+/scripts/

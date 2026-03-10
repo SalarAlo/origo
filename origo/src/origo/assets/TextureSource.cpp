@@ -1,5 +1,7 @@
 #include "origo/assets/TextureSource.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 #include "origo/serialization/ISerializer.h"
@@ -38,11 +40,11 @@ void TextureSourceRaw::serialize_body(ISerializer& backend) const {
 void TextureSourceSVG::serialize_body(ISerializer& backend) const {
 	backend.write("width", Width);
 	backend.write("height", Height);
-	backend.write("path", Path);
+	backend.write("path", PathContextService::get_instance().serialize_path(Path).string());
 }
 
 void TextureSourceFile::serialize_body(ISerializer& backend) const {
-	backend.write("path", Path);
+	backend.write("path", PathContextService::get_instance().serialize_path(Path).string());
 }
 
 TextureInitialisationData TextureSourceFile::get_initialisation_data() const {
@@ -53,7 +55,7 @@ TextureInitialisationData TextureSourceFile::get_initialisation_data() const {
 	initialisation_data.Channels = 4;
 
 	if (!pixels) {
-		ORG_CORE_ERROR("Texture::LoadCPU: failed to load image {}", Path);
+		ORG_CORE_ERROR("Texture::LoadCPU: failed to load image {}", Path.string());
 		return {};
 	}
 	const size_t byte_count {
@@ -73,7 +75,7 @@ TextureInitialisationData TextureSourceRaw::get_initialisation_data() const {
 TextureInitialisationData TextureSourceSVG::get_initialisation_data() const {
 	NSVGimage* svg = nsvgParseFromFile(Path.c_str(), "px", 96.0f);
 	if (!svg) {
-		ORG_CORE_WARN("TextureSourceSVG::get_initialisation_data: Failed to parse from file path {}", Path);
+		ORG_CORE_WARN("TextureSourceSVG::get_initialisation_data: Failed to parse from file path {}", Path.string());
 		return {};
 	}
 
@@ -160,7 +162,7 @@ Scope<TextureSource> TextureSource::deserialize(ISerializer& backend) {
 		backend.try_read("path", path);
 		backend.end_object();
 
-		return make_scope<TextureSourceFile>(path);
+		return make_scope<TextureSourceFile>(PathContextService::get_instance().resolve_serialized_path(path));
 	}
 
 	case TextureSourceType::Embedded:

@@ -8,6 +8,7 @@
 #include "layers/UpdateLayer.h"
 
 #include "origo/core/EntryPoint.h"
+#include "origo/core/PathContext.h"
 
 #include "systems/EditorIcons.h"
 
@@ -19,6 +20,7 @@ namespace {
 
 FrameBufferSpec create_render_buffer_spec() {
 	FrameBufferSpec spec;
+
 	spec.Width = 1920;
 	spec.Height = 1080;
 	spec.Samples = 4;
@@ -26,17 +28,20 @@ FrameBufferSpec create_render_buffer_spec() {
 		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
 		{ AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 	};
+
 	return spec;
 }
 
 FrameBufferSpec create_resolve_buffer_spec() {
 	FrameBufferSpec spec;
+
 	spec.Width = 1920;
 	spec.Height = 1080;
 	spec.Attachments = {
 		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
 		{ AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 	};
+
 	return spec;
 }
 
@@ -46,7 +51,9 @@ size_t layer_key(OrigoEditor::LayerType layer_type) {
 
 ApplicationSettings create_default_application_settings() {
 	return {
-		.WorkingDirectory = "./editor/workspace",
+		.WorkingDirectory = Origo::get_default_editor_workspace_root(),
+		.EditorResourceRoot = Origo::make_default_editor_resource_context().Root,
+		.ProjectRoot = Origo::make_default_project_path_context().Root,
 		.WindowSettings = { .Width = 1900, .Height = 900, .Title = "Origo" }
 	};
 }
@@ -109,5 +116,4 @@ namespace Origo {
 Application* create_application() {
 	return new OrigoEditor::EditorApplication(create_default_application_settings());
 }
-
 }

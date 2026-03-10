@@ -1,6 +1,7 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
 #include <glm/gtc/quaternion.hpp>
 
 #include "origo/components/systems/RigidbodyPhysicsSystem.h"
@@ -18,6 +19,14 @@
 namespace Origo {
 namespace {
 	constexpr float cTransformEpsilon = 0.0001f;
+
+	Vec3 get_collider_scale(const TransformComponent& transform, const BoxColliderComponent& collider) {
+		return transform.get_scale() * collider.Size;
+	}
+
+	Vec3 get_collider_offset(const TransformComponent& transform, const BoxColliderComponent& collider) {
+		return transform.get_scale() * collider.Offset;
+	}
 
 	JPH::RVec3 to_jolt_position(const Vec3& position) {
 		return JPH::RVec3(position.x, position.y, position.z);
@@ -75,6 +84,11 @@ namespace {
 		return !nearly_equal(rb.RuntimeScale, transform.get_scale());
 	}
 
+	bool collider_changed(const RigidbodyComponent& rb, const BoxColliderComponent& collider) {
+		return !nearly_equal(rb.RuntimeColliderOffset, collider.Offset)
+		    || !nearly_equal(rb.RuntimeColliderSize, collider.Size);
+	}
+
 	bool transform_pose_changed(const RigidbodyComponent& rb, const TransformComponent& transform) {
 		return !nearly_equal(rb.RuntimePosition, transform.get_position())
 		    || !nearly_equal(rb.RuntimeRotation, transform.get_rotation());
@@ -107,7 +121,11 @@ namespace {
 		    JPH::Vec3::sZero());
 	}
 
-	void sync_runtime_settings(RigidbodyComponent& rb, const TransformComponent& transform, JPH::BodyID body_id) {
+	void sync_runtime_settings(
+	    RigidbodyComponent& rb,
+	    const TransformComponent& transform,
+	    const BoxColliderComponent& collider,
+	    JPH::BodyID body_id) {
 		rb.HasBody = !body_id.IsInvalid();
 		rb.RuntimeBodyID = body_id;
 		rb.RuntimeMotionType = rb.MotionType;
@@ -123,17 +141,25 @@ namespace {
 		rb.RuntimePosition = transform.get_position();
 		rb.RuntimeRotation = transform.get_rotation();
 		rb.RuntimeScale = transform.get_scale();
+		rb.RuntimeColliderOffset = collider.Offset;
+		rb.RuntimeColliderSize = collider.Size;
 	}
 
 	JPH::BodyCreationSettings make_body_settings(
 	    const PhysicsWorld& physics_world,
 	    const TransformComponent& transform,
-	    const BoxColliderComponent&,
+	    const BoxColliderComponent& collider,
 	    const RigidbodyComponent& rb) {
-		Vec3 half_extent = glm::max(glm::abs(transform.get_scale()) * 0.5f, Vec3(0.05f));
+		Vec3 half_extent = glm::max(glm::abs(get_collider_scale(transform, collider)) * 0.5f, Vec3(0.05f));
+		Vec3 offset = get_collider_offset(transform, collider);
 
-		JPH::RefConst<JPH::BoxShape> shape = new JPH::BoxShape(
-		    JPH::Vec3(half_extent.x, half_extent.y, half_extent.z));
+		JPH::RefConst<JPH::Shape> shape = new JPH::BoxShape(JPH::Vec3(half_extent.x, half_extent.y, half_extent.z));
+		if (!nearly_equal(offset, Vec3(0.0f))) {
+			shape = new JPH::RotatedTranslatedShape(
+			    JPH::Vec3(offset.x, offset.y, offset.z),
+			    JPH::Quat::sIdentity(),
+			    shape);
+		}
 
 		JPH::BodyCreationSettings settings(
 		    shape.GetPtr(),
@@ -176,12 +202,13 @@ void RigidbodyPhysicsSystem::update(Scene* scene, float dt) {
 	    [&](RID entity, RigidbodyComponent& rb, TransformComponent& transform, BoxColliderComponent& collider) {
 		    if (!physics_world.has_body(entity)
 		        || requires_body_rebuild(rb)
-		        || transform_scale_changed(rb, transform)) {
+		        || transform_scale_changed(rb, transform)
+		        || collider_changed(rb, collider)) {
 			    JPH::BodyID body_id = physics_world.create_body(
 			        entity,
 			        make_body_settings(physics_world, transform, collider, rb));
 
-			    sync_runtime_settings(rb, transform, body_id);
+			    sync_runtime_settings(rb, transform, collider, body_id);
 			    return;
 		    }
 
@@ -190,13 +217,13 @@ void RigidbodyPhysicsSystem::update(Scene* scene, float dt) {
 			    sync_transform_to_body(physics_world, body_id, transform, rb);
 		    }
 
-		    sync_runtime_settings(rb, transform, body_id);
+		    sync_runtime_settings(rb, transform, collider, body_id);
 	    });
 
 	physics_world.step(dt);
 
 	scene->view<RigidbodyComponent, TransformComponent, BoxColliderComponent>(
-		    [&](RID entity, RigidbodyComponent& rb, TransformComponent& transform, BoxColliderComponent&) {
+		    [&](RID entity, RigidbodyComponent& rb, TransformComponent& transform, BoxColliderComponent& collider) {
 			    JPH::BodyID body_id = physics_world.get_body_id(entity);
 			    if (body_id.IsInvalid()) {
 				    rb.HasBody = false;
@@ -212,7 +239,7 @@ void RigidbodyPhysicsSystem::update(Scene* scene, float dt) {
 		    transform.set_position(to_origo_position(position));
 		    transform.set_rotation(to_origo_rotation(rotation));
 
-		    sync_runtime_settings(rb, transform, body_id);
+		    sync_runtime_settings(rb, transform, collider, body_id);
 	    });
 }
 

@@ -8,19 +8,23 @@
 #include "origo/assets/ShaderSource.h"
 #include "origo/assets/SkyboxMaterial.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/UUID.h"
 
 namespace Origo {
 
 AssetHandle SkyboxDefaults::get_cubemap() {
 	static AssetHandle handle = [] {
+		const auto skybox_root = PathContextService::get_instance().editor().fallback_root() / "textures" / "skybox";
+
 		CubemapDescription descr {};
-		descr.Right = "./resources/textures/skybox/Right.png";
-		descr.Left = "./resources/textures/skybox/Left.png";
-		descr.Top = "./resources/textures/skybox/Top.png";
-		descr.Bottom = "./resources/textures/skybox/Bottom.png";
-		descr.Front = "./resources/textures/skybox/Front.png";
-		descr.Back = "./resources/textures/skybox/Back.png";
+		descr.Right = skybox_root / "Right.png";
+		descr.Left = skybox_root / "Left.png";
+		descr.Top = skybox_root / "Top.png";
+		descr.Bottom = skybox_root / "Bottom.png";
+		descr.Front = skybox_root / "Front.png";
+		descr.Back = skybox_root / "Back.png";
 
 		auto cubemap = AssetFactory::get_instance().get_instance().create_synthetic_asset<CubemapTexture>(
 		    "Default Skybox Cubemap",
@@ -45,7 +49,8 @@ AssetHandle SkyboxDefaults::get_shader() {
 
 		auto shader { AssetManager::get_instance().get_asset<Shader>(shader_handle) };
 
-		shader->set_source(make_scope<ShaderSourceFile>("./resources/shaders/skybox.glsl"));
+		shader->set_source(make_scope<ShaderSourceFile>(
+		    PathContextService::get_instance().editor().fallback_root() / "shaders" / "skybox.glsl"));
 		shader->resolve();
 
 		return shader_handle;

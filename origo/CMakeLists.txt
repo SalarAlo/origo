@@ -59,4 +59,5 @@ target_link_libraries(OrigoEngine PUBLIC
 )
 
 target_compile_definitions(OrigoEngine PRIVATE ORIGO_BUILD_DLL)
+target_compile_definitions(OrigoEngine PRIVATE ORIGO_SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
 target_precompile_headers(OrigoEngine PRIVATE ${CMAKE_SOURCE_DIR}/pch.h)

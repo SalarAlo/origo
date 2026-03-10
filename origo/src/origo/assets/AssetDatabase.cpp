@@ -13,6 +13,8 @@
 
 #include "origo/assets/serialization/AssetSerializer.h"
 
+#include "origo/core/PathContext.h"
+
 #include "origo/core/Logger.h"
 
 #include "origo/serialization/JsonSerializer.h"
@@ -44,7 +46,7 @@ void AssetDatabase::write_import_file(const UUID& id) {
 		serializer.write("parent_id", meta.ParentID->to_string());
 
 	if (meta.SourcePath)
-		serializer.write("source_path", meta.SourcePath->string());
+		serializer.write("source_path", PathContextService::get_instance().serialize_path(*meta.SourcePath).string());
 
 	serializer.write("source_time_stamp",
 	    std::to_string(meta.SourceTimestamp.time_since_epoch().count()));
@@ -117,10 +119,12 @@ AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& pat
 		meta.ParentID = UUID::from_string(parent_id_str);
 
 	std::string source;
-	if (backend.try_read("source_path", source))
-		meta.SourceTimestamp = std::filesystem::last_write_time(source);
-	if (!source.empty())
-		meta.SourcePath = source;
+	if (backend.try_read("source_path", source) && !source.empty()) {
+		const auto resolved_source = PathContextService::get_instance().resolve_serialized_path(source);
+		if (std::filesystem::exists(resolved_source))
+			meta.SourceTimestamp = std::filesystem::last_write_time(resolved_source);
+		meta.SourcePath = resolved_source;
+	}
 
 	std::string imported_stamp;
 	backend.try_read("imported_time_stamp", imported_stamp);
@@ -215,7 +219,7 @@ std::filesystem::path AssetDatabase::get_import_path(const AssetMetadata& meta) 
 		return meta.SourcePath->string() + ".import";
 	}
 
-	return ROOT / "generated" / ((*meta.ID).to_string() + ".import");
+	return PathContextService::get_instance().project().generated_assets_root() / "generated" / ((*meta.ID).to_string() + ".import");
 }
 
 const AssetMetadata& AssetDatabase::get_metadata(const UUID& id) { return m_metadata[id]; }

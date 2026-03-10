@@ -1,0 +1,15 @@
+{
+        "header": {
+                "dependencies": [],
+                "imported_time_stamp": "-4664653483130439659",
+                "name": "Particle_System.scene",
+                "origin": "Imported",
+                "source_path": "resources/scenes/Particle_System.scene.json",
+                "source_time_stamp": "-4664653483130439659",
+                "type": "Scene",
+                "uuid": "a3f3391d166d01542a90a2db5329608e"
+        },
+        "payload": {
+                "path": "resources/scenes/Particle_System.scene.json"
+        }
+}
