@@ -31,7 +31,8 @@ void EditorUILayer::on_attach() {
 	UI::apply_editor_style(m_context.ColorPalette);
 	UI::load_editor_font();
 
-	m_panel_manager.add_panel<SceneViewport>(m_context);
+	m_panel_manager.add_panel<SceneViewport>(m_context, EditorViewMode::Editor, "Scene");
+	m_panel_manager.add_panel<SceneViewport>(m_context, EditorViewMode::Game, "Game");
 	m_panel_manager.add_panel<HierarchyPanel>(m_context);
 	m_panel_manager.add_panel<EntityInspectorPanel>(m_context);
 	m_panel_manager.add_panel<ConsolePanel>();
@@ -45,6 +46,7 @@ void EditorUILayer::on_attach() {
 
 void EditorUILayer::on_update(double dt) {
 	m_im_gui_controller.begin();
+	m_context.clear_text_input_active();
 
 	UI::begin_dockspace();
 	UI::draw_menu_bar(m_panel_manager, m_context);

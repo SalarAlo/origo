@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string_view>
 #include <typeindex>
 
@@ -34,6 +35,7 @@ public:
 	const PhysicsWorld& get_physics_world() const;
 
 	RID create_entity(std::string_view name);
+	std::optional<RID> duplicate_entity(const RID& source, std::string_view name = {});
 	const std::vector<RID>& get_entities() const { return m_entities; }
 	void schedule_remove_entity(const RID&);
 

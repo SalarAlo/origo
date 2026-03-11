@@ -16,8 +16,10 @@ public:
 	void add(RID entity, ScriptComponentID type);
 
 	ScriptComponentInstance* get(RID entity, ScriptComponentID type);
+
 	const ScriptComponentInstance* get(RID entity, ScriptComponentID type) const;
 	bool has(RID entity, ScriptComponentID type) const;
+	void copy_components(RID source, RID target);
 	void remove(RID entity, ScriptComponentID type);
 	bool remove_if_exists(RID entity, ScriptComponentID type);
 	void migrate_component(RID entity, ScriptComponentID);

@@ -21,6 +21,19 @@
 
 namespace OrigoEditor {
 
+namespace {
+void duplicate_selected_entity(EditorContext& context, const Origo::RID& entity_id) {
+	auto duplicate = context.ActiveScene->duplicate_entity(entity_id);
+	if (!duplicate)
+		return;
+
+	context.set_selected_entity(*duplicate);
+	EditorNotificationSystem::get_instance().success(
+	    "Entity Duplicated",
+	    "Added a duplicate to the scene.");
+}
+}
+
 HierarchyPanel::HierarchyPanel(EditorContext& ctx)
     : m_context(ctx) { }
 
@@ -102,6 +115,10 @@ void HierarchyPanel::on_im_gui_render() {
 			m_context.set_selected_entity(entity_id);
 
 		if (ImGui::BeginPopupContextItem("EntityContextPopup")) {
+			if (ImGui::MenuItem("Duplicate", "Ctrl+D")) {
+				duplicate_selected_entity(m_context, entity_id);
+			}
+
 			ImGui::MenuItem("Remove");
 			if (ImGui::IsItemClicked()) {
 				const std::string entity_name = name_comp->Name;

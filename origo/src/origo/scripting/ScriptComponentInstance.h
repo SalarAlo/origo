@@ -2,9 +2,11 @@
 #pragma once
 
 #include "origo/core/UUID.h"
+
 #include "origo/scripting/Variant.h"
 
 namespace Origo {
+
 using ScriptComponentID = UUID;
 using ScriptComponentFieldID = UUID;
 

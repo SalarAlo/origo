@@ -14,12 +14,12 @@ namespace OrigoEditor {
 EditorViewportController::EditorViewportController(EditorContext& ctx)
     : m_context(ctx) { }
 
-RenderView EditorViewportController::get_and_update_active_render_view() {
+RenderView EditorViewportController::get_render_view(EditorViewMode mode, Origo::Scene* scene) {
 	Camera* cam { nullptr };
 	TransformComponent* transf { nullptr };
 
-	if (m_context.ViewMode == EditorViewMode::Game) {
-		m_context.ActiveScene->view<CameraComponent, TransformComponent>([&](RID e, CameraComponent& cc, TransformComponent& tr) {
+	if (mode == EditorViewMode::Game && scene) {
+		scene->view<CameraComponent, TransformComponent>([&](RID e, CameraComponent& cc, TransformComponent& tr) {
 			if (cam != nullptr)
 				return;
 
@@ -31,13 +31,14 @@ RenderView EditorViewportController::get_and_update_active_render_view() {
 		});
 	}
 
-	if (m_context.ViewMode == EditorViewMode::Editor || !cam) {
+	if (mode == EditorViewMode::Editor || !cam) {
 		cam = &m_context.EditorViewportCamera.get_camera();
 		transf = &m_context.EditorViewportCamera.get_transform();
 	}
 
-	float width { static_cast<float>(m_context.RenderBuffer.get_width()) };
-	float height { static_cast<float>(m_context.RenderBuffer.get_height()) };
+	const auto& render_buffer = m_context.get_render_buffer(mode);
+	float width { static_cast<float>(render_buffer.get_width()) };
+	float height { static_cast<float>(render_buffer.get_height()) };
 	cam->set_aspect(width / height);
 
 	RenderView view {

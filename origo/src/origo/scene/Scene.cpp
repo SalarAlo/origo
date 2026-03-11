@@ -30,6 +30,30 @@ RID Scene::create_entity(std::string_view name) {
 	return create_entity_with_rid(RID::new_rid(), name);
 }
 
+std::optional<RID> Scene::duplicate_entity(const RID& source, std::string_view name) {
+	const auto source_it = std::find(m_entities.begin(), m_entities.end(), source);
+	if (source_it == m_entities.end())
+		return std::nullopt;
+
+	std::string duplicate_name;
+	if (!name.empty()) {
+		duplicate_name = name;
+	} else if (const auto* source_name = get_native_component<NameComponent>(source)) {
+		duplicate_name = source_name->Name + " Copy";
+	} else {
+		duplicate_name = "Entity Copy";
+	}
+
+	RID duplicate = create_entity(duplicate_name);
+	m_native_component_manager.copy_components(source, duplicate);
+	m_script_component_manager.copy_components(source, duplicate);
+
+	if (auto* name_component = get_native_component<NameComponent>(duplicate))
+		name_component->Name = duplicate_name;
+
+	return duplicate;
+}
+
 RID Scene::create_entity_with_rid(const RID& rid, std::string_view name) {
 	m_entities.push_back(rid);
 	add_native_component<NameComponent>(m_entities.back(), name);

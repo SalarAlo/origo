@@ -15,6 +15,7 @@
 #include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
+
 void InspectorComponentRenderer::init(EditorContext* ctx) {
 	m_context = ctx;
 }

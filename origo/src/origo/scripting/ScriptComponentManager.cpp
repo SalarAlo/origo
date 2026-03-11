@@ -88,6 +88,14 @@ bool ScriptComponentManager::has(RID entity, ScriptComponentID type) const {
 	return false;
 }
 
+void ScriptComponentManager::copy_components(RID source, RID target) {
+	auto it = m_data.find(source);
+	if (it == m_data.end())
+		return;
+
+	m_data[target] = it->second;
+}
+
 void ScriptComponentManager::remove(RID entity, ScriptComponentID type) {
 	auto it = m_data.find(entity);
 	if (it == m_data.end())

@@ -84,6 +84,9 @@ void EntityInspectorPanel::draw_entity_name() {
 		    sizeof(name_buffer),
 		    ImGuiInputTextFlags_EnterReturnsTrue);
 
+		if (ImGui::IsItemActive())
+			m_context.mark_text_input_active();
+
 		const bool deactivated = ImGui::IsItemDeactivatedAfterEdit();
 
 		if (enter_pressed || deactivated) {

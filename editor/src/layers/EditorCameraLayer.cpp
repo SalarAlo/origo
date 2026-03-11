@@ -1,20 +1,31 @@
 #include "layers/EditorCameraLayer.h"
 
-#include "origo/assets/serialization/SceneSerializer.h"
+#include "imgui.h"
 
 #include "origo/components/Transform.h"
 
 #include "origo/input/Input.h"
 
+#include "ui/EditorNotificationSystem.h"
+
 using namespace Origo;
 
 namespace OrigoEditor {
+
+namespace {
+	bool is_text_input_blocking_camera(const EditorContext& context) {
+		return context.is_text_input_active() || ImGui::GetIO().WantTextInput;
+	}
+}
 
 void EditorCameraLayer::on_attach() {
 	Input::set_cursor_mode(Input::CursorMode::Free);
 }
 
 void EditorCameraLayer::on_update(double dt) {
+	if (is_text_input_blocking_camera(m_context))
+		return;
+
 	glm::vec3 move_input(0.0f);
 
 	if (Input::is_key_pressed(KeyboardKey::KEY_W))
@@ -42,7 +53,32 @@ void EditorCameraLayer::on_update(double dt) {
 void EditorCameraLayer::on_event(Event& e) {
 	EventDispatcher dispatcher { e };
 	dispatcher.dispatch<KeyPressEvent>([this](KeyPressEvent& pressEvent) {
-		bool pressed_f { pressEvent.get_key_pressed() == KeyboardKey::KEY_F && pressEvent.get_key_press_type() == KeyPressType::KeyPressStart };
+		if (pressEvent.get_key_press_type() != KeyPressType::KeyPressStart)
+			return;
+
+		if (is_text_input_blocking_camera(m_context))
+			return;
+
+		const bool ctrl_pressed = Input::is_key_pressed(KeyboardKey::KEY_LEFT_CONTROL)
+		    || Input::is_key_pressed(KeyboardKey::KEY_RIGHT_CONTROL);
+
+		if (ctrl_pressed && pressEvent.get_key_pressed() == KeyboardKey::KEY_D) {
+			auto selected_entity = m_context.get_selected_entity();
+			if (!selected_entity)
+				return;
+
+			auto duplicate = m_context.ActiveScene->duplicate_entity(*selected_entity);
+			if (!duplicate)
+				return;
+
+			m_context.set_selected_entity(*duplicate);
+			EditorNotificationSystem::get_instance().success(
+			    "Entity Duplicated",
+			    "Created a copy of the selected entity.");
+			return;
+		}
+
+		bool pressed_f { pressEvent.get_key_pressed() == KeyboardKey::KEY_F };
 		if (pressed_f) {
 			if (!m_context.get_selected_entity())
 				return;

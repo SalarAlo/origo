@@ -69,6 +69,9 @@ void TextEditorPanel::on_im_gui_render() {
 	}
 
 	m_editor.Render("ScriptEditor");
+	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::GetIO().WantTextInput)
+		m_context.mark_text_input_active();
+
 	bool save_requested = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S);
 
 	if (save_requested)

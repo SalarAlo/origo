@@ -89,6 +89,15 @@ void NativeComponentManager::for_each_component_on_entity(const RID& entity, Vis
 	}
 }
 
+void NativeComponentManager::copy_components(const RID& source, const RID& target) {
+	for (const auto& [_, info] : NativeComponentRegistry::get_instance().get_all_components()) {
+		if (!info.Has(*this, source))
+			continue;
+
+		info.Copy(*this, source, target);
+	}
+}
+
 void NativeComponentManager::serialize_entity(const RID& entity, ISerializer& backend) const {
 	backend.begin_array("native_components");
 

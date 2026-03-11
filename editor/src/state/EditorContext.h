@@ -18,11 +18,13 @@
 namespace OrigoEditor {
 
 struct EditorContext {
-	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
+	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
 	    : EditorScene(editorScene)
 	    , ActiveScene(editorScene)
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
+	    , GameRenderBuffer(gameRenderBuffer)
+	    , GameResolveBuffer(gameResolveBuffer)
 	    , Window(window)
 	    , LayerSystem(layerSystem)
 	    , ViewportController(*this)
@@ -38,6 +40,8 @@ struct EditorContext {
 
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
+	Origo::FrameBuffer& GameRenderBuffer;
+	Origo::FrameBuffer& GameResolveBuffer;
 
 	Origo::LayerSystem& LayerSystem;
 
@@ -47,8 +51,27 @@ struct EditorContext {
 	EditorCamera EditorViewportCamera {};
 
 	EditorRuntimeState RuntimeState { EditorRuntimeState::Editing };
-	EditorViewMode ViewMode { EditorViewMode::Editor };
 	EditorViewportController ViewportController;
+
+	Origo::Scene* get_editor_scene() const { return EditorScene.get(); }
+	Origo::Scene* get_runtime_scene() const { return RuntimeState == EditorRuntimeState::Running ? ActiveScene : nullptr; }
+	Origo::Scene* get_game_scene() const { return ActiveScene; }
+
+	Origo::FrameBuffer& get_render_buffer(EditorViewMode mode) {
+		return mode == EditorViewMode::Editor ? RenderBuffer : GameRenderBuffer;
+	}
+
+	const Origo::FrameBuffer& get_render_buffer(EditorViewMode mode) const {
+		return mode == EditorViewMode::Editor ? RenderBuffer : GameRenderBuffer;
+	}
+
+	Origo::FrameBuffer& get_resolve_buffer(EditorViewMode mode) {
+		return mode == EditorViewMode::Editor ? ResolveBuffer : GameResolveBuffer;
+	}
+
+	const Origo::FrameBuffer& get_resolve_buffer(EditorViewMode mode) const {
+		return mode == EditorViewMode::Editor ? ResolveBuffer : GameResolveBuffer;
+	}
 
 	void set_selected_entity(const Origo::RID& entity);
 	void unselect_entity();
@@ -57,6 +80,9 @@ struct EditorContext {
 	void set_selected_asset(const Origo::UUID& asset);
 	void unselect_asset();
 	std::optional<Origo::UUID> get_selected_asset() const { return m_selected_asset; }
+	void mark_text_input_active() { m_text_input_active = true; }
+	void clear_text_input_active() { m_text_input_active = false; }
+	bool is_text_input_active() const { return m_text_input_active; }
 
 	EditorContext(const EditorContext&) = delete;
 	void operator=(const EditorContext&) = delete;
@@ -66,6 +92,7 @@ struct EditorContext {
 private:
 	std::optional<Origo::RID> m_selected_entity { std::nullopt };
 	OptionalUUID m_selected_asset { std::nullopt };
+	bool m_text_input_active { false };
 };
 
 }

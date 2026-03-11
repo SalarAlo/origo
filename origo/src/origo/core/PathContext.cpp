@@ -1,54 +1,54 @@
-#include "origo/core/PathContext.h"
-
 #include <cstdlib>
+
+#include "origo/core/PathContext.h"
 
 namespace Origo {
 
 namespace {
 
-constexpr std::string_view k_editor_prefix = "_editor";
+	constexpr std::string_view k_editor_prefix = "_editor";
 
-std::filesystem::path normalize_path(const std::filesystem::path& path) {
-	if (path.empty())
-		return {};
-	return path.lexically_normal();
-}
-
-bool is_relative_to(const std::filesystem::path& path, const std::filesystem::path& root) {
-	if (path.empty() || root.empty())
-		return false;
-
-	const auto normalized_path = normalize_path(path);
-	const auto normalized_root = normalize_path(root);
-
-	if (!normalized_path.is_absolute() || !normalized_root.is_absolute())
-		return false;
-
-	const auto relative = normalized_path.lexically_relative(normalized_root);
-	if (relative.empty())
-		return false;
-
-	for (const auto& part : relative) {
-		if (part == "..")
-			return false;
-		break;
+	std::filesystem::path normalize_path(const std::filesystem::path& path) {
+		if (path.empty())
+			return {};
+		return path.lexically_normal();
 	}
 
-	return true;
-}
+	bool is_relative_to(const std::filesystem::path& path, const std::filesystem::path& root) {
+		if (path.empty() || root.empty())
+			return false;
 
-std::filesystem::path env_or_default(const char* env_var, const std::filesystem::path& fallback) {
-	const char* override = std::getenv(env_var);
-	if (!override || std::string_view(override).empty())
-		return fallback;
+		const auto normalized_path = normalize_path(path);
+		const auto normalized_root = normalize_path(root);
 
-	return normalize_path(override);
-}
+		if (!normalized_path.is_absolute() || !normalized_root.is_absolute())
+			return false;
 
-std::filesystem::path append_editor_prefix(const std::filesystem::path& relative_path) {
-	std::filesystem::path prefixed { k_editor_prefix };
-	return normalize_path(prefixed / relative_path);
-}
+		const auto relative = normalized_path.lexically_relative(normalized_root);
+		if (relative.empty())
+			return false;
+
+		for (const auto& part : relative) {
+			if (part == "..")
+				return false;
+			break;
+		}
+
+		return true;
+	}
+
+	std::filesystem::path env_or_default(const char* env_var, const std::filesystem::path& fallback) {
+		const char* override = std::getenv(env_var);
+		if (!override || std::string_view(override).empty())
+			return fallback;
+
+		return normalize_path(override);
+	}
+
+	std::filesystem::path append_editor_prefix(const std::filesystem::path& relative_path) {
+		std::filesystem::path prefixed { k_editor_prefix };
+		return normalize_path(prefixed / relative_path);
+	}
 
 }
 

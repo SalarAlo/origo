@@ -1,5 +1,7 @@
 #include "panels/SceneViewport.h"
 
+#include <algorithm>
+
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 
@@ -11,71 +13,6 @@
 using namespace Origo;
 
 namespace OrigoEditor {
-
-static void view_mode_toggle(EditorViewMode& mode) {
-	ImDrawList* draw = ImGui::GetWindowDrawList();
-	ImVec2 pos = ImGui::GetCursorScreenPos();
-
-	const float height = 28.0f;
-	const float radius = 7.0f;
-	const float padding = 3.0f;
-
-	const char* labels[] = { "Scene", "Run" };
-	const EditorViewMode modes[] = {
-		EditorViewMode::Editor,
-		EditorViewMode::Game
-	};
-
-	float widths[2];
-	for (int i = 0; i < 2; i++)
-		widths[i] = ImGui::CalcTextSize(labels[i]).x + 20.0f;
-
-	float total_width = widths[0] + widths[1] + padding * 2;
-
-	ImVec2 size(total_width, height);
-	ImGui::InvisibleButton("##viewmode", size);
-
-	draw->AddRectFilled(
-	    pos,
-	    pos + size,
-	    IM_COL32(40, 40, 40, 255),
-	    radius);
-
-	float x = pos.x + padding;
-
-	for (int i = 0; i < 2; i++) {
-		bool active = (mode == modes[i]);
-
-		ImVec2 seg_min(x, pos.y + padding);
-		ImVec2 seg_max(x + widths[i], pos.y + height - padding);
-
-		if (active) {
-			draw->AddRectFilled(
-			    seg_min,
-			    seg_max,
-			    IM_COL32(90, 90, 90, 255),
-			    radius);
-		}
-
-		ImVec2 text_size = ImGui::CalcTextSize(labels[i]);
-		ImVec2 text_pos(
-		    seg_min.x + (widths[i] - text_size.x) * 0.5f,
-		    pos.y + (height - text_size.y) * 0.5f);
-
-		draw->AddText(
-		    text_pos,
-		    active ? IM_COL32(255, 255, 255, 255)
-		           : IM_COL32(160, 160, 160, 255),
-		    labels[i]);
-
-		if (ImGui::IsMouseHoveringRect(seg_min, seg_max) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-			mode = modes[i];
-		}
-
-		x += widths[i];
-	}
-}
-
 static ImTextureID to_im_texture_id(const Ref<Texture2D>& tex) {
 	return (ImTextureID)(intptr_t)tex->get_renderer_id();
 }
@@ -103,7 +40,9 @@ void SceneViewport::on_im_gui_render() {
 		m_icons_loaded = true;
 	}
 
-	auto& active_scene { m_context.ActiveScene };
+	auto* active_scene = m_mode == EditorViewMode::Editor
+	    ? m_context.get_editor_scene()
+	    : m_context.get_game_scene();
 	ImGuizmo::BeginFrame();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -115,19 +54,20 @@ void SceneViewport::on_im_gui_render() {
 		return;
 	}
 
-	static int last_w = 0, last_h = 0;
 	bool resized = false;
+	auto& render_buffer = m_context.get_render_buffer(m_mode);
+	auto& resolve_buffer = m_context.get_resolve_buffer(m_mode);
 
-	if (w != last_w || h != last_h) {
-		m_context.RenderBuffer.resize(w, h);
-		m_context.ResolveBuffer.resize(w, h);
-		last_w = w;
-		last_h = h;
+	if (w != m_last_width || h != m_last_height) {
+		render_buffer.resize(w, h);
+		resolve_buffer.resize(w, h);
+		m_last_width = w;
+		m_last_height = h;
 		resized = true;
 	}
 
 	ImGui::Image(
-	    (ImTextureID)(uintptr_t)m_context.ResolveBuffer.get_color_attachment(0),
+	    (ImTextureID)(uintptr_t)resolve_buffer.get_color_attachment(0),
 	    size,
 	    ImVec2(0, 1),
 	    ImVec2(1, 0));
@@ -165,7 +105,7 @@ void SceneViewport::on_im_gui_render() {
 		}
 	};
 
-	const bool editing_view = (m_context.ViewMode == EditorViewMode::Editor);
+	const bool editing_view = (m_mode == EditorViewMode::Editor);
 
 	if (editing_view) {
 		draw_tool_button("##Move", m_move_icon, ImGuizmo::TRANSLATE);
@@ -184,41 +124,37 @@ void SceneViewport::on_im_gui_render() {
 			    : ImGuizmo::LOCAL;
 		}
 
-		ImGui::SameLine();
-		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-		ImGui::SameLine();
 	}
-
-	view_mode_toggle(m_context.ViewMode);
 
 	ImGui::EndGroup();
 	ImGui::PopStyleVar(2);
 
-	if (editing_view && m_context.get_selected_entity().has_value()) {
+	if (editing_view && active_scene && m_context.get_selected_entity().has_value()) {
 		auto entity = *m_context.get_selected_entity();
 		auto transform = active_scene->get_native_component<TransformComponent>(entity);
+		if (transform) {
+			glm::mat4 model = transform->get_model_matrix();
+			auto render_view = m_context.ViewportController.get_render_view(m_mode, active_scene);
+			glm::mat4 view = render_view.View;
+			glm::mat4 proj = render_view.Projection;
 
-		glm::mat4 model = transform->get_model_matrix();
-		auto render_view = m_context.ViewportController.get_and_update_active_render_view();
-		glm::mat4 view = render_view.View;
-		glm::mat4 proj = render_view.Projection;
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(
+			    viewport_min.x,
+			    viewport_min.y,
+			    viewport_size.x,
+			    viewport_size.y);
 
-		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect(
-		    viewport_min.x,
-		    viewport_min.y,
-		    viewport_size.x,
-		    viewport_size.y);
+			ImGuizmo::Manipulate(
+			    glm::value_ptr(view),
+			    glm::value_ptr(proj),
+			    m_gizmo_operation,
+			    m_gizmo_mode,
+			    glm::value_ptr(model));
 
-		ImGuizmo::Manipulate(
-		    glm::value_ptr(view),
-		    glm::value_ptr(proj),
-		    m_gizmo_operation,
-		    m_gizmo_mode,
-		    glm::value_ptr(model));
-
-		if (ImGuizmo::IsUsing())
-			transform->set_from_matrix(model);
+			if (ImGuizmo::IsUsing())
+				transform->set_from_matrix(model);
+		}
 	}
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -226,34 +162,30 @@ void SceneViewport::on_im_gui_render() {
 
 	bool hovered = mouse.x >= viewport_min.x && mouse.y >= viewport_min.y && mouse.x <= viewport_max.x && mouse.y <= viewport_max.y;
 
-	static bool dragging = false;
-	static ImVec2 smooth_delta { 0.0f, 0.0f };
-
 	if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		dragging = true;
+		m_dragging = true;
 
 	if (!ImGui::IsMouseDown(ImGuiMouseButton_Right))
-		dragging = false;
+		m_dragging = false;
 
 	if (ImGuizmo::IsUsing())
-		dragging = false;
+		m_dragging = false;
 
-	if (dragging && !resized && !ImGuizmo::IsUsing()) {
+	if (editing_view && m_dragging && !resized && !ImGuizmo::IsUsing()) {
 		ImVec2 delta = io.MouseDelta;
 
 		delta.x = std::clamp(delta.x, -max_delta, max_delta);
 		delta.y = std::clamp(delta.y, -max_delta, max_delta);
 
-		smooth_delta.x = smooth_delta.x * (1.0f - smooth_alpha) + delta.x * smooth_alpha;
-		smooth_delta.y = smooth_delta.y * (1.0f - smooth_alpha) + delta.y * smooth_alpha;
+		m_smooth_delta.x = m_smooth_delta.x * (1.0f - smooth_alpha) + delta.x * smooth_alpha;
+		m_smooth_delta.y = m_smooth_delta.y * (1.0f - smooth_alpha) + delta.y * smooth_alpha;
 
 		glm::vec2 smooth_delta_glm {
-			(smooth_delta * sensitivity).x,
-			(smooth_delta * sensitivity).y
+			(m_smooth_delta * sensitivity).x,
+			(m_smooth_delta * sensitivity).y
 		};
 
-		if (m_context.ViewMode == EditorViewMode::Editor)
-			m_camera.on_mouse_delta(smooth_delta_glm);
+		m_camera.on_mouse_delta(smooth_delta_glm);
 	}
 }
 }

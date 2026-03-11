@@ -36,7 +36,8 @@ void DebugStatsPanel::on_im_gui_render() {
 	float dt = m_context.DeltaTime;
 	float fps = dt > 0.0f ? 1.0f / dt : 0.0f;
 
-	auto& fb = m_context.RenderBuffer.get_specification();
+	auto& scene_fb = m_context.RenderBuffer.get_specification();
+	auto& game_fb = m_context.GameRenderBuffer.get_specification();
 
 	if (ImGui::CollapsingHeader("Runtime", ImGuiTreeNodeFlags_DefaultOpen)) {
 		if (ImGui::BeginTable("RuntimeTable", 2, ImGuiTableFlags_SizingStretchProp)) {
@@ -45,10 +46,9 @@ void DebugStatsPanel::on_im_gui_render() {
 
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("View Mode");
+			ImGui::Text("Panels");
 			ImGui::TableSetColumnIndex(1);
-			ImGui::TextUnformatted(
-			    m_context.ViewMode == EditorViewMode::Editor ? "Editor" : "Runtime");
+			ImGui::TextUnformatted("Scene + Game");
 
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
@@ -72,17 +72,20 @@ void DebugStatsPanel::on_im_gui_render() {
 		if (ImGui::BeginTable("SceneTable", 2, ImGuiTableFlags_SizingStretchProp)) {
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("Active Scene");
+			ImGui::Text("Editor Scene");
 			ImGui::TableSetColumnIndex(1);
 
-			if (m_context.ActiveScene)
+			if (m_context.get_editor_scene())
 				ImGui::TextColored(green, "Valid");
 			else
 				ImGui::TextColored(red, "None");
 
 			draw_key_value(
-			    "Entity Count",
-			    m_context.ActiveScene ? (uint32_t)m_context.ActiveScene->get_entities().size() : 0);
+			    "Editor Entity Count",
+			    m_context.get_editor_scene() ? (uint32_t)m_context.get_editor_scene()->get_entities().size() : 0);
+			draw_key_value(
+			    "Runtime Entity Count",
+			    m_context.get_runtime_scene() ? (uint32_t)m_context.get_runtime_scene()->get_entities().size() : 0);
 
 			ImGui::EndTable();
 		}
@@ -92,9 +95,15 @@ void DebugStatsPanel::on_im_gui_render() {
 		if (ImGui::BeginTable("ViewportTable", 2, ImGuiTableFlags_SizingStretchProp)) {
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("Resolution");
+			ImGui::Text("Scene Size");
 			ImGui::TableSetColumnIndex(1);
-			ImGui::Text("%u x %u", fb.Width, fb.Height);
+			ImGui::Text("%u x %u", scene_fb.Width, scene_fb.Height);
+
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Game Size");
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("%u x %u", game_fb.Width, game_fb.Height);
 
 			ImGui::EndTable();
 		}

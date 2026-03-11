@@ -13,6 +13,7 @@ struct NativeComponentTypeInfo {
 	std::type_index Type;
 
 	std::function<void(NativeComponentManager&, RID)> Add;
+	std::function<void(NativeComponentManager&, RID, RID)> Copy;
 	std::function<void(NativeComponentManager&, RID)> Remove;
 	std::function<bool(const NativeComponentManager&, RID)> Has;
 	std::function<void*(NativeComponentManager&, RID)> Get;
@@ -34,6 +35,13 @@ public:
 		        .DisplayName = name,
 		        .Type = type,
 		        .Add = [](NativeComponentManager& mgr, RID e) { mgr.add_component<T>(e); },
+		        .Copy = [](NativeComponentManager& mgr, RID from, RID to) {
+			        auto* source = mgr.get_component<T>(from);
+			        if (!source)
+				        return;
+
+			        mgr.add_component<T>(to) = *source;
+		        },
 		        .Remove = [](NativeComponentManager& mgr, RID e) { mgr.remove_component_by_type(e, typeid(T)); },
 		        .Has = [](const NativeComponentManager& mgr, RID e) { return mgr.has_component<T>(e); },
 		        .Get = [](NativeComponentManager& mgr, RID e) -> void* { return mgr.get_component<T>(e); },

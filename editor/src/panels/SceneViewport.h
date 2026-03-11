@@ -11,18 +11,20 @@ namespace OrigoEditor {
 
 class SceneViewport : public EditorPanel {
 public:
-	SceneViewport(EditorContext& ctx)
+	SceneViewport(EditorContext& ctx, EditorViewMode mode, const char* name)
 	    : m_context(ctx)
-	    , m_camera(ctx.EditorViewportCamera) { }
+	    , m_camera(ctx.EditorViewportCamera)
+	    , m_mode(mode)
+	    , m_name(name) { }
 
-	void on_im_gui_render();
-	const char* get_name() const {
-		return "Viewport";
-	}
+	void on_im_gui_render() override;
+	const char* get_name() const override { return m_name; }
 
 private:
 	EditorContext& m_context;
 	EditorCamera& m_camera;
+	EditorViewMode m_mode;
+	const char* m_name;
 
 	ImGuizmo::OPERATION m_gizmo_operation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE m_gizmo_mode = ImGuizmo::LOCAL;
@@ -32,6 +34,10 @@ private:
 	Origo::Ref<Origo::Texture2D> m_scale_icon;
 
 	bool m_icons_loaded = false;
+	int m_last_width = 0;
+	int m_last_height = 0;
+	bool m_dragging = false;
+	ImVec2 m_smooth_delta { 0.0f, 0.0f };
 };
 
 }

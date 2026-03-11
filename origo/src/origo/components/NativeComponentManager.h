@@ -40,6 +40,7 @@ public:
 
 	void for_each_component_on_entity(const RID& entity, VisitFn fn, void* user);
 	void for_each_component_on_entity(const RID& entity, VisitFnConst fn, void* user) const;
+	void copy_components(const RID& source, const RID& target);
 
 	void serialize_entity(const RID& entity, ISerializer& backend) const;
 	void deserialize_entity(const RID& entity, ISerializer& backend);

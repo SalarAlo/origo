@@ -66,7 +66,9 @@ EditorApplication::EditorApplication(const ApplicationSettings& settings)
     : Application(settings)
     , m_render_buffer(create_render_buffer_spec())
     , m_resolve_buffer(create_resolve_buffer_spec())
-    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
+    , m_game_render_buffer(create_render_buffer_spec())
+    , m_game_resolve_buffer(create_resolve_buffer_spec())
+    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_game_render_buffer, m_game_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
     , m_runtime_controller(m_context) {
 	setup_layers();
 	setup_render_context();
@@ -92,8 +94,14 @@ void EditorApplication::setup_render_context() {
 void EditorApplication::on_end_frame(float dt) {
 	m_context.DeltaTime = dt;
 
-	if (m_context.ActiveScene)
-		m_context.ActiveScene->end_frame();
+	auto* editor_scene = m_context.get_editor_scene();
+	auto* runtime_scene = m_context.get_runtime_scene();
+
+	if (editor_scene)
+		editor_scene->end_frame();
+
+	if (runtime_scene && runtime_scene != editor_scene)
+		runtime_scene->end_frame();
 
 	if (!m_context.PendingScene)
 		return;
@@ -105,7 +113,6 @@ void EditorApplication::on_end_frame(float dt) {
 
 	m_context.ActiveScene = m_context.EditorScene.get();
 	m_context.RuntimeState = EditorRuntimeState::Editing;
-	m_context.ViewMode = EditorViewMode::Editor;
 
 	m_context.RuntimeScene.reset();
 }
