@@ -19,6 +19,7 @@ void serialize_to_file(Scene& scene, const std::filesystem::path& out) {
 		backend.write("rid", e.to_string());
 
 		scene.m_native_component_manager.serialize_entity(e, backend);
+		scene.m_script_component_manager.serialize_entity(e, backend);
 
 		backend.end_array_object();
 	}
@@ -96,6 +97,8 @@ Scope<Scene> deserialize_from_file(const std::filesystem::path& path) {
 		}
 
 		backend.end_array();
+
+		scene->m_script_component_manager.deserialize_entity(entity, backend);
 		backend.end_array_object();
 
 		++entity_index;

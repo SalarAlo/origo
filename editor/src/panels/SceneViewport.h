@@ -32,12 +32,17 @@ private:
 	Origo::Ref<Origo::Texture2D> m_move_icon;
 	Origo::Ref<Origo::Texture2D> m_rotate_icon;
 	Origo::Ref<Origo::Texture2D> m_scale_icon;
+	Origo::Ref<Origo::Texture2D> m_snap_grid_icon;
 
 	bool m_icons_loaded = false;
 	int m_last_width = 0;
 	int m_last_height = 0;
 	bool m_dragging = false;
 	ImVec2 m_smooth_delta { 0.0f, 0.0f };
+	bool m_snap_enabled = false;
+	float m_translate_snap = 1.0f;
+	float m_rotate_snap = 15.0f;
+	float m_scale_snap = 0.1f;
 };
 
 }

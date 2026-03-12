@@ -15,10 +15,4 @@ Component.define("StatusComponent", {
 		type = "bool",
 		default = true
 	},
-	ist_ein_bastard = {
-		type = "bool",
-		default = false
-	}
 })
-
-

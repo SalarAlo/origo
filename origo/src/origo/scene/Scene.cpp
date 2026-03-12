@@ -102,6 +102,7 @@ const PhysicsWorld& Scene::get_physics_world() const {
 
 void Scene::remove_entity(const RID& rid) {
 	m_native_component_manager.remove_all_components(rid);
+	m_script_component_manager.remove_all_components(rid);
 
 	auto it = std::remove(m_entities.begin(), m_entities.end(), rid);
 	m_entities.erase(it, m_entities.end());

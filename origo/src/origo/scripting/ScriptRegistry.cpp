@@ -114,6 +114,11 @@ std::optional<ScriptComponentID> ScriptComponentRegistry::try_find_by_name(const
 
 	return it->second;
 }
+
+bool ScriptComponentRegistry::exists(ScriptComponentID id) {
+	return s_descriptors.contains(id);
+}
+
 Action<void, ScriptComponentID> ScriptComponentRegistry::on_script_component_updated() {
 	static Action<void, ScriptComponentID> action {};
 	return action;

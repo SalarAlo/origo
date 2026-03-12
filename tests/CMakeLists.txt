@@ -7,6 +7,7 @@ add_executable(OrigoTests
 	src/Main.cpp
 	src/RIDTest.cpp
 	src/SceneAssetSerializationTest.cpp
+	src/SceneSerializationTest.cpp
 	src/ScriptAssetSerializationTest.cpp
 	src/UUIDTest.cpp
 )

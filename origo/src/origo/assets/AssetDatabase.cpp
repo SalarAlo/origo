@@ -86,11 +86,6 @@ void AssetDatabase::write_import_file(const UUID& id) {
 }
 
 AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& path) {
-	if (!std::filesystem::exists(path)) {
-		ORG_ERROR("Import file '{}' does not exist", path.string());
-		return {};
-	}
-
 	JsonSerializer backend { path.string() };
 	backend.load_file();
 
@@ -121,10 +116,12 @@ AssetMetadata AssetDatabase::load_import_header(const std::filesystem::path& pat
 	std::string source;
 	if (backend.try_read("source_path", source) && !source.empty()) {
 		const auto resolved_source = PathContextService::get_instance().resolve_serialized_path(source);
-		if (std::filesystem::exists(resolved_source))
-			meta.SourceTimestamp = std::filesystem::last_write_time(resolved_source);
 		meta.SourcePath = resolved_source;
 	}
+
+	std::string source_stamp;
+	if (backend.try_read("source_time_stamp", source_stamp) && !source_stamp.empty())
+		meta.SourceTimestamp = std::filesystem::file_time_type(std::filesystem::file_time_type::duration(std::stoll(source_stamp)));
 
 	std::string imported_stamp;
 	backend.try_read("imported_time_stamp", imported_stamp);

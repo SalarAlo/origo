@@ -37,6 +37,7 @@ void SceneViewport::on_im_gui_render() {
 		m_move_icon = load_svg_texture("icons/ToolMove.svg", 18);
 		m_rotate_icon = load_svg_texture("icons/ToolRotate.svg", 18);
 		m_scale_icon = load_svg_texture("icons/ToolScale.svg", 18);
+		m_snap_grid_icon = load_svg_texture("icons/SnapGrid.svg", 18);
 		m_icons_loaded = true;
 	}
 
@@ -105,6 +106,20 @@ void SceneViewport::on_im_gui_render() {
 		}
 	};
 
+	auto draw_toggle_button = [&](const char* id,
+	                              const Ref<Texture2D>& icon,
+	                              bool active) {
+		ImVec4 tint = active ? active_tint : inactive_tint;
+		return ImGui::ImageButton(
+		    id,
+		    to_im_texture_id(icon),
+		    ImVec2(18, 18),
+		    ImVec2(0, 1),
+		    ImVec2(1, 0),
+		    ImVec4(0, 0, 0, 0),
+		    tint);
+	};
+
 	const bool editing_view = (m_mode == EditorViewMode::Editor);
 
 	if (editing_view) {
@@ -122,6 +137,27 @@ void SceneViewport::on_im_gui_render() {
 			m_gizmo_mode = (m_gizmo_mode == ImGuizmo::LOCAL)
 			    ? ImGuizmo::WORLD
 			    : ImGuizmo::LOCAL;
+		}
+
+		ImGui::SameLine();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+		ImGui::SameLine();
+
+		if (draw_toggle_button("##SnapGrid", m_snap_grid_icon, m_snap_enabled)) {
+			m_snap_enabled = !m_snap_enabled;
+		}
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
+			ImGui::SetTooltip("Toggle grid snap");
+		}
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(72.0f);
+		if (m_gizmo_operation == ImGuizmo::ROTATE) {
+			ImGui::DragFloat("##RotateSnap", &m_rotate_snap, 1.0f, 1.0f, 180.0f, "%.0f deg");
+		} else if (m_gizmo_operation == ImGuizmo::SCALE) {
+			ImGui::DragFloat("##ScaleSnap", &m_scale_snap, 0.01f, 0.01f, 10.0f, "%.2f");
+		} else {
+			ImGui::DragFloat("##TranslateSnap", &m_translate_snap, 0.1f, 0.1f, 100.0f, "%.2f");
 		}
 
 	}
@@ -145,12 +181,31 @@ void SceneViewport::on_im_gui_render() {
 			    viewport_size.x,
 			    viewport_size.y);
 
+			float snap_values[3] = { 0.0f, 0.0f, 0.0f };
+			float* snap = nullptr;
+			if (m_snap_enabled) {
+				if (m_gizmo_operation == ImGuizmo::ROTATE) {
+					snap_values[0] = m_rotate_snap;
+				} else if (m_gizmo_operation == ImGuizmo::SCALE) {
+					snap_values[0] = m_scale_snap;
+					snap_values[1] = m_scale_snap;
+					snap_values[2] = m_scale_snap;
+				} else {
+					snap_values[0] = m_translate_snap;
+					snap_values[1] = m_translate_snap;
+					snap_values[2] = m_translate_snap;
+				}
+				snap = snap_values;
+			}
+
 			ImGuizmo::Manipulate(
 			    glm::value_ptr(view),
 			    glm::value_ptr(proj),
 			    m_gizmo_operation,
 			    m_gizmo_mode,
-			    glm::value_ptr(model));
+			    glm::value_ptr(model),
+			    nullptr,
+			    snap);
 
 			if (ImGuizmo::IsUsing())
 				transform->set_from_matrix(model);

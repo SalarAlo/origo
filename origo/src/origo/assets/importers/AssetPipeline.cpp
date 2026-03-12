@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <chrono>
 
 #include "origo/assets/importers/AssetPipeline.h"
 
@@ -19,7 +20,15 @@
 namespace Origo {
 
 void AssetImportPipeline::run_initial_import() {
+	using clock = std::chrono::steady_clock;
 	const std::filesystem::path root_asset_dir = PathContextService::get_instance().project().resources_root();
+	const auto started_at = clock::now();
+
+	size_t scanned_files = 0;
+	size_t imported_assets = 0;
+	size_t cached_assets = 0;
+	size_t authored_assets = 0;
+	size_t skipped_assets = 0;
 
 	ORG_CORE_INFO("[PIPELINE] Starting initial import scan at {}", root_asset_dir.string());
 
@@ -29,53 +38,52 @@ void AssetImportPipeline::run_initial_import() {
 	}
 
 	for (auto& asset_file : std::filesystem::recursive_directory_iterator(root_asset_dir)) {
-
-		ORG_CORE_TRACE("[SCAN] Found {}", asset_file.path().string());
-
 		if (!is_import_candidate(asset_file)) {
-			ORG_CORE_TRACE("[SCAN] Skipping (not import candidate)");
 			continue;
 		}
+		++scanned_files;
 
 		const auto& asset_path = asset_file.path();
+		const auto source_timestamp = asset_file.last_write_time();
 
 		IAssetImporter* asset_importer = resolve_importer(asset_path);
 
 		if (!asset_importer) {
-			ORG_CORE_WARN("[SCAN] No importer for {}", asset_path.string());
+			++skipped_assets;
+			ORG_CORE_TRACE("[SCAN] No importer for {}", asset_path.string());
 			continue;
 		}
 
-		ORG_CORE_INFO("[SCAN] Importer found for {}", asset_path.string());
-
-		auto meta = load_or_create_metadata(asset_path, asset_importer);
-
-		ORG_CORE_INFO("[META] UUID={} TYPE={} ORIGIN={}",
-		    meta->ID->to_string(),
-		    magic_enum::enum_name(meta->Type),
-		    magic_enum::enum_name(meta->Origin));
+		auto load_result = load_or_create_metadata(asset_path, source_timestamp, asset_importer);
+		auto& meta = load_result.Metadata;
 
 		auto truth = asset_importer->get_truth_location();
 
-		ORG_CORE_INFO("[PIPELINE] TruthLocation = {}",
-		    truth == AssetTruthLocation::ImportPayload ? "ImportPayload" : "SourceFile");
-
 		if (truth == AssetTruthLocation::ImportPayload) {
-			if (is_import_necessary(asset_path, *meta, asset_importer)) {
-				ORG_CORE_INFO("[PIPELINE] Import required for {}", asset_path.string());
+			if (is_import_necessary(load_result.ImportFileExists, *meta, asset_importer)) {
+				++imported_assets;
 				import_asset(asset_path, asset_importer, *meta);
 			} else {
-				ORG_CORE_INFO("[PIPELINE] Loading cached {}", asset_path.string());
+				++cached_assets;
 				load_cached_asset(asset_path.string() + ".import", *meta, *asset_importer);
 			}
 		} else {
-			ORG_CORE_INFO("[PIPELINE] Registering authored asset {}", asset_path.string());
+			++authored_assets;
 			register_authored_asset(asset_path, *asset_importer, *meta);
 		}
 	}
 
-	ORG_CORE_INFO("[PIPELINE] Resolving all assets");
 	AssetManager::get_instance().resolve_all();
+
+	const auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now() - started_at).count();
+	ORG_CORE_INFO(
+	    "[PIPELINE] Initial import complete in {} ms (scanned={}, imported={}, cached={}, authored={}, skipped={})",
+	    elapsed_ms,
+	    scanned_files,
+	    imported_assets,
+	    cached_assets,
+	    authored_assets,
+	    skipped_assets);
 }
 
 bool AssetImportPipeline::is_import_candidate(const std::filesystem::directory_entry& entry) {
@@ -89,13 +97,11 @@ IAssetImporter* AssetImportPipeline::resolve_importer(const std::filesystem::pat
 	return AssetImporterRegistry::get_instance().get_importer(path);
 }
 
-bool AssetImportPipeline::is_import_necessary(const std::filesystem::path& path, const AssetMetadata& meta, IAssetImporter* importer) {
+bool AssetImportPipeline::is_import_necessary(bool import_file_exists, const AssetMetadata& meta, IAssetImporter* importer) {
 	if (importer->get_truth_location() == AssetTruthLocation::SourceFile)
 		return false;
 
-	std::filesystem::path import_file { path.string() + ".import" };
-
-	if (!std::filesystem::exists(import_file))
+	if (!import_file_exists)
 		return true;
 
 	if (meta.ImportedTimestamp < meta.SourceTimestamp)
@@ -147,53 +153,35 @@ void AssetImportPipeline::load_cached_asset(const std::filesystem::path& importF
 	AssetDatabase::get_instance().register_metadata(meta);
 }
 
-Scope<AssetMetadata> AssetImportPipeline::load_or_create_metadata(const std::filesystem::path& sourcePath, IAssetImporter* importer) {
+AssetImportPipeline::MetadataLoadResult AssetImportPipeline::load_or_create_metadata(
+    const std::filesystem::path& sourcePath,
+    std::filesystem::file_time_type source_timestamp,
+    IAssetImporter* importer) {
 	const std::filesystem::path import_path { sourcePath.string() + ".import" };
-	Scope<AssetMetadata> meta;
+	MetadataLoadResult result;
+	result.ImportFileExists = std::filesystem::exists(import_path);
 
-	ORG_CORE_INFO("[META] Checking {}", import_path.string());
-
-	if (std::filesystem::exists(import_path)) {
-		ORG_CORE_INFO("[META] Found existing import file");
-		meta = make_scope<AssetMetadata>(AssetDatabase::get_instance().load_import_header(import_path));
+	if (result.ImportFileExists) {
+		result.Metadata = make_scope<AssetMetadata>(AssetDatabase::get_instance().load_import_header(import_path));
 	} else {
-		ORG_CORE_TRACE("[META] Creating new metadata for {}", sourcePath.string());
-
-		meta = make_scope<AssetMetadata>();
-		meta->ID = UUID::generate();
-		meta->Name = sourcePath.stem().string();
-		meta->Type = importer->get_asset_type();
-		meta->Origin = importer->get_origin();
-		meta->SourcePath = sourcePath;
-
-		if (std::filesystem::exists(sourcePath)) {
-			meta->SourceTimestamp = std::filesystem::last_write_time(sourcePath);
-			ORG_CORE_INFO("[META] SourceTimestamp set");
-		}
+		result.Metadata = make_scope<AssetMetadata>();
+		result.Metadata->ID = UUID::generate();
+		result.Metadata->Name = sourcePath.stem().string();
+		result.Metadata->Type = importer->get_asset_type();
+		result.Metadata->Origin = importer->get_origin();
+		result.Metadata->SourcePath = sourcePath;
 
 		using sys = std::chrono::system_clock;
-		meta->ImportedTimestamp = std::chrono::clock_cast<std::filesystem::file_time_type::clock>(
+		result.Metadata->ImportedTimestamp = std::chrono::clock_cast<std::filesystem::file_time_type::clock>(
 		    sys::from_time_t(0));
-
-		ORG_CORE_INFO("[META] New UUID {}", meta->ID->to_string());
 	}
 
-	return meta;
+	result.Metadata->SourcePath = sourcePath;
+	result.Metadata->SourceTimestamp = source_timestamp;
+	return result;
 }
 void AssetImportPipeline::register_authored_asset(const std::filesystem::path& path, const IAssetImporter& importer, AssetMetadata& meta) {
-	ORG_CORE_TRACE("[REGISTER] Authored asset {}", path.string());
-
-	if (std::filesystem::exists(path)) {
-		meta.SourceTimestamp = std::filesystem::last_write_time(path);
-		ORG_CORE_INFO("[REGISTER] SourceTimestamp refreshed");
-	}
-
-	ORG_CORE_INFO("[REGISTER] Registering metadata UUID={}", meta.ID->to_string());
 	AssetDatabase::get_instance().register_metadata(meta);
-
-	std::filesystem::path import_path = path.string() + ".import";
-	ORG_CORE_TRACE("[REGISTER] Attempting write {}", import_path.string());
-
 	AssetDatabase::get_instance().write_import_file(*meta.ID);
 
 	auto asset = AssetFactory::get_instance().allocate_hollow_asset(meta.Type);
@@ -208,8 +196,6 @@ void AssetImportPipeline::register_authored_asset(const std::filesystem::path& p
 	source.load_file();
 
 	serializer->deserialize(source, *asset.get());
-
-	ORG_CORE_INFO("[REGISTER] Creating runtime asset");
 	AssetFactory::get_instance().create_imported_asset(meta, std::move(asset));
 }
 
