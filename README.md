@@ -32,6 +32,23 @@ It is a learning project developed for submission to the CV-Tag 2026 at the Univ
 - **Build system:** CMake
 
 ---
+
+## Clone and Build
+
+The repository vendors its third-party dependencies directly, so a normal clone is enough:
+
+```bash
+git clone https://github.com/SalarAlo/origo.git
+```
+
+Then configure and build the project:
+
+```bash
+cmake -S . -B build
+cmake --build build
+```
+
+---
   
 ## License
 

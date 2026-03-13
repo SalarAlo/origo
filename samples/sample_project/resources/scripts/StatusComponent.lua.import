@@ -1,11 +1,11 @@
 {
         "header": {
                 "dependencies": [],
-                "imported_time_stamp": "-4664976734221252541",
+                "imported_time_stamp": "-4664367266354045438",
                 "name": "StatusComponent",
                 "origin": "Imported",
                 "source_path": "resources/scripts/StatusComponent.lua",
-                "source_time_stamp": "-4664976734221252541",
+                "source_time_stamp": "-4664367266354045438",
                 "type": "Script",
                 "uuid": "c29bc4fe21da04c6d446fd68a4c3b8ac"
         },

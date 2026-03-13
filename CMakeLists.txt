@@ -41,6 +41,24 @@ find_package(ZLIB REQUIRED)
 # Vendor Libraries
 # ------------------------------------------------------------------------------
 
+function(origo_require_submodule dir)
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${dir}/CMakeLists.txt")
+        message(FATAL_ERROR
+            "Missing vendored dependency '${dir}'. "
+            "Ensure the full source tree is present in the repository checkout."
+        )
+    endif()
+endfunction()
+
+origo_require_submodule(vendor/glfw)
+origo_require_submodule(vendor/glm)
+origo_require_submodule(vendor/assimp)
+origo_require_submodule(vendor/imgui)
+origo_require_submodule(vendor/spdlog)
+origo_require_submodule(vendor/json)
+origo_require_submodule(vendor/jolt)
+origo_require_submodule(vendor/nativefiledialog)
+
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/assimp)
