@@ -12,6 +12,7 @@ enum class AssetType {
 	Model,
 	Script,
 	Scene,
+	Audio,
 };
 
 class Asset {

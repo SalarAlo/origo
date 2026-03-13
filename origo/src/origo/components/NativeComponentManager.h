@@ -49,7 +49,6 @@ public:
 	T& add_component(const RID& entity, Args&&... args) {
 		auto& storage = get_or_create_storage<T>();
 		auto [it, inserted] = storage.Data.try_emplace(entity, std::forward<Args>(args)...);
-		(void)inserted;
 		return it->second;
 	}
 

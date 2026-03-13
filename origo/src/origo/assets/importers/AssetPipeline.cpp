@@ -114,9 +114,8 @@ void AssetImportPipeline::import_asset(const std::filesystem::path& path, IAsset
 	ORG_CORE_WARN("[IMPORT] Importing {}", path.string());
 
 	Scope<Asset> asset = importer->import(path, meta);
-
-	AssetManager::get_instance().register_asset(std::move(asset), meta.ID);
 	meta.ImportedTimestamp = meta.SourceTimestamp;
+	AssetFactory::get_instance().create_imported_asset(meta, std::move(asset));
 
 	ORG_CORE_INFO("[IMPORT] Writing import file UUID={}", meta.ID->to_string());
 

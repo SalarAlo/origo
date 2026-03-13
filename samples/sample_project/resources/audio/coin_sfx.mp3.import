@@ -1,0 +1,15 @@
+{
+        "header": {
+                "dependencies": [],
+                "imported_time_stamp": "-4664281715532061848",
+                "name": "coin_sfx",
+                "origin": "Imported",
+                "source_path": "resources/audio/coin_sfx.mp3",
+                "source_time_stamp": "-4664281715532061848",
+                "type": "Audio",
+                "uuid": "22d6d8f8838d5490ddb65b0a730b4148"
+        },
+        "payload": {
+                "file_path": "/home/salar/development/origo/samples/sample_project/resources/audio/coin_sfx.mp3"
+        }
+}

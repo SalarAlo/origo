@@ -1,5 +1,6 @@
 #include "origo/assets/serialization/AssetSerializer.h"
 
+#include "origo/assets/serialization/AudioSerializer.h"
 #include "origo/assets/serialization/MaterialSerializer.h"
 #include "origo/assets/serialization/MeshSerializer.h"
 #include "origo/assets/serialization/ModelSerializer.h"
@@ -46,6 +47,7 @@ void register_all_asset_serializers() {
 	register_serializer(AssetType::Shader, new ShaderSerializer());
 	register_serializer(AssetType::Script, new ScriptSerializer());
 	register_serializer(AssetType::Scene, new SceneAssetSerializer());
+	register_serializer(AssetType::Audio, new AudioSerializer());
 }
 
 }

@@ -1,5 +1,6 @@
 #include "origo/assets/importers/AssetImporterRegistry.h"
 
+#include "origo/assets/importers/AudioImporter.h"
 #include "origo/assets/importers/IAssetImporter.h"
 #include "origo/assets/importers/MaterialImporter.h"
 #include "origo/assets/importers/ModelImporter.h"
@@ -31,6 +32,7 @@ void AssetImporterRegistry::initialise_default_importers() {
 	register_importer(make_scope<ModelImporter>());
 	register_importer(make_scope<MaterialImporter>());
 	register_importer(make_scope<SceneAssetImporter>());
+	register_importer(make_scope<AudioImporter>());
 }
 
 }

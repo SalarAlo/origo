@@ -168,7 +168,7 @@ Asset* AssetDatabase::load_asset(const UUID& id) {
 
 	backend.end_object();
 
-	auto handle = am.register_asset(std::move(asset), meta.ID);
+	auto handle = am.register_asset(std::move(asset), meta.ID, meta.SourcePath);
 
 	return am.get(handle);
 }

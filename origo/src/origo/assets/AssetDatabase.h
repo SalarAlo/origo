@@ -2,7 +2,6 @@
 #pragma once
 
 #include "origo/assets/Metadata.h"
-#include "origo/core/PathContext.h"
 
 #include "origo/utils/Singleton.h"
 

@@ -14,6 +14,17 @@ Asset* AssetManager::get(const AssetHandle& handle) const {
 }
 
 auto AssetManager::register_asset(Scope<Asset>&& assetPtr, OptionalUUID uuid, OptionalPath path) -> AssetHandle {
+	if (uuid.has_value()) {
+		auto existing = m_uuid_to_handle.find(*uuid);
+		if (existing != m_uuid_to_handle.end() && is_valid(existing->second)) {
+			auto& entry = m_asset_entries[existing->second.Index];
+			entry.AssetPtr = std::move(assetPtr);
+			entry.Uuid = uuid;
+			entry.Path = path;
+			return existing->second;
+		}
+	}
+
 	auto handle { get_next_free_handle() };
 
 	m_asset_entries[handle.Index].AssetPtr = std::move(assetPtr);
