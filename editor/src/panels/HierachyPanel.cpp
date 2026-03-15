@@ -1,6 +1,7 @@
 #include <optional>
 
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 #include "components/EditorOutline.h"
 
@@ -22,6 +23,23 @@
 namespace OrigoEditor {
 
 namespace {
+bool entity_matches_search(const std::string& query, const std::string& entity_name) {
+	if (query.empty())
+		return true;
+
+	std::string lowered_query;
+	lowered_query.reserve(query.size());
+	for (unsigned char c : query)
+		lowered_query.push_back((char)std::tolower(c));
+
+	std::string lowered_name;
+	lowered_name.reserve(entity_name.size());
+	for (unsigned char c : entity_name)
+		lowered_name.push_back((char)std::tolower(c));
+
+	return lowered_name.contains(lowered_query);
+}
+
 void duplicate_selected_entity(EditorContext& context, const Origo::RID& entity_id) {
 	auto duplicate = context.ActiveScene->duplicate_entity(entity_id);
 	if (!duplicate)
@@ -39,6 +57,23 @@ HierarchyPanel::HierarchyPanel(EditorContext& ctx)
 
 void HierarchyPanel::on_im_gui_render() {
 	ImGui::TextUnformatted("Hierarchy");
+	ImGui::Separator();
+	ImGui::InputTextWithHint("##HierarchySearch", "Search entities...", &m_search_query);
+
+	std::size_t total_entities = 0;
+	std::size_t visible_entities = 0;
+	for (const auto& entity_id : m_context.ActiveScene->get_entities()) {
+		if (m_context.ActiveScene->has_native_component<Origo::EditorHiddenComponent>(entity_id))
+			continue;
+
+		++total_entities;
+
+		auto* name_comp = m_context.ActiveScene->get_native_component<Origo::NameComponent>(entity_id);
+		if (name_comp && entity_matches_search(m_search_query, name_comp->Name))
+			++visible_entities;
+	}
+
+	ImGui::Text("%zu / %zu entities", visible_entities, total_entities);
 	ImGui::Separator();
 
 	auto selected_entity_id { m_context.get_selected_entity() };
@@ -104,6 +139,9 @@ void HierarchyPanel::on_im_gui_render() {
 		}
 
 		auto* name_comp = m_context.ActiveScene->get_native_component<Origo::NameComponent>(entity_id);
+		if (!name_comp || !entity_matches_search(m_search_query, name_comp->Name)) {
+			continue;
+		}
 
 		ImGui::PushID(entity_id.get_id());
 

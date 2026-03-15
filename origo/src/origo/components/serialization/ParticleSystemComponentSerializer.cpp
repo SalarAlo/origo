@@ -9,6 +9,7 @@ void ParticleSystemComponentSerializer::serialize(Component* comp, ISerializer& 
 	auto* ps = static_cast<ParticleSystemComponent*>(comp);
 
 	s.write("is_looping", ps->IsLooping ? 1 : 0);
+	s.write("start_delay", ps->StartDelay);
 	s.write("spawn_rate", ps->SpawnRate);
 
 	s.write("start_size", ps->StartSize);
@@ -40,6 +41,15 @@ void ParticleSystemComponentSerializer::serialize(Component* comp, ISerializer& 
 	auto shape_serializer { SerializeEmissionShape { s } };
 	std::visit(shape_serializer, ps->Shape);
 	s.end_object();
+
+	s.begin_array("bursts");
+	for (const auto& burst : ps->Bursts) {
+		s.begin_array_object();
+		s.write("time", burst.Time);
+		s.write("count", burst.Count);
+		s.end_array_object();
+	}
+	s.end_array();
 }
 
 void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer& s) {
@@ -49,7 +59,11 @@ void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer
 	s.try_read("is_looping", is_looping);
 	ps->IsLooping = is_looping;
 
+	s.try_read("start_delay", ps->StartDelay);
 	s.try_read("spawn_rate", ps->SpawnRate);
+
+	float unused_loop_duration = 0.0f;
+	s.try_read("loop_duration", unused_loop_duration);
 
 	s.try_read("start_size", ps->StartSize);
 	s.try_read("end_size", ps->EndSize);
@@ -83,6 +97,17 @@ void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer
 	auto shape_deserializer { SerializeEmissionShape { s } };
 	ps->Shape = shape_deserializer();
 	s.end_object();
+
+	ps->Bursts.clear();
+	s.begin_array("bursts");
+	while (s.try_begin_array_object_read()) {
+		ParticleBurst burst {};
+		s.try_read("time", burst.Time);
+		s.try_read("count", burst.Count);
+		ps->Bursts.push_back(burst);
+		s.end_array_object();
+	}
+	s.end_array();
 }
 
 }

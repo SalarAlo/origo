@@ -19,7 +19,7 @@ void AudioEngine::play_sound(const std::filesystem::path& path) {
 	ma_engine_play_sound(&m_miniaudio_engine, path.c_str(), NULL);
 }
 
-std::optional<AudioEngine::PlaybackId> AudioEngine::create_sound(const std::filesystem::path& path, float volume, bool looping) {
+std::optional<AudioEngine::PlaybackId> AudioEngine::create_sound(const std::filesystem::path& path, float volume, bool looping, float pitch) {
 	auto instance = std::make_shared<SoundInstance>();
 	instance->Path = path.string();
 
@@ -32,6 +32,7 @@ std::optional<AudioEngine::PlaybackId> AudioEngine::create_sound(const std::file
 
 	ma_sound_set_volume(&instance->Sound, volume);
 	ma_sound_set_looping(&instance->Sound, looping ? MA_TRUE : MA_FALSE);
+	ma_sound_set_pitch(&instance->Sound, pitch);
 
 	const PlaybackId id = m_next_playback_id++;
 	m_sounds.emplace(id, std::move(instance));
@@ -59,12 +60,44 @@ void AudioEngine::set_sound_volume(PlaybackId id, float volume) {
 	ma_sound_set_volume(&it->second->Sound, volume);
 }
 
+void AudioEngine::set_sound_pitch(PlaybackId id, float pitch) {
+	auto it = m_sounds.find(id);
+	if (it == m_sounds.end())
+		return;
+
+	ma_sound_set_pitch(&it->second->Sound, pitch);
+}
+
 void AudioEngine::set_sound_looping(PlaybackId id, bool looping) {
 	auto it = m_sounds.find(id);
 	if (it == m_sounds.end())
 		return;
 
 	ma_sound_set_looping(&it->second->Sound, looping ? MA_TRUE : MA_FALSE);
+}
+
+void AudioEngine::set_listener_transform(const Vec3& position, const Vec3& direction, const Vec3& up) {
+	ma_engine_listener_set_position(&m_miniaudio_engine, 0, position.x, position.y, position.z);
+	ma_engine_listener_set_direction(&m_miniaudio_engine, 0, direction.x, direction.y, direction.z);
+	ma_engine_listener_set_world_up(&m_miniaudio_engine, 0, up.x, up.y, up.z);
+}
+
+void AudioEngine::set_sound_spatial(PlaybackId id, bool is_spatial, const Vec3& position, float falloff_start_distance, float falloff_duration) {
+	auto it = m_sounds.find(id);
+	if (it == m_sounds.end())
+		return;
+
+	ma_sound_set_spatialization_enabled(&it->second->Sound, is_spatial ? MA_TRUE : MA_FALSE);
+	if (!is_spatial)
+		return;
+
+	const float min_distance = std::max(0.0f, falloff_start_distance);
+	const float max_distance = std::max(min_distance, min_distance + std::max(0.0f, falloff_duration));
+
+	ma_sound_set_position(&it->second->Sound, position.x, position.y, position.z);
+	ma_sound_set_attenuation_model(&it->second->Sound, ma_attenuation_model_linear);
+	ma_sound_set_min_distance(&it->second->Sound, min_distance);
+	ma_sound_set_max_distance(&it->second->Sound, max_distance);
 }
 
 bool AudioEngine::is_sound_playing(PlaybackId id) const {

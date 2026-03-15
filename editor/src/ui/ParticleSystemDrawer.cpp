@@ -1,7 +1,12 @@
 
+#include <algorithm>
+#include <string>
+
 #include <glm/vec3.hpp>
 
 #include "components/DrawEmissionShapeGUIControl.h"
+
+#include "imgui.h"
 
 #include "origo/components/particle_system/ParticleEmissionShapeFactory.h"
 #include "origo/components/particle_system/ParticleEmissionShapeKindOf.h"
@@ -20,53 +25,32 @@ static bool s_registered = []() {
 		    bool general_open = ComponentUI::start_region("General");
 
 		    if (general_open) {
-			    ComponentUI::draw_bool_control("Is Looping", ps.IsLooping);
-			    ComponentUI::draw_float_control("Spawn Rate", ps.SpawnRate);
+			    ComponentUI::draw_bool_control("Looping", ps.IsLooping);
+			    ComponentUI::draw_float_control("Start Delay", ps.StartDelay);
 
-			    static bool use_size_range = true;
-			    ComponentUI::draw_bool_control("Use Size Range", use_size_range);
+			    ImGui::BeginDisabled(!ps.IsLooping);
+			    ComponentUI::draw_float_control("Particles Per Second", ps.SpawnRate);
+			    ImGui::EndDisabled();
 
-			    if (use_size_range) {
-				    glm::vec2 size_range { ps.StartSize, ps.EndSize };
-				    ComponentUI::draw_vec2_control("Size Range", size_range);
-				    ps.StartSize = size_range.x;
-				    ps.EndSize = size_range.y;
-			    } else {
-				    float size = ps.StartSize;
-				    ComponentUI::draw_float_control("Size", size);
-				    ps.StartSize = size;
-				    ps.EndSize = size;
-			    }
+			    ps.StartDelay = std::max(0.0f, ps.StartDelay);
+			    ps.SpawnRate = std::max(0.0f, ps.SpawnRate);
 
-			    static bool use_lifetime_range = true;
-			    ComponentUI::draw_bool_control("Use Lifetime Range", use_lifetime_range);
+			    ImGui::Spacing();
 
-			    if (use_lifetime_range) {
-				    glm::vec2 lifetime_range { ps.LifetimeMin, ps.LifetimeMax };
-				    ComponentUI::draw_min_max_range_control("Lifetime Range", lifetime_range);
-				    ps.LifetimeMin = lifetime_range.x;
-				    ps.LifetimeMax = lifetime_range.y;
-			    } else {
-				    float lifetime = ps.LifetimeMin;
-				    ComponentUI::draw_float_control("Lifetime", lifetime);
-				    ps.LifetimeMin = lifetime;
-				    ps.LifetimeMax = lifetime;
-			    }
+			    glm::vec2 size_range { ps.StartSize, ps.EndSize };
+			    ComponentUI::draw_vec2_control("Size Start / End", size_range);
+			    ps.StartSize = size_range.x;
+			    ps.EndSize = size_range.y;
 
-			    static bool use_speed_range = true;
-			    ComponentUI::draw_bool_control("Use Speed Range", use_speed_range);
+			    glm::vec2 lifetime_range { ps.LifetimeMin, ps.LifetimeMax };
+			    ComponentUI::draw_min_max_range_control("Lifetime Min / Max", lifetime_range);
+			    ps.LifetimeMin = lifetime_range.x;
+			    ps.LifetimeMax = lifetime_range.y;
 
-			    if (use_speed_range) {
-				    glm::vec2 speed_range { ps.InitialSpeedMin, ps.InitialSpeedMax };
-				    ComponentUI::draw_min_max_range_control("Speed Range", speed_range);
-				    ps.InitialSpeedMin = speed_range.x;
-				    ps.InitialSpeedMax = speed_range.y;
-			    } else {
-				    float speed = ps.InitialSpeedMin;
-				    ComponentUI::draw_float_control("Speed", speed);
-				    ps.InitialSpeedMin = speed;
-				    ps.InitialSpeedMax = speed;
-			    }
+			    glm::vec2 speed_range { ps.InitialSpeedMin, ps.InitialSpeedMax };
+			    ComponentUI::draw_min_max_range_control("Speed Min / Max", speed_range);
+			    ps.InitialSpeedMin = speed_range.x;
+			    ps.InitialSpeedMax = speed_range.y;
 		    }
 
 		    ComponentUI::end_region(general_open);
@@ -86,6 +70,59 @@ static bool s_registered = []() {
 		    }
 
 		    ComponentUI::end_region(emission_open);
+
+		    bool bursts_open = ComponentUI::start_region("Bursts");
+
+		    if (bursts_open) {
+			    if (ImGui::Button("Add Burst"))
+				    ps.Bursts.push_back({});
+
+			    int remove_index = -1;
+
+			    for (size_t i = 0; i < ps.Bursts.size(); ++i) {
+				    auto& burst = ps.Bursts[i];
+				    burst.Time = std::max(0.0f, burst.Time);
+				    burst.Count = std::max(0, burst.Count);
+
+				    ImGui::PushID(static_cast<int>(i));
+
+				    const std::string header = "Burst " + std::to_string(i + 1);
+				    bool is_open = false;
+
+				    if (ImGui::BeginTable("BurstRow", 2, ImGuiTableFlags_SizingStretchProp)) {
+					    ImGui::TableSetupColumn("Header", ImGuiTableColumnFlags_WidthStretch);
+					    ImGui::TableSetupColumn("Actions", ImGuiTableColumnFlags_WidthFixed, 84.0f);
+					    ImGui::TableNextRow();
+
+					    ImGui::TableSetColumnIndex(0);
+					    is_open = ImGui::CollapsingHeader(
+					        header.c_str(),
+					        ImGuiTreeNodeFlags_DefaultOpen);
+
+					    ImGui::TableSetColumnIndex(1);
+					    if (ImGui::Button("Remove", ImVec2(-1.0f, 0.0f)))
+						    remove_index = static_cast<int>(i);
+
+					    ImGui::EndTable();
+				    }
+
+				    if (is_open) {
+					    ComponentUI::draw_float_control("Time After Start", burst.Time);
+					    ComponentUI::draw_int_control("Count", burst.Count);
+
+					    burst.Time = std::max(0.0f, burst.Time);
+					    burst.Count = std::max(0, burst.Count);
+				    }
+
+				    ImGui::Spacing();
+				    ImGui::PopID();
+			    }
+
+			    if (remove_index >= 0)
+				    ps.Bursts.erase(ps.Bursts.begin() + remove_index);
+		    }
+
+		    ComponentUI::end_region(bursts_open);
 
 		    bool physics_open = ComponentUI::start_region("Physics");
 

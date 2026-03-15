@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "state/EditorContext.h"
 #include "EditorPanel.h"
 
@@ -18,6 +20,7 @@ private:
 
 private:
 	EditorContext& m_context;
+	std::string m_search_query {};
 };
 
 }

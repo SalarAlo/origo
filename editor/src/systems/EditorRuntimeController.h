@@ -1,6 +1,7 @@
 #pragma once
 
 #include "state/EditorContext.h"
+
 namespace OrigoEditor {
 
 class EditorRuntimeController {

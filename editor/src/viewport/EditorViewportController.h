@@ -1,6 +1,7 @@
 #pragma once
 
 #include "origo/renderer/RenderView.h"
+
 #include "state/EditorViewMode.h"
 
 namespace Origo {
