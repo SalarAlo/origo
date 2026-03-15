@@ -41,9 +41,7 @@ void SceneViewport::on_im_gui_render() {
 		m_icons_loaded = true;
 	}
 
-	auto* active_scene = m_mode == EditorViewMode::Editor
-	    ? m_context.get_editor_scene()
-	    : m_context.get_game_scene();
+	auto* active_scene = m_context.get_viewport_scene();
 	ImGuizmo::BeginFrame();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();

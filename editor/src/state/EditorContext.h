@@ -54,7 +54,8 @@ struct EditorContext {
 	EditorViewportController ViewportController;
 
 	Origo::Scene* get_editor_scene() const { return EditorScene.get(); }
-	Origo::Scene* get_runtime_scene() const { return RuntimeState == EditorRuntimeState::Running ? ActiveScene : nullptr; }
+	Origo::Scene* get_runtime_scene() const { return RuntimeState == EditorRuntimeState::Running ? RuntimeScene.get() : nullptr; }
+	Origo::Scene* get_viewport_scene() const { return ActiveScene; }
 	Origo::Scene* get_game_scene() const { return ActiveScene; }
 
 	Origo::FrameBuffer& get_render_buffer(EditorViewMode mode) {

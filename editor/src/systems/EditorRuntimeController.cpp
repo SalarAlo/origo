@@ -94,11 +94,12 @@ void EditorRuntimeController::stop() {
 
 	if (m_context.RuntimeScene) {
 		reset_sound_emitters(m_context.RuntimeScene.get());
-		m_context.EditorScene = std::move(m_context.RuntimeScene);
-		reset_sound_emitters(m_context.EditorScene.get());
-		m_context.ActiveScene = m_context.EditorScene.get();
-		m_context.unselect_entity();
+		m_context.RuntimeScene.reset();
 	}
+
+	reset_sound_emitters(m_context.EditorScene.get());
+	m_context.ActiveScene = m_context.EditorScene.get();
+	m_context.unselect_entity();
 
 	m_context.RuntimeState = EditorRuntimeState::Editing;
 	Origo::AudioEngine::get_instance().destroy_all_sounds();
@@ -109,7 +110,7 @@ void EditorRuntimeController::stop() {
 
 	EditorNotificationSystem::get_instance().success(
 	    "Game Stopped",
-	    "Returned to editing mode.");
+	    "Returned to editing mode and restored the editor scene.");
 }
 
 }
