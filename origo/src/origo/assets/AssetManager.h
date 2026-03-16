@@ -73,6 +73,10 @@ private:
 	AssetHandle get_next_free_handle();
 
 private:
+	// texture, model
+	// AssetHandle { idx: 1, generation: 0 }
+	// texture, shader { idx: 1, generation: 1}
+	// get({ idx: 1, generation: 0 })
 	std::vector<AssetEntry> m_asset_entries {};
 	std::vector<uint32_t> m_free {};
 	ankerl::unordered_dense::map<UUID, AssetHandle> m_uuid_to_handle;

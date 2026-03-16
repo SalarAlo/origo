@@ -31,5 +31,4 @@ void TransformComponentSerializer::deserialize(Component* comp, ISerializer& bac
 	transform->set_rotation(rotation);
 	transform->set_scale(scale);
 }
-
 }

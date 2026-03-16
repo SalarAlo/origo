@@ -13,6 +13,7 @@ public:
 
 		return instance;
 	}
+
 	~Singleton() = default;
 
 protected:
