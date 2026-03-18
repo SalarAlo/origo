@@ -17,6 +17,7 @@ void DefaultAssetCache::create_all_defaults() {
 	get_texture();
 	get_shader();
 	get_material();
+	get_terrain_material();
 	get_outline_material();
 	get_particle_material();
 	get_debug_material();
@@ -71,6 +72,26 @@ AssetHandle DefaultAssetCache::get_material() {
 	material->resolve();
 
 	return *m_material;
+}
+
+AssetHandle DefaultAssetCache::get_terrain_material() {
+	if (m_terrain_material.has_value())
+		return *m_terrain_material;
+
+	m_terrain_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialPBR>(
+	    "Terrain Material",
+	    UUID::from_arbitrary_string("DEFAULT_TERRAIN_MATERIAL_2D"));
+
+	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_terrain_material);
+	material->set_shader(get_shader());
+	material->set_albedo(get_texture());
+	material->get_data().PBRParams.BaseColor = Vec3 { 0.33f, 0.53f, 0.24f };
+	material->get_data().PBRParams.Metallic = 0.02f;
+	material->get_data().PBRParams.Roughness = 0.92f;
+	material->get_data().PBRParams.AO = 1.0f;
+	material->resolve();
+
+	return *m_terrain_material;
 }
 
 AssetHandle DefaultAssetCache::get_debug_material() {

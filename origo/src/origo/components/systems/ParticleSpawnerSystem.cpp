@@ -40,6 +40,9 @@ int count_burst_triggers(const ParticleSystemComponent& particle_system, const P
 		return 0;
 
 	const float trigger_time = get_start_delay(particle_system) + std::max(0.0f, burst.Time);
+	if (trigger_time == 0.0f && window_start == 0.0f && window_end > 0.0f)
+		return 1;
+
 	return window_start < trigger_time && trigger_time <= window_end ? 1 : 0;
 }
 

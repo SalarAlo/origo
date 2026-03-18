@@ -13,6 +13,7 @@ public:
 	    size_t indexBytes);
 
 	static GeometryHeap* get_heap(int heapId);
+	static bool free_mesh_range(int heapId, const MeshRange& range, size_t vertexStrideBytes);
 
 	static int get_or_create_static_mesh_heap(int layoutId);
 	static int get_or_create_dynamic_mesh_heap(int layoutId);

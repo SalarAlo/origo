@@ -1,15 +1,21 @@
 #pragma once
 
+#include "origo/assets/AssetManager.h"
+
 #include "origo/components/Component.h"
+
+#include "origo/core/Random.h"
 
 namespace Origo {
 class TerrainComponent : public Component {
 public:
-	float Frequency { 0.5f };
-	float Amplitude { 2.0f };
-	int Octaves { 3 };
-	float Scale { 0.02f };
+	Random::PerlinSettings Perlin {};
 	int Size { 10 };
+	float Detail { 0.5f };
+	float Height { 4.0f };
+
+	OptionalAssetHandle TerrainMesh {};
+	bool RebuildNecessary {};
 
 	std::string get_component_name() const { return "Terrain"; };
 };

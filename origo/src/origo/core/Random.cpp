@@ -3,55 +3,19 @@
 #include <algorithm>
 #include <random>
 
+#define STB_PERLIN_IMPLEMENTATION
+#include "stb_perlin.h"
+
 #include "origo/core/Random.h"
 
 static std::mt19937_64 rng;
-
-static int perm[512];
-
-namespace {
-
-float fade(float t) {
-	return t * t * t * (t * (t * 6 - 15) + 10);
-}
-
-float self_lerp(float a, float b, float t) {
-	return a + t * (b - a);
-}
-
-float grad(int hash, float x, float y, float z) {
-	int h = hash & 15;
-	float u = h < 8 ? x : y;
-	float v = h < 4 ? y : (h == 12 || h == 14 ? x : z);
-
-	return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
-}
-
-void build_permutation() {
-	int p[256];
-
-	for (int i = 0; i < 256; ++i)
-		p[i] = i;
-
-	// Shuffle using your RNG
-	for (int i = 255; i > 0; --i) {
-		int j = std::uniform_int_distribution<int>(0, i)(rng);
-		std::swap(p[i], p[j]);
-	}
-
-	for (int i = 0; i < 256; ++i) {
-		perm[i] = p[i];
-		perm[i + 256] = p[i];
-	}
-}
-
-}
+static int s_noise_seed = 1337;
 
 namespace Origo::Random {
 
 void seed(int seed) {
 	rng.seed(seed);
-	build_permutation(); // IMPORTANT: tie noise to seed
+	s_noise_seed = seed;
 }
 
 float range(float min, float max) {
@@ -97,62 +61,44 @@ float perlin(float x, float y) {
 }
 
 float perlin(float x, float y, float z) {
-	int floored_x = (int)std::floor(x) & 255;
-	int floored_y = (int)std::floor(y) & 255;
-	int floored_z = (int)std::floor(z) & 255;
-
-	x -= std::floor(x);
-	y -= std::floor(y);
-	z -= std::floor(z);
-
-	float u = fade(x);
-	float v = fade(y);
-	float w = fade(z);
-
-	int a = perm[floored_x] + floored_y;
-	int aa = perm[a] + floored_z;
-	int ab = perm[a + 1] + floored_z;
-	int b = perm[floored_x + 1] + floored_y;
-	int ba = perm[b] + floored_z;
-	int bb = perm[b + 1] + floored_z;
-
-	float res = self_lerp(
-	    self_lerp(
-	        self_lerp(grad(perm[aa], x, y, z),
-	            grad(perm[ba], x - 1, y, z), u),
-	        self_lerp(grad(perm[ab], x, y - 1, z),
-	            grad(perm[bb], x - 1, y - 1, z), u),
-	        v),
-	    self_lerp(
-	        self_lerp(grad(perm[aa + 1], x, y, z - 1),
-	            grad(perm[ba + 1], x - 1, y, z - 1), u),
-	        self_lerp(grad(perm[ab + 1], x, y - 1, z - 1),
-	            grad(perm[bb + 1], x - 1, y - 1, z - 1), u),
-	        v),
-	    w);
-
-	return (res + 1.0f) * 0.5f;
+	return 0.5f * (stb_perlin_noise3_seed(x, y, z, 0, 0, 0, s_noise_seed) + 1.0f);
 }
 
 float perlin_octaves(float x, float y, const PerlinSettings& s) {
+	const int octaves = std::max(1, s.Octaves);
+	const float base_frequency = std::max(0.0001f, s.Frequency);
+	const float lacunarity = std::max(0.0001f, s.Lacunarity);
+	const float persistence = std::max(0.0f, s.Persistence);
+
 	float total = 0.0f;
-	float frequency = s.Frequency;
-	float amplitude = s.Amplitude;
+	float frequency = base_frequency;
+	float amplitude = 1.0f;
 	float max_value = 0.0f;
 
 	x *= s.Scale;
 	y *= s.Scale;
 
-	for (int i = 0; i < s.Octaves; ++i) {
-		total += perlin(x * frequency, y * frequency) * amplitude;
+	for (int i = 0; i < octaves; ++i) {
+		const float sample = stb_perlin_noise3_seed(
+		    x * frequency,
+		    y * frequency,
+		    0.0f,
+		    0,
+		    0,
+		    0,
+		    s.Seed + i);
+		total += sample * amplitude;
 
 		max_value += amplitude;
 
-		amplitude *= s.Persistence;
-		frequency *= s.Lacunarity;
+		amplitude *= persistence;
+		frequency *= lacunarity;
 	}
 
-	return total / max_value;
+	if (max_value <= 0.0f)
+		return 0.0f;
+
+	return (total / max_value) * s.Amplitude;
 }
 
 }
