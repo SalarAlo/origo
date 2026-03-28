@@ -41,7 +41,6 @@ target_link_libraries(OrigoEngine PUBLIC
 				glm
 				assimp
 				imgui
-				lua
 				sol2
 				jolt
 

@@ -34,6 +34,7 @@ set(BUILD_IMGUI ON CACHE BOOL "" FORCE)
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(UUID REQUIRED uuid)
+pkg_check_modules(LUA54 REQUIRED IMPORTED_TARGET lua5.4)
 find_package(ZLIB REQUIRED)
 
 
@@ -88,6 +89,10 @@ add_library(sol2 INTERFACE)
 target_include_directories(sol2 INTERFACE
     ${CMAKE_SOURCE_DIR}/vendor/sol2/include
 )
+target_compile_definitions(sol2 INTERFACE
+    SOL_NO_LUA_HPP=1
+)
+target_link_libraries(sol2 INTERFACE PkgConfig::LUA54)
 
 include_directories(
     vendor/nanosvg/src

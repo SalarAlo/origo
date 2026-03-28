@@ -15,7 +15,7 @@ public:
 	float Height { 4.0f };
 
 	OptionalAssetHandle TerrainMesh {};
-	bool RebuildNecessary {};
+	bool RebuildNecessary { true };
 
 	std::string get_component_name() const { return "Terrain"; };
 };

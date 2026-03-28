@@ -78,6 +78,7 @@ struct RenderEmissionShapeDebug {
 	}
 
 	void operator()(const BoxEmissionShape& b) const {
+		// TODO: bounding size y affects the z component
 		glm::mat4 local = glm::translate(glm::mat4(1.0f), glm::vec3(b.Position))
 		    * glm::scale(glm::mat4(1.0f), glm::vec3(b.Size));
 

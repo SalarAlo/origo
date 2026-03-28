@@ -4,6 +4,7 @@
 #include "origo/assets/Mesh.h"
 
 #include "origo/components/TerrainComponent.h"
+
 #include "origo/components/terrain/TerrainGenerator.h"
 
 #include "origo/renderer/GeometryHeapRegistry.h"
@@ -45,7 +46,7 @@ void TerrainMeshGeneratorSystem::update(Scene* scene, float dt) {
 }
 
 REGISTER_UPDATE_SYSTEM(
-    Origo::GamePhase::UpdateGame,
+    Origo::GamePhase::UpdateAlways,
     Origo::TerrainMeshGeneratorSystem);
 
 }

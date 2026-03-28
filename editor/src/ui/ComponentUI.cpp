@@ -1,4 +1,5 @@
-#include <cstdint>
+#include <array>
+#include <string>
 
 #include "ui/ComponentUI.h"
 
@@ -9,373 +10,335 @@
 #include "origo/assets/AssetManager.h"
 #include "origo/assets/Texture2D.h"
 
-static bool begin_inspector_region(const char* label, bool defaultOpen = true) {
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
-	ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.18f, 0.18f, 0.18f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.24f, 0.24f, 0.24f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.0f));
+namespace {
 
-	bool open = ImGui::CollapsingHeader(label,
-	    defaultOpen ? ImGuiTreeNodeFlags_DefaultOpen : 0);
+constexpr ImVec2 k_region_item_spacing { 4.0f, 6.0f };
 
-	ImGui::PopStyleColor(3);
-	ImGui::PopStyleVar();
+struct ScopedStyleVar {
+	explicit ScopedStyleVar(ImGuiStyleVar idx, const ImVec2& value)
+	    : m_count(1) {
+		ImGui::PushStyleVar(idx, value);
+	}
 
-	return open;
+	~ScopedStyleVar() {
+		if (m_count > 0)
+			ImGui::PopStyleVar(m_count);
+	}
+
+	ScopedStyleVar(const ScopedStyleVar&) = delete;
+	ScopedStyleVar& operator=(const ScopedStyleVar&) = delete;
+
+private:
+	int m_count;
+};
+
+struct ScopedStyleColors {
+	explicit ScopedStyleColors(std::initializer_list<std::pair<ImGuiCol, ImVec4>> colors)
+	    : m_count(static_cast<int>(colors.size())) {
+		for (const auto& [idx, color] : colors)
+			ImGui::PushStyleColor(idx, color);
+	}
+
+	~ScopedStyleColors() {
+		if (m_count > 0)
+			ImGui::PopStyleColor(m_count);
+	}
+
+	ScopedStyleColors(const ScopedStyleColors&) = delete;
+	ScopedStyleColors& operator=(const ScopedStyleColors&) = delete;
+
+private:
+	int m_count;
+};
+
+struct ScopedControlRow {
+	explicit ScopedControlRow(std::string_view label)
+	    : m_label(label)
+	    , m_item_spacing(ImGuiStyleVar_ItemSpacing, ComponentUI::detail::k_control_item_spacing) {
+		ImGui::PushID(label.data());
+	}
+
+	~ScopedControlRow() {
+		ImGui::PopID();
+	}
+
+	ScopedControlRow(const ScopedControlRow&) = delete;
+	ScopedControlRow& operator=(const ScopedControlRow&) = delete;
+
+	void draw_label() const {
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(m_label.data());
+	}
+
+	void align_value(float width) const {
+		ImGui::SameLine(ComponentUI::detail::get_control_row_offset(m_label, width));
+	}
+
+private:
+	std::string_view m_label;
+	ScopedStyleVar m_item_spacing;
+};
+
+const ImVec4& style_color(ImGuiCol color) {
+	return ImGui::GetStyle().Colors[color];
 }
+
+bool begin_inspector_region(const char* label, bool default_open = true) {
+	ScopedStyleVar frame_padding(ImGuiStyleVar_FramePadding, ImVec2 { 6.0f, 4.0f });
+	ScopedStyleColors colors({
+	    { ImGuiCol_Header, style_color(ImGuiCol_Header) },
+	    { ImGuiCol_HeaderHovered, style_color(ImGuiCol_HeaderHovered) },
+	    { ImGuiCol_HeaderActive, style_color(ImGuiCol_HeaderActive) },
+	});
+
+	return ImGui::CollapsingHeader(label, default_open ? ImGuiTreeNodeFlags_DefaultOpen : 0);
+}
+
+template <typename DrawFn>
+void draw_styled_frame(DrawFn&& draw_fn) {
+	ScopedStyleColors colors({
+	    { ImGuiCol_FrameBg, style_color(ImGuiCol_FrameBg) },
+	    { ImGuiCol_FrameBgHovered, style_color(ImGuiCol_FrameBgHovered) },
+	    { ImGuiCol_FrameBgActive, style_color(ImGuiCol_FrameBgActive) },
+	    { ImGuiCol_Text, style_color(ImGuiCol_Text) },
+	});
+
+	draw_fn();
+}
+
+template <typename DrawFn>
+void draw_styled_checkbox(DrawFn&& draw_fn) {
+	ScopedStyleColors colors({
+	    { ImGuiCol_FrameBg, style_color(ImGuiCol_FrameBg) },
+	    { ImGuiCol_FrameBgHovered, style_color(ImGuiCol_FrameBgHovered) },
+	    { ImGuiCol_FrameBgActive, style_color(ImGuiCol_FrameBgActive) },
+	    { ImGuiCol_CheckMark, style_color(ImGuiCol_CheckMark) },
+	});
+
+	draw_fn();
+}
+
+template <typename DrawFn>
+void draw_row(std::string_view label, float width, DrawFn&& draw_fn) {
+	ScopedControlRow row(label);
+	row.draw_label();
+	row.align_value(width);
+	draw_fn();
+}
+
+template <typename DrawFn>
+void draw_scalar_control(std::string_view label, float width, DrawFn&& draw_fn) {
+	draw_row(label, width, [&] {
+		draw_styled_frame([&] {
+			ImGui::SetNextItemWidth(width);
+			draw_fn();
+		});
+	});
+}
+
+template <size_t N, typename DrawFieldFn>
+void draw_multi_float_control(
+    std::string_view label,
+    const std::array<float*, N>& components,
+    const std::array<const char*, N>& ids,
+    float field_width,
+    float speed,
+    DrawFieldFn&& draw_field_fn) {
+	constexpr float spacing = 4.0f;
+	const float total_width = field_width * static_cast<float>(N) + spacing * static_cast<float>(N - 1);
+
+	draw_row(label, total_width, [&] {
+		for (size_t i = 0; i < N; ++i) {
+			draw_styled_frame([&] {
+				ImGui::SetNextItemWidth(field_width);
+				draw_field_fn(ids[i], *components[i], speed);
+			});
+
+			if (i + 1 < N)
+				ImGui::SameLine(0.0f, spacing);
+		}
+	});
+}
+
+std::string truncate_text(const std::string& text, size_t max_chars) {
+	if (text.size() <= max_chars)
+		return text;
+	return text.substr(0, max_chars - 3) + "...";
+}
+
+bool is_texture_asset_field(const Origo::OptionalAssetHandle& handle, const Origo::AssetMetadata& metadata, std::optional<Origo::AssetType> validation_type) {
+	return (validation_type && *validation_type == Origo::AssetType::Texture2D)
+	    || (handle && metadata.Type == Origo::AssetType::Texture2D);
+}
+
+ImTextureID get_texture_preview_id(Origo::AssetManager& asset_manager, const Origo::OptionalAssetHandle& handle, const Origo::AssetMetadata& metadata) {
+	if (!handle || metadata.Type != Origo::AssetType::Texture2D)
+		return 0;
+
+	if (auto* texture = asset_manager.get_asset<Origo::Texture2D>(*handle))
+		return static_cast<ImTextureID>(texture->get_renderer_id());
+
+	return 0;
+}
+
+void draw_texture_asset_preview(const std::string& display_name, ImTextureID preview_id, float width) {
+	constexpr float padding = 6.0f;
+	constexpr float height = 82.0f;
+	const float preview_size = height - padding * 2.0f;
+
+	ImGui::InvisibleButton("##TextureAssetField", ImVec2(width, height));
+
+	const ImVec2 card_min = ImGui::GetItemRectMin();
+	const ImVec2 card_max = ImGui::GetItemRectMax();
+	const ImVec2 preview_min { card_min.x + padding, card_min.y + padding };
+	const ImVec2 preview_max { preview_min.x + preview_size, preview_min.y + preview_size };
+
+	const ImU32 bg_color = ImGui::GetColorU32(ImGui::IsItemHovered() ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+	const ImU32 border_color = ImGui::GetColorU32(ImGuiCol_Border);
+	const ImU32 text_color = ImGui::GetColorU32(ImGuiCol_Text);
+	const ImU32 dim_text_color = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	const ImU32 preview_bg_color = ImGui::GetColorU32(ImGuiCol_ChildBg);
+
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	draw_list->AddRectFilled(card_min, card_max, bg_color, 4.0f);
+	draw_list->AddRect(card_min, card_max, border_color, 4.0f);
+
+	if (preview_id) {
+		// Rotate preview by 180 degrees to compensate for default flipped orientation.
+		draw_list->AddImage(preview_id, preview_min, preview_max, ImVec2(1.0f, 1.0f), ImVec2(0.0f, 0.0f));
+	} else {
+		draw_list->AddRectFilled(preview_min, preview_max, preview_bg_color, 2.0f);
+		draw_list->AddText(ImVec2(preview_min.x + 10.0f, preview_min.y + preview_size * 0.42f), dim_text_color, "No Tex");
+	}
+
+	const ImVec2 text_pos { preview_max.x + 8.0f, card_min.y + 10.0f };
+	const std::string title = truncate_text(display_name, 20);
+	draw_list->AddText(text_pos, text_color, title.c_str());
+	draw_list->AddText(ImVec2(text_pos.x, text_pos.y + 22.0f), dim_text_color, "Texture");
+}
+
+} // namespace
 
 namespace ComponentUI {
 
 void draw_vec3_control(std::string_view label, glm::vec3& values, float speed) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float field_width = 65.0f;
-	const float spacing = 4.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float total_width = field_width * 3.0f + spacing * 2.0f;
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - total_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	auto draw_field = [&](const char* id, float& v) {
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-		ImGui::SetNextItemWidth(field_width);
-		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
-
-		ImGui::PopStyleColor(4);
-	};
-
-	draw_field("##X", values.x);
-	ImGui::SameLine(0.0f, spacing);
-	draw_field("##Y", values.y);
-	ImGui::SameLine(0.0f, spacing);
-	draw_field("##Z", values.z);
-
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_multi_float_control<3>(
+	    label,
+	    { &values.x, &values.y, &values.z },
+	    { "##X", "##Y", "##Z" },
+	    65.0f,
+	    speed,
+	    [](const char* id, float& value, float drag_speed) {
+		    ImGui::DragFloat(id, &value, drag_speed, 0.0f, 0.0f, "%.2f");
+	    });
 }
 
 void draw_min_max_range_control(std::string_view label, glm::vec2& values, float speed) {
-	glm::vec2 original { values };
+	const glm::vec2 original = values;
 
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+	draw_multi_float_control<2>(
+	    label,
+	    { &values.x, &values.y },
+	    { "##X", "##Y" },
+	    65.0f,
+	    speed,
+	    [](const char* id, float& value, float drag_speed) {
+		    ImGui::DragFloat(id, &value, drag_speed, 0.0f, 0.0f, "%.2f");
+	    });
 
-	const float field_width = 65.0f;
-	const float spacing = 4.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float total_width = field_width * 2.0f + spacing;
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - total_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	auto draw_field = [&](const char* id, float& v) {
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-		ImGui::SetNextItemWidth(field_width);
-		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
-
-		ImGui::PopStyleColor(4);
-	};
-
-	draw_field("##X", values.x);
-	ImGui::SameLine(0.0f, spacing);
-	draw_field("##Y", values.y);
-
-	if (values.x > values.y) {
+	if (values.x > values.y)
 		values = original;
-	} else if (values.y < values.x) {
-		values = original;
-	}
-
-	ImGui::PopStyleVar();
-	ImGui::PopID();
 }
 
 void draw_float_control(std::string_view label, float& value, float speed) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+	draw_scalar_control(label, 100.0f, [&] {
+		ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, "%.3f");
+	});
+}
 
-	const float field_width = 100.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - field_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::SetNextItemWidth(field_width);
-	ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, "%.3f");
-
-	ImGui::PopStyleColor(4);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+void draw_float_control(std::string_view label, float& value, float speed, const char* format) {
+	draw_scalar_control(label, 100.0f, [&] {
+		ImGui::DragFloat("##float", &value, speed, 0.0f, 0.0f, format);
+	});
 }
 
 void draw_float_slider_control(std::string_view label, float& value, float min, float max, const char* format) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float field_width = 140.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - field_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::SetNextItemWidth(field_width);
-	ImGui::SliderFloat("##slider", &value, min, max, format);
-
-	ImGui::PopStyleColor(4);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_scalar_control(label, 140.0f, [&] {
+		ImGui::SliderFloat("##slider", &value, min, max, format);
+	});
 }
 
 void draw_int_control(std::string_view label, int& value, float speed) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float field_width = 90.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - field_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::SetNextItemWidth(field_width);
-	ImGui::DragInt("##int", &value, speed);
-
-	ImGui::PopStyleColor(4);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_scalar_control(label, 90.0f, [&] {
+		ImGui::DragInt("##int", &value, speed);
+	});
 }
 
 void draw_string_control(std::string_view label, std::string& value) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float field_width = 180.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - field_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::SetNextItemWidth(field_width);
-	ImGui::InputText(
-	    "##string",
-	    value.data(),
-	    value.capacity() + 1,
-	    ImGuiInputTextFlags_CallbackResize,
-	    [](ImGuiInputTextCallbackData* data) {
-		    auto* str = static_cast<std::string*>(data->UserData);
-		    str->resize(data->BufTextLen);
-		    data->Buf = str->data();
-		    return 0;
-	    },
-	    &value);
-
-	ImGui::PopStyleColor(4);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_scalar_control(label, 180.0f, [&] {
+		ImGui::InputText(
+		    "##string",
+		    value.data(),
+		    value.capacity() + 1,
+		    ImGuiInputTextFlags_CallbackResize,
+		    [](ImGuiInputTextCallbackData* data) {
+			    auto* str = static_cast<std::string*>(data->UserData);
+			    str->resize(data->BufTextLen);
+			    data->Buf = str->data();
+			    return 0;
+		    },
+		    &value);
+	});
 }
 
 void draw_bool_control(std::string_view label, bool& value) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
+	const float checkbox_width = ImGui::GetFrameHeight();
 
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float checkbox_size = ImGui::GetFrameHeight();
-
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - checkbox_size;
-
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_CheckMark, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	ImGui::Checkbox("##bool", &value);
-
-	ImGui::PopStyleColor(4);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_row(label, checkbox_width, [&] {
+		draw_styled_checkbox([&] {
+			ImGui::Checkbox("##bool", &value);
+		});
+	});
 }
 
 void draw_asset_control(std::string_view label, Origo::OptionalAssetHandle& handle, std::optional<Origo::AssetType> assetValidationType) {
-	auto& am = Origo::AssetManager::get_instance();
+	auto& asset_manager = Origo::AssetManager::get_instance();
 
-	auto uuid = handle ? am.get_uuid(*handle) : std::nullopt;
-	auto md = uuid ? Origo::AssetDatabase::get_instance().get_metadata(*uuid) : Origo::AssetMetadata {};
-
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
+	const auto uuid = handle ? asset_manager.get_uuid(*handle) : std::nullopt;
+	const Origo::AssetMetadata metadata = uuid
+	    ? Origo::AssetDatabase::get_instance().get_metadata(*uuid)
+	    : Origo::AssetMetadata {};
+	const std::string display_name = handle ? metadata.Name : "None";
+	const bool texture_field = is_texture_asset_field(handle, metadata, assetValidationType);
 	const float field_width = 180.0f;
-	const float field_height = ImGui::GetFrameHeight();
 
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
+	draw_row(label, field_width, [&] {
+		draw_styled_frame([&] {
+			if (texture_field) {
+				draw_texture_asset_preview(display_name, get_texture_preview_id(asset_manager, handle, metadata), field_width);
+			} else {
+				ImGui::Button(display_name.c_str(), ImVec2(field_width, ImGui::GetFrameHeight()));
+			}
+		});
 
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - field_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-	if (next_x < min_x)
-		next_x = min_x;
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID")) {
+				const char* uuid_str = static_cast<const char*>(payload->Data);
+				const Origo::UUID payload_id = Origo::UUID::from_string(uuid_str);
+				const auto payload_metadata = Origo::AssetDatabase::get_instance().get_metadata(payload_id);
 
-	ImGui::SameLine(next_x);
-
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-	std::string display = handle ? md.Name : "None";
-	bool is_texture_field = (assetValidationType && *assetValidationType == Origo::AssetType::Texture2D) || (handle && md.Type == Origo::AssetType::Texture2D);
-	if (is_texture_field) {
-		ImTextureID preview_id = 0;
-		if (handle && md.Type == Origo::AssetType::Texture2D) {
-			if (auto* texture = am.get_asset<Origo::Texture2D>(*handle))
-				preview_id = static_cast<ImTextureID>((intptr_t)texture->get_renderer_id());
+				if (!assetValidationType || payload_metadata.Type == *assetValidationType)
+					handle = asset_manager.get_handle_by_uuid(payload_id);
+			}
+			ImGui::EndDragDropTarget();
 		}
 
-		const float padding = 6.0f;
-		const float control_height = 82.0f;
-		const float preview_size = control_height - padding * 2.0f;
-		ImGui::InvisibleButton("##TextureAssetField", ImVec2(field_width, control_height));
-
-		ImVec2 card_min = ImGui::GetItemRectMin();
-		ImVec2 card_max = ImGui::GetItemRectMax();
-		ImVec2 preview_min = ImVec2(card_min.x + padding, card_min.y + padding);
-		ImVec2 preview_max = ImVec2(preview_min.x + preview_size, preview_min.y + preview_size);
-
-		ImU32 bg_col = ImGui::GetColorU32(ImGui::IsItemHovered() ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-		ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
-		ImU32 text_col = ImGui::GetColorU32(ImGuiCol_Text);
-		ImU32 text_dim_col = ImGui::GetColorU32(ImGuiCol_TextDisabled);
-		ImU32 preview_bg_col = IM_COL32(35, 35, 35, 255);
-
-		auto truncate_text = [](const std::string& text, size_t max_chars) {
-			if (text.size() <= max_chars)
-				return text;
-			return text.substr(0, max_chars - 3) + "...";
-		};
-
-		ImGui::GetWindowDrawList()->AddRectFilled(card_min, card_max, bg_col, 4.0f);
-		ImGui::GetWindowDrawList()->AddRect(card_min, card_max, border_col, 4.0f);
-
-		if (preview_id) {
-			// Rotate preview by 180 degrees to compensate for default flipped orientation.
-			ImGui::GetWindowDrawList()->AddImage(preview_id, preview_min, preview_max, ImVec2(1.0f, 1.0f), ImVec2(0.0f, 0.0f));
-		} else {
-			ImGui::GetWindowDrawList()->AddRectFilled(preview_min, preview_max, preview_bg_col, 2.0f);
-			ImGui::GetWindowDrawList()->AddText(ImVec2(preview_min.x + 10.0f, preview_min.y + preview_size * 0.42f), text_dim_col, "No Tex");
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Clear"))
+				handle = {};
+			ImGui::EndPopup();
 		}
-
-		ImVec2 text_pos = ImVec2(preview_max.x + 8.0f, card_min.y + 10.0f);
-		std::string title = truncate_text(display, 20);
-		ImGui::GetWindowDrawList()->AddText(text_pos, text_col, title.c_str());
-		ImGui::GetWindowDrawList()->AddText(ImVec2(text_pos.x, text_pos.y + 22.0f), text_dim_col, "Texture");
-	} else {
-		ImGui::Button(display.c_str(), ImVec2(field_width, field_height));
-	}
-
-	ImGui::PopStyleColor(4);
-
-	if (ImGui::BeginDragDropTarget()) {
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID")) {
-			const char* uuid_str = static_cast<const char*>(payload->Data);
-			Origo::UUID payload_id = Origo::UUID::from_string(uuid_str);
-			auto payload_md = Origo::AssetDatabase::get_instance().get_metadata(payload_id);
-
-			if (!assetValidationType || payload_md.Type == *assetValidationType)
-				handle = am.get_handle_by_uuid(payload_id);
-		}
-		ImGui::EndDragDropTarget();
-	}
-
-	if (ImGui::BeginPopupContextItem()) {
-		if (ImGui::MenuItem("Clear"))
-			handle = {};
-		ImGui::EndPopup();
-	}
-
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	});
 }
 
 void draw_color_control(std::string_view label, glm::vec3& value) {
@@ -420,60 +383,31 @@ void draw_color_control(std::string_view label, glm::vec3& value) {
 bool start_region(std::string_view label, bool defaultOpen) {
 	ImGui::PushID(label.data());
 
-	bool open = begin_inspector_region(label.data(), defaultOpen);
+	const bool open = begin_inspector_region(label.data(), defaultOpen);
 
-	if (open) {
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 6.0f });
-	}
+	if (open)
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, k_region_item_spacing);
 
 	return open;
 }
 
 void end_region(bool open) {
-	if (open) {
+	if (open)
 		ImGui::PopStyleVar();
-	}
 
 	ImGui::PopID();
 }
 
 void draw_vec2_control(std::string_view label, glm::vec2& values, float speed) {
-	ImGui::PushID(label.data());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2 { 4.0f, 4.0f });
-
-	const float field_width = 65.0f;
-	const float spacing = 4.0f;
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted(label.data());
-
-	float total_width = field_width * 2.0f + spacing;
-	float avail = ImGui::GetContentRegionAvail().x;
-	float next_x = ImGui::GetCursorPosX() + avail - total_width;
-	float min_x = ImGui::GetCursorPosX() + ImGui::CalcTextSize(label.data()).x + 8.0f;
-
-	if (next_x < min_x)
-		next_x = min_x;
-
-	ImGui::SameLine(next_x);
-
-	auto draw_field = [&](const char* id, float& v) {
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.13f, 0.13f, 0.13f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.17f, 0.17f, 0.17f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.20f, 0.20f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
-
-		ImGui::SetNextItemWidth(field_width);
-		ImGui::DragFloat(id, &v, speed, 0.0f, 0.0f, "%.2f");
-
-		ImGui::PopStyleColor(4);
-	};
-
-	draw_field("##X", values.x);
-	ImGui::SameLine(0.0f, spacing);
-	draw_field("##Y", values.y);
-
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+	draw_multi_float_control<2>(
+	    label,
+	    { &values.x, &values.y },
+	    { "##X", "##Y" },
+	    65.0f,
+	    speed,
+	    [](const char* id, float& value, float drag_speed) {
+		    ImGui::DragFloat(id, &value, drag_speed, 0.0f, 0.0f, "%.2f");
+	    });
 }
-}
+
+} // namespace ComponentUI
