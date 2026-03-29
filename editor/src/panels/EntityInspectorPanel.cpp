@@ -1,8 +1,15 @@
+#include <cctype>
+
+#include <algorithm>
+#include <string_view>
 #include <typeindex>
+#include <vector>
 
 #include "panels/EntityInspectorPanel.h"
 
 #include "imgui.h"
+
+#include "misc/cpp/imgui_stdlib.h"
 
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
@@ -18,6 +25,57 @@
 using namespace Origo;
 
 namespace OrigoEditor {
+
+namespace {
+	bool text_matches_query(std::string_view text, std::string_view query) {
+		if (query.empty())
+			return true;
+
+		return std::search(
+		           text.begin(),
+		           text.end(),
+		           query.begin(),
+		           query.end(),
+		           [](char lhs, char rhs) {
+			           return std::tolower((unsigned char)lhs) == std::tolower((unsigned char)rhs);
+		           })
+		    != text.end();
+	}
+
+	struct NativePickerEntry {
+		const char* Name = nullptr;
+		std::type_index Type = typeid(void);
+	};
+
+	struct ScriptPickerEntry {
+		const char* Name = nullptr;
+		Origo::ScriptComponentID ID;
+	};
+
+	bool draw_picker_row(const char* label, const char* category_label, bool enabled) {
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 6.0f));
+
+		if (!enabled)
+			ImGui::BeginDisabled();
+
+		const bool selected = ImGui::Selectable(label, false, ImGuiSelectableFlags_SpanAvailWidth);
+		const ImVec2 min = ImGui::GetItemRectMin();
+		const ImVec2 max = ImGui::GetItemRectMax();
+
+		if (!enabled)
+			ImGui::EndDisabled();
+
+		const ImU32 category_color = ImGui::GetColorU32(enabled ? ImGuiCol_TextDisabled : ImGuiCol_Text);
+		const ImVec2 text_size = ImGui::CalcTextSize(category_label);
+		ImGui::GetWindowDrawList()->AddText(
+		    ImVec2(max.x - text_size.x - 10.0f, min.y + 6.0f),
+		    category_color,
+		    category_label);
+
+		ImGui::PopStyleVar();
+		return enabled && selected;
+	}
+}
 
 void EntityInspectorPanel::on_im_gui_render() {
 	auto selected_entity_optional = m_context.get_selected_entity();
@@ -122,7 +180,7 @@ void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Ori
 }
 
 void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	const float button_width = 180.0f;
+	const float button_width = std::min(220.0f, ImGui::GetContentRegionAvail().x);
 	const float content_width = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 
 	ImGui::SetCursorPosX(
@@ -131,63 +189,142 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 	static ImVec2 add_button_pos {};
 	static ImVec2 add_button_size {};
 
-	if (ImGui::Button("+ Add Component", ImVec2(button_width, 0))) {
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 8.0f));
+	if (ImGui::Button("Add Component", ImVec2(button_width, 0))) {
 		add_button_pos = ImGui::GetItemRectMin();
 		add_button_size = ImGui::GetItemRectSize();
+		m_add_component_query.clear();
+		m_focus_add_component_search = true;
 		ImGui::OpenPopup("AddComponentPopup");
 	}
+	ImGui::PopStyleVar();
 
 	ImGui::SetNextWindowPos(
 	    ImVec2(add_button_pos.x, add_button_pos.y + add_button_size.y),
 	    ImGuiCond_Appearing);
 
-	ImGui::SetNextWindowSize(ImVec2(300.0f, 0.0f),
+	ImGui::SetNextWindowSize(ImVec2(380.0f, 420.0f),
 	    ImGuiCond_Appearing);
 
 	if (ImGui::BeginPopup("AddComponentPopup",
 	        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
-
-		ImGui::TextDisabled("Available Components");
-		ImGui::Separator();
+		std::vector<NativePickerEntry> available_native;
+		std::vector<NativePickerEntry> unavailable_native;
+		std::vector<ScriptPickerEntry> available_script;
 
 		for (const auto& [type, entry] : InspectorDrawRegistry::get_instance().get_entries()) {
 			if (activeScene->has_native_component_by_type(selectedEntity, type))
 				continue;
 
 			const bool is_registered = Origo::NativeComponentRegistry::get_instance().get_component_info(type) != nullptr;
-
-			if (!is_registered) {
-				ImGui::PushStyleColor(
-				    ImGuiCol_Text,
-				    ImVec4(0.85f, 0.25f, 0.25f, 1.0f));
-				ImGui::BeginDisabled();
-				ImGui::MenuItem(entry.Name);
-				ImGui::EndDisabled();
-				ImGui::PopStyleColor();
-				continue;
-			}
-
-			if (ImGui::MenuItem(entry.Name)) {
-				activeScene->add_native_component(selectedEntity, type);
-				ImGui::CloseCurrentPopup();
-				break;
-			}
+			(is_registered ? available_native : unavailable_native).push_back(NativePickerEntry { .Name = entry.Name, .Type = type });
 		}
-
-		ImGui::Separator();
-		ImGui::TextDisabled("Script Components");
 
 		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::get_all()) {
 			if (activeScene->has_script_component(selectedEntity, id))
 				continue;
 
-			if (ImGui::MenuItem(desc.Name.c_str())) {
-				activeScene->add_script_component(selectedEntity, id);
-				ImGui::CloseCurrentPopup();
-				break;
+			available_script.push_back(ScriptPickerEntry { .Name = desc.Name.c_str(), .ID = id });
+		}
+
+		auto sort_by_name = [](const auto& lhs, const auto& rhs) {
+			return std::string_view(lhs.Name) < std::string_view(rhs.Name);
+		};
+
+		std::sort(available_native.begin(), available_native.end(), sort_by_name);
+		std::sort(unavailable_native.begin(), unavailable_native.end(), sort_by_name);
+		std::sort(available_script.begin(), available_script.end(), sort_by_name);
+
+		ImGui::TextUnformatted("Add Component");
+		ImGui::SameLine();
+		ImGui::TextDisabled("%zu available", available_native.size() + available_script.size());
+		ImGui::Separator();
+
+		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::InputTextWithHint("##AddComponentSearch", "Search components...", &m_add_component_query);
+		if (m_focus_add_component_search) {
+			ImGui::SetKeyboardFocusHere(-1);
+			m_focus_add_component_search = false;
+		}
+
+		if (ImGui::IsItemActive())
+			m_context.mark_text_input_active();
+
+		ImGui::Spacing();
+
+		std::size_t visible_available_native = 0;
+		std::size_t visible_unavailable_native = 0;
+		std::size_t visible_script = 0;
+
+		for (const auto& item : available_native)
+			visible_available_native += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
+		for (const auto& item : unavailable_native)
+			visible_unavailable_native += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
+		for (const auto& item : available_script)
+			visible_script += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
+
+		const std::size_t visible_total = visible_available_native + visible_unavailable_native + visible_script;
+		bool component_added = false;
+
+		ImGui::BeginChild("AddComponentList", ImVec2(0.0f, 0.0f), true);
+
+		if (visible_total == 0) {
+			ImGui::TextDisabled("No components match \"%s\".", m_add_component_query.c_str());
+			ImGui::EndChild();
+			ImGui::EndPopup();
+			return;
+		}
+
+		if (visible_available_native > 0) {
+			ImGui::SeparatorText("Native Components");
+			for (const auto& item : available_native) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				ImGui::PushID(item.Name);
+				if (draw_picker_row(item.Name, "Native", true)) {
+					activeScene->add_native_component(selectedEntity, item.Type);
+					ImGui::CloseCurrentPopup();
+					component_added = true;
+					ImGui::PopID();
+					break;
+				}
+				ImGui::PopID();
 			}
 		}
 
+		if (visible_script > 0 && !component_added) {
+			ImGui::SeparatorText("Script Components");
+			for (const auto& item : available_script) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				ImGui::PushID(item.Name);
+				if (draw_picker_row(item.Name, "Script", true)) {
+					activeScene->add_script_component(selectedEntity, item.ID);
+					ImGui::CloseCurrentPopup();
+					component_added = true;
+					ImGui::PopID();
+					break;
+				}
+				ImGui::PopID();
+			}
+		}
+
+		if (visible_unavailable_native > 0 && !component_added) {
+			ImGui::SeparatorText("Unavailable");
+			ImGui::TextDisabled("Registered in the inspector, but not addable in the scene:");
+			for (const auto& item : unavailable_native) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				ImGui::PushID(item.Name);
+				draw_picker_row(item.Name, "Missing Registry", false);
+				ImGui::PopID();
+			}
+		}
+
+		ImGui::EndChild();
 		ImGui::EndPopup();
 	}
 }

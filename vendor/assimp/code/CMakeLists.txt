@@ -1596,7 +1596,7 @@ IF(NOT ASSIMP_HUNTER_ENABLED)
       TARGET_LINK_LIBRARIES(assimp ${UNZIP_LINK_LIBRARIES})
     endif()
   else ()
-    INCLUDE_DIRECTORIES("../")
+    INCLUDE_DIRECTORIES("../contrib/unzip")
   endif ()
 ENDIF()
 

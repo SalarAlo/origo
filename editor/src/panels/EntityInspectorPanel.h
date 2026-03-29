@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "EditorPanel.h"
 
 #include "state/EditorContext.h"
@@ -25,6 +27,8 @@ private:
 
 private:
 	EditorContext& m_context;
+	std::string m_add_component_query {};
+	bool m_focus_add_component_search = false;
 };
 
 }
