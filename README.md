@@ -29,7 +29,7 @@ It is a learning project developed for submission to the CV-Tag 2026 at the Univ
 - **Graphics:** OpenGL  
   Proper driver support required (Mesa recommended)
 
-- **Build system:** CMake
+- **Build system:** CMake + Ninja
 
 ---
 
@@ -44,7 +44,7 @@ git clone https://github.com/SalarAlo/origo.git
 Then configure and build the project:
 
 ```bash
-cmake -S . -B build
+cmake -S . -B build -G Ninja
 cmake --build build
 ```
 

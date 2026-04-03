@@ -17,72 +17,49 @@ EditorViewportController::EditorViewportController(EditorContext& ctx)
 
 RenderView EditorViewportController::get_render_view(EditorViewMode mode, Origo::Scene* scene) {
 	Camera* cam { nullptr };
-	TransformComponent* transf { nullptr };
+	std::optional<TransformComponent> transform {};
 	CameraShakeComponent* shake { nullptr };
 
 	RID camera_entity {};
 
 	if (mode == EditorViewMode::Game && scene) {
-		scene->view<CameraComponent, TransformComponent, CameraShakeComponent>(
-		    [&](RID e, CameraComponent& cc, TransformComponent& tr, CameraShakeComponent& sh) {
+		scene->view<CameraComponent, TransformComponent>(
+		    [&](RID e, CameraComponent& cc, TransformComponent& tr) {
 			    if (cam != nullptr)
 				    return;
 
 			    if (cc.IsPrimary) {
 				    cam = &cc.CameraObj;
-				    transf = &tr;
-				    shake = &sh;
+				    transform = tr;
 				    camera_entity = e;
+				    shake = scene->get_native_component<CameraShakeComponent>(camera_entity);
 			    }
 		    });
+	}
 
-		if (!cam) {
-			scene->view<CameraComponent, TransformComponent>(
-			    [&](RID e, CameraComponent& cc, TransformComponent& tr) {
-				    if (cam != nullptr)
-					    return;
+	if (shake && shake->Counter >= shake->Delay && m_context.RuntimeState == EditorRuntimeState::Running && shake->Counter < shake->Delay + shake->Duration) {
+		float time_passed { shake->Counter - shake->Delay };
+		float normalized { time_passed / shake->Duration };
+		float inverse_normalized { 1 - normalized };
+		float amplitude { (shake->Amplitude * inverse_normalized) };
 
-				    if (cc.IsPrimary) {
-					    cam = &cc.CameraObj;
-					    transf = &tr;
-					    camera_entity = e;
-				    }
-			    });
-		}
+		float x { glm::sin(time_passed * shake->Frequency) * amplitude };
+		float y { glm::cos(time_passed * shake->Frequency) * amplitude };
+
+		float rot_x { glm::sin(time_passed * shake->Frequency + 4.2f) * amplitude };
+		float rot_y { glm::cos(time_passed * shake->Frequency + 6.7f) * amplitude };
+
+		transform->set_position(transform->get_position() + transform->get_right() * x + transform->get_up() * y);
+		transform->set_rotation(transform->get_rotation() + Vec3 { rot_x, 0, rot_y });
 	}
 
 	if (mode == EditorViewMode::Editor || !cam) {
 		cam = &m_context.EditorViewportCamera.get_camera();
-		transf = &m_context.EditorViewportCamera.get_transform();
-		shake = nullptr;
+		transform = m_context.EditorViewportCamera.get_transform();
 	}
 
-	TransformComponent final = *transf;
+	cam->update_from_transform(*transform);
 
-	if (shake) {
-		float total = shake->ShakeDelay + shake->ShakeDuration;
-
-		if (shake->ShakeCounter >= shake->ShakeDelay && shake->ShakeCounter < total) {
-
-			float t = shake->ShakeCounter - shake->ShakeDelay;
-
-			float decay = 1.0f - (t / shake->ShakeDuration);
-			decay = glm::clamp(decay, 0.0f, 1.0f);
-
-			float freq = shake->ShakeFrequency;
-			float amp = shake->ShakeAmplitude * decay;
-
-			float x = sin(t * freq * 1.3f) * amp;
-			float y = cos(t * freq * 1.7f) * amp;
-
-			final.set_position(final.get_position() + glm::vec3(x, y, 0.0f));
-		}
-	}
-
-	// --- UPDATE CAMERA WITH FINAL TRANSFORM ---
-	cam->update_from_transform(final);
-
-	// --- NORMAL RENDER VIEW SETUP ---
 	const auto& render_buffer = m_context.get_render_buffer(mode);
 	float width = static_cast<float>(render_buffer.get_width());
 	float height = static_cast<float>(render_buffer.get_height());
@@ -92,8 +69,8 @@ RenderView EditorViewportController::get_render_view(EditorViewMode mode, Origo:
 	RenderView view {
 		.Projection = cam->get_projection(),
 		.View = cam->get_view(),
-		.CameraForward = final.get_forward(),
-		.CameraPosition = final.get_position(),
+		.CameraForward = transform->get_forward(),
+		.CameraPosition = transform->get_position(),
 	};
 
 	return view;

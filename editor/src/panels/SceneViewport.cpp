@@ -49,9 +49,12 @@ void SceneViewport::on_im_gui_render() {
 	int h = (int)size.y;
 
 	if (w <= 0 || h <= 0) {
+		m_context.set_viewport_visible(m_mode, false);
 		ImGui::Dummy(size);
 		return;
 	}
+
+	m_context.set_viewport_visible(m_mode, true);
 
 	bool resized = false;
 	auto& render_buffer = m_context.get_render_buffer(m_mode);

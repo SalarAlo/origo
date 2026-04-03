@@ -74,6 +74,17 @@ struct EditorContext {
 		return mode == EditorViewMode::Editor ? ResolveBuffer : GameResolveBuffer;
 	}
 
+	void set_viewport_visible(EditorViewMode mode, bool visible) {
+		if (mode == EditorViewMode::Editor)
+			m_editor_viewport_visible = visible;
+		else
+			m_game_viewport_visible = visible;
+	}
+
+	bool is_viewport_visible(EditorViewMode mode) const {
+		return mode == EditorViewMode::Editor ? m_editor_viewport_visible : m_game_viewport_visible;
+	}
+
 	void set_selected_entity(const Origo::RID& entity);
 	void unselect_entity();
 	std::optional<Origo::RID> get_selected_entity() const { return m_selected_entity; }
@@ -94,6 +105,8 @@ private:
 	std::optional<Origo::RID> m_selected_entity { std::nullopt };
 	OptionalUUID m_selected_asset { std::nullopt };
 	bool m_text_input_active { false };
+	bool m_editor_viewport_visible { false };
+	bool m_game_viewport_visible { false };
 };
 
 }

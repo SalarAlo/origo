@@ -70,8 +70,8 @@ void PanelManager::render_panels() {
 			if (!panel->is_collapsable())
 				flags |= ImGuiWindowFlags_NoCollapse;
 
-			ImGui::Begin(panel->get_name(), nullptr, flags);
-			panel->on_im_gui_render();
+			if (ImGui::Begin(panel->get_name(), nullptr, flags))
+				panel->on_im_gui_render();
 			ImGui::End();
 		}
 	}

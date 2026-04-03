@@ -1,12 +1,13 @@
 #pragma once
 
-#include "origo/components/serialization/IComponentSerializer.h"
+#include "IComponentSerializer.h"
 
 namespace Origo {
+
 class CameraShakeComponentSerializer : public IComponentSerializer {
 public:
-	void serialize(Component*, ISerializer&) const override;
-	void deserialize(Component*, ISerializer&) override;
+	void serialize(Component* comp, ISerializer& s) const override;
+	void deserialize(Component* comp, ISerializer& s) override;
 };
 
 }

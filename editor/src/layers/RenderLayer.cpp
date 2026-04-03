@@ -45,14 +45,19 @@ void RenderLayer::on_attach() {
 void RenderLayer::on_update(double dt) {
 	auto* viewport_scene = m_context.get_viewport_scene();
 
-	render_view(m_context, m_render_context, viewport_scene, EditorViewMode::Editor, dt, true);
-	render_view(
-	    m_context,
-	    m_render_context,
-	    viewport_scene,
-	    EditorViewMode::Game,
-	    dt,
-	    false);
+	if (m_context.is_viewport_visible(EditorViewMode::Editor)) {
+		render_view(m_context, m_render_context, viewport_scene, EditorViewMode::Editor, dt, true);
+	}
+
+	if (m_context.is_viewport_visible(EditorViewMode::Game)) {
+		render_view(
+		    m_context,
+		    m_render_context,
+		    viewport_scene,
+		    EditorViewMode::Game,
+		    dt,
+		    false);
+	}
 }
 
 }
