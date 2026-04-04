@@ -13,6 +13,7 @@ enum class AssetType {
 	Script,
 	Scene,
 	Audio,
+	Prefab
 };
 
 class Asset {

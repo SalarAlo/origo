@@ -8,7 +8,7 @@ namespace Origo {
 
 enum class AssetOrigin {
 	Imported, // External data requiring transformation into runtime form (payload stored in .import)
-	Authored, // Engine-native data resolved directly from source (.import holds metadata only)
+	Authored, // Engine native data resolved directly from source (.import holds metadata only)
 	Runtime, // Created by the editor or at runtime (materials for materials, meshes for models, ...)
 	Synthetic // Engine built asset (default shaders, fallback textures)
 };

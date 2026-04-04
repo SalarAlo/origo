@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <optional>
 
 #include "origo/assets/AssetManager.h"
 
@@ -8,12 +9,20 @@ namespace Origo {
 
 class ISerializer {
 public:
-	ISerializer(const std::filesystem::path& path)
-	    : m_path(path) { }
+	ISerializer() = default;
+	explicit ISerializer(std::filesystem::path path)
+	    : m_path(std::move(path)) { }
+
 	virtual ~ISerializer() = default;
+
+	void set_path(std::filesystem::path path) { m_path = std::move(path); }
+	void clear_path() { m_path.reset(); }
+	bool has_path() const { return m_path.has_value(); }
+	const std::optional<std::filesystem::path>& get_path() const { return m_path; }
 
 	virtual void save_to_file() = 0;
 	virtual void load_file() = 0;
+	virtual void write_to(ISerializer& serializer) const = 0;
 
 	virtual void begin_object(std::string_view key) = 0;
 	virtual void end_object() = 0;
@@ -58,12 +67,13 @@ public:
 	virtual bool try_begin_array_object_read() = 0;
 
 protected:
-	std::filesystem::path m_path;
+	std::optional<std::filesystem::path> m_path;
 };
 
 #define SERIALIZER_FWD                                                     \
 	void save_to_file() override;                                      \
 	void load_file() override;                                         \
+	void write_to(ISerializer& serializer) const override;             \
                                                                            \
 	void begin_object(std::string_view key) override;                  \
 	void end_object() override;                                        \

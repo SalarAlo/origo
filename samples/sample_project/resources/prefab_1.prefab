@@ -1,0 +1,39 @@
+{
+        "native_components": [
+                {
+                        "data": {
+                                "pos": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                },
+                                "rot": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                },
+                                "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                }
+                        },
+                        "type": "Transform"
+                },
+                {
+                        "data": {
+                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
+                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                        },
+                        "type": "MeshRenderer"
+                },
+                {
+                        "data": {
+                                "name": "Cube"
+                        },
+                        "type": "Name"
+                }
+        ],
+        "rid": "2",
+        "script_components": []
+}

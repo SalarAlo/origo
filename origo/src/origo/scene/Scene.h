@@ -13,6 +13,7 @@
 namespace Origo {
 class Scene;
 class PhysicsWorld;
+class SceneEntitySerializationManager;
 
 namespace SceneSerializer {
 	void serialize_to_file(Scene& scene, const std::filesystem::path& out);
@@ -22,6 +23,7 @@ namespace SceneSerializer {
 class Scene {
 	friend void SceneSerializer::serialize_to_file(Scene& scene, const std::filesystem::path& out);
 	friend Scope<Scene> SceneSerializer::deserialize_from_file(const std::filesystem::path& path);
+	friend class SceneEntitySerializationManager;
 
 public:
 	Scene(std::string_view name = "SampleScene");

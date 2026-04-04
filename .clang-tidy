@@ -25,6 +25,3 @@ CheckOptions:
     value: lower_case
 
 
-  # PUBLIC members → PascalCase
-  - key: readability-identifier-naming.PublicMemberCase
-    value: CamelCase

@@ -4,6 +4,7 @@
 #include "origo/assets/importers/IAssetImporter.h"
 #include "origo/assets/importers/MaterialImporter.h"
 #include "origo/assets/importers/ModelImporter.h"
+#include "origo/assets/importers/PrefabImporter.h"
 #include "origo/assets/importers/SceneAssetImporter.h"
 #include "origo/assets/importers/ScriptImporter.h"
 #include "origo/assets/importers/ShaderImporter.h"
@@ -33,6 +34,7 @@ void AssetImporterRegistry::initialise_default_importers() {
 	register_importer(make_scope<MaterialImporter>());
 	register_importer(make_scope<SceneAssetImporter>());
 	register_importer(make_scope<AudioImporter>());
+	register_importer(make_scope<PrefabImporter>());
 }
 
 }

@@ -32,6 +32,9 @@ private:
 	void draw_asset_hierarchy(FolderEntry* folder);
 	void draw_asset_hierarchy_node(AssetEntry& asset, const std::unordered_map<Origo::UUID, std::vector<AssetEntry*>>& children_by_parent);
 	void draw_create_asset_context_menu(FolderEntry* target_folder);
+
+	void handle_drag_drop_target(FolderEntry* entry);
+
 	void rebuild_tree();
 
 private:

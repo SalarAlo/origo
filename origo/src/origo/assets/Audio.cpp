@@ -9,7 +9,6 @@ namespace Origo {
 
 Audio::Audio(const std::optional<std::filesystem::path>& audio_path)
     : AudioPath(audio_path) {
-	ORG_INFO("Audio asset constructed");
 }
 
 void Audio::play_sound() {

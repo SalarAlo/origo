@@ -1,0 +1,68 @@
+{
+        "native_components": [
+                {
+                        "data": {
+                                "offset": {
+                                        "x": 0.0,
+                                        "y": 1.0,
+                                        "z": 0.0
+                                },
+                                "size": {
+                                        "x": 1.899999976158142,
+                                        "y": 4.0,
+                                        "z": 1.899999976158142
+                                }
+                        },
+                        "type": "Box Collider Component"
+                },
+                {
+                        "data": {
+                                "pos": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                },
+                                "rot": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                },
+                                "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                }
+                        },
+                        "type": "Transform"
+                },
+                {
+                        "data": {
+                                "model": "2f5d6d377408942edae1f069bc6ff636"
+                        },
+                        "type": "ModelRenderer"
+                },
+                {
+                        "data": {
+                                "name": "Entity"
+                        },
+                        "type": "Name"
+                },
+                {
+                        "data": {
+                                "allow_sleeping": 1,
+                                "angular_drag": 0.05000000074505806,
+                                "drag": 0.0,
+                                "friction": 0.20000000298023224,
+                                "is_sensor": 0,
+                                "mass": 1.0,
+                                "motion_quality": "Discrete",
+                                "motion_type": "Dynamic",
+                                "restitution": 0.0,
+                                "use_gravity": 1
+                        },
+                        "type": "Rigidbody"
+                }
+        ],
+        "rid": "2",
+        "script_components": []
+}

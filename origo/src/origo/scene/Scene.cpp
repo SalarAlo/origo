@@ -32,6 +32,7 @@ RID Scene::create_entity(std::string_view name) {
 
 std::optional<RID> Scene::duplicate_entity(const RID& source, std::string_view name) {
 	const auto source_it = std::find(m_entities.begin(), m_entities.end(), source);
+
 	if (source_it == m_entities.end())
 		return std::nullopt;
 

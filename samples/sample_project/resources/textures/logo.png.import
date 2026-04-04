@@ -1,0 +1,19 @@
+{
+        "header": {
+                "dependencies": [],
+                "imported_time_stamp": "-4662358473725267102",
+                "name": "logo",
+                "origin": "Imported",
+                "source_path": "resources/textures/logo.png",
+                "source_time_stamp": "-4662358473725267102",
+                "type": "Texture2D",
+                "uuid": "8967b880e20df5d39a9296cca0c32c6b"
+        },
+        "payload": {
+                "source": {
+                        "path": "resources/textures/logo.png",
+                        "type": "File"
+                },
+                "texture_type": "Albedo"
+        }
+}

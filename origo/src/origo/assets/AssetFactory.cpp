@@ -1,6 +1,7 @@
 #include "AssetFactory.h"
 
 #include "origo/assets/Audio.h"
+#include "origo/assets/Prefab.h"
 #include "origo/assets/SceneAsset.h"
 #include "origo/assets/Script.h"
 #include "origo/assets/Shader.h"
@@ -27,6 +28,8 @@ Scope<Asset> AssetFactory::allocate_hollow_asset(AssetType type) {
 		return make_scope<SceneAsset>();
 	case AssetType::Audio:
 		return make_scope<Audio>();
+	case AssetType::Prefab:
+		return make_scope<Prefab>();
 	default:
 		ORG_ERROR("AssetFactory: Unknown asset type");
 		return nullptr;

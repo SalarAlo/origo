@@ -4,6 +4,8 @@
 
 #include "origo/components/Transform.h"
 
+#include "origo/events/KeyEvent.h"
+
 #include "origo/input/Input.h"
 
 #include "ui/EditorNotificationSystem.h"
@@ -24,6 +26,9 @@ void EditorCameraLayer::on_attach() {
 
 void EditorCameraLayer::on_update(double dt) {
 	if (is_text_input_blocking_camera(m_context))
+		return;
+
+	if (Input::is_key_pressed(KeyboardKey::KEY_LEFT_CONTROL) || Input::is_key_pressed(KeyboardKey::KEY_RIGHT_CONTROL))
 		return;
 
 	glm::vec3 move_input(0.0f);

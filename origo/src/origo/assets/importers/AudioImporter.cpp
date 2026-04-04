@@ -17,7 +17,6 @@ AssetType AudioImporter::get_asset_type() const {
 }
 
 Scope<Asset> AudioImporter::import(const std::filesystem::path& path, const AssetMetadata& meta) {
-	ORG_INFO("Audio being constructed with path {}", path.c_str());
 	auto asset = make_scope<Audio>(path);
 
 	return asset;

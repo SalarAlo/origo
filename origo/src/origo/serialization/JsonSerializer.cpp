@@ -40,6 +40,18 @@
 
 namespace Origo {
 
+static void reset_serializer_stack(nlohmann::json& root, std::stack<JsonStackEntry>& stack) {
+	root = nlohmann::json::object();
+	while (!stack.empty())
+		stack.pop();
+	stack.push({ &root });
+}
+
+static const std::filesystem::path* get_serializer_path(const ISerializer& serializer) {
+	const auto& path = serializer.get_path();
+	return path ? &*path : nullptr;
+}
+
 template <typename T>
 static bool try_read_array_object_impl(std::stack<JsonStackEntry>& stack, T& value) {
 	if (stack.empty())
@@ -63,50 +75,58 @@ static bool try_read_array_object_impl(std::stack<JsonStackEntry>& stack, T& val
 	}
 }
 
-JsonSerializer::JsonSerializer(const std::filesystem::path& path)
-    : ISerializer(path) {
-	m_root = nlohmann::json::object();
-	while (!m_objects_stack.empty())
-		m_objects_stack.pop();
-	m_objects_stack.push({ &m_root });
+JsonSerializer::JsonSerializer() {
+	reset_serializer_stack(m_root, m_objects_stack);
+}
+
+JsonSerializer::JsonSerializer(std::filesystem::path path)
+    : ISerializer(std::move(path)) {
+	reset_serializer_stack(m_root, m_objects_stack);
 }
 
 nlohmann::json& JsonSerializer::top_json() {
 	auto* p = m_objects_stack.top().Json;
 	if (!p) {
 		ORG_ERROR("Json stack top was null; reinitializing to root");
-		m_root = nlohmann::json::object();
-		while (!m_objects_stack.empty())
-			m_objects_stack.pop();
-		m_objects_stack.push({ &m_root });
+		reset_serializer_stack(m_root, m_objects_stack);
 		p = &m_root;
 	}
 	return *p;
 }
 
 void JsonSerializer::save_to_file() {
-	if (m_objects_stack.size() > 1) {
-		ORG_ERROR("Trying to write while there are unclosed objects: {}", m_path.c_str());
+	const std::filesystem::path* path = get_serializer_path(*this);
+	if (!path) {
+		ORG_ERROR("Trying to write JSON without a file path");
 		return;
 	}
 
-	std::filesystem::create_directories(m_path.parent_path());
-	std::ofstream out(m_path, std::ios::out | std::ios::trunc);
+	if (m_objects_stack.size() > 1) {
+		ORG_ERROR("Trying to write while there are unclosed objects: {}", path->string());
+		return;
+	}
+
+	std::filesystem::create_directories(path->parent_path());
+	std::ofstream out(*path, std::ios::out | std::ios::trunc);
 	if (!out) {
-		ORG_ERROR("Failed to open output file: {}", m_path.c_str());
+		ORG_ERROR("Failed to open output file: {}", path->string());
 		return;
 	}
 	out << top_json().dump(8);
 }
 
 void JsonSerializer::load_file() {
-	std::ifstream in(m_path);
+	const std::filesystem::path* path = get_serializer_path(*this);
+	if (!path) {
+		ORG_ERROR("Trying to load JSON without a file path");
+		reset_serializer_stack(m_root, m_objects_stack);
+		return;
+	}
+
+	std::ifstream in(*path);
 	if (!in) {
-		ORG_ERROR("Failed to open input file: {}", m_path.c_str());
-		m_root = nlohmann::json::object();
-		while (!m_objects_stack.empty())
-			m_objects_stack.pop();
-		m_objects_stack.push({ &m_root });
+		ORG_ERROR("Failed to open input file: {}", path->string());
+		reset_serializer_stack(m_root, m_objects_stack);
 		return;
 	}
 
@@ -115,13 +135,26 @@ void JsonSerializer::load_file() {
 		in >> loaded;
 		m_root = loaded.is_object() ? std::move(loaded) : nlohmann::json::object();
 	} catch (const std::exception& e) {
-		ORG_ERROR("JSON parse error in {}: {}", m_path.c_str(), e.what());
+		ORG_ERROR("JSON parse error in {}: {}", path->string(), e.what());
 		m_root = nlohmann::json::object();
 	}
 
 	while (!m_objects_stack.empty())
 		m_objects_stack.pop();
 	m_objects_stack.push({ &m_root });
+}
+
+void JsonSerializer::write_to(ISerializer& serializer) const {
+	auto* json_serializer = dynamic_cast<JsonSerializer*>(&serializer);
+	if (!json_serializer) {
+		ORG_ERROR("JsonSerializer::write_to requires a JsonSerializer destination");
+		return;
+	}
+
+	json_serializer->m_root = m_root;
+	while (!json_serializer->m_objects_stack.empty())
+		json_serializer->m_objects_stack.pop();
+	json_serializer->m_objects_stack.push({ &json_serializer->m_root });
 }
 
 void JsonSerializer::begin_object(std::string_view key) {

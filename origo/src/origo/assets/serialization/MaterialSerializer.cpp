@@ -45,25 +45,6 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	material.get_data().PBRParams = PBRParameters::deserialize(backend);
 	backend.end_object();
 
-	if (!deps.Shader) {
-		backend.begin_object("data");
-		if (std::string legacy_shader_id; backend.try_read("shader", legacy_shader_id)) {
-			deps.Shader = UUID::from_string(legacy_shader_id);
-		}
-		if (std::string legacy_albedo_id; backend.try_read("albedo", legacy_albedo_id)) {
-			deps.Albedo = UUID::from_string(legacy_albedo_id);
-		}
-		backend.end_object();
-	}
-
-	Origo::Vec3 legacy_color = material.get_data().PBRParams.BaseColor;
-	const bool has_r = backend.try_read("color_r", legacy_color.r);
-	const bool has_g = backend.try_read("color_g", legacy_color.g);
-	const bool has_b = backend.try_read("color_b", legacy_color.b);
-	if (has_r && has_g && has_b) {
-		material.get_data().PBRParams.BaseColor = legacy_color;
-	}
-
 	material.get_uniform_list().deserialize(backend);
 
 	auto& am = AssetManager::get_instance();

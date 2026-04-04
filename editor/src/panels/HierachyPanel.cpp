@@ -1,12 +1,17 @@
 #include <optional>
 
 #include "imgui.h"
-#include "misc/cpp/imgui_stdlib.h"
 
 #include "components/EditorOutline.h"
 
+#include "misc/cpp/imgui_stdlib.h"
+
+#include "origo/assets/AssetManager.h"
 #include "origo/assets/DefaultAssetCache.h"
+#include "origo/assets/Prefab.h"
 #include "origo/assets/PrimitiveShapeCache.h"
+
+#include "origo/assets/serialization/SceneEntitySerializationManager.h"
 
 #include "origo/components/EditorHiddenComponent.h"
 #include "origo/components/MeshRenderer.h"
@@ -23,33 +28,33 @@
 namespace OrigoEditor {
 
 namespace {
-bool entity_matches_search(const std::string& query, const std::string& entity_name) {
-	if (query.empty())
-		return true;
+	bool entity_matches_search(const std::string& query, const std::string& entity_name) {
+		if (query.empty())
+			return true;
 
-	std::string lowered_query;
-	lowered_query.reserve(query.size());
-	for (unsigned char c : query)
-		lowered_query.push_back((char)std::tolower(c));
+		std::string lowered_query;
+		lowered_query.reserve(query.size());
+		for (unsigned char c : query)
+			lowered_query.push_back((char)std::tolower(c));
 
-	std::string lowered_name;
-	lowered_name.reserve(entity_name.size());
-	for (unsigned char c : entity_name)
-		lowered_name.push_back((char)std::tolower(c));
+		std::string lowered_name;
+		lowered_name.reserve(entity_name.size());
+		for (unsigned char c : entity_name)
+			lowered_name.push_back((char)std::tolower(c));
 
-	return lowered_name.contains(lowered_query);
-}
+		return lowered_name.contains(lowered_query);
+	}
 
-void duplicate_selected_entity(EditorContext& context, const Origo::RID& entity_id) {
-	auto duplicate = context.ActiveScene->duplicate_entity(entity_id);
-	if (!duplicate)
-		return;
+	void duplicate_selected_entity(EditorContext& context, const Origo::RID& entity_id) {
+		auto duplicate = context.ActiveScene->duplicate_entity(entity_id);
+		if (!duplicate)
+			return;
 
-	context.set_selected_entity(*duplicate);
-	EditorNotificationSystem::get_instance().success(
-	    "Entity Duplicated",
-	    "Added a duplicate to the scene.");
-}
+		context.set_selected_entity(*duplicate);
+		EditorNotificationSystem::get_instance().success(
+		    "Entity Duplicated",
+		    "Added a duplicate to the scene.");
+	}
 }
 
 HierarchyPanel::HierarchyPanel(EditorContext& ctx)
@@ -62,6 +67,7 @@ void HierarchyPanel::on_im_gui_render() {
 
 	std::size_t total_entities = 0;
 	std::size_t visible_entities = 0;
+
 	for (const auto& entity_id : m_context.ActiveScene->get_entities()) {
 		if (m_context.ActiveScene->has_native_component<Origo::EditorHiddenComponent>(entity_id))
 			continue;
@@ -149,6 +155,12 @@ void HierarchyPanel::on_im_gui_render() {
 
 		ImGui::Selectable("##EntitySelectable", selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap);
 
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+			ImGui::TextUnformatted(name_comp->Name.c_str());
+			ImGui::SetDragDropPayload("ORIGO_ENTITY_ID", entity_id.to_string().c_str(), entity_id.to_string().size() + 1);
+			ImGui::EndDragDropSource();
+		}
+
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !selected)
 			m_context.set_selected_entity(entity_id);
 
@@ -181,6 +193,43 @@ void HierarchyPanel::on_im_gui_render() {
 		ImGui::PopID();
 	}
 
+	if (!ImGui::BeginDragDropTarget()) {
+		ImGui::EndChild();
+		return;
+	}
+
+	const ImGuiPayload* payload {};
+
+	if (payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID"); !payload) {
+		ImGui::EndDragDropTarget();
+		ImGui::EndChild();
+		return;
+	}
+
+	const char* uuid_str = static_cast<const char*>(payload->Data);
+	Origo::UUID uuid = Origo::UUID::from_string(uuid_str);
+
+	auto handle { Origo::AssetManager::get_instance().get_handle_by_uuid(uuid) };
+
+	if (!handle.has_value()) {
+		ImGui::EndDragDropTarget();
+		ImGui::EndChild();
+		return;
+	}
+
+	auto prefab { Origo::AssetManager::get_instance().get_asset<Origo::Prefab>(*handle) };
+	if (!prefab) {
+		ImGui::EndDragDropTarget();
+		ImGui::EndChild();
+		return;
+	}
+
+	auto entity { m_context.ActiveScene->create_entity("prefab instance") };
+
+	Origo::SceneEntitySerializationManager serialization_mngr {};
+	serialization_mngr.deserialize_entity_components(*m_context.ActiveScene, entity, prefab->backend);
+
+	ImGui::EndDragDropTarget();
 	ImGui::EndChild();
 }
 

@@ -19,6 +19,14 @@ template <typename T, typename... Args>
 Scope<T> make_scope(Args&&... args) {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 };
+template <typename Derived, typename Base>
+Scope<Derived> scope_cast(Scope<Base>&& base) {
+	if (Derived* result = dynamic_cast<Derived*>(base.get())) {
+		base.release();
+		return std::unique_ptr<Derived>(result);
+	}
+	return nullptr;
+}
 
 using Vec3 = glm::vec3;
 using Vec2 = glm::vec2;

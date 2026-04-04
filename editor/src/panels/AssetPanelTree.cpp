@@ -185,6 +185,9 @@ void AssetPanel::draw_folder_tree_node(FolderEntry& folder) {
 			ImGui::PushID(&child);
 			const std::string label = "      " + (child.Name.empty() ? std::string("Assets") : child.Name);
 			const bool open = ImGui::TreeNodeEx("folder_node", flags, "%s", label.c_str());
+
+			handle_drag_drop_target(&child);
+
 			draw_tree_node_icon(EditorIcons::get_instance().get(IconType::Folder));
 			if (should_toggle_row_open(has_children)) {
 				const bool next_open_state = !open;
@@ -304,6 +307,26 @@ void AssetPanel::draw_asset_hierarchy_node(
 	}
 
 	ImGui::PopID();
+}
+
+void AssetPanel::handle_drag_drop_target(FolderEntry* entry) {
+	if (!ImGui::BeginDragDropTarget())
+		return;
+
+	const ImGuiPayload* payload {};
+
+	if (payload = ImGui::AcceptDragDropPayload("ORIGO_ENTITY_ID"); !payload) {
+		ImGui::EndDragDropTarget();
+		return;
+	}
+
+	const char* rid_str = static_cast<const char*>(payload->Data);
+	Origo::RID ent = Origo::RID::from_string(rid_str);
+
+	if (m_creation_service.create_prefab(entry, ent, m_context.ActiveScene))
+		m_tree_dirty = true;
+
+	ImGui::EndDragDropTarget();
 }
 
 }

@@ -16,7 +16,8 @@ struct JsonStackEntry {
 
 class JsonSerializer : public ISerializer {
 public:
-	JsonSerializer(const std::filesystem::path& name);
+	JsonSerializer();
+	explicit JsonSerializer(std::filesystem::path path);
 
 	SERIALIZER_FWD
 private:

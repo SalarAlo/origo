@@ -4,6 +4,7 @@
 #include "origo/assets/serialization/MaterialSerializer.h"
 #include "origo/assets/serialization/MeshSerializer.h"
 #include "origo/assets/serialization/ModelSerializer.h"
+#include "origo/assets/serialization/PrefabSerializer.h"
 #include "origo/assets/serialization/SceneAssetSerializer.h"
 #include "origo/assets/serialization/ScriptSerializer.h"
 #include "origo/assets/serialization/ShaderSerializer.h"
@@ -48,6 +49,7 @@ void register_all_asset_serializers() {
 	register_serializer(AssetType::Script, new ScriptSerializer());
 	register_serializer(AssetType::Scene, new SceneAssetSerializer());
 	register_serializer(AssetType::Audio, new AudioSerializer());
+	register_serializer(AssetType::Prefab, new PrefabSerializer());
 }
 
 }
