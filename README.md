@@ -1,7 +1,13 @@
 
-# Origo
+<p align="center">
+  <img src="resources/logo.png" alt="Origo logo" width="140">
+</p>
 
-Origo is a Linux only 3D game engine written in C++23 and modern OpenGL.
+<h1 align="center">Origo</h1>
+
+<p align="center">
+  Origo is a Linux only 3D game engine written in C++23 and modern OpenGL.
+</p>
 
 ---
 
@@ -14,8 +20,10 @@ It is a learning project developed for submission to the CV-Tag 2026 at the Univ
 
 ## Showcase
 
-![Origo Showcase 1](resources/showcase/first.png)
-![Origo Showcase 2](resources/showcase/second.png)
+<p align="center">
+  <img src="resources/showcase/first.png" alt="Origo Showcase 1" width="48%">
+  <img src="resources/showcase/second.png" alt="Origo Showcase 2" width="48%">
+</p>
 
 ---
 
