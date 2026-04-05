@@ -1,6 +1,7 @@
 #include <optional>
 
 #include "imgui.h"
+#include "imgui_internal.h"
 
 #include "components/EditorOutline.h"
 
@@ -86,6 +87,8 @@ void HierarchyPanel::on_im_gui_render() {
 	ImTextureID entity_icon { EditorIcons::get_instance().get(IconType::Entity) };
 
 	ImGui::BeginChild("HierarchyList", ImVec2(0, 0), false);
+
+	handle_prefab_drop_target();
 
 	if (ImGui::BeginPopupContextWindow("HierarchyCreatePopup", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 		ImGui::MenuItem("Empty");
@@ -193,8 +196,11 @@ void HierarchyPanel::on_im_gui_render() {
 		ImGui::PopID();
 	}
 
-	if (!ImGui::BeginDragDropTarget()) {
-		ImGui::EndChild();
+	ImGui::EndChild();
+}
+
+void HierarchyPanel::handle_prefab_drop_target() {
+	if (!ImGui::BeginDragDropTargetCustom(ImGui::GetCurrentWindow()->Rect(), ImGui::GetID("prefab_drop_target"))) {
 		return;
 	}
 
@@ -202,7 +208,6 @@ void HierarchyPanel::on_im_gui_render() {
 
 	if (payload = ImGui::AcceptDragDropPayload("ORIGO_ASSET_UUID"); !payload) {
 		ImGui::EndDragDropTarget();
-		ImGui::EndChild();
 		return;
 	}
 
@@ -213,24 +218,22 @@ void HierarchyPanel::on_im_gui_render() {
 
 	if (!handle.has_value()) {
 		ImGui::EndDragDropTarget();
-		ImGui::EndChild();
 		return;
 	}
 
 	auto prefab { Origo::AssetManager::get_instance().get_asset<Origo::Prefab>(*handle) };
 	if (!prefab) {
 		ImGui::EndDragDropTarget();
-		ImGui::EndChild();
 		return;
 	}
 
 	auto entity { m_context.ActiveScene->create_entity("prefab instance") };
 
 	Origo::SceneEntitySerializationManager serialization_mngr {};
-	serialization_mngr.deserialize_entity_components(*m_context.ActiveScene, entity, prefab->backend);
+	Origo::JsonSerializer prefab_data {};
+	prefab->backend.write_to(prefab_data);
+	serialization_mngr.deserialize_entity_components(*m_context.ActiveScene, entity, prefab_data);
 
 	ImGui::EndDragDropTarget();
-	ImGui::EndChild();
 }
-
 }

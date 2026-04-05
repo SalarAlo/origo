@@ -31,7 +31,7 @@ Scope<Asset> PrefabImporter::import(const std::filesystem::path& path, const Ass
 	backend.load_file();
 
 	auto prefab { scope_cast<Prefab>(AssetFactory::get_instance().allocate_hollow_asset(AssetType::Prefab)) };
-	prefab->backend = backend;
+	backend.write_to(prefab->backend);
 
 	return prefab;
 }

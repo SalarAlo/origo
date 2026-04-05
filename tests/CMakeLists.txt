@@ -4,6 +4,8 @@ project(OrigoTests LANGUAGES CXX)
 
 add_executable(OrigoTests
 	src/Main.cpp
+	src/JsonSerializerTest.cpp
+	src/PrefabSerializationTest.cpp
 	src/RIDTest.cpp
 	src/SceneAssetSerializationTest.cpp
 	src/SceneSerializationTest.cpp
