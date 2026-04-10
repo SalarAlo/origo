@@ -2,7 +2,7 @@
 
 #include "origo/assets/AssetManager.h"
 
-#include "origo/components/ModelRenderer.h"
+#include "origo/components/ModelRendererComponent.h"
 
 namespace Origo {
 

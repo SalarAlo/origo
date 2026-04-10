@@ -17,7 +17,7 @@ set_source_files_properties(
 )
 
 set_source_files_properties(
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/components/systems/RigidbodyPhysicsSystem.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/components/systems/RigidbodyComponentPhysicsSystem.cpp
 				PROPERTIES
 								SKIP_LINTING ON
 )

@@ -1,10 +1,10 @@
 #include "origo/components/serialization/SoundEmitterComponentSerializer.h"
 
-#include "origo/components/SoundEmitter.h"
+#include "origo/components/SoundEmitterComponent.h"
 
 namespace Origo {
 void SoundEmitterComponentSerializer::serialize(Component* comp, ISerializer& s) const {
-	auto sound_emitter { dynamic_cast<SoundEmitter*>(comp) };
+	auto sound_emitter { dynamic_cast<SoundEmitterComponent*>(comp) };
 
 	s.write("is_enabled", sound_emitter->IsEnabled);
 	s.write("auto_play", sound_emitter->AutoPlay);
@@ -20,7 +20,7 @@ void SoundEmitterComponentSerializer::serialize(Component* comp, ISerializer& s)
 }
 
 void SoundEmitterComponentSerializer::deserialize(Component* comp, ISerializer& s) {
-	auto sound_emitter { dynamic_cast<SoundEmitter*>(comp) };
+	auto sound_emitter { dynamic_cast<SoundEmitterComponent*>(comp) };
 
 	s.try_read("is_enabled", sound_emitter->IsEnabled);
 	s.try_read("auto_play", sound_emitter->AutoPlay);

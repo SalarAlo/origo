@@ -1,12 +1,12 @@
 #include "systems/EditorOutlineRenderSystem.h"
 
-#include "components/EditorOutline.h"
+#include "components/EditorOutlineComponent.h"
 
 #include "origo/assets/DefaultAssetCache.h"
 
-#include "origo/components/MeshRenderer.h"
-#include "origo/components/ModelRenderer.h"
-#include "origo/components/Transform.h"
+#include "origo/components/MeshRendererComponent.h"
+#include "origo/components/ModelRendererComponent.h"
+#include "origo/components/TransformComponent.h"
 
 #include "origo/scene/GamePhase.h"
 #include "origo/scene/SystemScheduler.h"

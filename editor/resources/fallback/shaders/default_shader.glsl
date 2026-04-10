@@ -26,6 +26,7 @@ void main() {
                 vec3 up = abs(v_normal.y) < 0.999 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
                 tangent_ws = cross(up, v_normal);
         }
+
         v_tangent = normalize(tangent_ws - dot(tangent_ws, v_normal) * v_normal);
         v_bitangent = normalize(cross(v_normal, v_tangent) * a_tangent.w);
         v_frag_pos = vec3(u_model_matrix * vec4(a_pos, 1.0));
@@ -71,9 +72,12 @@ uniform int u_entity_id = -1;
 uniform vec3 u_base_color_factor = vec3(1.0);
 uniform float u_metallic_factor = 0.0;
 uniform float u_roughness_factor = 1.0;
+
 uniform float u_ao_factor = 1.0;
+
 uniform bool u_unlit = false;
 uniform bool u_has_normal_map = false;
+uniform bool u_only_color = false;
 
 uniform float u_ambient = 0.03;
 

@@ -2,7 +2,7 @@
 
 #include "origo/assets/AssetManager.h"
 
-#include "origo/components/MeshRenderer.h"
+#include "origo/components/MeshRendererComponent.h"
 
 namespace Origo {
 

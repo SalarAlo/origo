@@ -2,7 +2,7 @@
 
 #include "origo/Camera.h"
 
-#include "origo/components/Transform.h"
+#include "origo/components/TransformComponent.h"
 
 namespace OrigoEditor {
 

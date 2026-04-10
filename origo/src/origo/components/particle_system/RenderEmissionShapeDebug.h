@@ -6,7 +6,7 @@
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
 
-#include "origo/components/Transform.h"
+#include "origo/components/TransformComponent.h"
 
 #include "origo/components/particle_system/BoxEmissionShape.h"
 #include "origo/components/particle_system/ConeEmissionShape.h"

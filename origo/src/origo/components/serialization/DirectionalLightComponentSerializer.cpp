@@ -1,6 +1,6 @@
 #include "DirectionalLightComponentSerializer.h"
 
-#include "origo/components/DirectionalLight.h"
+#include "origo/components/DirectionalLightComponent.h"
 
 namespace Origo {
 

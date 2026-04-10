@@ -2,7 +2,7 @@
 
 #include "origo/components/CameraComponent.h"
 #include "origo/components/CameraShakeComponent.h"
-#include "origo/components/Transform.h"
+#include "origo/components/TransformComponent.h"
 
 #include "origo/renderer/RenderView.h"
 

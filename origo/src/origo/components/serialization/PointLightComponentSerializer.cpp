@@ -1,6 +1,6 @@
 #include "PointLightComponentSerializer.h"
 
-#include "origo/components/PointLight.h"
+#include "origo/components/PointLightComponent.h"
 
 namespace Origo {
 

@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-#include "components/EditorOutline.h"
+#include "components/EditorOutlineComponent.h"
 
 #include "misc/cpp/imgui_stdlib.h"
 
@@ -15,8 +15,8 @@
 #include "origo/assets/serialization/SceneEntitySerializationManager.h"
 
 #include "origo/components/EditorHiddenComponent.h"
-#include "origo/components/MeshRenderer.h"
-#include "origo/components/Name.h"
+#include "origo/components/MeshRendererComponent.h"
+#include "origo/components/NameComponent.h"
 
 #include "panels/HierarchyPanel.h"
 

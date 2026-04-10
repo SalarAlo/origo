@@ -14,7 +14,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetDatabase.h"
 
-#include "origo/components/Name.h"
+#include "origo/components/NameComponent.h"
 #include "origo/components/NativeComponentRegistry.h"
 
 #include "origo/scripting/ScriptComponentRegistry.h"

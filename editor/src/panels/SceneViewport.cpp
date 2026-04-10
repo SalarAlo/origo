@@ -6,7 +6,7 @@
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
 
-#include "origo/components/Transform.h"
+#include "origo/components/TransformComponent.h"
 #include "origo/core/PathContext.h"
 
 #include "state/EditorViewMode.h"

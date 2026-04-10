@@ -6,7 +6,7 @@
 #include "origo/assets/Prefab.h"
 #include "origo/assets/serialization/PrefabSerializer.h"
 #include "origo/assets/serialization/SceneEntitySerializationManager.h"
-#include "origo/components/Name.h"
+#include "origo/components/NameComponent.h"
 #include "origo/scene/Scene.h"
 #include "origo/serialization/JsonSerializer.h"
 

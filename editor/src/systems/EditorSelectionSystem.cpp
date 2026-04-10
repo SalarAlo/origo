@@ -1,6 +1,6 @@
 #include "systems/EditorSelectionSystem.h"
 
-#include "components/EditorOutline.h"
+#include "components/EditorOutlineComponent.h"
 
 namespace OrigoEditor::EditorSelectionSystem {
 

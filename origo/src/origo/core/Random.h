@@ -1,16 +1,10 @@
 #pragma once
 
-namespace Origo::Random {
+#include "origo/serialization/ISerializer.h"
 
-struct PerlinSettings {
-	float Frequency = 0.5f;
-	float Amplitude = 1.0f;
-	int Octaves = 3;
-	float Scale = 0.02f;
-	float Persistence = 0.5f;
-	float Lacunarity = 2.0f;
-	int Seed = 1337;
-};
+#include "origo/core/FastNoiseLite.h"
+
+namespace Origo::Random {
 
 void seed(int seed);
 
@@ -20,10 +14,49 @@ int range(int min, int max);
 
 Vec3 random_unit_vector();
 
-float perlin(float x);
-float perlin(float x, float y);
-float perlin(float x, float y, float z);
+}
 
-float perlin_octaves(float x, float y, const PerlinSettings& s);
+namespace Origo::Noise {
+enum class Type {
+	Perlin
+};
+
+enum class FractalType {
+	None,
+	FBm
+};
+
+struct Settings {
+	Type type = Type::Perlin;
+	int seed = 1337;
+	float frequency = 0.017f;
+
+	FractalType fractal = FractalType::FBm;
+	int octaves = 3;
+	float lacunarity = 1.84f;
+	float gain = 0.59f;
+	float weighted_strength = 0.98f;
+
+	void serialize(ISerializer& serializer) const;
+	void deserialize(ISerializer& serializer);
+};
+
+class Generator {
+public:
+	Generator();
+	Generator(const Settings& settings);
+
+	void set_settings(const Settings& settings);
+
+	float sample_2d(float x, float y) const;
+	float sample_3d(float x, float y, float z) const;
+
+private:
+	void apply_settings();
+
+private:
+	Settings m_settings;
+	FastNoiseLite m_impl;
+};
 
 }

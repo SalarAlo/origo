@@ -4,7 +4,7 @@
 
 #include "origo/audio/AudioEngine.h"
 
-#include "origo/components/SoundEmitter.h"
+#include "origo/components/SoundEmitterComponent.h"
 
 #include "origo/core/Logger.h"
 
@@ -20,7 +20,7 @@ namespace {
 		if (!scene)
 			return;
 
-		scene->view<Origo::SoundEmitter>([](Origo::RID, Origo::SoundEmitter& sound_emitter) {
+		scene->view<Origo::SoundEmitterComponent>([](Origo::RID, Origo::SoundEmitterComponent& sound_emitter) {
 			sound_emitter.reset_runtime_state();
 		});
 	}

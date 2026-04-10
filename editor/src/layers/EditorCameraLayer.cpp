@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 
-#include "origo/components/Transform.h"
+#include "origo/components/TransformComponent.h"
 
 #include "origo/events/KeyEvent.h"
 

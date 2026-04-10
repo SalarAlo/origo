@@ -3,10 +3,11 @@
 #include <algorithm>
 #include <random>
 
-#define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+#include <magic_enum/magic_enum.hpp>
 
 #include "origo/core/Random.h"
+
+#include "FastNoiseLite.h"
 
 static std::mt19937_64 rng;
 static int s_noise_seed = 1337;
@@ -52,53 +53,91 @@ Vec3 random_unit_vector() {
 	return out;
 }
 
-float perlin(float x) {
-	return perlin(x, 0.0f, 0.0f);
 }
 
-float perlin(float x, float y) {
-	return perlin(x, y, 0.0f);
+namespace Origo::Noise {
+
+void Settings::serialize(ISerializer& serializer) const {
+	serializer.write("type", std::string_view(magic_enum::enum_name(type)));
+	serializer.write("seed", seed);
+	serializer.write("frequency", frequency);
+
+	serializer.write("fractal", std::string_view(magic_enum::enum_name(fractal)));
+	serializer.write("octaves", octaves);
+	serializer.write("lacunarity", lacunarity);
+	serializer.write("gain", gain);
+	serializer.write("weighted_strength", weighted_strength);
 }
 
-float perlin(float x, float y, float z) {
-	return 0.5f * (stb_perlin_noise3_seed(x, y, z, 0, 0, 0, s_noise_seed) + 1.0f);
-}
-
-float perlin_octaves(float x, float y, const PerlinSettings& s) {
-	const int octaves = std::max(1, s.Octaves);
-	const float base_frequency = std::max(0.0001f, s.Frequency);
-	const float lacunarity = std::max(0.0001f, s.Lacunarity);
-	const float persistence = std::max(0.0f, s.Persistence);
-
-	float total = 0.0f;
-	float frequency = base_frequency;
-	float amplitude = 1.0f;
-	float max_value = 0.0f;
-
-	x *= s.Scale;
-	y *= s.Scale;
-
-	for (int i = 0; i < octaves; ++i) {
-		const float sample = stb_perlin_noise3_seed(
-		    x * frequency,
-		    y * frequency,
-		    0.0f,
-		    0,
-		    0,
-		    0,
-		    s.Seed + i);
-		total += sample * amplitude;
-
-		max_value += amplitude;
-
-		amplitude *= persistence;
-		frequency *= lacunarity;
+void Settings::deserialize(ISerializer& serializer) {
+	if (std::string type_name; serializer.try_read("type", type_name)) {
+		if (auto parsed = magic_enum::enum_cast<Type>(type_name))
+			type = *parsed;
 	}
 
-	if (max_value <= 0.0f)
-		return 0.0f;
+	serializer.try_read("seed", seed);
+	serializer.try_read("frequency", frequency);
 
-	return (total / max_value) * s.Amplitude;
+	if (std::string fractal_name; serializer.try_read("fractal", fractal_name)) {
+		if (auto parsed = magic_enum::enum_cast<FractalType>(fractal_name))
+			fractal = *parsed;
+	}
+
+	serializer.try_read("octaves", octaves);
+	serializer.try_read("lacunarity", lacunarity);
+	serializer.try_read("gain", gain);
+	serializer.try_read("weighted_strength", weighted_strength);
+}
+
+Generator::Generator()
+    : m_impl() {
+	apply_settings();
+}
+
+Generator::Generator(const Settings& settings)
+    : m_settings(settings)
+    , m_impl() {
+	apply_settings();
+}
+
+void Generator::set_settings(const Settings& settings) {
+	m_settings = settings;
+	apply_settings();
+}
+
+void Generator::apply_settings() {
+	auto& n = m_impl;
+
+	n.SetSeed(m_settings.seed);
+	n.SetFrequency(m_settings.frequency);
+
+	switch (m_settings.type) {
+	case Type::Perlin:
+		n.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		break;
+	}
+
+	switch (m_settings.fractal) {
+	case FractalType::None:
+		n.SetFractalType(FastNoiseLite::FractalType_None);
+		break;
+	case FractalType::FBm:
+		n.SetFractalType(FastNoiseLite::FractalType_FBm);
+		break;
+	}
+
+	n.SetFractalOctaves(m_settings.octaves);
+	n.SetFractalLacunarity(m_settings.lacunarity);
+	n.SetFractalGain(m_settings.gain);
+	n.SetFractalWeightedStrength(m_settings.weighted_strength);
+}
+
+float Generator::sample_2d(float x, float y) const {
+	return m_impl.GetNoise(x, y);
+}
+
+float Generator::sample_3d(float x, float y, float z) const {
+	return m_impl.GetNoise(x, y, z);
 }
 
 }

@@ -8,7 +8,6 @@
 #include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/core/PathContext.h"
-
 #include "origo/core/Typedefs.h"
 
 namespace Origo {
@@ -65,6 +64,7 @@ AssetHandle DefaultAssetCache::get_material() {
 	    UUID::from_arbitrary_string("DEFAULT_MATERIAL_2D"));
 
 	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(*m_material);
+
 	material->set_shader(get_shader());
 	material->set_albedo(get_texture());
 

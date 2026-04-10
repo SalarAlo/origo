@@ -5,8 +5,8 @@
 #include "origo/assets/Shader.h"
 
 #include "origo/components/CameraComponent.h"
-#include "origo/components/DirectionalLight.h"
-#include "origo/components/Transform.h"
+#include "origo/components/DirectionalLightComponent.h"
+#include "origo/components/TransformComponent.h"
 
 #include "origo/core/Time.h"
 

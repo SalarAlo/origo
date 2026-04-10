@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 
-#include "components/EditorOutline.h"
+#include "components/EditorOutlineComponent.h"
 
 #include "state/EditorContext.h"
 
