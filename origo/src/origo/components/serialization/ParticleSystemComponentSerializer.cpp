@@ -1,6 +1,7 @@
 #include "origo/components/serialization/ParticleSystemComponentSerializer.h"
 
 #include "origo/components/particle_system/ParticleSystemComponent.h"
+#include "origo/components/particle_system/SanitizeParticleEmissionShape.h"
 #include "origo/components/particle_system/SerializeEmissionShape.h"
 
 namespace Origo {
@@ -96,6 +97,7 @@ void ParticleSystemComponentSerializer::deserialize(Component* comp, ISerializer
 	s.begin_object("shape");
 	auto shape_deserializer { SerializeEmissionShape { s } };
 	ps->Shape = shape_deserializer();
+	std::visit(SanitizeParticleEmissionShape {}, ps->Shape);
 	s.end_object();
 
 	ps->Bursts.clear();

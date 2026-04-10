@@ -3,6 +3,7 @@
 #include "origo/components/Transform.h"
 
 #include "origo/components/particle_system/ParticleSystemComponent.h"
+#include "origo/components/particle_system/SanitizeParticleEmissionShape.h"
 #include "origo/components/particle_system/SetParticleEmissionShapeForward.h"
 #include "origo/components/particle_system/SetParticleEmissionShapePosition.h"
 
@@ -20,6 +21,8 @@ void ParticleSystemTransformInjecter::update(Origo::Scene* scene, float dt) {
 
 		    auto forward_setter_visitor = SetParticleEmissionShapeForward { particleSystemTransf.get_forward() };
 		    std::visit(forward_setter_visitor, particleSystem.Shape);
+
+		    std::visit(SanitizeParticleEmissionShape {}, particleSystem.Shape);
 	    });
 }
 

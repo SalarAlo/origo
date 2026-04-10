@@ -180,8 +180,44 @@ GLuint FrameBuffer::get_color_attachment(size_t index) const {
 	return m_color_tex.at(index);
 }
 
+const AttachmentSpec* FrameBuffer::get_color_attachment_spec(size_t index) const {
+	size_t color_attachment_index = 0;
+	for (const auto& attachment : m_spec.Attachments) {
+		if (attachment.Type != AttachmentType::Color)
+			continue;
+
+		if (color_attachment_index == index)
+			return &attachment;
+
+		++color_attachment_index;
+	}
+
+	return nullptr;
+}
+
 GLuint FrameBuffer::get_depth_attachment() const {
 	return m_depth_tex;
+}
+
+int FrameBuffer::read_pixel_int(size_t attachmentIndex, int x, int y) const {
+	if (attachmentIndex >= m_color_tex.size())
+		throw std::out_of_range("Framebuffer color attachment index out of range");
+
+	if (x < 0 || y < 0 || x >= m_spec.Width || y >= m_spec.Height)
+		return -1;
+
+	const AttachmentSpec* attachment_spec = get_color_attachment_spec(attachmentIndex);
+	if (!attachment_spec || attachment_spec->Format != GL_RED_INTEGER)
+		throw std::runtime_error("Framebuffer attachment is not readable as integer");
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + static_cast<GLenum>(attachmentIndex));
+
+	int pixel = -1;
+	glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixel);
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	return pixel;
 }
 
 void FrameBuffer::resolve_to(FrameBuffer& target) const {
@@ -194,14 +230,17 @@ void FrameBuffer::resolve_to(FrameBuffer& target) const {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target.m_fbo);
 
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	const size_t color_attachment_count = std::min(m_color_tex.size(), target.m_color_tex.size());
+	for (size_t i = 0; i < color_attachment_count; ++i) {
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + static_cast<GLenum>(i));
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + static_cast<GLenum>(i));
 
-	glBlitFramebuffer(
-	    0, 0, m_spec.Width, m_spec.Height,
-	    0, 0, target.m_spec.Width, target.m_spec.Height,
-	    GL_COLOR_BUFFER_BIT,
-	    GL_NEAREST);
+		glBlitFramebuffer(
+		    0, 0, m_spec.Width, m_spec.Height,
+		    0, 0, target.m_spec.Width, target.m_spec.Height,
+		    GL_COLOR_BUFFER_BIT,
+		    GL_NEAREST);
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

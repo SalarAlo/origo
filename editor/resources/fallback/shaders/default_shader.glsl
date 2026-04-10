@@ -63,8 +63,10 @@ in vec3 v_frag_pos;
 in vec2 v_uv;
 
 out vec4 frag_color;
+layout(location = 1) out int entity_id_out;
 
 uniform vec3 u_view_pos;
+uniform int u_entity_id = -1;
 
 uniform vec3 u_base_color_factor = vec3(1.0);
 uniform float u_metallic_factor = 0.0;
@@ -210,4 +212,5 @@ void main() {
         color = pow(color, vec3(1.0 / 2.2));
 
         frag_color = vec4(color, 1.0);
+        entity_id_out = u_entity_id;
 }

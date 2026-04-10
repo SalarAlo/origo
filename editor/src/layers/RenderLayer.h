@@ -19,6 +19,7 @@ public:
 private:
 	EditorContext& m_context;
 	Origo::RenderContext& m_render_context;
+	Origo::RenderContext m_pick_render_context { nullptr };
 };
 
 }

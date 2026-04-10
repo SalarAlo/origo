@@ -19,7 +19,7 @@ public:
 	void on_im_gui_render() override;
 
 private:
-	void draw_entity_name();
+	void draw_entity_name(Origo::Scene* scene, Origo::RID selectedEntity);
 	void draw_native_components(Origo::Scene* scene, Origo::RID selectedEntity);
 	void draw_script_components(Origo::Scene* scene, Origo::RID selectedEntity);
 	void draw_add_component(Origo::Scene* scene, Origo::RID selectedEntity);

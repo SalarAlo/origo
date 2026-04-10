@@ -26,6 +26,7 @@ FrameBufferSpec create_render_buffer_spec() {
 	spec.Samples = 4;
 	spec.Attachments = {
 		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
+		{ AttachmentType::Color, GL_R32I, GL_RED_INTEGER, GL_INT, GL_NEAREST, GL_NEAREST },
 		{ AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 	};
 
@@ -39,6 +40,21 @@ FrameBufferSpec create_resolve_buffer_spec() {
 	spec.Height = 1080;
 	spec.Attachments = {
 		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
+		{ AttachmentType::Color, GL_R32I, GL_RED_INTEGER, GL_INT, GL_NEAREST, GL_NEAREST },
+		{ AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
+	};
+
+	return spec;
+}
+
+FrameBufferSpec create_pick_buffer_spec() {
+	FrameBufferSpec spec;
+
+	spec.Width = 1920;
+	spec.Height = 1080;
+	spec.Attachments = {
+		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
+		{ AttachmentType::Color, GL_R32I, GL_RED_INTEGER, GL_INT, GL_NEAREST, GL_NEAREST },
 		{ AttachmentType::Depth, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT },
 	};
 
@@ -66,9 +82,10 @@ EditorApplication::EditorApplication(const ApplicationSettings& settings)
     : Application(settings)
     , m_render_buffer(create_render_buffer_spec())
     , m_resolve_buffer(create_resolve_buffer_spec())
+    , m_editor_pick_buffer(create_pick_buffer_spec())
     , m_game_render_buffer(create_render_buffer_spec())
     , m_game_resolve_buffer(create_resolve_buffer_spec())
-    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_game_render_buffer, m_game_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
+    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_editor_pick_buffer, m_game_render_buffer, m_game_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
     , m_runtime_controller(m_context) {
 	setup_layers();
 	setup_render_context();
@@ -113,6 +130,7 @@ void EditorApplication::on_end_frame(float dt) {
 
 	m_context.ActiveScene = m_context.EditorScene.get();
 	m_context.RuntimeState = EditorRuntimeState::Editing;
+	m_context.unselect_entity();
 
 	m_context.RuntimeScene.reset();
 }

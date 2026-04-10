@@ -1,16 +1,17 @@
 
+#include <glm/vec3.hpp>
+
 #include <algorithm>
 #include <string>
 
-#include <glm/vec3.hpp>
+#include "imgui.h"
 
 #include "components/DrawEmissionShapeGUIControl.h"
-
-#include "imgui.h"
 
 #include "origo/components/particle_system/ParticleEmissionShapeFactory.h"
 #include "origo/components/particle_system/ParticleEmissionShapeKindOf.h"
 #include "origo/components/particle_system/ParticleSystemComponent.h"
+#include "origo/components/particle_system/SanitizeParticleEmissionShape.h"
 
 #include "ui/ComponentUI.h"
 #include "ui/InspectorDrawRegistry.h"
@@ -67,6 +68,7 @@ static bool s_registered = []() {
 			    }
 
 			    std::visit(OrigoEditor::DrawEmissionShapeGUIControls {}, ps.Shape);
+			    std::visit(Origo::SanitizeParticleEmissionShape {}, ps.Shape);
 		    }
 
 		    ComponentUI::end_region(emission_open);

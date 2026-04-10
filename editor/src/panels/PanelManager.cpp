@@ -18,8 +18,11 @@ PanelManager::PanelManager(EditorContext& context)
 void PanelManager::render_menu_items() {
 	if (ImGui::BeginMenu("View")) {
 		static bool enabled { EditorNotificationSystem::get_instance().is_enabled() };
+		bool skybox_enabled = m_context.is_skybox_enabled();
 
 		ImGui::MenuItem("Notifications Enabled", nullptr, &enabled);
+		if (ImGui::MenuItem("Skybox Enabled", nullptr, &skybox_enabled))
+			m_context.set_skybox_enabled(skybox_enabled);
 
 		if (enabled)
 			EditorNotificationSystem::get_instance().set_enabled();

@@ -3,6 +3,7 @@
 #include "layers/LayerType.h"
 
 #include "origo/audio/AudioEngine.h"
+
 #include "origo/components/SoundEmitter.h"
 
 #include "origo/core/Logger.h"
@@ -15,14 +16,14 @@ static constexpr size_t update_layer_key { static_cast<size_t>(LayerType::Update
 
 namespace {
 
-void reset_sound_emitters(Origo::Scene* scene) {
-	if (!scene)
-		return;
+	void reset_sound_emitters(Origo::Scene* scene) {
+		if (!scene)
+			return;
 
-	scene->view<Origo::SoundEmitter>([](Origo::RID, Origo::SoundEmitter& sound_emitter) {
-		sound_emitter.reset_runtime_state();
-	});
-}
+		scene->view<Origo::SoundEmitter>([](Origo::RID, Origo::SoundEmitter& sound_emitter) {
+			sound_emitter.reset_runtime_state();
+		});
+	}
 
 }
 

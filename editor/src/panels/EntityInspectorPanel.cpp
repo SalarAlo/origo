@@ -81,15 +81,27 @@ void EntityInspectorPanel::on_im_gui_render() {
 	auto selected_entity_optional = m_context.get_selected_entity();
 	auto active_scene = m_context.ActiveScene;
 
+	if (!active_scene) {
+		ImGui::TextDisabled("No active scene.");
+		ImGui::SetWindowFontScale(1.0f);
+		return;
+	}
+
 	if (!selected_entity_optional.has_value()) {
 		ImGui::TextDisabled("No entity selected.");
 		ImGui::SetWindowFontScale(1.0f);
 		return;
 	}
 
-	draw_entity_name();
-
 	const Origo::RID selected_entity = selected_entity_optional.value();
+	if (!active_scene->has_entity(selected_entity)) {
+		m_context.unselect_entity();
+		ImGui::TextDisabled("No entity selected.");
+		ImGui::SetWindowFontScale(1.0f);
+		return;
+	}
+
+	draw_entity_name(active_scene, selected_entity);
 
 	ImGui::SetWindowFontScale(0.9f);
 
@@ -106,13 +118,8 @@ void EntityInspectorPanel::on_im_gui_render() {
 	draw_script_drop_target(active_scene, selected_entity);
 }
 
-void EntityInspectorPanel::draw_entity_name() {
-	auto selected_entity = m_context.get_selected_entity();
-	auto scene = m_context.ActiveScene;
-
-	const Origo::RID entity = selected_entity.value();
+void EntityInspectorPanel::draw_entity_name(Origo::Scene* scene, Origo::RID entity) {
 	auto* name_comp = scene->get_native_component<Origo::NameComponent>(entity);
-	const std::string& name = name_comp->Name;
 
 	static Origo::RID editing_entity {};
 	static bool is_editing_name = false;
@@ -123,6 +130,13 @@ void EntityInspectorPanel::draw_entity_name() {
 	if (!is_editing_name || editing_entity != entity) {
 		is_editing_name = false;
 	}
+
+	if (!name_comp) {
+		ImGui::SeparatorText("Unnamed Entity");
+		return;
+	}
+
+	const std::string& name = name_comp->Name;
 
 	if (!is_editing_name) {
 		ImGui::SeparatorText(name.c_str());
@@ -165,6 +179,9 @@ void EntityInspectorPanel::draw_native_components(Origo::Scene* activeScene, Ori
 			continue;
 
 		void* component_ptr = activeScene->get_native_component_by_type(selectedEntity, type);
+		if (!component_ptr)
+			continue;
+
 		InspectorComponentRenderer::get_instance().draw_native_component(selectedEntity, component_ptr, type);
 	}
 }
@@ -174,7 +191,11 @@ void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Ori
 		if (!activeScene->has_script_component(selectedEntity, id))
 			continue;
 
-		auto& instance = *activeScene->get_script_component(selectedEntity, id);
+		auto* component = activeScene->get_script_component(selectedEntity, id);
+		if (!component)
+			continue;
+
+		auto& instance = *component;
 		InspectorComponentRenderer::get_instance().draw_script_component(instance);
 	}
 }
@@ -193,8 +214,10 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 	if (ImGui::Button("Add Component", ImVec2(button_width, 0))) {
 		add_button_pos = ImGui::GetItemRectMin();
 		add_button_size = ImGui::GetItemRectSize();
+
 		m_add_component_query.clear();
 		m_focus_add_component_search = true;
+
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 	ImGui::PopStyleVar();
@@ -241,7 +264,8 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 		ImGui::Separator();
 
 		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::InputTextWithHint("##AddComponentSearch", "Search components...", &m_add_component_query);
+		const bool search_changed = ImGui::InputTextWithHint(
+		    "##AddComponentSearch", "Search components...", &m_add_component_query);
 		if (m_focus_add_component_search) {
 			ImGui::SetKeyboardFocusHere(-1);
 			m_focus_add_component_search = false;
@@ -263,8 +287,31 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 		for (const auto& item : available_script)
 			visible_script += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
 
+		const std::size_t visible_addable_total = visible_available_native + visible_script;
 		const std::size_t visible_total = visible_available_native + visible_unavailable_native + visible_script;
 		bool component_added = false;
+
+		if (search_changed && !m_add_component_query.empty() && visible_addable_total == 1) {
+			for (const auto& item : available_native) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				activeScene->add_native_component(selectedEntity, item.Type);
+				ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+				return;
+			}
+
+			for (const auto& item : available_script) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				activeScene->add_script_component(selectedEntity, item.ID);
+				ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+				return;
+			}
+		}
 
 		ImGui::BeginChild("AddComponentList", ImVec2(0.0f, 0.0f), true);
 

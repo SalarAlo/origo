@@ -62,6 +62,10 @@ RID Scene::create_entity_with_rid(const RID& rid, std::string_view name) {
 	return m_entities.back();
 }
 
+bool Scene::has_entity(const RID& entity) const {
+	return std::find(m_entities.begin(), m_entities.end(), entity) != m_entities.end();
+}
+
 void Scene::schedule_remove_entity(const RID& rid) {
 	m_commands.emplace_back(make_scope<RemoveEntityCommand>(rid));
 }

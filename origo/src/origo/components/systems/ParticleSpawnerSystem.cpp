@@ -1,6 +1,7 @@
 #include "origo/components/systems/ParticleSpawnerSystem.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/PrimitiveShapeCache.h"
@@ -14,6 +15,7 @@
 #include "origo/components/particle_system/ParticleSystemComponent.h"
 #include "origo/components/particle_system/SampleParticleEmissionDirection.h"
 #include "origo/components/particle_system/SampleParticleEmissionPosition.h"
+#include "origo/components/particle_system/SanitizeParticleEmissionShape.h"
 
 #include "origo/core/Random.h"
 
@@ -22,6 +24,11 @@
 namespace Origo {
 
 namespace {
+
+struct PendingParticleSpawn {
+	RID EmitterRID;
+	size_t ParticleIndex;
+};
 
 float get_start_delay(const ParticleSystemComponent& particle_system) {
 	return std::max(0.0f, particle_system.StartDelay);
@@ -101,6 +108,7 @@ void spawn_particle(
 
 void ParticleSpawnerSystem::update(Origo::Scene* scene, float dt) {
 	constexpr int max_spawn_per_frame = 2048;
+	std::vector<PendingParticleSpawn> pending_spawns {};
 
 	scene->view<ParticleSystemComponent, TransformComponent, NameComponent>(
 	    [&](RID emitterRID,
@@ -132,8 +140,28 @@ void ParticleSpawnerSystem::update(Origo::Scene* scene, float dt) {
 		    spawn_count = std::min(spawn_count, max_spawn_per_frame);
 
 		    for (size_t i = 0; i < static_cast<size_t>(spawn_count); ++i)
-			    spawn_particle(scene, emitterRID, particleSystem, nc, i);
+			    pending_spawns.push_back(PendingParticleSpawn {
+			        .EmitterRID = emitterRID,
+			        .ParticleIndex = i,
+			    });
 	    });
+
+	for (const auto& pending_spawn : pending_spawns) {
+		auto* particle_system = scene->get_native_component<ParticleSystemComponent>(pending_spawn.EmitterRID);
+		auto* name = scene->get_native_component<NameComponent>(pending_spawn.EmitterRID);
+
+		if (!particle_system || !name)
+			continue;
+
+		std::visit(SanitizeParticleEmissionShape {}, particle_system->Shape);
+
+		spawn_particle(
+		    scene,
+		    pending_spawn.EmitterRID,
+		    *particle_system,
+		    *name,
+		    pending_spawn.ParticleIndex);
+	}
 }
 
 REGISTER_UPDATE_SYSTEM(

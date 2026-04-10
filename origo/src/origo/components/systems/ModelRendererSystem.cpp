@@ -9,11 +9,11 @@
 namespace Origo {
 
 void ModelRenderSystem::render(Scene* scene, RenderContext& context) {
-	scene->view<ModelRendererComponent, TransformComponent>([&](RID, auto& mr, auto& tr) {
+	scene->view<ModelRendererComponent, TransformComponent>([&](RID entity, auto& mr, auto& tr) {
 		if (!mr.ModelHandle.has_value())
 			return;
 
-		context.submit_model(*mr.ModelHandle, tr.get_model_matrix());
+		context.submit_model(*mr.ModelHandle, tr.get_model_matrix(), RenderPass::Geometry, std::nullopt, entity.get_id());
 	});
 }
 }

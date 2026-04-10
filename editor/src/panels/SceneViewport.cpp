@@ -1,6 +1,7 @@
 #include "panels/SceneViewport.h"
 
 #include <algorithm>
+#include <unordered_map>
 
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/TextureSource.h"
@@ -26,6 +27,31 @@ static Ref<Texture2D> load_svg_texture(const std::string& path, int size = 18) {
 	texture->load();
 
 	return texture;
+}
+
+static bool is_mouse_inside_rect(ImVec2 mouse, ImVec2 min, ImVec2 max) {
+	return mouse.x >= min.x && mouse.y >= min.y && mouse.x <= max.x && mouse.y <= max.y;
+}
+
+static int resolve_picked_entity_id(const FrameBuffer& buffer, int pixel_x, int pixel_y) {
+	const int center_id = buffer.read_pixel_int(1, pixel_x, pixel_y);
+	if (center_id < 0)
+		return -1;
+
+	std::unordered_map<int, int> hit_counts;
+
+	for (int dy = -1; dy <= 1; ++dy) {
+		for (int dx = -1; dx <= 1; ++dx) {
+			const int id = buffer.read_pixel_int(1, pixel_x + dx, pixel_y + dy);
+			++hit_counts[id];
+		}
+	}
+
+	const auto it = hit_counts.find(center_id);
+	if (it == hit_counts.end())
+		return -1;
+
+	return it->second >= 2 ? center_id : -1;
 }
 
 void SceneViewport::on_im_gui_render() {
@@ -59,10 +85,12 @@ void SceneViewport::on_im_gui_render() {
 	bool resized = false;
 	auto& render_buffer = m_context.get_render_buffer(m_mode);
 	auto& resolve_buffer = m_context.get_resolve_buffer(m_mode);
+	auto& pick_buffer = m_context.get_pick_buffer(m_mode);
 
 	if (w != m_last_width || h != m_last_height) {
 		render_buffer.resize(w, h);
 		resolve_buffer.resize(w, h);
+		pick_buffer.resize(w, h);
 		m_last_width = w;
 		m_last_height = h;
 		resized = true;
@@ -86,6 +114,7 @@ void SceneViewport::on_im_gui_render() {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 	ImGui::BeginGroup();
+	const ImVec2 toolbar_min = ImGui::GetCursorScreenPos();
 
 	const ImVec4 inactive_tint(0.85f, 0.85f, 0.85f, 1.0f);
 	const ImVec4 active_tint(0.30f, 0.60f, 1.00f, 1.0f);
@@ -164,6 +193,7 @@ void SceneViewport::on_im_gui_render() {
 	}
 
 	ImGui::EndGroup();
+	const ImVec2 toolbar_max = ImGui::GetItemRectMax();
 	ImGui::PopStyleVar(2);
 
 	if (editing_view && active_scene && m_context.get_selected_entity().has_value()) {
@@ -216,7 +246,25 @@ void SceneViewport::on_im_gui_render() {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouse = ImGui::GetMousePos();
 
-	bool hovered = mouse.x >= viewport_min.x && mouse.y >= viewport_min.y && mouse.x <= viewport_max.x && mouse.y <= viewport_max.y;
+	bool hovered = is_mouse_inside_rect(mouse, viewport_min, viewport_max);
+	const bool toolbar_hovered = is_mouse_inside_rect(mouse, toolbar_min, toolbar_max);
+
+	if (editing_view && hovered && !toolbar_hovered && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+		if (pick_buffer.get_color_attachment_count() > 1) {
+			const float u = std::clamp((mouse.x - viewport_min.x) / std::max(viewport_size.x, 1.0f), 0.0f, 0.999999f);
+			const float v = std::clamp((mouse.y - viewport_min.y) / std::max(viewport_size.y, 1.0f), 0.0f, 0.999999f);
+
+			const int pixel_x = static_cast<int>(u * static_cast<float>(pick_buffer.get_width()));
+			const int pixel_y_from_top = static_cast<int>(v * static_cast<float>(pick_buffer.get_height()));
+			const int pixel_y = pick_buffer.get_height() - 1 - pixel_y_from_top;
+
+			const int entity_id = resolve_picked_entity_id(pick_buffer, pixel_x, pixel_y);
+			if (entity_id >= 0)
+				m_context.set_selected_entity(RID::from_id(entity_id));
+			else
+				m_context.unselect_entity();
+		}
+	}
 
 	if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 		m_dragging = true;

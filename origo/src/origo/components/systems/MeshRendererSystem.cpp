@@ -20,7 +20,9 @@ void MeshRenderSystem::render(Scene* scene, RenderContext& context) {
 		        *mr.MeshHandle,
 		        *mr.MaterialHandle,
 		        transform.get_model_matrix(),
-		        RenderPass::Geometry);
+		        RenderPass::Geometry,
+		        GL_TRIANGLES,
+		        entity.get_id());
 	    });
 }
 

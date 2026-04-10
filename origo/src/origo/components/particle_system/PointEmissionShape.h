@@ -3,7 +3,7 @@
 namespace Origo {
 
 struct PointEmissionShape {
-	Vec3 Position;
+	Vec3 Position { 0.0f };
 };
 
 }

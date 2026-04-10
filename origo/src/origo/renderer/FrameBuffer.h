@@ -49,7 +49,10 @@ public:
 	bool is_msaa() const { return m_spec.Samples > 1; }
 
 	GLuint get_color_attachment(size_t index = 0) const;
+	size_t get_color_attachment_count() const { return m_color_tex.size(); }
+	const AttachmentSpec* get_color_attachment_spec(size_t index) const;
 	GLuint get_depth_attachment() const;
+	int read_pixel_int(size_t attachmentIndex, int x, int y) const;
 
 	const FrameBufferSpec& get_specification() const { return m_spec; }
 

@@ -65,8 +65,8 @@ void RenderContext::set_view(const RenderView& view) {
 	m_has_view = true;
 }
 
-void RenderContext::submit_mesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass, GLenum drawMethod) {
-	m_draw_queue.emplace_back(mesh, material, modelMatrix, pass, drawMethod);
+void RenderContext::submit_mesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass, GLenum drawMethod, int entityId) {
+	m_draw_queue.emplace_back(mesh, material, modelMatrix, pass, drawMethod, entityId);
 }
 
 void RenderContext::flush() {
@@ -99,6 +99,11 @@ void RenderContext::end_frame() {
 
 void RenderContext::clear() {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+	if (m_target && m_target->get_color_attachment_count() > 1) {
+		const GLint clear_value = -1;
+		glClearBufferiv(GL_COLOR, 1, &clear_value);
+	}
 }
 void RenderContext::bind_fb() {
 	FrameBuffer* fb = m_target;
@@ -177,6 +182,9 @@ void RenderContext::execute_pass(RenderPass pass) {
 			}
 		}
 
+		if (current_material)
+			current_material->set_uniform_directly("u_entity_id", cmd.get_entity_id());
+
 		draw_mesh(cmd);
 	}
 }
@@ -190,6 +198,14 @@ void RenderContext::push_point_light(const PointLightData& data) {
 }
 
 void RenderContext::configure_state(RenderPass pass) {
+	const GLenum geometry_draw_buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	const GLenum color_only_draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+	const bool has_entity_attachment = m_target && m_target->get_color_attachment_count() > 1;
+
+	glDrawBuffers(
+	    has_entity_attachment && pass == RenderPass::Geometry ? 2 : 1,
+	    has_entity_attachment && pass == RenderPass::Geometry ? geometry_draw_buffers : color_only_draw_buffers);
+
 	switch (pass) {
 	case RenderPass::Geometry: {
 		glEnable(GL_DEPTH_TEST);
@@ -251,7 +267,7 @@ void RenderContext::configure_state(RenderPass pass) {
 	}
 }
 
-void RenderContext::submit_model(const AssetHandle& modelHandle, const glm::mat4& modelMatrix, RenderPass pass, const std::optional<AssetHandle>& material) {
+void RenderContext::submit_model(const AssetHandle& modelHandle, const glm::mat4& modelMatrix, RenderPass pass, const std::optional<AssetHandle>& material, int entityId) {
 	auto model = AssetManager::get_instance().get_asset<Model>(modelHandle);
 	if (!model)
 		return;
@@ -277,12 +293,18 @@ void RenderContext::submit_model(const AssetHandle& modelHandle, const glm::mat4
 			    sub.Mesh,
 			    material.has_value() ? *material : sub.Material,
 			    world_matrices[i],
-			    pass);
+			    pass,
+			    GL_TRIANGLES,
+			    entityId);
 		}
 	}
 }
 
 void RenderContext::set_skybox_material(AssetHandle skyboxMaterial) {
 	m_skybox_material = skyboxMaterial;
+}
+
+void RenderContext::clear_skybox_material() {
+	m_skybox_material.reset();
 }
 }

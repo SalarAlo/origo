@@ -18,11 +18,12 @@
 namespace OrigoEditor {
 
 struct EditorContext {
-	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
+	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& editorPickBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
 	    : EditorScene(editorScene)
 	    , ActiveScene(editorScene)
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
+	    , EditorPickBuffer(editorPickBuffer)
 	    , GameRenderBuffer(gameRenderBuffer)
 	    , GameResolveBuffer(gameResolveBuffer)
 	    , Window(window)
@@ -40,6 +41,7 @@ struct EditorContext {
 
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
+	Origo::FrameBuffer& EditorPickBuffer;
 	Origo::FrameBuffer& GameRenderBuffer;
 	Origo::FrameBuffer& GameResolveBuffer;
 
@@ -74,6 +76,14 @@ struct EditorContext {
 		return mode == EditorViewMode::Editor ? ResolveBuffer : GameResolveBuffer;
 	}
 
+	Origo::FrameBuffer& get_pick_buffer(EditorViewMode mode) {
+		return mode == EditorViewMode::Editor ? EditorPickBuffer : GameResolveBuffer;
+	}
+
+	const Origo::FrameBuffer& get_pick_buffer(EditorViewMode mode) const {
+		return mode == EditorViewMode::Editor ? EditorPickBuffer : GameResolveBuffer;
+	}
+
 	void set_viewport_visible(EditorViewMode mode, bool visible) {
 		if (mode == EditorViewMode::Editor)
 			m_editor_viewport_visible = visible;
@@ -95,6 +105,8 @@ struct EditorContext {
 	void mark_text_input_active() { m_text_input_active = true; }
 	void clear_text_input_active() { m_text_input_active = false; }
 	bool is_text_input_active() const { return m_text_input_active; }
+	void set_skybox_enabled(bool enabled) { m_skybox_enabled = enabled; }
+	bool is_skybox_enabled() const { return m_skybox_enabled; }
 
 	EditorContext(const EditorContext&) = delete;
 	void operator=(const EditorContext&) = delete;
@@ -107,6 +119,7 @@ private:
 	bool m_text_input_active { false };
 	bool m_editor_viewport_visible { false };
 	bool m_game_viewport_visible { false };
+	bool m_skybox_enabled { true };
 };
 
 }

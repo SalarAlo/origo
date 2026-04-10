@@ -39,6 +39,7 @@ public:
 	RID create_entity(std::string_view name);
 	std::optional<RID> duplicate_entity(const RID& source, std::string_view name = {});
 	const std::vector<RID>& get_entities() const { return m_entities; }
+	bool has_entity(const RID& entity) const;
 	void schedule_remove_entity(const RID&);
 
 	void schedule_remove_native_component(const RID&, const std::type_index&);

@@ -6,6 +6,7 @@
 
 #include "origo/components/particle_system/ParticleSystemComponent.h"
 #include "origo/components/particle_system/RenderEmissionShapeDebug.h"
+#include "origo/components/particle_system/SanitizeParticleEmissionShape.h"
 
 #include "origo/scene/SystemScheduler.h"
 
@@ -15,6 +16,7 @@ void ParticleEmitterShapeDebugRenderSystem::render(Origo::Scene* scene, RenderCo
 	    [&](RID emitterRID,
 	        ParticleSystemComponent& particleSystem,
 	        TransformComponent& particleSystemTransf) {
+		    std::visit(SanitizeParticleEmissionShape {}, particleSystem.Shape);
 		    std::visit(RenderEmissionShapeDebug { rCtx, particleSystemTransf }, particleSystem.Shape);
 	    });
 }
