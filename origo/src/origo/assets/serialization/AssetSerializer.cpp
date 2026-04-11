@@ -1,6 +1,7 @@
 #include "origo/assets/serialization/AssetSerializer.h"
 
 #include "origo/assets/serialization/AudioSerializer.h"
+#include "origo/assets/serialization/MaterialColorSerializer.h"
 #include "origo/assets/serialization/MaterialSerializer.h"
 #include "origo/assets/serialization/MeshSerializer.h"
 #include "origo/assets/serialization/ModelSerializer.h"
@@ -43,6 +44,7 @@ void register_all_asset_serializers() {
 
 	register_serializer(AssetType::Texture2D, new TextureSerializer());
 	register_serializer(AssetType::MaterialPBR, new MaterialSerializer());
+	register_serializer(AssetType::MaterialColor, new MaterialColorSerializer());
 	register_serializer(AssetType::Mesh, new MeshSerializer());
 	register_serializer(AssetType::Model, new ModelSerializer());
 	register_serializer(AssetType::Shader, new ShaderSerializer());

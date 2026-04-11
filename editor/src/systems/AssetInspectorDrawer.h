@@ -3,6 +3,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/Metadata.h"
 
+#include "origo/assets/material/MaterialColor.h"
 #include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/utils/Singleton.h"
@@ -15,7 +16,8 @@ public:
 
 private:
 	void draw_specific(Origo::Asset* asset, Origo::AssetType type);
-	void draw_material(Origo::MaterialPBR* material);
+	void draw_material_pbr(Origo::MaterialPBR* material);
+	void draw_material_color(Origo::MaterialColor* material);
 };
 
 }

@@ -52,10 +52,10 @@ public:
 			return nullptr;
 
 		Asset* base = m_asset_entries[handle.Index].AssetPtr.get();
-		if (base->get_asset_type() != T::get_class_asset_type())
+		if (!base->is_asset_type(T::get_class_asset_type()))
 			return nullptr;
 
-		return static_cast<T*>(m_asset_entries[handle.Index].AssetPtr.get());
+		return dynamic_cast<T*>(m_asset_entries[handle.Index].AssetPtr.get());
 	}
 
 	Asset* get(const AssetHandle& handle) const;

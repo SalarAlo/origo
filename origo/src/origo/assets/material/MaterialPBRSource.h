@@ -13,9 +13,7 @@ enum class MaterialSourceType {
 	ID
 };
 
-struct MaterialData {
-	OptionalAssetHandle ShaderHandle { DefaultAssetCache::get_instance().get_shader() };
-
+struct MaterialPBRData {
 	PBRParameters PBRParams;
 	PBRTextures PBRTexs;
 };

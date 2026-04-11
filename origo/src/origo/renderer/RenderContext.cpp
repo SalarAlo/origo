@@ -4,7 +4,7 @@
 #include "origo/assets/Mesh.h"
 #include "origo/assets/SkyboxMaterial.h"
 
-#include "origo/assets/material/MaterialPBR.h"
+#include "origo/assets/material/Material.h"
 
 #include "origo/assets/model/Model.h"
 
@@ -19,8 +19,10 @@ namespace Origo {
 
 static void draw_mesh(const RenderCommand& cmd) {
 	auto& am { AssetManager::get_instance() };
-	auto material { am.get_asset<MaterialPBR>(cmd.get_material()) };
+	auto material { am.get_asset<Material>(cmd.get_material()) };
 	auto mesh { am.get_asset<Mesh>(cmd.get_mesh()) };
+	if (!material || !mesh)
+		return;
 
 	constexpr float outline_thickness { 0.1f };
 
@@ -133,15 +135,21 @@ void RenderContext::execute_pass(RenderPass pass) {
 		return;
 	}
 
-	MaterialPBR* current_material {};
+	Material* current_material {};
 	OptionalAssetHandle current_material_id {};
 
 	for (auto& cmd : m_draw_queue) {
 		if (cmd.get_render_pass() != pass)
 			continue;
 
+		if (!AssetManager::get_instance().is_valid(cmd.get_material())
+		    || !AssetManager::get_instance().is_valid(cmd.get_mesh()))
+			continue;
+
 		if (!current_material_id.has_value() || cmd.get_material() != current_material_id) {
-			auto material { AssetManager::get_instance().get_asset<MaterialPBR>(cmd.get_material()) };
+			auto material { AssetManager::get_instance().get_asset<Material>(cmd.get_material()) };
+			if (!material)
+				continue;
 			material->bind();
 
 			current_material = material;

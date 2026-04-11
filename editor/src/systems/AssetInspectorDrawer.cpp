@@ -5,6 +5,7 @@
 #include "origo/assets/Asset.h"
 #include "origo/assets/AssetManager.h"
 
+#include "origo/assets/material/MaterialColor.h"
 #include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/material/MaterialPBRSource.h"
 
@@ -28,7 +29,10 @@ void AssetInspectorDrawer::draw_asset(const Origo::AssetMetadata& md) {
 void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType type) {
 	switch (type) {
 	case Origo::AssetType::MaterialPBR:
-		draw_material(dynamic_cast<Origo::MaterialPBR*>(asset));
+		draw_material_pbr(dynamic_cast<Origo::MaterialPBR*>(asset));
+		break;
+	case Origo::AssetType::MaterialColor:
+		draw_material_color(dynamic_cast<Origo::MaterialColor*>(asset));
 		break;
 	default: {
 		std::string asset_type_str { magic_enum::enum_name(type) };
@@ -37,7 +41,7 @@ void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType t
 	}
 }
 
-void AssetInspectorDrawer::draw_material(Origo::MaterialPBR* material) {
+void AssetInspectorDrawer::draw_material_pbr(Origo::MaterialPBR* material) {
 	auto& material_data { material->get_data() };
 
 	Origo::OptionalAssetHandle albedo_handle = material_data.PBRTexs.Albedo;
@@ -45,7 +49,7 @@ void AssetInspectorDrawer::draw_material(Origo::MaterialPBR* material) {
 	Origo::OptionalAssetHandle metallic_roughness_handle = material_data.PBRTexs.MetallicRoughness;
 	Origo::OptionalAssetHandle ao_handle = material_data.PBRTexs.Ao;
 	Origo::OptionalAssetHandle emissive_handle = material_data.PBRTexs.Emissive;
-	Origo::OptionalAssetHandle shader_handle = material_data.ShaderHandle;
+	Origo::OptionalAssetHandle shader_handle = material->get_shader_handle();
 
 	bool textures_open = ComponentUI::start_region("Texture Maps", true);
 	if (textures_open) {
@@ -91,6 +95,25 @@ void AssetInspectorDrawer::draw_material(Origo::MaterialPBR* material) {
 		material_data.PBRParams.Roughness = roughness;
 	if (material_data.PBRParams.AO != ao)
 		material_data.PBRParams.AO = ao;
+}
+
+void AssetInspectorDrawer::draw_material_color(Origo::MaterialColor* material) {
+	auto& material_data { material->get_data() };
+	Origo::OptionalAssetHandle shader_handle = material->get_shader_handle();
+	bool unlit = material_data.Unlit;
+
+	bool surface_open = ComponentUI::start_region("Surface", true);
+	if (surface_open)
+		ComponentUI::draw_bool_control("Unlit", unlit);
+	ComponentUI::end_region(surface_open);
+
+	bool shader_open = ComponentUI::start_region("Shader", false);
+	if (shader_open)
+		ComponentUI::draw_asset_control("Shader", shader_handle, Origo::AssetType::Shader);
+	ComponentUI::end_region(shader_open);
+
+	material->set_shader(shader_handle);
+	material_data.Unlit = unlit;
 }
 
 }

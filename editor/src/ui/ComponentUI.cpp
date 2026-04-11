@@ -327,7 +327,7 @@ void draw_asset_control(std::string_view label, Origo::OptionalAssetHandle& hand
 				const Origo::UUID payload_id = Origo::UUID::from_string(uuid_str);
 				const auto payload_metadata = Origo::AssetDatabase::get_instance().get_metadata(payload_id);
 
-				if (!assetValidationType || payload_metadata.Type == *assetValidationType)
+				if (!assetValidationType || Origo::is_asset_type_compatible(payload_metadata.Type, *assetValidationType))
 					handle = asset_manager.get_handle_by_uuid(payload_id);
 			}
 			ImGui::EndDragDropTarget();

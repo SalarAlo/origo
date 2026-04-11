@@ -1,6 +1,7 @@
 #include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/assets/AssetManager.h"
+#include "origo/assets/DefaultAssetCache.h"
 #include "origo/assets/Texture2D.h"
 #include "origo/assets/UniformList.hpp"
 
@@ -8,11 +9,15 @@
 
 namespace Origo {
 
+MaterialPBR::MaterialPBR()
+    : Material(DefaultAssetCache::get_instance().get_shader()) {
+}
+
 void MaterialPBR::bind() {
 	if (!m_shader)
 		return;
 
-	m_shader->use_program();
+	bind_shader_and_upload_uniforms();
 
 	m_shader->set_uniform("u_base_color_factor", m_data.PBRParams.BaseColor);
 	m_shader->set_uniform("u_metallic_factor", m_data.PBRParams.Metallic);
@@ -20,41 +25,26 @@ void MaterialPBR::bind() {
 	m_shader->set_uniform("u_ao_factor", m_data.PBRParams.AO);
 	m_shader->set_uniform("u_unlit", m_data.PBRParams.Unlit);
 
-	if (m_albedo && m_data.ShaderHandle)
-		m_albedo->bind(*m_data.ShaderHandle);
-	if (m_normal && m_data.ShaderHandle)
-		m_normal->bind(*m_data.ShaderHandle);
-	if (m_metallic_roughness && m_data.ShaderHandle)
-		m_metallic_roughness->bind(*m_data.ShaderHandle);
-	if (m_ao && m_data.ShaderHandle)
-		m_ao->bind(*m_data.ShaderHandle);
-	if (m_emissive && m_data.ShaderHandle)
-		m_emissive->bind(*m_data.ShaderHandle);
+	if (m_albedo && m_shader_handle)
+		m_albedo->bind(*m_shader_handle);
+	if (m_normal && m_shader_handle)
+		m_normal->bind(*m_shader_handle);
+	if (m_metallic_roughness && m_shader_handle)
+		m_metallic_roughness->bind(*m_shader_handle);
+	if (m_ao && m_shader_handle)
+		m_ao->bind(*m_shader_handle);
+	if (m_emissive && m_shader_handle)
+		m_emissive->bind(*m_shader_handle);
 
 	m_shader->set_uniform("u_has_albedo_map", m_albedo != nullptr);
 	m_shader->set_uniform("u_has_normal_map", m_normal != nullptr);
 	m_shader->set_uniform("u_has_metallic_roughness_map", m_metallic_roughness != nullptr);
 	m_shader->set_uniform("u_has_ao_map", m_ao != nullptr);
 	m_shader->set_uniform("u_has_emissive_map", m_emissive != nullptr);
-
-	m_uniform_list.upload_all(m_shader);
-}
-
-void MaterialPBR::write_model(const glm::mat4& modelMatrix) {
-	if (!m_shader)
-		return;
-
-	m_shader->set_uniform("u_model_matrix", modelMatrix);
 }
 
 void MaterialPBR::resolve() {
 	auto& am = AssetManager::get_instance();
-
-	if (!m_data.ShaderHandle && m_uuid_deps.Shader) {
-		auto shader_handle = am.get_handle_by_uuid(*m_uuid_deps.Shader);
-		if (shader_handle)
-			m_data.ShaderHandle = *shader_handle;
-	}
 
 	if (!m_data.PBRTexs.Albedo && m_uuid_deps.Albedo) {
 		auto albedo_handle = am.get_handle_by_uuid(*m_uuid_deps.Albedo);
@@ -82,14 +72,13 @@ void MaterialPBR::resolve() {
 			m_data.PBRTexs.Emissive = *emissive_handle;
 	}
 
-	m_shader = nullptr;
 	m_albedo = nullptr;
 	m_normal = nullptr;
 	m_metallic_roughness = nullptr;
 	m_ao = nullptr;
 	m_emissive = nullptr;
 
-	resolve_shader();
+	resolve_material_base();
 	resolve_albedo();
 	resolve_normal();
 	resolve_metallic_roughness();
@@ -98,24 +87,6 @@ void MaterialPBR::resolve() {
 
 	if (!m_shader)
 		ORG_CORE_ERROR("Material resolve failed: missing shader");
-}
-
-void MaterialPBR::resolve_shader() {
-	if (!m_data.ShaderHandle)
-		return;
-
-	auto& am = AssetManager::get_instance();
-	m_shader = am.get_asset<Shader>(*m_data.ShaderHandle);
-}
-
-MaterialPBR& MaterialPBR::set_shader(const OptionalAssetHandle& shader) {
-	if (m_data.ShaderHandle == shader)
-		return *this;
-
-	m_data.ShaderHandle = shader;
-	m_shader = nullptr;
-	resolve_shader();
-	return *this;
 }
 
 MaterialPBR& MaterialPBR::set_albedo(const OptionalAssetHandle& albedo) {

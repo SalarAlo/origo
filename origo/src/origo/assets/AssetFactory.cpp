@@ -7,6 +7,7 @@
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
 
+#include "origo/assets/material/MaterialColor.h"
 #include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/assets/model/Model.h"
@@ -20,6 +21,8 @@ Scope<Asset> AssetFactory::allocate_hollow_asset(AssetType type) {
 		return make_scope<Texture2D>();
 	case AssetType::MaterialPBR:
 		return make_scope<MaterialPBR>();
+	case AssetType::MaterialColor:
+		return make_scope<MaterialColor>();
 	case AssetType::Script:
 		return make_scope<Script>();
 	case AssetType::Model:

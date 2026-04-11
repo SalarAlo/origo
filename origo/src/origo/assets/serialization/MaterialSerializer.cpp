@@ -16,7 +16,7 @@ void MaterialSerializer::serialize(const Asset* asset, ISerializer& backend) con
 		static_cast<const MaterialPBR*>(asset)
 	};
 
-	backend.write("shader", material->get_data().ShaderHandle);
+	backend.write("shader", material->get_shader_handle());
 
 	backend.begin_object("textures");
 	material->get_data().PBRTexs.serialize(backend);
@@ -51,7 +51,7 @@ void MaterialSerializer::deserialize(ISerializer& backend, Asset& asset) const {
 	if (deps.Shader) {
 		auto shader_handle = am.get_handle_by_uuid(*deps.Shader);
 		if (shader_handle)
-			material.get_data().ShaderHandle = *shader_handle;
+			material.set_shader(*shader_handle);
 	}
 	if (deps.Albedo) {
 		auto albedo_handle = am.get_handle_by_uuid(*deps.Albedo);

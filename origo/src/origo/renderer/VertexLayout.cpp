@@ -53,4 +53,15 @@ int VertexLayout::get_static_mesh_tangent_layout() {
 	return id;
 }
 
+int VertexLayout::get_static_mesh_color_layout() {
+	static int id = [] {
+		VertexLayout layout {};
+		layout.add_attribute<float>(3, false, VertexAttributeSemantic::Position);
+		layout.add_attribute<float>(3, false, VertexAttributeSemantic::Normal);
+		layout.add_attribute<float>(3, false, VertexAttributeSemantic::Color);
+		return VertexLayoutRegistry::register_layout(layout);
+	}();
+	return id;
+}
+
 }

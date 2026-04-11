@@ -7,4 +7,5 @@
 namespace Origo {
 
 ORIGO_REGISTER_NATIVE_COMPONENT(TerrainComponent, TerrainComponentSerializer);
+
 }

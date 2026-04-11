@@ -5,6 +5,7 @@
 #include "origo/assets/Shader.h"
 #include "origo/assets/Texture2D.h"
 
+#include "origo/assets/material/MaterialColor.h"
 #include "origo/assets/material/MaterialPBR.h"
 
 #include "origo/core/PathContext.h"
@@ -15,7 +16,9 @@ namespace Origo {
 void DefaultAssetCache::create_all_defaults() {
 	get_texture();
 	get_shader();
+	get_color_shader();
 	get_material();
+	get_color_material();
 	get_outline_material();
 	get_particle_material();
 	get_debug_material();
@@ -35,6 +38,22 @@ AssetHandle DefaultAssetCache::get_shader() {
 	shader->resolve();
 
 	return *m_shader;
+}
+
+AssetHandle DefaultAssetCache::get_color_shader() {
+	if (m_color_shader.has_value())
+		return *m_color_shader;
+
+	m_color_shader = AssetFactory::get_instance().get_instance().create_synthetic_asset<Shader>(
+	    "Default Color Shader",
+	    UUID::from_hash("ENGINE_DEFAULT_COLOR_SHADER"));
+
+	auto shader = AssetManager::get_instance().get_asset<Shader>(*m_color_shader);
+	shader->set_source(make_scope<ShaderSourceFile>(
+	    PathContextService::get_instance().editor().fallback_root() / "shaders" / "color_shader.glsl"));
+	shader->resolve();
+
+	return *m_color_shader;
 }
 
 AssetHandle DefaultAssetCache::get_texture() {
@@ -71,6 +90,22 @@ AssetHandle DefaultAssetCache::get_material() {
 	material->resolve();
 
 	return *m_material;
+}
+
+AssetHandle DefaultAssetCache::get_color_material() {
+	if (m_color_material.has_value())
+		return *m_color_material;
+
+	m_color_material = AssetFactory::get_instance().get_instance().create_synthetic_asset<MaterialColor>(
+	    "Default Color Material",
+	    UUID::from_arbitrary_string("DEFAULT_COLOR_MATERIAL_2D"));
+
+	auto material = AssetManager::get_instance().get_asset<MaterialColor>(*m_color_material);
+	material->set_shader(get_color_shader());
+	material->set_unlit(false);
+	material->resolve();
+
+	return *m_color_material;
 }
 
 AssetHandle DefaultAssetCache::get_debug_material() {

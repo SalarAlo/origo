@@ -14,7 +14,7 @@ namespace Origo {
 bool MaterialImporter::can_import(const std::filesystem::path& path) const {
 	auto ext = path.extension().string();
 	to_lower_in_place(ext);
-	return ext == ".mat";
+	return ext == ".matpbr";
 }
 
 AssetType MaterialImporter::get_asset_type() const {

@@ -2,7 +2,7 @@
 
 #include "origo/serialization/ISerializer.h"
 
-#include "origo/core/FastNoiseLite.h"
+#include <FastNoiseLite.h>
 
 namespace Origo::Random {
 
@@ -29,13 +29,13 @@ enum class FractalType {
 struct Settings {
 	Type type = Type::Perlin;
 	int seed = 1337;
-	float frequency = 0.017f;
+	float frequency = 0.04f;
 
 	FractalType fractal = FractalType::FBm;
 	int octaves = 3;
-	float lacunarity = 1.84f;
-	float gain = 0.59f;
-	float weighted_strength = 0.98f;
+	float lacunarity = 5.0f;
+	float gain = 0.1f;
+	float weighted_strength = 1.0f;
 
 	void serialize(ISerializer& serializer) const;
 	void deserialize(ISerializer& serializer);

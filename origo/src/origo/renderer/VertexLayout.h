@@ -13,6 +13,7 @@ public:
 	size_t get_stride() { return m_stride; }
 	static int get_static_mesh_layout();
 	static int get_static_mesh_tangent_layout();
+	static int get_static_mesh_color_layout();
 
 private:
 	std::vector<VertexAttribute> m_attributes {};

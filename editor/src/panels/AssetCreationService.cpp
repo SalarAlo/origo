@@ -76,7 +76,7 @@ bool AssetCreationService::create_material(FolderEntry* current_folder) const {
 	if (!ensure_physical_folder(current_folder, folder_path, "Unable to create materials within a virtual path"))
 		return false;
 
-	const auto unique_path = make_unique_asset_path(folder_path, "material", ".mat");
+	const auto unique_path = make_unique_asset_path(folder_path, "material", ".matpbr");
 
 	const auto material_handle = AssetFactory::get_instance().create_pathed_runtime_asset<MaterialPBR>(unique_path.stem().string(), unique_path);
 	auto material = AssetManager::get_instance().get_asset<MaterialPBR>(material_handle);
