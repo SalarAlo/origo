@@ -21,6 +21,7 @@ public:
 	static const ScriptComponentDescriptor& get(ScriptComponentID id);
 
 	static std::optional<ScriptComponentID> try_find_by_name(const std::string& name);
+	static std::optional<ScriptComponentID> try_find_by_script_and_name(const UUID& script_id, const std::string& name);
 	static bool exists(ScriptComponentID id);
 
 	static const std::unordered_map<ScriptComponentID, ScriptComponentDescriptor>& get_all() { return s_descriptors; }

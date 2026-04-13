@@ -81,6 +81,12 @@ void SceneViewport::on_im_gui_render() {
 	}
 
 	m_context.set_viewport_visible(m_mode, true);
+	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {
+		m_context.claim_keyboard_input(
+		    m_mode == EditorViewMode::Editor
+		        ? KeyboardInputOwner::SceneViewport
+		        : KeyboardInputOwner::GameViewport);
+	}
 
 	bool resized = false;
 	auto& render_buffer = m_context.get_render_buffer(m_mode);

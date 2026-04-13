@@ -202,7 +202,9 @@ void ScriptComponentManager::serialize_entity(RID entity, ISerializer& backend) 
 			backend.write("id", component.ID.to_string());
 
 			if (ScriptComponentRegistry::exists(component.ID)) {
-				backend.write("name", ScriptComponentRegistry::get(component.ID).Name);
+				const auto& descriptor = ScriptComponentRegistry::get(component.ID);
+				backend.write("name", descriptor.Name);
+				backend.write("script_id", descriptor.ScriptID.to_string());
 			}
 
 			backend.begin_array("fields");
@@ -230,8 +232,10 @@ void ScriptComponentManager::deserialize_entity(RID entity, ISerializer& backend
 	while (backend.try_begin_array_object_read()) {
 		std::string component_id_str;
 		std::string component_name;
+		std::string script_id_str;
 		backend.try_read("id", component_id_str);
 		backend.try_read("name", component_name);
+		backend.try_read("script_id", script_id_str);
 
 		std::optional<ScriptComponentID> component_id;
 		if (!component_id_str.empty()) {
@@ -244,7 +248,18 @@ void ScriptComponentManager::deserialize_entity(RID entity, ISerializer& backend
 		}
 
 		if (!component_id.has_value() && !component_name.empty()) {
-			component_id = ScriptComponentRegistry::try_find_by_name(component_name);
+			if (!script_id_str.empty()) {
+				try {
+					component_id = ScriptComponentRegistry::try_find_by_script_and_name(
+					    UUID::from_string(script_id_str),
+					    component_name);
+				} catch (const std::exception&) {
+				}
+			}
+
+			if (!component_id.has_value()) {
+				component_id = ScriptComponentRegistry::try_find_by_name(component_name);
+			}
 		}
 
 		if (!component_id.has_value()) {

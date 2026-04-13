@@ -15,6 +15,11 @@ enum class TextureType {
 	UI
 };
 
+enum class TextureWrapMode {
+	Clamp,
+	Repeat
+};
+
 class Texture2D : public Asset {
 public:
 	Texture2D(TextureType type = TextureType::Albedo);
@@ -29,6 +34,7 @@ public:
 
 	TextureType get_texture_type() const { return m_texture_type; }
 	void set_texture_type(TextureType type) { m_texture_type = type; }
+	void set_wrap_mode(TextureWrapMode wrap_mode);
 	GLuint get_renderer_id() { return m_texture_id; }
 
 	void resolve() override;
@@ -44,5 +50,6 @@ private:
 	GLuint m_texture_id = 0;
 	bool m_loaded { false };
 	TextureType m_texture_type;
+	TextureWrapMode m_wrap_mode { TextureWrapMode::Clamp };
 };
 }

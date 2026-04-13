@@ -9,6 +9,8 @@ enum class AssetType {
 	Material,
 	MaterialPBR,
 	MaterialColor,
+	TerrainMaterial,
+	WaterMaterial,
 	SkyboxMaterial,
 	Mesh,
 	Model,
@@ -24,7 +26,10 @@ inline bool is_asset_type_compatible(AssetType actual, AssetType requested) {
 
 	switch (requested) {
 	case AssetType::Material:
-		return actual == AssetType::MaterialPBR || actual == AssetType::MaterialColor;
+		return actual == AssetType::MaterialPBR
+		    || actual == AssetType::MaterialColor
+		    || actual == AssetType::TerrainMaterial
+		    || actual == AssetType::WaterMaterial;
 	default:
 		return false;
 	}

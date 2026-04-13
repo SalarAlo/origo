@@ -15,8 +15,8 @@ using namespace Origo;
 namespace OrigoEditor {
 
 namespace {
-	bool is_text_input_blocking_camera(const EditorContext& context) {
-		return context.is_text_input_active() || ImGui::GetIO().WantTextInput;
+	bool scene_viewport_owns_keyboard(const EditorContext& context) {
+		return context.keyboard_input_owned_by(KeyboardInputOwner::SceneViewport);
 	}
 }
 
@@ -25,7 +25,7 @@ void EditorCameraLayer::on_attach() {
 }
 
 void EditorCameraLayer::on_update(double dt) {
-	if (is_text_input_blocking_camera(m_context))
+	if (!scene_viewport_owns_keyboard(m_context))
 		return;
 
 	if (Input::is_key_pressed(KeyboardKey::KEY_LEFT_CONTROL) || Input::is_key_pressed(KeyboardKey::KEY_RIGHT_CONTROL))
@@ -61,7 +61,7 @@ void EditorCameraLayer::on_event(Event& e) {
 		if (pressEvent.get_key_press_type() != KeyPressType::KeyPressStart)
 			return;
 
-		if (is_text_input_blocking_camera(m_context))
+		if (!scene_viewport_owns_keyboard(m_context))
 			return;
 
 		const bool ctrl_pressed = Input::is_key_pressed(KeyboardKey::KEY_LEFT_CONTROL)

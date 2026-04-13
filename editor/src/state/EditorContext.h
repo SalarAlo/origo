@@ -6,6 +6,7 @@
 
 #include "origo/scene/Scene.h"
 
+#include "state/EditingSessionType.h"
 #include "state/EditorRuntimeState.h"
 #include "state/EditorViewMode.h"
 
@@ -16,6 +17,14 @@
 #include "viewport/EditorViewportController.h"
 
 namespace OrigoEditor {
+
+enum class KeyboardInputOwner {
+	None,
+	SceneViewport,
+	GameViewport,
+	TextEditor,
+	InspectorTextInput,
+};
 
 struct EditorContext {
 	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& editorPickBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
@@ -45,11 +54,13 @@ struct EditorContext {
 	Origo::FrameBuffer& GameRenderBuffer;
 	Origo::FrameBuffer& GameResolveBuffer;
 
+	Origo::EditingSessionType Session { Origo::EditingSessionType::Scene };
+
 	Origo::LayerSystem& LayerSystem;
 
 	GLFWwindow* Window;
 
-	EditorPalette ColorPalette {};
+	EditorPalette ColorPalette;
 	EditorCamera EditorViewportCamera {};
 
 	EditorRuntimeState RuntimeState { EditorRuntimeState::Editing };
@@ -95,6 +106,19 @@ struct EditorContext {
 		return mode == EditorViewMode::Editor ? m_editor_viewport_visible : m_game_viewport_visible;
 	}
 
+	void begin_ui_input_frame() {
+		m_keyboard_input_owner = KeyboardInputOwner::None;
+		m_editor_viewport_visible = false;
+		m_game_viewport_visible = false;
+	}
+
+	void claim_keyboard_input(KeyboardInputOwner owner) {
+		m_keyboard_input_owner = owner;
+	}
+
+	KeyboardInputOwner get_keyboard_input_owner() const { return m_keyboard_input_owner; }
+	bool keyboard_input_owned_by(KeyboardInputOwner owner) const { return m_keyboard_input_owner == owner; }
+
 	void set_selected_entity(const Origo::RID& entity);
 	void unselect_entity();
 	std::optional<Origo::RID> get_selected_entity() const { return m_selected_entity; }
@@ -102,9 +126,6 @@ struct EditorContext {
 	void set_selected_asset(const Origo::UUID& asset);
 	void unselect_asset();
 	std::optional<Origo::UUID> get_selected_asset() const { return m_selected_asset; }
-	void mark_text_input_active() { m_text_input_active = true; }
-	void clear_text_input_active() { m_text_input_active = false; }
-	bool is_text_input_active() const { return m_text_input_active; }
 	void set_skybox_enabled(bool enabled) { m_skybox_enabled = enabled; }
 	bool is_skybox_enabled() const { return m_skybox_enabled; }
 
@@ -116,7 +137,7 @@ struct EditorContext {
 private:
 	std::optional<Origo::RID> m_selected_entity { std::nullopt };
 	OptionalUUID m_selected_asset { std::nullopt };
-	bool m_text_input_active { false };
+	KeyboardInputOwner m_keyboard_input_owner { KeyboardInputOwner::None };
 	bool m_editor_viewport_visible { false };
 	bool m_game_viewport_visible { false };
 	bool m_skybox_enabled { true };

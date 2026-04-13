@@ -55,36 +55,42 @@ static float build_base_height(
     const Noise::Generator& base_generator,
     const Noise::Generator& warp_generator_x,
     const Noise::Generator& warp_generator_z,
-    const Noise::Generator& macro_generator,
+    const Noise::Generator& medium_generator,
     const Noise::Generator& ridge_generator,
-    const Noise::Generator& detail_generator,
+    const Noise::Generator& fine_generator,
     int x,
     int z) {
 	const float sample_x = static_cast<float>(x) * terrain_component.scale;
 	const float sample_z = static_cast<float>(z) * terrain_component.scale;
 
-	const float warp_strength = 18.0f * terrain_component.scale;
+	const float warp_strength = terrain_component.shape_settings.domain_warp_strength * terrain_component.scale;
 	const float warped_x = sample_x + warp_generator_x.sample_2d(sample_x * 0.35f, sample_z * 0.35f) * warp_strength;
 	const float warped_z = sample_z + warp_generator_z.sample_2d(sample_x * 0.35f, sample_z * 0.35f) * warp_strength;
 
-	const float continental = remap_noise(base_generator.sample_2d(warped_x, warped_z));
-	const float macro = remap_noise(macro_generator.sample_2d(warped_x * 0.42f, warped_z * 0.42f));
-	const float ridge = 1.0f - std::abs(ridge_generator.sample_2d(warped_x * 1.7f, warped_z * 1.7f));
-	const float detail = remap_noise(detail_generator.sample_2d(warped_x * 3.5f, warped_z * 3.5f));
+	const float base = remap_noise(base_generator.sample_2d(warped_x, warped_z));
+	const float medium = remap_noise(medium_generator.sample_2d(
+	    warped_x * terrain_component.shape_settings.medium_frequency_multiplier,
+	    warped_z * terrain_component.shape_settings.medium_frequency_multiplier));
+	const float ridge = 1.0f - std::abs(ridge_generator.sample_2d(
+	    warped_x * terrain_component.shape_settings.ridge_frequency_multiplier,
+	    warped_z * terrain_component.shape_settings.ridge_frequency_multiplier));
+	const float fine = remap_noise(fine_generator.sample_2d(
+	    warped_x * terrain_component.shape_settings.fine_frequency_multiplier,
+	    warped_z * terrain_component.shape_settings.fine_frequency_multiplier));
 
-	const float valley_mask = glm::smoothstep(0.18f, 0.62f, macro);
-	const float mountain_mask = glm::smoothstep(0.45f, 0.88f, macro);
+	const float mountain_mask = glm::smoothstep(0.38f, 0.82f, base);
+	const float basin_mask = 1.0f - glm::smoothstep(0.24f, 0.56f, base);
 
-	float height = continental * 0.72f;
-	height += macro * 0.28f;
-	height = glm::mix(height * 0.58f, height, valley_mask);
-	height += ridge * mountain_mask * 0.24f;
-	height += (detail - 0.5f) * glm::mix(0.04f, 0.11f, mountain_mask);
-
-	// Preserve flatter basins while still allowing higher relief zones.
-	height = glm::smoothstep(0.10f, 0.96f, glm::clamp(height, 0.0f, 1.0f));
+	float height = base * terrain_component.shape_settings.base_strength;
+	height += medium * terrain_component.shape_settings.medium_detail_strength;
+	height += ridge * terrain_component.shape_settings.ridge_strength * mountain_mask;
+	height += (fine - 0.5f) * terrain_component.shape_settings.detail_strength * glm::mix(0.45f, 1.0f, mountain_mask);
+	height = glm::mix(height * 0.68f, height, 1.0f - basin_mask * 0.45f);
+	height = glm::smoothstep(
+	    terrain_component.shape_settings.remap_min,
+	    terrain_component.shape_settings.remap_max,
+	    glm::clamp(height, 0.0f, 1.0f));
 	height = glm::pow(height, terrain_component.contrast);
-
 	return glm::clamp(height, 0.0f, 1.0f);
 }
 
@@ -278,28 +284,6 @@ static void normalize_height_map(std::vector<float>& height_map) {
 		sample = (sample - min_height) / span;
 }
 
-static glm::vec3 calculate_color(float normalized_height, const glm::vec3& normal, float variation) {
-	const float slope = 1.0f - glm::clamp(normal.y, 0.0f, 1.0f);
-	const glm::vec3 lush_grass = { 0.12f, 0.52f, 0.18f };
-	const glm::vec3 dry_grass = { 0.42f, 0.50f, 0.18f };
-	const glm::vec3 dirt = { 0.45f, 0.31f, 0.20f };
-	const glm::vec3 rock = { 0.43f, 0.44f, 0.46f };
-	const glm::vec3 snow = { 0.96f, 0.97f, 1.0f };
-
-	const float grass_to_dry = glm::smoothstep(0.16f, 0.48f, normalized_height);
-	const float dirt_mask = glm::smoothstep(0.14f, 0.34f, slope) * (1.0f - glm::smoothstep(0.42f, 0.68f, slope));
-	const float rock_mask = glm::smoothstep(0.22f, 0.48f, slope);
-	const float snow_mask = glm::smoothstep(0.80f, 0.94f, normalized_height + rock_mask * 0.08f);
-
-	glm::vec3 base = glm::mix(lush_grass, dry_grass, grass_to_dry);
-	base = glm::mix(base, dirt, dirt_mask * 0.65f);
-	base = glm::mix(base, rock, rock_mask);
-	base = glm::mix(base, snow, snow_mask);
-
-	const float tint = glm::mix(0.88f, 1.12f, variation);
-	return glm::clamp(base * tint, 0.0f, 1.0f);
-}
-
 static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_component) {
 	const int size_x = terrain_component.size_x;
 	const int size_z = terrain_component.size_z;
@@ -316,26 +300,26 @@ static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_compo
 
 	Noise::Settings ridge_settings = terrain_component.noise_settings;
 	ridge_settings.seed += 211;
-	ridge_settings.frequency *= 1.8f;
+	ridge_settings.frequency *= terrain_component.shape_settings.ridge_frequency_multiplier;
 	ridge_settings.gain *= 0.85f;
 
-	Noise::Settings macro_settings = terrain_component.noise_settings;
-	macro_settings.seed += 149;
-	macro_settings.frequency *= 0.22f;
-	macro_settings.octaves = 2;
-	macro_settings.gain *= 0.8f;
+	Noise::Settings medium_settings = terrain_component.noise_settings;
+	medium_settings.seed += 149;
+	medium_settings.frequency *= terrain_component.shape_settings.medium_frequency_multiplier;
+	medium_settings.octaves = std::max(2, terrain_component.noise_settings.octaves - 1);
+	medium_settings.gain *= 0.8f;
 
-	Noise::Settings detail_settings = terrain_component.noise_settings;
-	detail_settings.seed += 307;
-	detail_settings.frequency *= 3.0f;
-	detail_settings.octaves = std::max(1, detail_settings.octaves);
-	detail_settings.gain *= 0.7f;
+	Noise::Settings fine_settings = terrain_component.noise_settings;
+	fine_settings.seed += 307;
+	fine_settings.frequency *= terrain_component.shape_settings.fine_frequency_multiplier;
+	fine_settings.octaves = std::max(1, fine_settings.octaves);
+	fine_settings.gain *= 0.7f;
 
 	Noise::Generator warp_generator_x { warp_settings };
 	Noise::Generator warp_generator_z { warp_settings_z };
-	Noise::Generator macro_generator { macro_settings };
+	Noise::Generator medium_generator { medium_settings };
 	Noise::Generator ridge_generator { ridge_settings };
-	Noise::Generator detail_generator { detail_settings };
+	Noise::Generator fine_generator { fine_settings };
 
 	std::vector<float> height_map(size_x * size_z);
 
@@ -346,9 +330,9 @@ static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_compo
 			    base_generator,
 			    warp_generator_x,
 			    warp_generator_z,
-			    macro_generator,
+			    medium_generator,
 			    ridge_generator,
-			    detail_generator,
+			    fine_generator,
 			    x,
 			    z);
 
@@ -367,6 +351,22 @@ static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_compo
 	    size_x,
 	    size_z,
 	    terrain_component.cell_size);
+}
+
+static MeshData construct_water_mesh_data(const TerrainComponent& terrain_component) {
+	MeshData mesh {};
+	const float world_y = terrain_component.water_settings.water_level * terrain_component.height;
+	const float max_x = static_cast<float>(terrain_component.size_x - 1) * terrain_component.cell_size;
+	const float max_z = static_cast<float>(terrain_component.size_z - 1) * terrain_component.cell_size;
+
+	mesh.Vertices = {
+		0.0f, world_y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		max_x, world_y, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, world_y, max_z, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		max_x, world_y, max_z, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+	};
+	mesh.Indices = { 0, 2, 1, 1, 2, 3 };
+	return mesh;
 }
 
 static float get_height(
@@ -390,9 +390,7 @@ MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 	const float min_height = min_it != height_map.end() ? *min_it : 0.0f;
 	const float max_height = max_it != height_map.end() ? *max_it : 1.0f;
 	const float height_span = std::max(1e-5f, max_height - min_height);
-
-	// position (3) + normal (3) + color (3)
-	const int stride = 9;
+	const int stride = 8;
 
 	mesh.Vertices.reserve(size_x * size_z * stride);
 
@@ -405,10 +403,9 @@ MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 			float h_d = get_height(height_map, size_x, size_z, x, z - 1);
 			float h_u = get_height(height_map, size_x, size_z, x, z + 1);
 
-			glm::vec3 normal = glm::normalize(glm::vec3(
-			    h_l - h_r,
-			    2.0f,
-			    h_d - h_u));
+			const float ddx = (h_r - h_l) / std::max(cell_size * 2.0f, 1e-5f);
+			const float ddz = (h_u - h_d) / std::max(cell_size * 2.0f, 1e-5f);
+			glm::vec3 normal = glm::normalize(glm::vec3(-ddx, 1.0f, -ddz));
 
 			mesh.Vertices.push_back(static_cast<float>(x) * cell_size);
 			mesh.Vertices.push_back(h);
@@ -418,12 +415,10 @@ MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 			mesh.Vertices.push_back(normal.y);
 			mesh.Vertices.push_back(normal.z);
 
-			const float normalized_height = (h - min_height) / height_span;
-			const float variation = hash_noise_2d(x, z);
-			auto color { calculate_color(normalized_height, normal, variation) };
-			mesh.Vertices.push_back(color.x);
-			mesh.Vertices.push_back(color.y);
-			mesh.Vertices.push_back(color.z);
+			const float normalized_x = size_x > 1 ? static_cast<float>(x) / static_cast<float>(size_x - 1) : 0.0f;
+			const float normalized_z = size_z > 1 ? static_cast<float>(z) / static_cast<float>(size_z - 1) : 0.0f;
+			mesh.Vertices.push_back(normalized_x);
+			mesh.Vertices.push_back(normalized_z);
 		}
 	}
 
@@ -472,7 +467,7 @@ void TerrainComponentMeshBuilderSystem::update(Scene* scene, float dt) {
 				return;
 			}
 
-			const int layout_id = VertexLayout::get_static_mesh_color_layout();
+			const int layout_id = VertexLayout::get_static_mesh_layout();
 			const int heap_id = GeometryHeapRegistry::get_or_create_static_mesh_heap(layout_id);
 
 			auto* heap = GeometryHeapRegistry::get_heap(heap_id);
@@ -497,6 +492,22 @@ void TerrainComponentMeshBuilderSystem::update(Scene* scene, float dt) {
 			    layout_id,
 			    heap_id,
 			    range);
+			release_terrain_mesh(terrain_component.water_mesh);
+			if (terrain_component.water_settings.enabled) {
+				const MeshData water_mesh = construct_water_mesh_data(terrain_component);
+				const auto water_range = heap->allocate(
+				    water_mesh.Vertices.data(),
+				    water_mesh.Vertices.size() * sizeof(float),
+				    layout->get_stride(),
+				    water_mesh.Indices.data(),
+				    water_mesh.Indices.size());
+
+				terrain_component.water_mesh = AssetFactory::get_instance().create_runtime_asset<Mesh>(
+				    "TerrainWaterMesh_" + std::to_string(entity.get_id()),
+				    layout_id,
+				    heap_id,
+				    water_range);
+			}
 
 			terrain_component.should_rebuild = false;
 			terrain_component.started_rebuilding = false;
@@ -511,6 +522,7 @@ void TerrainComponentMeshBuilderSystem::update(Scene* scene, float dt) {
 
 		if (size_x < 2 || size_z < 2) {
 			release_terrain_mesh(terrain_component.terrain_mesh);
+			release_terrain_mesh(terrain_component.water_mesh);
 			terrain_component.should_rebuild = false;
 			terrain_component.started_rebuilding = false;
 			return;

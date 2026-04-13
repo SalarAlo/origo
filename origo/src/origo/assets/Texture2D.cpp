@@ -35,6 +35,18 @@ Texture2D::Texture2D(TextureType type)
     , m_texture_id(0) {
 }
 
+void Texture2D::set_wrap_mode(TextureWrapMode wrap_mode) {
+	m_wrap_mode = wrap_mode;
+	if (m_texture_id == 0)
+		return;
+
+	const GLint gl_wrap_mode = m_wrap_mode == TextureWrapMode::Repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_texture_id));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_wrap_mode));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrap_mode));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
 void Texture2D::set_source(Scope<TextureSource> src) {
 	m_source = std::move(src);
 }
@@ -82,8 +94,9 @@ void Texture2D::init_texture(const TextureInitialisationData& initData) {
 	    GL_UNSIGNED_BYTE,
 	    initData.PixelData.data());
 
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	const GLint wrap_mode = m_wrap_mode == TextureWrapMode::Repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, initData.GenerateMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 

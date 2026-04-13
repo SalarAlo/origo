@@ -9,6 +9,8 @@
 
 #include "origo/assets/material/MaterialColor.h"
 #include "origo/assets/material/MaterialPBR.h"
+#include "origo/assets/material/TerrainMaterial.h"
+#include "origo/assets/material/WaterMaterial.h"
 
 #include "origo/assets/model/Model.h"
 
@@ -23,6 +25,10 @@ Scope<Asset> AssetFactory::allocate_hollow_asset(AssetType type) {
 		return make_scope<MaterialPBR>();
 	case AssetType::MaterialColor:
 		return make_scope<MaterialColor>();
+	case AssetType::TerrainMaterial:
+		return make_scope<TerrainMaterial>();
+	case AssetType::WaterMaterial:
+		return make_scope<WaterMaterial>();
 	case AssetType::Script:
 		return make_scope<Script>();
 	case AssetType::Model:

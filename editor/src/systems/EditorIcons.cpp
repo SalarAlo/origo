@@ -49,6 +49,8 @@ ImTextureID EditorIcons::get(Origo::AssetType type) {
 	case Origo::AssetType::Material:
 	case Origo::AssetType::MaterialPBR:
 	case Origo::AssetType::MaterialColor:
+	case Origo::AssetType::TerrainMaterial:
+	case Origo::AssetType::WaterMaterial:
 	case Origo::AssetType::SkyboxMaterial:
 		return get(IconType::Unknown);
 

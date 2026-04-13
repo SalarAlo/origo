@@ -25,6 +25,7 @@ ScriptComponentID ScriptComponentRegistry::register_or_update(ScriptComponentDes
 		auto& existing = s_descriptors[descriptor.ID];
 		existing.Fields = descriptor.Fields;
 		existing.Name = descriptor.Name;
+		existing.ScriptID = descriptor.ScriptID;
 
 		s_name_to_script_component_id.erase(existing.Name);
 		s_name_to_script_component_id.emplace(descriptor.Name, descriptor.ID);
@@ -52,7 +53,8 @@ ScriptComponentID ScriptComponentRegistry::register_or_update(ScriptComponentDes
 ScriptComponentID ScriptComponentRegistry::register_component_from_lua(const UUID& uuid, const std::string& name, sol::table fields) {
 	ScriptComponentDescriptor desc {};
 	desc.Name = name;
-	desc.ID = uuid;
+	desc.ScriptID = uuid;
+	desc.ID = UUID::from_hash(uuid.to_string() + "::" + name);
 
 	for (auto& kv : fields) {
 		std::string field_name = kv.first.as<std::string>();
@@ -76,7 +78,7 @@ ScriptComponentID ScriptComponentRegistry::register_component_from_lua(const UUI
 		Variant value = it->second.FromLua(def_val);
 
 		UUID field_id = UUID::from_hash(
-		    uuid.to_string() + "::" + field_name);
+		    desc.ID.to_string() + "::" + field_name);
 
 		ScriptFieldDescriptor field {
 			field_id,
@@ -113,6 +115,16 @@ std::optional<ScriptComponentID> ScriptComponentRegistry::try_find_by_name(const
 	}
 
 	return it->second;
+}
+
+std::optional<ScriptComponentID> ScriptComponentRegistry::try_find_by_script_and_name(const UUID& script_id, const std::string& name) {
+	for (const auto& [id, descriptor] : s_descriptors) {
+		if (descriptor.ScriptID == script_id && descriptor.Name == name) {
+			return id;
+		}
+	}
+
+	return std::nullopt;
 }
 
 bool ScriptComponentRegistry::exists(ScriptComponentID id) {

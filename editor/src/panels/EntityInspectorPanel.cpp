@@ -157,7 +157,7 @@ void EntityInspectorPanel::draw_entity_name(Origo::Scene* scene, Origo::RID enti
 		    ImGuiInputTextFlags_EnterReturnsTrue);
 
 		if (ImGui::IsItemActive())
-			m_context.mark_text_input_active();
+			m_context.claim_keyboard_input(KeyboardInputOwner::InspectorTextInput);
 
 		const bool deactivated = ImGui::IsItemDeactivatedAfterEdit();
 
@@ -272,7 +272,7 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 		}
 
 		if (ImGui::IsItemActive())
-			m_context.mark_text_input_active();
+			m_context.claim_keyboard_input(KeyboardInputOwner::InspectorTextInput);
 
 		ImGui::Spacing();
 

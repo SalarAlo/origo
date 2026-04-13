@@ -11,6 +11,9 @@ std::string asset_type_to_string(Origo::AssetType type) {
 	case Origo::AssetType::Material:
 	case Origo::AssetType::MaterialPBR:
 	case Origo::AssetType::MaterialColor:
+	case Origo::AssetType::TerrainMaterial:
+	case Origo::AssetType::WaterMaterial:
+	case Origo::AssetType::SkyboxMaterial:
 		return "Materials";
 	case Origo::AssetType::Mesh:
 		return "Meshes";
@@ -20,6 +23,12 @@ std::string asset_type_to_string(Origo::AssetType type) {
 		return "Models";
 	case Origo::AssetType::Shader:
 		return "Shaders";
+	case Origo::AssetType::Scene:
+		return "Scenes";
+	case Origo::AssetType::Audio:
+		return "Audio";
+	case Origo::AssetType::Prefab:
+		return "Prefabs";
 	default:
 		return "Other";
 	}

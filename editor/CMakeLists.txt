@@ -30,6 +30,7 @@ target_link_libraries(OrigoEditor PRIVATE
 				nfd
 				imgui
 				imgui_textedit
+				zep_vendor
 				imguizmo_vendor
 )
 

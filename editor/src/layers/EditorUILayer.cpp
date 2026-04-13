@@ -46,9 +46,7 @@ void EditorUILayer::on_attach() {
 
 void EditorUILayer::on_update(double dt) {
 	m_im_gui_controller.begin();
-	m_context.clear_text_input_active();
-	m_context.set_viewport_visible(EditorViewMode::Editor, false);
-	m_context.set_viewport_visible(EditorViewMode::Game, false);
+	m_context.begin_ui_input_frame();
 
 	UI::begin_dockspace();
 	UI::draw_menu_bar(m_panel_manager, m_context);

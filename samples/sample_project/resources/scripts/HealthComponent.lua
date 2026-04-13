@@ -3,14 +3,12 @@ Component.define("HealthComponent", {
 		type = "int",
 		default = 100
 	},
-	max_helath = {
+	max_health = {
 		type = "int",
 		default = 100
 	},
 	is_dead = {
 		type = "float",
 		default = 20
-	}
+	},
 })
-
-

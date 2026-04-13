@@ -26,6 +26,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${output_dir})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${output_dir}")
+
 set(BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(BUILD_QT OFF CACHE BOOL "" FORCE)
@@ -63,6 +66,7 @@ origo_require_submodule(vendor/spdlog)
 origo_require_submodule(vendor/json)
 origo_require_submodule(vendor/jolt)
 origo_require_submodule(vendor/nativefiledialog)
+origo_require_submodule(vendor/zep)
 
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
@@ -75,6 +79,55 @@ target_include_directories(imgui_textedit PUBLIC
     vendor/ImGuiColorTextEdit
 )
 target_link_libraries(imgui_textedit PUBLIC imgui)
+
+set(ZEP_ROOT "${CMAKE_SOURCE_DIR}/vendor/zep")
+configure_file(
+    "${ZEP_ROOT}/cmake/config_app.h.cmake"
+    "${CMAKE_BINARY_DIR}/config_app.h"
+)
+
+add_library(zep_vendor STATIC
+    vendor/zep/src/buffer.cpp
+    vendor/zep/src/commands.cpp
+    vendor/zep/src/display.cpp
+    vendor/zep/src/editor.cpp
+    vendor/zep/src/filesystem.cpp
+    vendor/zep/src/glyph_iterator.cpp
+    vendor/zep/src/indexer.cpp
+    vendor/zep/src/keymap.cpp
+    vendor/zep/src/line_widgets.cpp
+    vendor/zep/src/mcommon/animation/timer.cpp
+    vendor/zep/src/mcommon/file/path.cpp
+    vendor/zep/src/mcommon/string/stringutils.cpp
+    vendor/zep/src/mode.cpp
+    vendor/zep/src/mode_repl.cpp
+    vendor/zep/src/mode_search.cpp
+    vendor/zep/src/mode_standard.cpp
+    vendor/zep/src/mode_tree.cpp
+    vendor/zep/src/mode_vim.cpp
+    vendor/zep/src/range_markers.cpp
+    vendor/zep/src/regress.cpp
+    vendor/zep/src/scroller.cpp
+    vendor/zep/src/splits.cpp
+    vendor/zep/src/syntax.cpp
+    vendor/zep/src/syntax_markdown.cpp
+    vendor/zep/src/syntax_providers.cpp
+    vendor/zep/src/syntax_rainbow_brackets.cpp
+    vendor/zep/src/syntax_tree.cpp
+    vendor/zep/src/tab_window.cpp
+    vendor/zep/src/theme.cpp
+    vendor/zep/src/window.cpp
+)
+target_include_directories(zep_vendor PUBLIC
+    vendor/zep/include
+    vendor/zep/src
+    vendor/zep/src/mcommon
+    ${CMAKE_BINARY_DIR}
+)
+target_compile_definitions(zep_vendor PUBLIC
+    ZEP_FEATURE_CPP_FILE_SYSTEM
+)
+target_link_libraries(zep_vendor PUBLIC imgui)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/jolt)
