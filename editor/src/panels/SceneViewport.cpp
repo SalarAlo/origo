@@ -91,11 +91,13 @@ void SceneViewport::on_im_gui_render() {
 	bool resized = false;
 	auto& render_buffer = m_context.get_render_buffer(m_mode);
 	auto& resolve_buffer = m_context.get_resolve_buffer(m_mode);
+	auto& present_buffer = m_context.get_present_buffer(m_mode);
 	auto& pick_buffer = m_context.get_pick_buffer(m_mode);
 
 	if (w != m_last_width || h != m_last_height) {
 		render_buffer.resize(w, h);
 		resolve_buffer.resize(w, h);
+		present_buffer.resize(w, h);
 		pick_buffer.resize(w, h);
 		m_last_width = w;
 		m_last_height = h;
@@ -103,7 +105,7 @@ void SceneViewport::on_im_gui_render() {
 	}
 
 	ImGui::Image(
-	    (ImTextureID)(uintptr_t)resolve_buffer.get_color_attachment(0),
+	    (ImTextureID)(uintptr_t)present_buffer.get_color_attachment(0),
 	    size,
 	    ImVec2(0, 1),
 	    ImVec2(1, 0));

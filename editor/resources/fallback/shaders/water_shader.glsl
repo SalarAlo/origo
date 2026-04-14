@@ -115,8 +115,6 @@ void main() {
         color += albedo * u_ambient * 0.55;
         color = mix(color, sky_reflection, view_fresnel * 0.65);
 
-        color = color / (color + vec3(1.0));
-        color = pow(color, vec3(1.0 / 2.2));
         frag_color = vec4(color, 1.0);
         entity_id_out = u_entity_id;
 }

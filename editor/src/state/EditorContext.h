@@ -27,14 +27,16 @@ enum class KeyboardInputOwner {
 };
 
 struct EditorContext {
-	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& editorPickBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
+	EditorContext(Origo::Scene* editorScene, Origo::FrameBuffer& renderBuffer, Origo::FrameBuffer& resolveBuffer, Origo::FrameBuffer& presentBuffer, Origo::FrameBuffer& editorPickBuffer, Origo::FrameBuffer& gameRenderBuffer, Origo::FrameBuffer& gameResolveBuffer, Origo::FrameBuffer& gamePresentBuffer, GLFWwindow* window, const EditorPalette& palette, Origo::LayerSystem& layerSystem)
 	    : EditorScene(editorScene)
 	    , ActiveScene(editorScene)
 	    , RenderBuffer(renderBuffer)
 	    , ResolveBuffer(resolveBuffer)
+	    , PresentBuffer(presentBuffer)
 	    , EditorPickBuffer(editorPickBuffer)
 	    , GameRenderBuffer(gameRenderBuffer)
 	    , GameResolveBuffer(gameResolveBuffer)
+	    , GamePresentBuffer(gamePresentBuffer)
 	    , Window(window)
 	    , LayerSystem(layerSystem)
 	    , ViewportController(*this)
@@ -50,9 +52,11 @@ struct EditorContext {
 
 	Origo::FrameBuffer& RenderBuffer;
 	Origo::FrameBuffer& ResolveBuffer;
+	Origo::FrameBuffer& PresentBuffer;
 	Origo::FrameBuffer& EditorPickBuffer;
 	Origo::FrameBuffer& GameRenderBuffer;
 	Origo::FrameBuffer& GameResolveBuffer;
+	Origo::FrameBuffer& GamePresentBuffer;
 
 	Origo::EditingSessionType Session { Origo::EditingSessionType::Scene };
 
@@ -85,6 +89,14 @@ struct EditorContext {
 
 	const Origo::FrameBuffer& get_resolve_buffer(EditorViewMode mode) const {
 		return mode == EditorViewMode::Editor ? ResolveBuffer : GameResolveBuffer;
+	}
+
+	Origo::FrameBuffer& get_present_buffer(EditorViewMode mode) {
+		return mode == EditorViewMode::Editor ? PresentBuffer : GamePresentBuffer;
+	}
+
+	const Origo::FrameBuffer& get_present_buffer(EditorViewMode mode) const {
+		return mode == EditorViewMode::Editor ? PresentBuffer : GamePresentBuffer;
 	}
 
 	Origo::FrameBuffer& get_pick_buffer(EditorViewMode mode) {

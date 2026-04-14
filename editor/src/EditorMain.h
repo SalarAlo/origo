@@ -27,9 +27,11 @@ private:
 private:
 	Origo::FrameBuffer m_render_buffer;
 	Origo::FrameBuffer m_resolve_buffer;
+	Origo::FrameBuffer m_present_buffer;
 	Origo::FrameBuffer m_editor_pick_buffer;
 	Origo::FrameBuffer m_game_render_buffer;
 	Origo::FrameBuffer m_game_resolve_buffer;
+	Origo::FrameBuffer m_game_present_buffer;
 
 	EditorContext m_context;
 	EditorRuntimeController m_runtime_controller;

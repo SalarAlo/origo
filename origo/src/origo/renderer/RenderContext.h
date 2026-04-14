@@ -7,6 +7,8 @@
 
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/GridRenderer.h"
+#include "origo/renderer/PostProcessSettings.h"
+#include "origo/renderer/PostProcessor.h"
 #include "origo/renderer/RenderCommand.h"
 #include "origo/renderer/RenderView.h"
 
@@ -20,6 +22,9 @@ public:
 
 	void set_target(FrameBuffer* target) { m_target = target; }
 	void set_resolve_target(FrameBuffer* resolveTarget) { m_resolve_target = resolveTarget; }
+	void set_present_target(FrameBuffer* presentTarget) { m_present_target = presentTarget; }
+	void set_post_process_settings(const PostProcessSettings& settings) { m_post_process_settings = settings; }
+	void clear_post_process_settings() { m_post_process_settings.reset(); }
 	void set_skybox_material(AssetHandle skyboxMaterial);
 	void clear_skybox_material();
 
@@ -33,7 +38,9 @@ public:
 
 	FrameBuffer* get_target() const { return m_target; }
 	FrameBuffer* get_resolve_target() const { return m_resolve_target; }
-	FrameBuffer* get_final_target() const { return m_resolve_target ? m_resolve_target : m_target; }
+	FrameBuffer* get_present_target() const { return m_present_target; }
+	FrameBuffer* get_scene_output_target() const { return m_target && m_target->is_msaa() ? m_resolve_target : m_target; }
+	FrameBuffer* get_final_target() const { return m_present_target ? m_present_target : get_scene_output_target(); }
 
 	void begin_frame();
 	void end_frame();
@@ -52,6 +59,9 @@ private:
 private:
 	FrameBuffer* m_target {};
 	FrameBuffer* m_resolve_target {};
+	FrameBuffer* m_present_target {};
+	std::optional<PostProcessSettings> m_post_process_settings {};
+	PostProcessor m_post_processor {};
 
 	std::optional<DirectionalLightData> m_directional_light_data;
 	std::vector<PointLightData> m_point_lights;

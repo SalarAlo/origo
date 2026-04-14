@@ -2,6 +2,8 @@
 
 #include "origo/assets/SkyboxDefaults.h"
 
+#include "origo/components/CameraComponent.h"
+
 #include "origo/scene/GamePhase.h"
 #include "origo/scene/SystemScheduler.h"
 
@@ -10,14 +12,22 @@ using namespace Origo;
 namespace OrigoEditor {
 
 namespace {
+	PostProcessSettings default_post_process_settings() {
+		return PostProcessSettings {};
+	}
+
 	void render_view(EditorContext& context, RenderContext& renderContext, Origo::Scene* scene, EditorViewMode mode, double dt) {
 		if (!scene)
 			return;
 
 		const bool editing_view = mode == EditorViewMode::Editor;
+		const auto* active_camera = context.ViewportController.get_active_camera_component(mode, scene);
+		const PostProcessSettings post_settings = active_camera ? active_camera->PostProcess : default_post_process_settings();
 
 		renderContext.set_target(&context.get_render_buffer(mode));
 		renderContext.set_resolve_target(&context.get_resolve_buffer(mode));
+		renderContext.set_present_target(&context.get_present_buffer(mode));
+		renderContext.set_post_process_settings(post_settings);
 		renderContext.set_view(context.ViewportController.get_render_view(mode, scene));
 		renderContext.set_editor_grid_enabled(editing_view);
 
@@ -42,6 +52,8 @@ namespace {
 
 		renderContext.set_target(&context.get_pick_buffer(EditorViewMode::Editor));
 		renderContext.set_resolve_target(nullptr);
+		renderContext.set_present_target(nullptr);
+		renderContext.clear_post_process_settings();
 		renderContext.set_view(context.ViewportController.get_render_view(EditorViewMode::Editor, scene));
 		renderContext.set_editor_grid_enabled(false);
 

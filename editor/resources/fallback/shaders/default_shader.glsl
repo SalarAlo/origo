@@ -212,9 +212,6 @@ void main() {
         vec3 ambient = u_unlit ? albedo : (u_ambient * albedo * ao);
         vec3 color = ambient + Lo + emissive;
 
-        color = color / (color + vec3(1.0));
-        color = pow(color, vec3(1.0 / 2.2));
-
         frag_color = vec4(color, 1.0);
         entity_id_out = u_entity_id;
 }

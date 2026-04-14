@@ -61,6 +61,18 @@ FrameBufferSpec create_pick_buffer_spec() {
 	return spec;
 }
 
+FrameBufferSpec create_present_buffer_spec() {
+	FrameBufferSpec spec;
+
+	spec.Width = 1920;
+	spec.Height = 1080;
+	spec.Attachments = {
+		{ AttachmentType::Color, GL_RGBA16F, GL_RGBA, GL_FLOAT },
+	};
+
+	return spec;
+}
+
 size_t layer_key(OrigoEditor::LayerType layer_type) {
 	return static_cast<size_t>(layer_type);
 }
@@ -82,10 +94,12 @@ EditorApplication::EditorApplication(const ApplicationSettings& settings)
     : Application(settings)
     , m_render_buffer(create_render_buffer_spec())
     , m_resolve_buffer(create_resolve_buffer_spec())
+    , m_present_buffer(create_present_buffer_spec())
     , m_editor_pick_buffer(create_pick_buffer_spec())
     , m_game_render_buffer(create_render_buffer_spec())
     , m_game_resolve_buffer(create_resolve_buffer_spec())
-    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_editor_pick_buffer, m_game_render_buffer, m_game_resolve_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
+    , m_game_present_buffer(create_present_buffer_spec())
+    , m_context(new Scene("Sample Scene"), m_render_buffer, m_resolve_buffer, m_present_buffer, m_editor_pick_buffer, m_game_render_buffer, m_game_resolve_buffer, m_game_present_buffer, m_window.get_native_window(), get_default_editor_palette(), m_layer_system)
     , m_runtime_controller(m_context) {
 	setup_layers();
 	setup_render_context();
@@ -106,6 +120,7 @@ void EditorApplication::setup_layers() {
 void EditorApplication::setup_render_context() {
 	m_render_context.set_target(&m_render_buffer);
 	m_render_context.set_resolve_target(&m_resolve_buffer);
+	m_render_context.set_present_target(&m_present_buffer);
 }
 
 void EditorApplication::on_end_frame(float dt) {

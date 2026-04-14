@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(OrigoTests LANGUAGES CXX)
 
 add_executable(OrigoTests
+	src/CameraComponentSerializationTest.cpp
 	src/Main.cpp
 	src/JsonSerializerTest.cpp
 	src/PrefabSerializationTest.cpp

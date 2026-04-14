@@ -76,4 +76,18 @@ RenderView EditorViewportController::get_render_view(EditorViewMode mode, Origo:
 	return view;
 }
 
+const CameraComponent* EditorViewportController::get_active_camera_component(EditorViewMode mode, Origo::Scene* scene) const {
+	if (mode != EditorViewMode::Game || !scene)
+		return nullptr;
+
+	const CameraComponent* active_camera = nullptr;
+
+	scene->view<CameraComponent>([&](RID, CameraComponent& cc) {
+		if (!active_camera && cc.IsPrimary)
+			active_camera = &cc;
+	});
+
+	return active_camera;
+}
+
 }
