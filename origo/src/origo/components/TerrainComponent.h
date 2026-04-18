@@ -19,6 +19,11 @@
 #include "origo/core/Typedefs.h"
 namespace Origo {
 
+enum class TerrainStyle {
+	Smooth,
+	Voxel,
+};
+
 struct TerrainBuildTask {
 	std::atomic<bool> Ready { false };
 	std::mutex ResultMutex {};
@@ -33,6 +38,7 @@ struct TerrainComponent : public Component {
 	    , shape_settings(other.shape_settings)
 	    , surface_settings(other.surface_settings)
 	    , water_settings(other.water_settings)
+	    , style(other.style)
 	    , use_texture_layers(other.use_texture_layers)
 	    , ground_albedo(other.ground_albedo)
 	    , ground_normal(other.ground_normal)
@@ -65,6 +71,7 @@ struct TerrainComponent : public Component {
 		shape_settings = other.shape_settings;
 		surface_settings = other.surface_settings;
 		water_settings = other.water_settings;
+		style = other.style;
 		use_texture_layers = other.use_texture_layers;
 		ground_albedo = other.ground_albedo;
 		ground_normal = other.ground_normal;
@@ -107,6 +114,7 @@ struct TerrainComponent : public Component {
 	TerrainShapeSettings shape_settings {};
 	TerrainSurfaceSettings surface_settings {};
 	TerrainWaterSettings water_settings {};
+	TerrainStyle style { TerrainStyle::Smooth };
 	bool use_texture_layers { false };
 	OptionalAssetHandle ground_albedo { std::nullopt };
 	OptionalAssetHandle ground_normal { std::nullopt };

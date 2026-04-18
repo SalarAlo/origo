@@ -60,6 +60,7 @@ static bool s_registered = []() {
 		    const auto before_surface_settings = terrain.surface_settings;
 		    const auto before_water_settings = terrain.water_settings;
 		    const auto before_erosion_settings = terrain.erosion_settings;
+		    const auto before_style = terrain.style;
 		    const bool before_use_texture_layers = terrain.use_texture_layers;
 		    const auto before_ground_albedo = terrain.ground_albedo;
 		    const auto before_ground_normal = terrain.ground_normal;
@@ -88,6 +89,7 @@ static bool s_registered = []() {
 
 		    const bool general_open = ComponentUI::start_region("Terrain");
 		    if (general_open) {
+			    ComponentUI::draw_enum_control("Style", terrain.style);
 			    ComponentUI::draw_int_control("Size X", terrain.size_x);
 			    ComponentUI::draw_int_control("Size Z", terrain.size_z);
 			    ComponentUI::draw_float_control("Noise Scale", terrain.scale);
@@ -188,6 +190,7 @@ static bool s_registered = []() {
 		    ComponentUI::end_region(advanced_open);
 
 		    const bool changed = terrain.noise_settings.type != before_noise_settings.type
+		        || terrain.style != before_style
 		        || terrain.noise_settings.seed != before_noise_settings.seed
 		        || terrain.noise_settings.frequency != before_noise_settings.frequency
 		        || terrain.noise_settings.fractal != before_noise_settings.fractal

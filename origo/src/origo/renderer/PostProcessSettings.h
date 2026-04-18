@@ -10,33 +10,33 @@ enum class ToneMappingOperator {
 
 struct ToneMappingSettings {
 	bool Enabled { true };
-	ToneMappingOperator Operator { ToneMappingOperator::Reinhard };
-	float Exposure { 0.0f };
+	ToneMappingOperator Operator { ToneMappingOperator::ACES };
+	float Exposure { 0.1f };
 	float Gamma { 2.2f };
 };
 
 struct ColorAdjustmentsSettings {
-	bool Enabled { false };
-	float Contrast { 0.0f };
-	float Saturation { 1.0f };
+	bool Enabled { true };
+	float Contrast { 0.06f };
+	float Saturation { 1.08f };
 	float HueShift { 0.0f };
-	float Temperature { 0.0f };
+	float Temperature { 0.02f };
 	float Tint { 0.0f };
 };
 
 struct BloomSettings {
-	bool Enabled { false };
-	float Threshold { 1.0f };
-	float Knee { 0.5f };
-	float Intensity { 0.7f };
+	bool Enabled { true };
+	float Threshold { 1.5f };
+	float Knee { 0.45f };
+	float Intensity { 0.08f };
 	int BlurPasses { 4 };
 };
 
 struct VignetteSettings {
-	bool Enabled { false };
-	float Intensity { 0.25f };
-	float Smoothness { 0.55f };
-	float Roundness { 1.0f };
+	bool Enabled { true };
+	float Intensity { 0.08f };
+	float Smoothness { 0.72f };
+	float Roundness { 1.1f };
 	Vec3 Color { 0.0f, 0.0f, 0.0f };
 };
 

@@ -89,6 +89,7 @@ void TerrainComponentRenderSystem::render(Scene* scene, RenderContext& context) 
 		        .set_micro_normal(pick_texture_handle(terrain_component.micro_normal, DefaultAssetCache::get_instance().get_terrain_micro_normal()));
 
 		    terrain_material->set_uniform("u_use_texture_layers", terrain_component.use_texture_layers)
+		        .set_uniform("u_use_mesh_uvs", terrain_component.style == TerrainStyle::Voxel)
 		        .set_uniform("u_terrain_max_height", terrain_component.height)
 		        .set_uniform("u_water_level", terrain_component.water_settings.water_level)
 		        .set_uniform("u_ground_tile_scale", terrain_component.surface_settings.ground_tile_scale)

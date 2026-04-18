@@ -1,5 +1,7 @@
 #include "TerrainComponentSerializer.h"
 
+#include <magic_enum/magic_enum.hpp>
+
 #include "origo/components/TerrainComponent.h"
 
 namespace Origo {
@@ -26,6 +28,7 @@ void TerrainComponentSerializer::serialize(Component* comp, ISerializer& s) cons
 	s.begin_object("water_settings");
 	terrain->water_settings.serialize(s);
 	s.end_object();
+	s.write("style", std::string_view(magic_enum::enum_name(terrain->style)));
 	s.write("use_texture_layers", terrain->use_texture_layers);
 	s.write("ground_albedo", terrain->ground_albedo);
 	s.write("ground_normal", terrain->ground_normal);
@@ -65,6 +68,10 @@ void TerrainComponentSerializer::deserialize(Component* comp, ISerializer& s) {
 	s.begin_object("water_settings");
 	terrain->water_settings.deserialize(s);
 	s.end_object();
+	if (std::string style_name; s.try_read("style", style_name)) {
+		if (auto style = magic_enum::enum_cast<TerrainStyle>(style_name))
+			terrain->style = *style;
+	}
 	s.try_read("use_texture_layers", terrain->use_texture_layers);
 	terrain->ground_albedo = read_optional_asset(s, "ground_albedo");
 	terrain->ground_normal = read_optional_asset(s, "ground_normal");

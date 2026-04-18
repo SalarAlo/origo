@@ -1,5 +1,6 @@
 #include "TerrainComponentMeshBuilderSystem.h"
 
+#include <cmath>
 #include <random>
 #include <thread>
 
@@ -10,6 +11,7 @@
 
 #include "origo/components/TerrainComponent.h"
 
+#include "origo/core/Logger.h"
 #include "origo/core/RID.h"
 #include "origo/renderer/GeometryHeapRegistry.h"
 #include "origo/renderer/VertexLayout.h"
@@ -284,6 +286,305 @@ static void normalize_height_map(std::vector<float>& height_map) {
 		sample = (sample - min_height) / span;
 }
 
+static void append_voxel_face(
+    MeshData& mesh,
+    const glm::vec3& a,
+    const glm::vec3& b,
+    const glm::vec3& c,
+    const glm::vec3& d,
+    const glm::vec3& normal,
+    float u_scale,
+    float v_scale) {
+	const unsigned int base_index = static_cast<unsigned int>(mesh.Vertices.size() / 8);
+
+	const auto append_vertex = [&](const glm::vec3& position, float u, float v) {
+		mesh.Vertices.push_back(position.x);
+		mesh.Vertices.push_back(position.y);
+		mesh.Vertices.push_back(position.z);
+		mesh.Vertices.push_back(normal.x);
+		mesh.Vertices.push_back(normal.y);
+		mesh.Vertices.push_back(normal.z);
+		mesh.Vertices.push_back(u);
+		mesh.Vertices.push_back(v);
+	};
+
+	append_vertex(a, 0.0f, 0.0f);
+	append_vertex(b, u_scale, 0.0f);
+	append_vertex(c, 0.0f, v_scale);
+	append_vertex(d, u_scale, v_scale);
+
+	const glm::vec3 triangle_normal = glm::cross(b - a, c - a);
+	if (glm::dot(triangle_normal, normal) >= 0.0f) {
+		mesh.Indices.push_back(base_index + 0);
+		mesh.Indices.push_back(base_index + 1);
+		mesh.Indices.push_back(base_index + 2);
+		mesh.Indices.push_back(base_index + 1);
+		mesh.Indices.push_back(base_index + 3);
+		mesh.Indices.push_back(base_index + 2);
+	} else {
+		mesh.Indices.push_back(base_index + 0);
+		mesh.Indices.push_back(base_index + 2);
+		mesh.Indices.push_back(base_index + 1);
+		mesh.Indices.push_back(base_index + 1);
+		mesh.Indices.push_back(base_index + 2);
+		mesh.Indices.push_back(base_index + 3);
+	}
+}
+
+static int get_voxel_height(
+    const std::vector<int>& voxel_heights,
+    int size_x,
+    int size_z,
+    int x,
+    int z) {
+	if (x < 0 || x >= size_x || z < 0 || z >= size_z)
+		return 0;
+
+	return voxel_heights[z * size_x + x];
+}
+
+static MeshData construct_voxel_mesh_data(
+    const std::vector<float>& height_map,
+    int size_x,
+    int size_z,
+    float cell_size) {
+	MeshData mesh {};
+	if (height_map.empty())
+		return mesh;
+
+	const float fine_unit = std::max(cell_size, 1e-5f);
+	const float target_voxel_size = std::max(1.0f, fine_unit);
+	const int voxel_footprint = std::max(1, static_cast<int>(std::round(target_voxel_size / fine_unit)));
+	const float unit = fine_unit * static_cast<float>(voxel_footprint);
+	const int voxel_size_x = std::max(1, (size_x + voxel_footprint - 1) / voxel_footprint);
+	const int voxel_size_z = std::max(1, (size_z + voxel_footprint - 1) / voxel_footprint);
+
+	std::vector<int> voxel_heights(voxel_size_x * voxel_size_z, 0);
+	for (int vz = 0; vz < voxel_size_z; ++vz) {
+		for (int vx = 0; vx < voxel_size_x; ++vx) {
+			float accumulated_height = 0.0f;
+			int sample_count = 0;
+
+			for (int dz = 0; dz < voxel_footprint; ++dz) {
+				const int source_z = vz * voxel_footprint + dz;
+				if (source_z >= size_z)
+					break;
+
+				for (int dx = 0; dx < voxel_footprint; ++dx) {
+					const int source_x = vx * voxel_footprint + dx;
+					if (source_x >= size_x)
+						break;
+
+					accumulated_height += height_map[source_z * size_x + source_x];
+					++sample_count;
+				}
+			}
+
+			if (sample_count == 0)
+				continue;
+
+			const float averaged_height = accumulated_height / static_cast<float>(sample_count);
+			voxel_heights[vz * voxel_size_x + vx] = std::max(0, static_cast<int>(std::round(averaged_height / unit)));
+		}
+	}
+
+	std::vector<uint8_t> top_visited(voxel_size_x * voxel_size_z, 0);
+
+	for (int z = 0; z < voxel_size_z; ++z) {
+		for (int x = 0; x < voxel_size_x; ++x) {
+			const int index = z * voxel_size_x + x;
+			const int column_height = voxel_heights[index];
+			if (column_height <= 0 || top_visited[index])
+				continue;
+
+			int width = 1;
+			while (x + width < voxel_size_x) {
+				const int next_index = z * voxel_size_x + (x + width);
+				if (top_visited[next_index] || voxel_heights[next_index] != column_height)
+					break;
+				++width;
+			}
+
+			int depth = 1;
+			bool can_extend = true;
+			while (z + depth < voxel_size_z && can_extend) {
+				for (int dx = 0; dx < width; ++dx) {
+					const int next_index = (z + depth) * voxel_size_x + (x + dx);
+					if (top_visited[next_index] || voxel_heights[next_index] != column_height) {
+						can_extend = false;
+						break;
+					}
+				}
+				if (can_extend)
+					++depth;
+			}
+
+			for (int dz = 0; dz < depth; ++dz) {
+				for (int dx = 0; dx < width; ++dx)
+					top_visited[(z + dz) * voxel_size_x + (x + dx)] = 1;
+			}
+
+			const float x0 = static_cast<float>(x) * unit;
+			const float x1 = static_cast<float>(x + width) * unit;
+			const float z0 = static_cast<float>(z) * unit;
+			const float z1 = static_cast<float>(z + depth) * unit;
+			const float y = static_cast<float>(column_height) * unit;
+
+			append_voxel_face(
+			    mesh,
+			    glm::vec3(x0, y, z0),
+			    glm::vec3(x1, y, z0),
+			    glm::vec3(x0, y, z1),
+			    glm::vec3(x1, y, z1),
+			    glm::vec3(0.0f, 1.0f, 0.0f),
+			    static_cast<float>(width),
+			    static_cast<float>(depth));
+		}
+	}
+
+	for (int x = 0; x < voxel_size_x; ++x) {
+		int z = 0;
+		while (z < voxel_size_z) {
+			const int column_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z);
+			const int left_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x - 1, z);
+			if (column_height <= left_height) {
+				++z;
+				continue;
+			}
+
+			int depth = 1;
+			while (z + depth < voxel_size_z) {
+				const int run_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z + depth);
+				const int run_left_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x - 1, z + depth);
+				if (run_height != column_height || run_left_height != left_height)
+					break;
+				++depth;
+			}
+
+			const float x_plane = static_cast<float>(x) * unit;
+			const float z0 = static_cast<float>(z) * unit;
+			const float z1 = static_cast<float>(z + depth) * unit;
+			append_voxel_face(
+			    mesh,
+			    glm::vec3(x_plane, static_cast<float>(left_height) * unit, z0),
+			    glm::vec3(x_plane, static_cast<float>(left_height) * unit, z1),
+			    glm::vec3(x_plane, static_cast<float>(column_height) * unit, z0),
+			    glm::vec3(x_plane, static_cast<float>(column_height) * unit, z1),
+			    glm::vec3(-1.0f, 0.0f, 0.0f),
+			    static_cast<float>(depth),
+			    static_cast<float>(column_height - left_height));
+			z += depth;
+		}
+	}
+
+	for (int x = 0; x < voxel_size_x; ++x) {
+		int z = 0;
+		while (z < voxel_size_z) {
+			const int column_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z);
+			const int right_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + 1, z);
+			if (column_height <= right_height) {
+				++z;
+				continue;
+			}
+
+			int depth = 1;
+			while (z + depth < voxel_size_z) {
+				const int run_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z + depth);
+				const int run_right_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + 1, z + depth);
+				if (run_height != column_height || run_right_height != right_height)
+					break;
+				++depth;
+			}
+
+			const float x_plane = static_cast<float>(x + 1) * unit;
+			const float z0 = static_cast<float>(z) * unit;
+			const float z1 = static_cast<float>(z + depth) * unit;
+			append_voxel_face(
+			    mesh,
+			    glm::vec3(x_plane, static_cast<float>(right_height) * unit, z0),
+			    glm::vec3(x_plane, static_cast<float>(column_height) * unit, z0),
+			    glm::vec3(x_plane, static_cast<float>(right_height) * unit, z1),
+			    glm::vec3(x_plane, static_cast<float>(column_height) * unit, z1),
+			    glm::vec3(1.0f, 0.0f, 0.0f),
+			    static_cast<float>(depth),
+			    static_cast<float>(column_height - right_height));
+			z += depth;
+		}
+	}
+
+	for (int z = 0; z < voxel_size_z; ++z) {
+		int x = 0;
+		while (x < voxel_size_x) {
+			const int column_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z);
+			const int back_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z - 1);
+			if (column_height <= back_height) {
+				++x;
+				continue;
+			}
+
+			int width = 1;
+			while (x + width < voxel_size_x) {
+				const int run_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + width, z);
+				const int run_back_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + width, z - 1);
+				if (run_height != column_height || run_back_height != back_height)
+					break;
+				++width;
+			}
+
+			const float z_plane = static_cast<float>(z) * unit;
+			const float x0 = static_cast<float>(x) * unit;
+			const float x1 = static_cast<float>(x + width) * unit;
+			append_voxel_face(
+			    mesh,
+			    glm::vec3(x0, static_cast<float>(back_height) * unit, z_plane),
+			    glm::vec3(x1, static_cast<float>(back_height) * unit, z_plane),
+			    glm::vec3(x0, static_cast<float>(column_height) * unit, z_plane),
+			    glm::vec3(x1, static_cast<float>(column_height) * unit, z_plane),
+			    glm::vec3(0.0f, 0.0f, -1.0f),
+			    static_cast<float>(width),
+			    static_cast<float>(column_height - back_height));
+			x += width;
+		}
+	}
+
+	for (int z = 0; z < voxel_size_z; ++z) {
+		int x = 0;
+		while (x < voxel_size_x) {
+			const int column_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z);
+			const int front_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x, z + 1);
+			if (column_height <= front_height) {
+				++x;
+				continue;
+			}
+
+			int width = 1;
+			while (x + width < voxel_size_x) {
+				const int run_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + width, z);
+				const int run_front_height = get_voxel_height(voxel_heights, voxel_size_x, voxel_size_z, x + width, z + 1);
+				if (run_height != column_height || run_front_height != front_height)
+					break;
+				++width;
+			}
+
+			const float z_plane = static_cast<float>(z + 1) * unit;
+			const float x0 = static_cast<float>(x) * unit;
+			const float x1 = static_cast<float>(x + width) * unit;
+			append_voxel_face(
+			    mesh,
+			    glm::vec3(x0, static_cast<float>(front_height) * unit, z_plane),
+			    glm::vec3(x0, static_cast<float>(column_height) * unit, z_plane),
+			    glm::vec3(x1, static_cast<float>(front_height) * unit, z_plane),
+			    glm::vec3(x1, static_cast<float>(column_height) * unit, z_plane),
+			    glm::vec3(0.0f, 0.0f, 1.0f),
+			    static_cast<float>(width),
+			    static_cast<float>(column_height - front_height));
+			x += width;
+		}
+	}
+
+	return mesh;
+}
+
 static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_component) {
 	const int size_x = terrain_component.size_x;
 	const int size_z = terrain_component.size_z;
@@ -346,6 +647,14 @@ static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_compo
 	for (float& sample : height_map)
 		sample *= terrain_component.height;
 
+	if (terrain_component.style == TerrainStyle::Voxel) {
+		return construct_voxel_mesh_data(
+		    height_map,
+		    size_x,
+		    size_z,
+		    terrain_component.cell_size);
+	}
+
 	return TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 	    height_map,
 	    size_x,
@@ -355,7 +664,7 @@ static MeshData generate_terrain_mesh_data(const TerrainComponent& terrain_compo
 
 static MeshData construct_water_mesh_data(const TerrainComponent& terrain_component) {
 	MeshData mesh {};
-	const float world_y = terrain_component.water_settings.water_level * terrain_component.height;
+	const float world_y = terrain_component.water_settings.water_level * terrain_component.height - 0.1f;
 	const float max_x = static_cast<float>(terrain_component.size_x - 1) * terrain_component.cell_size;
 	const float max_z = static_cast<float>(terrain_component.size_z - 1) * terrain_component.cell_size;
 
@@ -380,16 +689,64 @@ static float get_height(
 	return height_map[z * size_x + x];
 }
 
+static glm::vec3 get_height_position(
+    const std::vector<float>& height_map,
+    int size_x,
+    int size_z,
+    int x,
+    int z,
+    float cell_size) {
+	return glm::vec3(
+	    static_cast<float>(std::clamp(x, 0, size_x - 1)) * cell_size,
+	    get_height(height_map, size_x, size_z, x, z),
+	    static_cast<float>(std::clamp(z, 0, size_z - 1)) * cell_size);
+}
+
+static glm::vec3 compute_smooth_heightmap_normal(
+    const std::vector<float>& height_map,
+    int size_x,
+    int size_z,
+    int x,
+    int z,
+    float cell_size) {
+	const glm::vec3 center = get_height_position(height_map, size_x, size_z, x, z, cell_size);
+	const glm::vec3 ring[] = {
+		get_height_position(height_map, size_x, size_z, x, z - 1, cell_size),
+		get_height_position(height_map, size_x, size_z, x + 1, z - 1, cell_size),
+		get_height_position(height_map, size_x, size_z, x + 1, z, cell_size),
+		get_height_position(height_map, size_x, size_z, x + 1, z + 1, cell_size),
+		get_height_position(height_map, size_x, size_z, x, z + 1, cell_size),
+		get_height_position(height_map, size_x, size_z, x - 1, z + 1, cell_size),
+		get_height_position(height_map, size_x, size_z, x - 1, z, cell_size),
+		get_height_position(height_map, size_x, size_z, x - 1, z - 1, cell_size),
+	};
+
+	glm::vec3 accumulated_normal(0.0f);
+	for (size_t i = 0; i < std::size(ring); ++i) {
+		const glm::vec3 edge_a = ring[i] - center;
+		const glm::vec3 edge_b = ring[(i + 1) % std::size(ring)] - center;
+		accumulated_normal += glm::cross(edge_b, edge_a);
+	}
+
+	if (glm::dot(accumulated_normal, accumulated_normal) <= 1e-10f) {
+		const float h_l = get_height(height_map, size_x, size_z, x - 1, z);
+		const float h_r = get_height(height_map, size_x, size_z, x + 1, z);
+		const float h_d = get_height(height_map, size_x, size_z, x, z - 1);
+		const float h_u = get_height(height_map, size_x, size_z, x, z + 1);
+		const float ddx = (h_r - h_l) / std::max(cell_size * 2.0f, 1e-5f);
+		const float ddz = (h_u - h_d) / std::max(cell_size * 2.0f, 1e-5f);
+		accumulated_normal = glm::vec3(-ddx, 1.0f, -ddz);
+	}
+
+	return glm::normalize(accumulated_normal);
+}
+
 MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
     const std::vector<float>& height_map,
     int size_x,
     int size_z,
     float cell_size) {
 	MeshData mesh {};
-	const auto [min_it, max_it] = std::minmax_element(height_map.begin(), height_map.end());
-	const float min_height = min_it != height_map.end() ? *min_it : 0.0f;
-	const float max_height = max_it != height_map.end() ? *max_it : 1.0f;
-	const float height_span = std::max(1e-5f, max_height - min_height);
 	const int stride = 8;
 
 	mesh.Vertices.reserve(size_x * size_z * stride);
@@ -397,15 +754,13 @@ MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 	for (int z = 0; z < size_z; ++z) {
 		for (int x = 0; x < size_x; ++x) {
 			float h = height_map[z * size_x + x];
-
-			float h_l = get_height(height_map, size_x, size_z, x - 1, z);
-			float h_r = get_height(height_map, size_x, size_z, x + 1, z);
-			float h_d = get_height(height_map, size_x, size_z, x, z - 1);
-			float h_u = get_height(height_map, size_x, size_z, x, z + 1);
-
-			const float ddx = (h_r - h_l) / std::max(cell_size * 2.0f, 1e-5f);
-			const float ddz = (h_u - h_d) / std::max(cell_size * 2.0f, 1e-5f);
-			glm::vec3 normal = glm::normalize(glm::vec3(-ddx, 1.0f, -ddz));
+			const glm::vec3 normal = compute_smooth_heightmap_normal(
+			    height_map,
+			    size_x,
+			    size_z,
+			    x,
+			    z,
+			    cell_size);
 
 			mesh.Vertices.push_back(static_cast<float>(x) * cell_size);
 			mesh.Vertices.push_back(h);
@@ -415,10 +770,8 @@ MeshData TerrainComponentMeshBuilderSystem::construct_mesh_data_from_heightmap(
 			mesh.Vertices.push_back(normal.y);
 			mesh.Vertices.push_back(normal.z);
 
-			const float normalized_x = size_x > 1 ? static_cast<float>(x) / static_cast<float>(size_x - 1) : 0.0f;
-			const float normalized_z = size_z > 1 ? static_cast<float>(z) / static_cast<float>(size_z - 1) : 0.0f;
-			mesh.Vertices.push_back(normalized_x);
-			mesh.Vertices.push_back(normalized_z);
+			mesh.Vertices.push_back(static_cast<float>(x));
+			mesh.Vertices.push_back(static_cast<float>(z));
 		}
 	}
 
@@ -480,33 +833,44 @@ void TerrainComponentMeshBuilderSystem::update(Scene* scene, float dt) {
 
 			release_terrain_mesh(terrain_component.terrain_mesh);
 
-			const auto range = heap->allocate(
-			    built_mesh->Vertices.data(),
-			    built_mesh->Vertices.size() * sizeof(float),
-			    layout->get_stride(),
-			    built_mesh->Indices.data(),
-			    built_mesh->Indices.size());
-
-			terrain_component.terrain_mesh = AssetFactory::get_instance().create_runtime_asset<Mesh>(
-			    "TerrainMesh_" + std::to_string(entity.get_id()),
-			    layout_id,
-			    heap_id,
-			    range);
-			release_terrain_mesh(terrain_component.water_mesh);
-			if (terrain_component.water_settings.enabled) {
-				const MeshData water_mesh = construct_water_mesh_data(terrain_component);
-				const auto water_range = heap->allocate(
-				    water_mesh.Vertices.data(),
-				    water_mesh.Vertices.size() * sizeof(float),
+			try {
+				const auto range = heap->allocate(
+				    built_mesh->Vertices.data(),
+				    built_mesh->Vertices.size() * sizeof(float),
 				    layout->get_stride(),
-				    water_mesh.Indices.data(),
-				    water_mesh.Indices.size());
+				    built_mesh->Indices.data(),
+				    built_mesh->Indices.size());
 
-				terrain_component.water_mesh = AssetFactory::get_instance().create_runtime_asset<Mesh>(
-				    "TerrainWaterMesh_" + std::to_string(entity.get_id()),
+				terrain_component.terrain_mesh = AssetFactory::get_instance().create_runtime_asset<Mesh>(
+				    "TerrainMesh_" + std::to_string(entity.get_id()),
 				    layout_id,
 				    heap_id,
-				    water_range);
+				    range);
+				release_terrain_mesh(terrain_component.water_mesh);
+				if (terrain_component.water_settings.enabled) {
+					const MeshData water_mesh = construct_water_mesh_data(terrain_component);
+					const auto water_range = heap->allocate(
+					    water_mesh.Vertices.data(),
+					    water_mesh.Vertices.size() * sizeof(float),
+					    layout->get_stride(),
+					    water_mesh.Indices.data(),
+					    water_mesh.Indices.size());
+
+					terrain_component.water_mesh = AssetFactory::get_instance().create_runtime_asset<Mesh>(
+					    "TerrainWaterMesh_" + std::to_string(entity.get_id()),
+					    layout_id,
+					    heap_id,
+					    water_range);
+				}
+			} catch (const std::exception& ex) {
+				ORG_CORE_ERROR(
+				    "Failed to allocate terrain mesh for entity {}: {} (vertices: {}, indices: {})",
+				    entity.get_id(),
+				    ex.what(),
+				    built_mesh->Vertices.size() / 8,
+				    built_mesh->Indices.size());
+				release_terrain_mesh(terrain_component.terrain_mesh);
+				release_terrain_mesh(terrain_component.water_mesh);
 			}
 
 			terrain_component.should_rebuild = false;

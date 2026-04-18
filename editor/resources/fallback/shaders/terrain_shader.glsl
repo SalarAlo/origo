@@ -13,12 +13,14 @@ uniform mat4 u_projection_matrix;
 out vec3 v_world_pos;
 out vec3 v_world_normal;
 out vec2 v_uv;
+out float v_local_height;
 
 void main() {
         mat3 normal_matrix = mat3(transpose(inverse(u_model_matrix)));
         v_world_pos = vec3(u_model_matrix * vec4(a_pos, 1.0));
         v_world_normal = normalize(normal_matrix * a_norm);
         v_uv = a_uv;
+        v_local_height = a_pos.y;
         gl_Position = u_projection_matrix * u_view_matrix * vec4(v_world_pos, 1.0);
 }
 
@@ -46,6 +48,7 @@ struct point_light {
 in vec3 v_world_pos;
 in vec3 v_world_normal;
 in vec2 v_uv;
+in float v_local_height;
 
 out vec4 frag_color;
 layout(location = 1) out int entity_id_out;
@@ -66,6 +69,7 @@ uniform point_light u_point_lights[max_point_lights];
 uniform float u_terrain_max_height = 50.0;
 uniform float u_water_level = 0.18;
 uniform bool u_use_texture_layers = false;
+uniform bool u_use_mesh_uvs = false;
 
 uniform float u_ground_tile_scale = 0.08;
 uniform float u_rock_tile_scale = 0.06;
@@ -152,6 +156,18 @@ vec4 sample_triplanar(sampler2D tex, vec3 pos, vec3 blend, float scale) {
         return x * blend.x + y * blend.y + z * blend.z;
 }
 
+vec4 sample_terrain_layer(sampler2D tex, vec3 pos, vec3 blend, vec2 uv, float scale) {
+        if (u_use_mesh_uvs)
+                return texture(tex, uv * scale);
+        return sample_triplanar(tex, pos, blend, scale);
+}
+
+vec4 sample_terrain_packed(sampler2D tex, vec3 pos, vec3 blend, vec2 uv, float scale) {
+        if (u_use_mesh_uvs)
+                return texture(tex, uv * scale);
+        return sample_triplanar(tex, pos, blend, scale);
+}
+
 vec3 tangent_from_normal(vec3 n) {
         vec3 up = abs(n.y) < 0.999 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
         return normalize(cross(up, n));
@@ -163,6 +179,12 @@ vec3 sample_planar_detail_normal(sampler2D tex, vec2 uv, vec3 base_normal, float
         vec3 T = tangent_from_normal(base_normal);
         vec3 B = normalize(cross(base_normal, T));
         return normalize(T * tangent_normal.x + B * tangent_normal.y + base_normal * tangent_normal.z);
+}
+
+vec3 sample_terrain_normal(sampler2D tex, vec3 pos, vec2 uv, vec3 base_normal, float scale, float strength) {
+        if (u_use_mesh_uvs)
+                return sample_planar_detail_normal(tex, uv * scale, base_normal, strength);
+        return sample_planar_detail_normal(tex, pos.xz * scale, base_normal, strength);
 }
 
 vec3 evaluate_pbr(vec3 radiance, vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, float roughness) {
@@ -180,7 +202,7 @@ vec3 evaluate_pbr(vec3 radiance, vec3 N, vec3 V, vec3 L, vec3 albedo, float meta
         return (diffuse + specular) * radiance * NdotL;
 }
 
-vec3 evaluate_soft_directional(vec3 radiance, vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, float roughness) {
+vec3 evaluate_terrain_directional(vec3 radiance, vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, float roughness) {
         vec3 H = normalize(V + L);
         float NDF = distribution_ggx(N, H, roughness);
         float G = geometry_smith(N, V, L, roughness);
@@ -190,16 +212,16 @@ vec3 evaluate_soft_directional(vec3 radiance, vec3 N, vec3 V, vec3 L, vec3 albed
         vec3 kD = (vec3(1.0) - kS) * (1.0 - metallic);
         float NdotV = max(dot(N, V), 0.0);
         float NdotL = max(dot(N, L), 0.0);
-        float wrapped_NdotL = clamp((NdotL + 0.28) / 1.28, 0.0, 1.0);
+        float wrapped_NdotL = clamp((NdotL + 0.12) / 1.12, 0.0, 1.0);
         vec3 specular = (NDF * G * F) / max(4.0 * NdotV * max(NdotL, 0.001), 0.0001);
         vec3 diffuse = kD * albedo / PI;
-        return (diffuse * wrapped_NdotL + specular * mix(0.65, 1.0, NdotL)) * radiance;
+        return (diffuse * wrapped_NdotL + specular * mix(0.45, 1.0, NdotL)) * radiance;
 }
 
 void main() {
         vec3 base_normal = normalize(v_world_normal);
         vec3 blend = triplanar_weights(base_normal);
-        float normalized_height = clamp(v_world_pos.y / max(u_terrain_max_height, 0.0001), 0.0, 1.0);
+        float normalized_height = clamp(v_local_height / max(u_terrain_max_height, 0.0001), 0.0, 1.0);
         float slope = 1.0 - clamp(base_normal.y, 0.0, 1.0);
 
         float large_variation = terrain_noise(v_world_pos.xz * 0.012);
@@ -217,21 +239,21 @@ void main() {
         float roughness;
 
         if (u_use_texture_layers) {
-                vec4 ground_albedo_sample = sample_triplanar(u_ground_albedo, v_world_pos, blend, u_ground_tile_scale);
-                vec4 rock_albedo_sample = sample_triplanar(u_rock_albedo, v_world_pos, blend, u_rock_tile_scale);
-                vec4 sand_albedo_sample = sample_triplanar(u_sand_albedo, v_world_pos, blend, u_sand_tile_scale);
-                vec4 snow_albedo_sample = sample_triplanar(u_snow_albedo, v_world_pos, blend, u_snow_tile_scale);
+                vec4 ground_albedo_sample = sample_terrain_layer(u_ground_albedo, v_world_pos, blend, v_uv, u_ground_tile_scale);
+                vec4 rock_albedo_sample = sample_terrain_layer(u_rock_albedo, v_world_pos, blend, v_uv, u_rock_tile_scale);
+                vec4 sand_albedo_sample = sample_terrain_layer(u_sand_albedo, v_world_pos, blend, v_uv, u_sand_tile_scale);
+                vec4 snow_albedo_sample = sample_terrain_layer(u_snow_albedo, v_world_pos, blend, v_uv, u_snow_tile_scale);
 
-                vec4 ground_packed = sample_triplanar(u_ground_packed, v_world_pos, blend, u_ground_tile_scale);
-                vec4 rock_packed = sample_triplanar(u_rock_packed, v_world_pos, blend, u_rock_tile_scale);
-                vec4 sand_packed = sample_triplanar(u_sand_packed, v_world_pos, blend, u_sand_tile_scale);
-                vec4 snow_packed = sample_triplanar(u_snow_packed, v_world_pos, blend, u_snow_tile_scale);
+                vec4 ground_packed = sample_terrain_packed(u_ground_packed, v_world_pos, blend, v_uv, u_ground_tile_scale);
+                vec4 rock_packed = sample_terrain_packed(u_rock_packed, v_world_pos, blend, v_uv, u_rock_tile_scale);
+                vec4 sand_packed = sample_terrain_packed(u_sand_packed, v_world_pos, blend, v_uv, u_sand_tile_scale);
+                vec4 snow_packed = sample_terrain_packed(u_snow_packed, v_world_pos, blend, v_uv, u_snow_tile_scale);
 
-                vec3 ground_normal = sample_planar_detail_normal(u_ground_normal, v_world_pos.xz * u_ground_tile_scale, base_normal, 0.10);
-                vec3 rock_normal = sample_planar_detail_normal(u_rock_normal, v_world_pos.xz * u_rock_tile_scale, base_normal, 0.16);
-                vec3 sand_normal = sample_planar_detail_normal(u_sand_normal, v_world_pos.xz * u_sand_tile_scale, base_normal, 0.06);
-                vec3 snow_normal = sample_planar_detail_normal(u_snow_normal, v_world_pos.xz * u_snow_tile_scale, base_normal, 0.04);
-                vec3 micro_normal = sample_planar_detail_normal(u_micro_normal, v_world_pos.xz * u_micro_detail_scale, base_normal, 0.08);
+                vec3 ground_normal = sample_terrain_normal(u_ground_normal, v_world_pos, v_uv, base_normal, u_ground_tile_scale, 0.10);
+                vec3 rock_normal = sample_terrain_normal(u_rock_normal, v_world_pos, v_uv, base_normal, u_rock_tile_scale, 0.16);
+                vec3 sand_normal = sample_terrain_normal(u_sand_normal, v_world_pos, v_uv, base_normal, u_sand_tile_scale, 0.06);
+                vec3 snow_normal = sample_terrain_normal(u_snow_normal, v_world_pos, v_uv, base_normal, u_snow_tile_scale, 0.04);
+                vec3 micro_normal = sample_terrain_normal(u_micro_normal, v_world_pos, v_uv, base_normal, u_micro_detail_scale, 0.08);
 
                 rock_mask = clamp(rock_mask + (rock_packed.r - ground_packed.r) * u_height_blend_sharpness, 0.0, 1.0);
                 cliff_mask = clamp(cliff_mask + (rock_packed.r - ground_packed.r) * 0.25, 0.0, 1.0);
@@ -239,8 +261,8 @@ void main() {
                 wet_mask = (1.0 - smoothstep(0.0, u_wetness_width, max(normalized_height - u_water_level, 0.0))) * (1.0 - cliff_mask);
                 snow_mask = smoothstep(u_snow_start, u_snow_end, normalized_height) * (1.0 - smoothstep(u_snow_slope_limit, u_snow_slope_limit + 0.18, slope));
 
-                vec3 ground_tint = mix(vec3(0.95, 0.97, 0.94), vec3(1.03, 1.00, 0.96), large_variation);
-                vec3 rock_tint = mix(vec3(0.96, 0.97, 0.99), vec3(1.02, 1.00, 0.98), fine_variation);
+                vec3 ground_tint = mix(vec3(0.90, 1.00, 0.90), vec3(1.05, 1.01, 0.92), large_variation);
+                vec3 rock_tint = mix(vec3(0.88, 0.89, 0.92), vec3(0.96, 0.94, 0.92), fine_variation);
                 vec3 sand_tint = mix(vec3(0.96, 0.95, 0.92), vec3(1.02, 1.00, 0.96), large_variation);
                 vec3 snow_tint = mix(vec3(0.98, 0.99, 1.00), vec3(1.01, 1.00, 0.99), fine_variation);
 
@@ -265,8 +287,8 @@ void main() {
                 roughness = mix(roughness, 0.82, wet_mask * 0.45);
                 albedo = clamp(albedo, vec3(0.0), vec3(0.78));
         } else {
-                vec3 ground_color = mix(vec3(0.18, 0.34, 0.16), vec3(0.32, 0.39, 0.20), large_variation);
-                vec3 rock_color = mix(vec3(0.33, 0.34, 0.36), vec3(0.43, 0.41, 0.39), fine_variation);
+                vec3 ground_color = mix(vec3(0.14, 0.35, 0.15), vec3(0.34, 0.43, 0.19), large_variation);
+                vec3 rock_color = mix(vec3(0.25, 0.26, 0.28), vec3(0.36, 0.34, 0.32), fine_variation);
                 vec3 sand_color = mix(vec3(0.56, 0.50, 0.37), vec3(0.69, 0.64, 0.52), large_variation);
                 vec3 snow_color = mix(vec3(0.88, 0.90, 0.94), vec3(0.97, 0.98, 1.0), fine_variation);
 
@@ -286,8 +308,8 @@ void main() {
         float metallic = 0.02;
 
         vec3 dir_L = normalize(-u_dir_light.direction);
-        vec3 dir_radiance = u_dir_light.color * u_dir_light.intensity;
-        Lo += evaluate_soft_directional(dir_radiance, N, V, dir_L, albedo, metallic, clamp(roughness, 0.05, 1.0));
+        vec3 dir_radiance = u_dir_light.color * u_dir_light.intensity * 0.55;
+        Lo += evaluate_terrain_directional(dir_radiance, N, V, dir_L, albedo, metallic, clamp(roughness, 0.05, 1.0));
 
         for (int i = 0; i < u_point_light_count; ++i) {
                 point_light light = u_point_lights[i];
@@ -301,10 +323,10 @@ void main() {
 
         float NdotUp = clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
         float view_fresnel = pow(1.0 - max(dot(N, V), 0.0), 5.0);
-        vec3 sky_ambient = mix(vec3(0.24, 0.23, 0.22), vec3(0.46, 0.52, 0.60), NdotUp);
-        vec3 ground_bounce = vec3(0.10, 0.085, 0.07) * (1.0 - clamp(N.y, 0.0, 1.0));
-        float ao = mix(1.0, 0.88, cliff_mask * 0.25 + rock_mask * 0.10);
-        vec3 ambient = (sky_ambient + ground_bounce) * albedo * (0.22 + u_ambient * 0.75) * ao;
+        vec3 sky_ambient = mix(vec3(0.28, 0.27, 0.26), vec3(0.50, 0.56, 0.64), NdotUp);
+        vec3 ground_bounce = vec3(0.12, 0.10, 0.08) * (1.0 - clamp(N.y, 0.0, 1.0));
+        float ao = mix(1.0, 0.94, cliff_mask * 0.25 + rock_mask * 0.10);
+        vec3 ambient = (sky_ambient + ground_bounce) * albedo * (0.16 + u_ambient * 0.50) * ao;
         ambient += vec3(0.014) * view_fresnel;
 
         vec3 color = ambient + Lo;
