@@ -19,7 +19,7 @@ public:
 	void show_clipped_text_tooltip(bool hovered, const std::string& displayed, const std::string& full_text) const;
 
 private:
-	static ImVec2 get_centered_tile_label_position(const ImVec2& cursor, const std::string& label);
+	static ImVec2 get_centered_tile_label_position(const AssetTileLayout& layout, const std::string& label);
 	static void draw_tile_background(ImDrawList* draw_list, const AssetTileLayout& layout, ImU32 color);
 	static void draw_placeholder_thumbnail(ImDrawList* draw_list, const AssetTileLayout& layout);
 	static void draw_tile_label(ImDrawList* draw_list, const AssetTileLayout& layout, const std::string& text);

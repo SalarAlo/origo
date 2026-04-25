@@ -22,7 +22,7 @@ target_link_libraries(OrigoTests
 
 target_include_directories(OrigoTests
 				PRIVATE
-								${CMAKE_SOURCE_DIR}/origo/src
+								${CMAKE_SOURCE_DIR}
 )
 
 target_compile_features(OrigoTests PRIVATE cxx_std_23)

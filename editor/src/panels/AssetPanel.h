@@ -16,6 +16,16 @@
 
 namespace OrigoEditor {
 
+enum class AssetPanelViewMode {
+	Tree,
+	Browser
+};
+
+enum class AssetBrowserVisualMode {
+	Grid,
+	List
+};
+
 class AssetPanel : public EditorPanel {
 public:
 	AssetPanel(EditorContext& ctx);
@@ -26,9 +36,12 @@ private:
 	void draw_top_bar();
 	void draw_breadcrumb_bar(float available_width);
 	void draw_folder_contents(FolderEntry* folder);
+	void draw_browser_contents(FolderEntry* folder);
+	void draw_browser_grid(FolderEntry& folder);
+	void draw_browser_list(FolderEntry& folder);
 	void draw_folder_tree_node(FolderEntry& folder);
-	void draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list);
-	void draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list);
+	void draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list, float tile_size);
+	void draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list, float tile_size);
 	void draw_asset_hierarchy(FolderEntry* folder);
 	void draw_asset_hierarchy_node(AssetEntry& asset, const std::unordered_map<Origo::UUID, std::vector<AssetEntry*>>& children_by_parent);
 	void draw_create_asset_context_menu(FolderEntry* target_folder);
@@ -46,6 +59,9 @@ private:
 	AssetInteraction m_interaction;
 	AssetCreationService m_creation_service;
 
+	AssetPanelViewMode m_view_mode { AssetPanelViewMode::Tree };
+	AssetBrowserVisualMode m_browser_visual_mode { AssetBrowserVisualMode::Grid };
+	float m_browser_tile_size { 96.0f };
 	bool m_tree_dirty { false };
 };
 

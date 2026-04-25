@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "panels/AssetPanel.h"
+#include "panels/AssetThumbnailGenerator.h"
 
 #include "systems/EditorIcons.h"
 
@@ -22,6 +23,11 @@ namespace {
 		FolderEntry* Folder { nullptr };
 		AssetEntry* Asset { nullptr };
 		std::string Name {};
+	};
+
+	struct BrowserEntries {
+		std::vector<FolderEntry*> Folders;
+		std::vector<AssetEntry*> Assets;
 	};
 
 	bool hierarchy_node_matches_search(
@@ -156,13 +162,180 @@ namespace {
 
 		return false;
 	}
+
+	BrowserEntries collect_browser_entries(FolderEntry& folder, const AssetBrowserState& browser_state) {
+		BrowserEntries entries {};
+
+		for (FolderEntry* child : folder.Children) {
+			if (!child)
+				continue;
+			if (!browser_state.matches_search(child->Name))
+				continue;
+			entries.Folders.push_back(child);
+		}
+
+		for (AssetEntry* asset : folder.Assets) {
+			if (!asset)
+				continue;
+			if (!browser_state.matches_search(asset->Name))
+				continue;
+			entries.Assets.push_back(asset);
+		}
+
+		auto sort_by_name = [](const auto* a, const auto* b) {
+			return a->Name < b->Name;
+		};
+
+		std::sort(entries.Folders.begin(), entries.Folders.end(), sort_by_name);
+		std::sort(entries.Assets.begin(), entries.Assets.end(), sort_by_name);
+		return entries;
+	}
 }
 
 void AssetPanel::draw_folder_contents(FolderEntry* folder) {
 	if (!folder)
 		return;
 
-	draw_folder_tree_node(*folder);
+	if (m_view_mode == AssetPanelViewMode::Tree) {
+		draw_folder_tree_node(*folder);
+		return;
+	}
+
+	draw_browser_contents(m_browser_state.get_current_folder() ? m_browser_state.get_current_folder() : folder);
+}
+
+void AssetPanel::draw_browser_contents(FolderEntry* folder) {
+	if (!folder)
+		return;
+
+	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup)
+	    && !ImGui::IsAnyItemHovered()
+	    && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+		ImGui::OpenPopup("AssetPanelCreatePopup");
+	}
+
+	draw_create_asset_context_menu(folder);
+	handle_drag_drop_target(folder);
+
+	if (m_browser_visual_mode == AssetBrowserVisualMode::List)
+		draw_browser_list(*folder);
+	else
+		draw_browser_grid(*folder);
+}
+
+void AssetPanel::draw_browser_grid(FolderEntry& folder) {
+	const BrowserEntries entries = collect_browser_entries(folder, m_browser_state);
+	const bool has_entries = !entries.Folders.empty() || !entries.Assets.empty();
+
+	if (!has_entries) {
+		ImGui::TextDisabled("This folder is empty.");
+		return;
+	}
+
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	const float available_width = ImGui::GetContentRegionAvail().x;
+	const int columns = AssetLayout::calculate_tile_columns(available_width, m_browser_tile_size);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10.0f, 12.0f));
+	int index = 0;
+
+	auto draw_entry = [&](auto* entry, auto draw_fn) {
+		draw_fn(entry, draw_list, m_browser_tile_size);
+		++index;
+		if (index % columns != 0)
+			ImGui::SameLine();
+	};
+
+	for (FolderEntry* child : entries.Folders)
+		draw_entry(child, [this](FolderEntry* item, ImDrawList* list, float tile_size) { draw_folder_tile(item, list, tile_size); });
+
+	for (AssetEntry* asset : entries.Assets)
+		draw_entry(asset, [this](AssetEntry* item, ImDrawList* list, float tile_size) { draw_asset_tile(*item, list, tile_size); });
+
+	ImGui::PopStyleVar();
+}
+
+void AssetPanel::draw_browser_list(FolderEntry& folder) {
+	const BrowserEntries entries = collect_browser_entries(folder, m_browser_state);
+	const bool has_entries = !entries.Folders.empty() || !entries.Assets.empty();
+
+	if (!has_entries) {
+		ImGui::TextDisabled("This folder is empty.");
+		return;
+	}
+
+	const float row_height = 28.0f;
+	const float icon_size = 18.0f;
+
+	if (!ImGui::BeginTable("AssetBrowserList", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_BordersInnerH))
+		return;
+
+	auto draw_folder_row = [&](FolderEntry& child) {
+		ImGui::TableNextRow(ImGuiTableRowFlags_None, row_height);
+		ImGui::TableNextColumn();
+		ImGui::PushID(&child);
+
+		const bool clicked = ImGui::Selectable("##folder_row", false, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, ImVec2(0.0f, row_height));
+		handle_drag_drop_target(&child);
+
+		const ImVec2 min = ImGui::GetItemRectMin();
+		const float text_y = min.y + (row_height - ImGui::GetTextLineHeight()) * 0.5f;
+		const float icon_y = min.y + (row_height - icon_size) * 0.5f;
+		const float icon_x = min.x + 8.0f;
+
+		if (ImTextureID icon = EditorIcons::get_instance().get(IconType::Folder))
+			ImGui::GetWindowDrawList()->AddImage(icon, ImVec2(icon_x, icon_y), ImVec2(icon_x + icon_size, icon_y + icon_size));
+
+		ImGui::GetWindowDrawList()->AddText(ImVec2(icon_x + icon_size + 10.0f, text_y), ImGui::GetColorU32(ImGuiCol_Text), child.Name.c_str());
+
+		if (clicked)
+			m_browser_state.navigate_to(&child, m_tree);
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			ImGui::OpenPopup("AssetPanelCreatePopup");
+
+		draw_create_asset_context_menu(&child);
+		ImGui::PopID();
+	};
+
+	auto draw_asset_row = [&](AssetEntry& asset) {
+		ImGui::TableNextRow(ImGuiTableRowFlags_None, row_height);
+		ImGui::TableNextColumn();
+		ImGui::PushID(asset.Id.to_string().c_str());
+
+		const bool selected = m_interaction.is_asset_selected(asset, m_context);
+		ImGui::Selectable("##asset_row", selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, ImVec2(0.0f, row_height));
+
+		const ImVec2 min = ImGui::GetItemRectMin();
+		const float text_y = min.y + (row_height - ImGui::GetTextLineHeight()) * 0.5f;
+		const float icon_y = min.y + (row_height - icon_size) * 0.5f;
+		const float icon_x = min.x + 8.0f;
+
+		if (ImTextureID icon = AssetThumbnailGenerator::get_thumbnail_id(&asset))
+			ImGui::GetWindowDrawList()->AddImage(icon, ImVec2(icon_x, icon_y), ImVec2(icon_x + icon_size, icon_y + icon_size), ImVec2(0, asset.Type == Origo::AssetType::Texture2D ? 1 : 0), ImVec2(1, asset.Type == Origo::AssetType::Texture2D ? 0 : 1));
+
+		ImGui::GetWindowDrawList()->AddText(ImVec2(icon_x + icon_size + 10.0f, text_y), ImGui::GetColorU32(ImGuiCol_Text), asset.Name.c_str());
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			m_context.set_selected_asset(asset.Id);
+
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+			const std::string uuid = asset.Id.to_string();
+			ImGui::TextUnformatted(asset.Name.c_str());
+			ImGui::SetDragDropPayload("ORIGO_ASSET_UUID", uuid.c_str(), uuid.size() + 1);
+			ImGui::EndDragDropSource();
+		}
+
+		ImGui::PopID();
+	};
+
+	for (FolderEntry* child : entries.Folders)
+		draw_folder_row(*child);
+
+	for (AssetEntry* asset : entries.Assets)
+		draw_asset_row(*asset);
+
+	ImGui::EndTable();
 }
 
 void AssetPanel::draw_folder_tree_node(FolderEntry& folder) {
@@ -215,13 +388,14 @@ void AssetPanel::draw_folder_tree_node(FolderEntry& folder) {
 	}
 }
 
-void AssetPanel::draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list) {
+void AssetPanel::draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list, float tile_size) {
 	ImGui::PushID(folder);
 
-	const AssetTileLayout layout = AssetLayout::make_tile_layout();
+	const AssetTileLayout layout = AssetLayout::make_tile_layout(tile_size);
 	ImGui::InvisibleButton("folder_tile", layout.TileSize);
 
 	m_interaction.handle_folder_tile(folder, m_browser_state, m_tree);
+	handle_drag_drop_target(folder);
 	const bool left_click_open = ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 	const bool right_click_open = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 	if (left_click_open || right_click_open)
@@ -232,10 +406,10 @@ void AssetPanel::draw_folder_tile(FolderEntry* folder, ImDrawList* draw_list) {
 	ImGui::PopID();
 }
 
-void AssetPanel::draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list) {
-	ImGui::PushID(&asset.Id);
+void AssetPanel::draw_asset_tile(AssetEntry& asset, ImDrawList* draw_list, float tile_size) {
+	ImGui::PushID(asset.Id.to_string().c_str());
 
-	const AssetTileLayout layout = AssetLayout::make_tile_layout();
+	const AssetTileLayout layout = AssetLayout::make_tile_layout(tile_size);
 	ImGui::InvisibleButton("asset_tile", layout.TileSize);
 
 	m_interaction.handle_asset_tile(asset, m_context);

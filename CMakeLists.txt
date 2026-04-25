@@ -49,24 +49,26 @@ find_package(ZLIB REQUIRED)
 # Vendor Libraries
 # ------------------------------------------------------------------------------
 
-function(origo_require_submodule dir)
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${dir}/CMakeLists.txt")
+function(origo_require_vendor_path path)
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${path}")
         message(FATAL_ERROR
-            "Missing vendored dependency '${dir}'. "
+            "Missing vendored dependency '${path}'. "
             "Ensure the full source tree is present in the repository checkout."
         )
     endif()
 endfunction()
 
-origo_require_submodule(vendor/glfw)
-origo_require_submodule(vendor/glm)
-origo_require_submodule(vendor/assimp)
-origo_require_submodule(vendor/imgui)
-origo_require_submodule(vendor/spdlog)
-origo_require_submodule(vendor/json)
-origo_require_submodule(vendor/jolt)
-origo_require_submodule(vendor/nativefiledialog)
-origo_require_submodule(vendor/zep)
+origo_require_vendor_path(vendor/glfw/CMakeLists.txt)
+origo_require_vendor_path(vendor/glm/CMakeLists.txt)
+origo_require_vendor_path(vendor/assimp/CMakeLists.txt)
+origo_require_vendor_path(vendor/imgui/CMakeLists.txt)
+origo_require_vendor_path(vendor/spdlog/CMakeLists.txt)
+origo_require_vendor_path(vendor/json/CMakeLists.txt)
+origo_require_vendor_path(vendor/miniaudio/miniaudio.h)
+origo_require_vendor_path(vendor/jolt/Build/CMakeLists.txt)
+origo_require_vendor_path(vendor/nativefiledialog/CMakeLists.txt)
+origo_require_vendor_path(vendor/zep/include/zep.h)
+origo_require_vendor_path(vendor/zep/cmake/config_app.h.cmake)
 
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
@@ -160,23 +162,22 @@ include_directories(
 # Testing
 # ------------------------------------------------------------------------------
 
-option(ORIGO_ENABLE_TESTS "Build Origo tests" ON)
+option(ORIGO_ENABLE_TESTS "Build Origo tests" OFF)
 
 if (ORIGO_ENABLE_TESTS)
     enable_testing()
-    include(FetchContent)
+    set(ORIGO_DOCTEST_ROOT "${CMAKE_SOURCE_DIR}/vendor/json/tests/thirdparty")
 
-    FetchContent_Declare(
-        doctest
-        GIT_REPOSITORY https://github.com/doctest/doctest.git
-        GIT_TAG v2.4.11
-    )
-
-    FetchContent_Populate(doctest)
+    if(NOT EXISTS "${ORIGO_DOCTEST_ROOT}/doctest/doctest.h")
+        message(FATAL_ERROR
+            "Tests require a vendored doctest header at "
+            "'${ORIGO_DOCTEST_ROOT}/doctest/doctest.h'."
+        )
+    endif()
 
     add_library(doctest INTERFACE)
     target_include_directories(doctest INTERFACE
-        ${doctest_SOURCE_DIR}
+        ${ORIGO_DOCTEST_ROOT}
     )
 
     add_library(doctest::doctest ALIAS doctest)

@@ -5,10 +5,8 @@
 namespace OrigoEditor {
 
 namespace {
-	constexpr float k_tile_size = 96.0f;
 	constexpr float k_tile_padding = 10.0f;
 	constexpr float k_tile_text_height = 22.0f;
-	constexpr float k_tile_thumbnail_inset = 10.0f;
 	constexpr float k_tile_text_horizontal_padding = 6.0f;
 	constexpr float k_search_width = 220.0f;
 	constexpr float k_breadcrumb_item_spacing_x = 6.0f;
@@ -19,22 +17,23 @@ namespace {
 	}
 }
 
-AssetTileLayout AssetLayout::make_tile_layout() {
+AssetTileLayout AssetLayout::make_tile_layout(float tile_size) {
 	const ImVec2 cursor = ImGui::GetCursorScreenPos();
-	const ImVec2 tile_size = { k_tile_size, k_tile_size + k_tile_text_height };
-	const ImVec2 thumbnail_min = cursor + ImVec2(k_tile_thumbnail_inset, k_tile_thumbnail_inset);
-	const ImVec2 thumbnail_max = thumbnail_min + ImVec2(k_tile_size - k_tile_thumbnail_inset * 2.0f, k_tile_size - k_tile_thumbnail_inset * 2.0f);
+	const ImVec2 tile_extent = { tile_size, tile_size + k_tile_text_height };
+	const float thumbnail_inset = std::max(8.0f, tile_size * 0.10f);
+	const ImVec2 thumbnail_min = cursor + ImVec2(thumbnail_inset, thumbnail_inset);
+	const ImVec2 thumbnail_max = thumbnail_min + ImVec2(tile_size - thumbnail_inset * 2.0f, tile_size - thumbnail_inset * 2.0f);
 
 	return {
 		cursor,
-		tile_size,
+		tile_extent,
 		thumbnail_min,
 		thumbnail_max
 	};
 }
 
-int AssetLayout::calculate_tile_columns(float panel_width) {
-	const float cell_size = k_tile_size + k_tile_padding;
+int AssetLayout::calculate_tile_columns(float panel_width, float tile_size) {
+	const float cell_size = tile_size + k_tile_padding;
 	return std::max(1, (int)(panel_width / cell_size));
 }
 
@@ -64,8 +63,8 @@ float AssetLayout::get_breadcrumb_max_segment_width() {
 	return k_breadcrumb_max_segment_width;
 }
 
-float AssetLayout::get_tile_label_max_width() {
-	return k_tile_size - k_tile_text_horizontal_padding * 2.0f;
+float AssetLayout::get_tile_label_max_width(float tile_size) {
+	return tile_size - k_tile_text_horizontal_padding * 2.0f;
 }
 
 }

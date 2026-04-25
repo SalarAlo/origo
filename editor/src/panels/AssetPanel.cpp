@@ -11,6 +11,10 @@
 namespace OrigoEditor {
 
 namespace {
+	constexpr float k_mode_toggle_width = 58.0f;
+	constexpr float k_visual_toggle_width = 54.0f;
+	constexpr float k_tile_slider_width = 110.0f;
+
 	const char* get_folder_name_or_root_label(const FolderEntry* folder) {
 		return folder->Name.empty() ? "Assets" : folder->Name.c_str();
 	}
@@ -43,6 +47,21 @@ namespace {
 		ImGui::TextUnformatted(">");
 		ImGui::PopStyleColor();
 		ImGui::SameLine();
+	}
+
+	bool draw_toolbar_toggle(const char* label, bool selected, float width) {
+		if (selected) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+		}
+
+		const bool pressed = ImGui::Button(label, ImVec2(width, 0.0f));
+
+		if (selected)
+			ImGui::PopStyleColor(3);
+
+		return pressed;
 	}
 }
 
@@ -117,18 +136,52 @@ void AssetPanel::draw_top_bar() {
 	ImGui::BeginChild("AssetTopBar", ImVec2(0, height), false, ImGuiWindowFlags_NoScrollbar);
 
 	ImGuiStyle& style = ImGui::GetStyle();
-
-	ImGui::SameLine();
-
 	const float available_width = ImGui::GetContentRegionAvail().x;
-	const float breadcrumb_width = std::max(0.0f, available_width - AssetLayout::get_search_width() - style.ItemSpacing.x);
+	float reserved_width = k_mode_toggle_width * 2.0f + style.ItemSpacing.x;
 
-	draw_breadcrumb_bar(breadcrumb_width);
+	if (m_view_mode == AssetPanelViewMode::Browser)
+		reserved_width += style.ItemSpacing.x * 3.0f + k_visual_toggle_width * 2.0f + k_tile_slider_width;
+
+	reserved_width += style.ItemSpacing.x + AssetLayout::get_search_width();
+	const float breadcrumb_width = std::max(120.0f, available_width - reserved_width);
+
+	if (draw_toolbar_toggle("Tree", m_view_mode == AssetPanelViewMode::Tree, k_mode_toggle_width))
+		m_view_mode = AssetPanelViewMode::Tree;
 
 	ImGui::SameLine();
+	if (draw_toolbar_toggle("Browse", m_view_mode == AssetPanelViewMode::Browser, k_mode_toggle_width))
+		m_view_mode = AssetPanelViewMode::Browser;
+
+	ImGui::SameLine();
+
+	if (m_view_mode == AssetPanelViewMode::Browser) {
+		draw_breadcrumb_bar(breadcrumb_width);
+
+		ImGui::SameLine();
+		if (draw_toolbar_toggle("Grid", m_browser_visual_mode == AssetBrowserVisualMode::Grid, k_visual_toggle_width))
+			m_browser_visual_mode = AssetBrowserVisualMode::Grid;
+
+		ImGui::SameLine();
+		if (draw_toolbar_toggle("List", m_browser_visual_mode == AssetBrowserVisualMode::List, k_visual_toggle_width))
+			m_browser_visual_mode = AssetBrowserVisualMode::List;
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(k_tile_slider_width);
+		ImGui::SliderFloat("##AssetTileSize", &m_browser_tile_size, 72.0f, 140.0f, "%.0f");
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+			ImGui::SetTooltip("Tile Size");
+
+		ImGui::SameLine();
+	} else {
+		ImGui::Dummy(ImVec2(breadcrumb_width + style.ItemSpacing.x * 3.0f + k_visual_toggle_width * 2.0f + k_tile_slider_width, 0.0f));
+		ImGui::SameLine();
+	}
 
 	ImGui::SetNextItemWidth(AssetLayout::get_search_width());
-	ImGui::InputTextWithHint("##AssetSearch", "Search...", &m_browser_state.search());
+	ImGui::InputTextWithHint(
+	    "##AssetSearch",
+	    m_view_mode == AssetPanelViewMode::Tree ? "Search tree..." : "Search current folder...",
+	    &m_browser_state.search());
 
 	ImGui::EndChild();
 }

@@ -1,29 +1,29 @@
 # origo/CMakeLists.txt
 
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*/*.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/*/*/*/*.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/*/*/*/*.cpp
 				${CMAKE_SOURCE_DIR}/pch.cpp
 )
 
 add_library(OrigoEngine SHARED ${ENGINE_SOURCES})
 
 set_source_files_properties(
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/physics/PhysicsWorld.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/physics/PhysicsWorld.cpp
 				PROPERTIES
 								SKIP_LINTING ON
 )
 
 set_source_files_properties(
-				${CMAKE_CURRENT_SOURCE_DIR}/src/origo/components/systems/RigidbodyComponentPhysicsSystem.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/components/systems/RigidbodyComponentPhysicsSystem.cpp
 				PROPERTIES
 								SKIP_LINTING ON
 )
 
 target_include_directories(OrigoEngine PUBLIC
-				${CMAKE_CURRENT_SOURCE_DIR}/src
+				${CMAKE_SOURCE_DIR}
 				${CMAKE_SOURCE_DIR}/vendor/glfw/include
 				${CMAKE_SOURCE_DIR}/vendor/glad/include
 				${CMAKE_SOURCE_DIR}/vendor/glm

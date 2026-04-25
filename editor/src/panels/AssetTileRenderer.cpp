@@ -5,13 +5,13 @@
 #include "origo/assets/Asset.h"
 
 #include "panels/EditorAssetTree.h"
+#include "panels/AssetThumbnailGenerator.h"
 
 #include "systems/EditorIcons.h"
 
 namespace OrigoEditor {
 
 namespace {
-	constexpr float k_tile_size = 96.0f;
 	constexpr float k_tile_text_height = 22.0f;
 	constexpr float k_tile_corner_rounding = 8.0f;
 	constexpr float k_tile_thumbnail_corner_rounding = 6.0f;
@@ -21,7 +21,7 @@ void AssetTileRenderer::draw_folder_tile(ImDrawList* draw_list, const AssetTileL
 	draw_tile_background(draw_list, layout, get_folder_tile_background_color(hovered));
 	draw_folder_thumbnail(draw_list, layout);
 
-	const std::string display_name = clip_label(folder.Name, AssetLayout::get_tile_label_max_width());
+	const std::string display_name = clip_label(folder.Name, AssetLayout::get_tile_label_max_width(layout.TileSize.x));
 	draw_tile_label(draw_list, layout, display_name);
 	show_clipped_text_tooltip(hovered, display_name, folder.Name);
 }
@@ -30,7 +30,7 @@ void AssetTileRenderer::draw_asset_tile(ImDrawList* draw_list, const AssetTileLa
 	draw_tile_background(draw_list, layout, get_asset_tile_background_color(selected, hovered));
 	draw_asset_thumbnail(draw_list, layout, asset);
 
-	const std::string display_name = clip_label(asset.Name, AssetLayout::get_tile_label_max_width());
+	const std::string display_name = clip_label(asset.Name, AssetLayout::get_tile_label_max_width(layout.TileSize.x));
 	draw_tile_label(draw_list, layout, display_name);
 	show_clipped_text_tooltip(hovered, display_name, asset.Name);
 }
@@ -59,12 +59,12 @@ void AssetTileRenderer::show_clipped_text_tooltip(bool hovered, const std::strin
 	ImGui::EndTooltip();
 }
 
-ImVec2 AssetTileRenderer::get_centered_tile_label_position(const ImVec2& cursor, const std::string& label) {
+ImVec2 AssetTileRenderer::get_centered_tile_label_position(const AssetTileLayout& layout, const std::string& label) {
 	const ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
 	const float font_size = ImGui::GetFontSize();
 	return {
-		cursor.x + (k_tile_size - text_size.x) * 0.5f,
-		cursor.y + k_tile_size + (k_tile_text_height - font_size) * 0.5f
+		layout.Cursor.x + (layout.TileSize.x - text_size.x) * 0.5f,
+		layout.Cursor.y + layout.TileSize.x + (k_tile_text_height - font_size) * 0.5f
 	};
 }
 
@@ -77,7 +77,7 @@ void AssetTileRenderer::draw_placeholder_thumbnail(ImDrawList* draw_list, const 
 }
 
 void AssetTileRenderer::draw_tile_label(ImDrawList* draw_list, const AssetTileLayout& layout, const std::string& text) {
-	const ImVec2 text_pos = get_centered_tile_label_position(layout.Cursor, text);
+	const ImVec2 text_pos = get_centered_tile_label_position(layout, text);
 	draw_list->AddText(text_pos, IM_COL32(230, 230, 230, 255), text.c_str());
 }
 
@@ -129,7 +129,8 @@ void AssetTileRenderer::draw_folder_thumbnail(ImDrawList* draw_list, const Asset
 }
 
 void AssetTileRenderer::draw_asset_thumbnail(ImDrawList* draw_list, const AssetTileLayout& layout, const AssetEntry& asset) const {
-	if (!asset.Icon) {
+	const ImTextureID thumbnail = AssetThumbnailGenerator::get_thumbnail_id(&asset);
+	if (!thumbnail) {
 		draw_placeholder_thumbnail(draw_list, layout);
 		return;
 	}
@@ -138,11 +139,11 @@ void AssetTileRenderer::draw_asset_thumbnail(ImDrawList* draw_list, const AssetT
 	const ImVec2 center = layout.ThumbnailMin + size * 0.5f;
 
 	if (asset.Type == Origo::AssetType::Texture2D) {
-		add_image_rotated(draw_list, asset.Icon, center, size, IM_PI);
+		add_image_rotated(draw_list, thumbnail, center, size, IM_PI);
 		return;
 	}
 
-	add_image_rotated(draw_list, asset.Icon, center, size, 0.0f);
+	add_image_rotated(draw_list, thumbnail, center, size, 0.0f);
 }
 
 }

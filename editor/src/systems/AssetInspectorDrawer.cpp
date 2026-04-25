@@ -9,6 +9,8 @@
 #include "origo/assets/material/MaterialPBR.h"
 #include "origo/assets/material/MaterialPBRSource.h"
 
+#include "panels/MaterialThumbnailRenderer.h"
+
 #include "ui/ComponentUI.h"
 
 namespace OrigoEditor {
@@ -42,6 +44,9 @@ void AssetInspectorDrawer::draw_specific(Origo::Asset* asset, Origo::AssetType t
 }
 
 void AssetInspectorDrawer::draw_material_pbr(Origo::MaterialPBR* material) {
+	if (!material)
+		return;
+
 	auto& material_data { material->get_data() };
 
 	Origo::OptionalAssetHandle albedo_handle = material_data.PBRTexs.Albedo;
@@ -65,6 +70,16 @@ void AssetInspectorDrawer::draw_material_pbr(Origo::MaterialPBR* material) {
 	float metallic { material_data.PBRParams.Metallic };
 	float roughness { material_data.PBRParams.Roughness };
 	float ao { material_data.PBRParams.AO };
+	const auto previous_albedo = material_data.PBRTexs.Albedo;
+	const auto previous_normal = material_data.PBRTexs.Normal;
+	const auto previous_metallic_roughness = material_data.PBRTexs.MetallicRoughness;
+	const auto previous_ao = material_data.PBRTexs.Ao;
+	const auto previous_emissive = material_data.PBRTexs.Emissive;
+	const auto previous_shader = material->get_shader_handle();
+	const auto previous_color = material_data.PBRParams.BaseColor;
+	const auto previous_metallic = material_data.PBRParams.Metallic;
+	const auto previous_roughness = material_data.PBRParams.Roughness;
+	const auto previous_ao_value = material_data.PBRParams.AO;
 
 	bool surface_open = ComponentUI::start_region("Surface", true);
 	if (surface_open) {
@@ -95,6 +110,21 @@ void AssetInspectorDrawer::draw_material_pbr(Origo::MaterialPBR* material) {
 		material_data.PBRParams.Roughness = roughness;
 	if (material_data.PBRParams.AO != ao)
 		material_data.PBRParams.AO = ao;
+
+	if (previous_albedo != material_data.PBRTexs.Albedo
+	    || previous_normal != material_data.PBRTexs.Normal
+	    || previous_metallic_roughness != material_data.PBRTexs.MetallicRoughness
+	    || previous_ao != material_data.PBRTexs.Ao
+	    || previous_emissive != material_data.PBRTexs.Emissive
+	    || previous_shader != material->get_shader_handle()
+	    || previous_color != material_data.PBRParams.BaseColor
+	    || previous_metallic != material_data.PBRParams.Metallic
+	    || previous_roughness != material_data.PBRParams.Roughness
+	    || previous_ao_value != material_data.PBRParams.AO) {
+		material->resolve();
+		if (auto material_id = Origo::AssetManager::get_instance().get_uuid(material))
+			MaterialThumbnailRenderer::get_instance().invalidate(*material_id);
+	}
 }
 
 void AssetInspectorDrawer::draw_material_color(Origo::MaterialColor* material) {

@@ -52,9 +52,12 @@ git clone https://github.com/SalarAlo/origo.git
 Then configure and build the project:
 
 ```bash
-cmake -S . -B build -G Ninja
-cmake --build build
+cmake -B ./build
+cmake --build ./build
 ```
+
+Tests are optional and disabled by default so a normal configure works without
+network access. Enable them explicitly with `-DORIGO_ENABLE_TESTS=ON`.
 
 ---
   

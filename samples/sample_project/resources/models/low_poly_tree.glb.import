@@ -1,16 +1,16 @@
 {
         "header": {
                 "dependencies": [],
-                "imported_time_stamp": "-4664976734230018237",
+                "imported_time_stamp": "-4661153495055994995",
                 "name": "low_poly_tree",
                 "origin": "Imported",
                 "source_path": "resources/models/low_poly_tree.glb",
-                "source_time_stamp": "-4664976734230018237",
+                "source_time_stamp": "-4661153495055994995",
                 "type": "Model",
                 "uuid": "2f5d6d377408942edae1f069bc6ff636"
         },
         "payload": {
                 "path": "resources/models/low_poly_tree.glb",
-                "shader_id": "e1beba6e7aa762f38a0720983812e54a"
+                "shader_id": 1
         }
 }
