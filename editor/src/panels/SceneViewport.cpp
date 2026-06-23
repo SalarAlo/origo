@@ -117,6 +117,28 @@ void SceneViewport::on_im_gui_render() {
 		viewport_max.y - viewport_min.y
 	};
 
+	if (m_mode == EditorViewMode::Game && !m_context.ViewportController.get_active_camera_component(m_mode, active_scene)) {
+		const char* title = "No Active Camera";
+		const char* subtitle = "Mark a Camera component as primary to render the game view.";
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+		const ImVec2 title_size = ImGui::CalcTextSize(title);
+		const ImVec2 subtitle_size = ImGui::CalcTextSize(subtitle);
+		const float line_gap = 6.0f;
+		const float block_height = title_size.y + line_gap + subtitle_size.y;
+		const ImVec2 title_pos {
+			viewport_min.x + (viewport_size.x - title_size.x) * 0.5f,
+			viewport_min.y + (viewport_size.y - block_height) * 0.5f
+		};
+		const ImVec2 subtitle_pos {
+			viewport_min.x + (viewport_size.x - subtitle_size.x) * 0.5f,
+			title_pos.y + title_size.y + line_gap
+		};
+
+		draw_list->AddText(title_pos, IM_COL32(235, 238, 245, 255), title);
+		draw_list->AddText(subtitle_pos, IM_COL32(160, 168, 182, 255), subtitle);
+	}
+
 	ImGui::SetCursorScreenPos({ viewport_min.x + 8.0f, viewport_min.y + 8.0f });
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));

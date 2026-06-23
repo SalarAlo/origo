@@ -1,11 +1,15 @@
 #pragma once
 
+#include <filesystem>
+#include <memory>
+#include <string>
+#include <unordered_map>
+
 #include "origo/core/UUID.h"
 
-#define SOL_ALL_SAFETIES_ON 1
-#include <sol/sol.hpp>
-
 namespace Origo {
+
+class NoctScriptRuntime;
 
 class ScriptSystem {
 public:
@@ -25,8 +29,8 @@ public:
 	static void execute(const ScriptEntry& entry, const UUID& id);
 
 private:
-	inline static sol::state s_lua {};
 	inline static std::unordered_map<UUID, ScriptEntry> s_scripts {};
+	static std::unique_ptr<NoctScriptRuntime> s_noct_runtime;
 	inline static bool s_initialised {};
 };
 

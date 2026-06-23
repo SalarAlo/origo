@@ -24,6 +24,16 @@ namespace {
 		const auto* active_camera = context.ViewportController.get_active_camera_component(mode, scene);
 		const PostProcessSettings post_settings = active_camera ? active_camera->PostProcess : default_post_process_settings();
 
+		if (!editing_view && !active_camera) {
+			renderContext.set_target(&context.get_render_buffer(mode));
+			renderContext.set_resolve_target(&context.get_resolve_buffer(mode));
+			renderContext.set_present_target(&context.get_present_buffer(mode));
+			renderContext.clear_post_process_settings();
+			renderContext.set_editor_grid_enabled(false);
+			renderContext.clear_frame();
+			return;
+		}
+
 		renderContext.set_target(&context.get_render_buffer(mode));
 		renderContext.set_resolve_target(&context.get_resolve_buffer(mode));
 		renderContext.set_present_target(&context.get_present_buffer(mode));

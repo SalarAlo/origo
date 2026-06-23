@@ -16,7 +16,7 @@ void AssetInteraction::handle_folder_tile(FolderEntry* folder, AssetBrowserState
 }
 
 void AssetInteraction::handle_asset_tile(const AssetEntry& asset, EditorContext& ctx) const {
-	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 		ctx.set_selected_asset(asset.Id);
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {

@@ -33,6 +33,7 @@ set(BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(BUILD_QT OFF CACHE BOOL "" FORCE)
 set(BUILD_IMGUI ON CACHE BOOL "" FORCE) 
+set(ASSIMP_BUILD_USE_CCACHE OFF CACHE BOOL "" FORCE)
 
 # ------------------------------------------------------------------------------
 # Dependencies
@@ -41,7 +42,6 @@ set(BUILD_IMGUI ON CACHE BOOL "" FORCE)
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(UUID REQUIRED uuid)
-pkg_check_modules(LUA54 REQUIRED IMPORTED_TARGET lua5.4)
 find_package(ZLIB REQUIRED)
 
 
@@ -69,6 +69,7 @@ origo_require_vendor_path(vendor/jolt/Build/CMakeLists.txt)
 origo_require_vendor_path(vendor/nativefiledialog/CMakeLists.txt)
 origo_require_vendor_path(vendor/zep/include/zep.h)
 origo_require_vendor_path(vendor/zep/cmake/config_app.h.cmake)
+origo_require_vendor_path(vendor/noct/CMakeLists.txt)
 
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
@@ -134,6 +135,7 @@ add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/jolt)
 add_subdirectory(vendor/nativefiledialog)
+add_subdirectory(vendor/noct EXCLUDE_FROM_ALL)
 
 add_library(glad STATIC vendor/glad/src/glad.c)
 target_include_directories(glad PUBLIC vendor/glad/include)
@@ -143,15 +145,6 @@ add_library(ankerl_unordered_dense INTERFACE)
 target_include_directories(ankerl_unordered_dense INTERFACE
     ${CMAKE_SOURCE_DIR}/vendor/ankerl/include
 )
-
-add_library(sol2 INTERFACE)
-target_include_directories(sol2 INTERFACE
-    ${CMAKE_SOURCE_DIR}/vendor/sol2/include
-)
-target_compile_definitions(sol2 INTERFACE
-    SOL_NO_LUA_HPP=1
-)
-target_link_libraries(sol2 INTERFACE PkgConfig::LUA54)
 
 include_directories(
     vendor/nanosvg/src

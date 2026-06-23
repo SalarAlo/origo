@@ -42,7 +42,7 @@ target_link_libraries(OrigoEngine PUBLIC
 				glm
 				assimp
 				imgui
-				sol2
+				Noct::Noct
 				jolt
 
 				Threads::Threads

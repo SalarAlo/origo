@@ -1,0 +1,6 @@
+import Component
+
+Component.define(
+	"SomeScript",
+	"enabled", "Bool", true
+);

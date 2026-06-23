@@ -8,8 +8,6 @@
 #include "origo/scripting/ScriptComponentDescriptor.h"
 #include "origo/scripting/ScriptComponentRegistry.h"
 
-#include "sol/state.hpp"
-
 namespace {
 std::filesystem::path make_temp_path(std::string_view tag) {
 	auto base = std::filesystem::temp_directory_path();
@@ -75,37 +73,24 @@ TEST_CASE("SceneSerializer roundtrip preserves scripted components") {
 	std::filesystem::remove(json_path, ec);
 }
 
-TEST_CASE("Lua-defined script components from the same script have stable distinct IDs and serialize independently") {
+TEST_CASE("Script-defined components from the same script have stable distinct IDs and serialize independently") {
 	const std::filesystem::path json_path = make_temp_path("scene_ser_multi_script");
 	const Origo::UUID script_id = Origo::UUID::from_hash("scene-serialization-shared-script");
 
-	sol::state lua;
-	lua.open_libraries(sol::lib::base, sol::lib::table);
-
-	sol::table health_fields = lua.create_table();
-	health_fields["value"] = lua.create_table_with(
-	    "type", "int",
-	    "default", 100);
-	health_fields["label"] = lua.create_table_with(
-	    "type", "string",
-	    "default", "health");
-
-	sol::table mana_fields = lua.create_table();
-	mana_fields["value"] = lua.create_table_with(
-	    "type", "int",
-	    "default", 50);
-	mana_fields["enabled"] = lua.create_table_with(
-	    "type", "bool",
-	    "default", true);
-
-	const Origo::ScriptComponentID health_id = Origo::ScriptComponentRegistry::register_component_from_lua(
+	const Origo::ScriptComponentID health_id = Origo::ScriptComponentRegistry::register_component(
 	    script_id,
 	    "HealthComponent_SharedScript",
-	    health_fields);
-	const Origo::ScriptComponentID mana_id = Origo::ScriptComponentRegistry::register_component_from_lua(
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(100) },
+	        { "label", Origo::VariantType::String, Origo::Variant(std::string("health")) },
+	    });
+	const Origo::ScriptComponentID mana_id = Origo::ScriptComponentRegistry::register_component(
 	    script_id,
 	    "ManaComponent_SharedScript",
-	    mana_fields);
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(50) },
+	        { "enabled", Origo::VariantType::Bool, Origo::Variant(true) },
+	    });
 
 	CHECK(health_id != mana_id);
 
@@ -179,4 +164,128 @@ TEST_CASE("Lua-defined script components from the same script have stable distin
 
 	std::error_code ec;
 	std::filesystem::remove(json_path, ec);
+}
+
+TEST_CASE("Script component instances migrate when script descriptors are reloaded") {
+	const Origo::UUID script_id = Origo::UUID::from_hash("scene-serialization-reload-script");
+	const Origo::ScriptComponentID component_id = Origo::ScriptComponentRegistry::register_component(
+	    script_id,
+	    "ReloadableComponent_Test",
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	        { "label", Origo::VariantType::String, Origo::Variant(std::string("first")) },
+	    });
+
+	Origo::Scene scene("ReloadMigrationScene");
+	const Origo::RID entity = scene.create_entity("Entity");
+	scene.add_script_component(entity, component_id);
+
+	auto* component = scene.get_script_component(entity, component_id);
+	REQUIRE(component != nullptr);
+
+	for (auto& field : component->Fields) {
+		if (field.Name == "value")
+			field.Value = Origo::Variant(99);
+	}
+
+	Origo::ScriptComponentRegistry::register_component(
+	    script_id,
+	    "ReloadableComponent_Test",
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	        { "enabled", Origo::VariantType::Bool, Origo::Variant(true) },
+	    });
+
+	component = scene.get_script_component(entity, component_id);
+	REQUIRE(component != nullptr);
+	REQUIRE(component->Fields.size() == 2);
+
+	bool saw_value = false;
+	bool saw_enabled = false;
+
+	for (const auto& field : component->Fields) {
+		if (field.Name == "value") {
+			int value {};
+			CHECK(field.Value.TryGetAsInt(value));
+			CHECK(value == 99);
+			saw_value = true;
+		} else if (field.Name == "enabled") {
+			bool enabled {};
+			CHECK(field.Value.TryGetAsBool(enabled));
+			CHECK(enabled == true);
+			saw_enabled = true;
+		} else {
+			FAIL("Unexpected field after script component migration");
+		}
+	}
+
+	CHECK(saw_value);
+	CHECK(saw_enabled);
+}
+
+TEST_CASE("Script component replacement removes fields no longer declared by the script") {
+	const Origo::UUID script_id = Origo::UUID::from_hash("scene-serialization-field-removal-script");
+	const Origo::ScriptComponentID component_id = Origo::ScriptComponentRegistry::register_component(
+	    script_id,
+	    "FieldRemovalComponent_Test",
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	        { "removed", Origo::VariantType::Bool, Origo::Variant(true) },
+	    });
+
+	Origo::Scene scene("FieldRemovalScene");
+	const Origo::RID entity = scene.create_entity("Entity");
+	scene.add_script_component(entity, component_id);
+
+	Origo::ScriptComponentRegistry::replace_script_components(
+	    script_id,
+	    {
+	        Origo::ScriptComponentRegistry::create_descriptor(
+	            script_id,
+	            "FieldRemovalComponent_Test",
+	            {
+	                { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	            }),
+	    });
+
+	auto* component = scene.get_script_component(entity, component_id);
+	REQUIRE(component != nullptr);
+	REQUIRE(component->Fields.size() == 1);
+	CHECK(component->Fields[0].Name == "value");
+}
+
+TEST_CASE("Script component replacement removes components no longer declared by the script") {
+	const Origo::UUID script_id = Origo::UUID::from_hash("scene-serialization-component-removal-script");
+	const Origo::ScriptComponentID kept_id = Origo::ScriptComponentRegistry::register_component(
+	    script_id,
+	    "KeptComponent_Test",
+	    {
+	        { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	    });
+	const Origo::ScriptComponentID removed_id = Origo::ScriptComponentRegistry::register_component(
+	    script_id,
+	    "RemovedComponent_Test",
+	    {
+	        { "enabled", Origo::VariantType::Bool, Origo::Variant(true) },
+	    });
+
+	Origo::Scene scene("ComponentRemovalScene");
+	const Origo::RID entity = scene.create_entity("Entity");
+	scene.add_script_component(entity, kept_id);
+	scene.add_script_component(entity, removed_id);
+
+	Origo::ScriptComponentRegistry::replace_script_components(
+	    script_id,
+	    {
+	        Origo::ScriptComponentRegistry::create_descriptor(
+	            script_id,
+	            "KeptComponent_Test",
+	            {
+	                { "value", Origo::VariantType::Int, Origo::Variant(10) },
+	            }),
+	    });
+
+	CHECK(scene.has_script_component(entity, kept_id));
+	CHECK(!scene.has_script_component(entity, removed_id));
+	CHECK(!Origo::ScriptComponentRegistry::exists(removed_id));
 }

@@ -304,7 +304,8 @@ void AssetPanel::draw_browser_list(FolderEntry& folder) {
 		ImGui::PushID(asset.Id.to_string().c_str());
 
 		const bool selected = m_interaction.is_asset_selected(asset, m_context);
-		ImGui::Selectable("##asset_row", selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, ImVec2(0.0f, row_height));
+		if (ImGui::Selectable("##asset_row", selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, ImVec2(0.0f, row_height)))
+			m_context.set_selected_asset(asset.Id);
 
 		const ImVec2 min = ImGui::GetItemRectMin();
 		const float text_y = min.y + (row_height - ImGui::GetTextLineHeight()) * 0.5f;
@@ -315,9 +316,6 @@ void AssetPanel::draw_browser_list(FolderEntry& folder) {
 			ImGui::GetWindowDrawList()->AddImage(icon, ImVec2(icon_x, icon_y), ImVec2(icon_x + icon_size, icon_y + icon_size), ImVec2(0, asset.Type == Origo::AssetType::Texture2D ? 1 : 0), ImVec2(1, asset.Type == Origo::AssetType::Texture2D ? 0 : 1));
 
 		ImGui::GetWindowDrawList()->AddText(ImVec2(icon_x + icon_size + 10.0f, text_y), ImGui::GetColorU32(ImGuiCol_Text), asset.Name.c_str());
-
-		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			m_context.set_selected_asset(asset.Id);
 
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 			const std::string uuid = asset.Id.to_string();
@@ -461,8 +459,8 @@ void AssetPanel::draw_asset_hierarchy_node(
 		ImGui::GetStateStorage()->SetInt(ImGui::GetItemID(), next_open_state ? 1 : 0);
 	}
 
-	if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		m_context.set_selected_asset(asset.Id);
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen())
+			m_context.set_selected_asset(asset.Id);
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 		const std::string uuid = asset.Id.to_string();

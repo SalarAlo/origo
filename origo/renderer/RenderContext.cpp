@@ -109,6 +109,36 @@ void RenderContext::end_frame() {
 	m_post_process_settings.reset();
 }
 
+void RenderContext::clear_frame() {
+	if (m_target)
+		glViewport(0, 0, m_target->get_width(), m_target->get_height());
+
+	bind_fb();
+	clear();
+
+	if (m_target)
+		m_target->unbind();
+
+	if (m_target && m_target->is_msaa()) {
+		if (!m_resolve_target)
+			throw std::runtime_error("MSAA target requires a resolve target");
+
+		m_target->resolve_to(*m_resolve_target);
+	}
+
+	FrameBuffer* source_target = get_scene_output_target();
+	if (m_present_target && source_target) {
+		const PostProcessSettings settings = m_post_process_settings.value_or(PostProcessSettings {});
+		const float time_seconds = static_cast<float>(Time::get_time_since_start().count());
+		m_post_processor.apply(*source_target, *m_present_target, settings, time_seconds);
+	}
+
+	m_directional_light_data.reset();
+	m_point_lights.clear();
+	m_draw_queue.clear();
+	m_post_process_settings.reset();
+}
+
 void RenderContext::clear() {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 

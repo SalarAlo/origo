@@ -104,23 +104,87 @@ std::optional<Variant> deserialize_variant_value(VariantType type, ISerializer& 
 }
 
 ScriptComponentManager::ScriptComponentManager() {
-	ScriptComponentRegistry::on_script_component_updated().add_listener(
-	    [&](ScriptComponentID updatedComponent) {
-		    std::vector<RID> affected;
+	subscribe_to_registry_updates();
+}
 
-		    for (const auto& [e, components] : m_data) {
-			    for (const auto& c : components) {
-				    if (c.ID == updatedComponent) {
-					    affected.push_back(e);
-					    break;
+ScriptComponentManager::ScriptComponentManager(const ScriptComponentManager& other)
+    : m_data(other.m_data) {
+	subscribe_to_registry_updates();
+}
+
+ScriptComponentManager& ScriptComponentManager::operator=(const ScriptComponentManager& other) {
+	if (this == &other)
+		return *this;
+
+	m_data = other.m_data;
+
+	if (!m_has_script_component_updated_listener)
+		subscribe_to_registry_updates();
+
+	return *this;
+}
+
+ScriptComponentManager::~ScriptComponentManager() {
+	unsubscribe_from_registry_updates();
+}
+
+void ScriptComponentManager::unsubscribe_from_registry_updates() {
+	if (m_has_script_component_updated_listener) {
+		ScriptComponentRegistry::on_script_component_updated().remove_listener(m_script_component_updated_listener);
+		m_has_script_component_updated_listener = false;
+	}
+
+	if (m_has_script_component_removed_listener) {
+		ScriptComponentRegistry::on_script_component_removed().remove_listener(m_script_component_removed_listener);
+		m_has_script_component_removed_listener = false;
+	}
+}
+
+void ScriptComponentManager::subscribe_to_registry_updates() {
+	if (!m_has_script_component_updated_listener)
+		m_script_component_updated_listener = ScriptComponentRegistry::on_script_component_updated().add_listener(
+		    [&](ScriptComponentID updatedComponent) {
+			    std::vector<RID> affected;
+
+			    for (const auto& [e, components] : m_data) {
+				    for (const auto& c : components) {
+					    if (c.ID == updatedComponent) {
+						    affected.push_back(e);
+						    break;
+					    }
 				    }
 			    }
-		    }
 
-		    for (RID e : affected) {
-			    migrate_component(e, updatedComponent);
-		    }
-	    });
+			    for (RID e : affected) {
+				    migrate_component(e, updatedComponent);
+			    }
+		    });
+
+	m_has_script_component_updated_listener = true;
+
+	if (!m_has_script_component_removed_listener)
+		m_script_component_removed_listener = ScriptComponentRegistry::on_script_component_removed().add_listener(
+		    [&](ScriptComponentID removedComponent) {
+			    for (auto it = m_data.begin(); it != m_data.end();) {
+				    auto& components = it->second;
+				    components.erase(
+				        std::remove_if(
+				            components.begin(),
+				            components.end(),
+				            [removedComponent](const ScriptComponentInstance& component) {
+					            return component.ID == removedComponent;
+				            }),
+				        components.end());
+
+				    if (components.empty()) {
+					    it = m_data.erase(it);
+				    } else {
+					    ++it;
+				    }
+			    }
+		    });
+
+	m_has_script_component_removed_listener = true;
 }
 
 void ScriptComponentManager::add(RID entity, ScriptComponentID type) {

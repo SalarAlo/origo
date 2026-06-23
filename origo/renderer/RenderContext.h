@@ -44,6 +44,7 @@ public:
 
 	void begin_frame();
 	void end_frame();
+	void clear_frame();
 
 	void submit_mesh(const AssetHandle& mesh, const AssetHandle& material, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry, GLenum drawMethod = GL_TRIANGLES, int entityId = -1);
 	void submit_model(const AssetHandle& mesh, const glm::mat4& modelMatrix, RenderPass pass = RenderPass::Geometry, const std::optional<AssetHandle>& optionalMaterial = std::nullopt, int entityId = -1);

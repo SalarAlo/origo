@@ -51,14 +51,13 @@ struct RenderEmissionShapeDebug {
 		float radius = c.Length * tanf(angle_rad);
 
 		glm::quat rot = glm::rotation(
-		    glm::vec3(0, 1, 0),
-		    -glm::normalize(glm::vec3(dir.x, dir.y, dir.z)));
+		    glm::vec3(0, -1, 0),
+		    glm::normalize(glm::vec3(dir.x, dir.y, dir.z)));
 
-		glm::mat4 local = glm::toMat4(rot)
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), c.Position)
+		    * glm::toMat4(rot)
 		    * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f * c.Length, 0.0f))
 		    * glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * radius, c.Length, 2.0f * radius));
-
-		glm::mat4 model = get_emitter_matrix() * local;
 
 		RenderCtx.submit_mesh(
 		    PrimitiveShapeCache::get_instance().get_wire_cone_mesh(),

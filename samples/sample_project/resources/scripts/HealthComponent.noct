@@ -1,0 +1,8 @@
+import Component
+
+Component.define(
+	"HealthComponent",
+	"current_health", "Int", 100,
+	"max_health", "Int", 100,
+	"is_dead", "Float", 20
+);

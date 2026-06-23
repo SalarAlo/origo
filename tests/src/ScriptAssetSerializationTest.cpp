@@ -28,7 +28,7 @@ TEST_CASE("Script asset serializes and deserializes via AssetSerializationSystem
 	REQUIRE(serializer != nullptr);
 
 	const Origo::UUID expected_id = Origo::UUID::from_hash("script-asset-test-id");
-	Origo::Script original("assets/scripts/player.lua", expected_id);
+	Origo::Script original("assets/scripts/player.noct", expected_id);
 
 	Origo::JsonSerializer writer(json_path);
 	serializer->serialize(&original, writer);
@@ -41,7 +41,7 @@ TEST_CASE("Script asset serializes and deserializes via AssetSerializationSystem
 	serializer->deserialize(reader, restored);
 
 	CHECK(restored.get_id() == expected_id);
-	CHECK(restored.get_path().string() == std::string("assets/scripts/player.lua"));
+	CHECK(restored.get_path().string() == std::string("assets/scripts/player.noct"));
 
 	Origo::AssetSerializationSystem::cleanup();
 	std::error_code ec;

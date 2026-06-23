@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <unordered_map>
 #include <vector>
 
@@ -14,6 +15,9 @@ namespace Origo {
 class ScriptComponentManager {
 public:
 	ScriptComponentManager();
+	ScriptComponentManager(const ScriptComponentManager& other);
+	ScriptComponentManager& operator=(const ScriptComponentManager& other);
+	~ScriptComponentManager();
 
 	void add(RID entity, ScriptComponentID type);
 
@@ -30,7 +34,14 @@ public:
 	void migrate_component(RID entity, ScriptComponentID);
 
 private:
+	void subscribe_to_registry_updates();
+	void unsubscribe_from_registry_updates();
+
 	std::unordered_map<RID, std::vector<ScriptComponentInstance>> m_data {};
+	std::size_t m_script_component_updated_listener {};
+	std::size_t m_script_component_removed_listener {};
+	bool m_has_script_component_updated_listener {};
+	bool m_has_script_component_removed_listener {};
 };
 
 }

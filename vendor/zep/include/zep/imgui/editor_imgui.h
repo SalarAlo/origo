@@ -14,6 +14,16 @@
 namespace Zep
 {
 
+inline ImGuiKey ImGuiKeyForDigit(int digit)
+{
+    return static_cast<ImGuiKey>(ImGuiKey_0 + digit);
+}
+
+inline ImGuiKey ImGuiKeyForUppercaseLetter(int offset)
+{
+    return static_cast<ImGuiKey>(ImGuiKey_A + offset);
+}
+
 class ZepDisplay_ImGui;
 class ZepTabWindow;
 class ZepEditor_ImGui : public ZepEditor
@@ -32,7 +42,7 @@ public:
 
         uint32_t mod = 0;
 
-        static std::map<int, int> MapUSBKeys = {
+        static std::map<ImGuiKey, int> MapUSBKeys = {
             { ImGuiKey_F1, ExtKeys::F1 },
             { ImGuiKey_F2, ExtKeys::F2 },
             { ImGuiKey_F3, ExtKeys::F3 },
@@ -59,7 +69,7 @@ public:
             { ImGuiKey_PageDown, ExtKeys::PAGEDOWN },
             { ImGuiKey_PageUp, ExtKeys::PAGEUP }
         };
-        static std::map<int, int> MapShiftableUSBKeys = {
+        static std::map<ImGuiKey, int> MapShiftableUSBKeys = {
             { ImGuiKey_Apostrophe, '\'' },
             { ImGuiKey_Comma, ',' },
             { ImGuiKey_Minus, '-' },
@@ -147,7 +157,7 @@ public:
         // Check USB Keys
         for (auto& usbKey : MapUSBKeys)
         {
-            if (ImGui::IsKeyPressed(ImGuiKey(usbKey.first)))
+            if (ImGui::IsKeyPressed(usbKey.first))
             {
                 pBuffer->GetMode()->AddKeyPress(usbKey.second, mod);
                 return;
@@ -159,7 +169,7 @@ public:
             // Check Shiftable USB Keys
             for (auto& usbKey : MapShiftableUSBKeys)
             {
-                if (ImGui::IsKeyPressed(ImGuiKey(usbKey.first)))
+                if (ImGui::IsKeyPressed(usbKey.first))
                 {
                     pBuffer->GetMode()->AddKeyPress(usbKey.second, mod);
                     return;
@@ -169,12 +179,12 @@ public:
             // without modifying the ImGui base code, we have special handling here for CTRL.
             // For the Win32 case, we use VK_A (ASCII) is handled below
 #if defined(_SDL_H) || defined(ZEP_USE_SDL)
-            if (ImGui::IsKeyPressed(ImGuiKey(KEY_1)))
+            if (ImGui::IsKeyPressed(ImGuiKey_1))
             {
                 SetGlobalMode(ZepMode_Standard::StaticName());
                 handled = true;
             }
-            else if (ImGui::IsKeyPressed(ImGuiKey(KEY_2)))
+            else if (ImGui::IsKeyPressed(ImGuiKey_2))
             {
                 SetGlobalMode(ZepMode_Vim::StaticName());
                 handled = true;
@@ -183,7 +193,8 @@ public:
             {
                 for (int ch = KEY_1; ch <= KEY_0; ch++)
                 {
-                    if (ImGui::IsKeyPressed(ImGuiKey(ch)))
+                    const int digit = ch == KEY_0 ? 0 : ch - KEY_1 + 1;
+                    if (ImGui::IsKeyPressed(ImGuiKeyForDigit(digit)))
                     {
                         pBuffer->GetMode()->AddKeyPress(ch == KEY_0 ? '0' : ch - KEY_1 + '1', mod);
                         handled = true;
@@ -191,26 +202,26 @@ public:
                 }
                 for (int ch = KEY_A; ch <= KEY_Z; ch++)
                 {
-                    if (ImGui::IsKeyPressed(ImGuiKey(ch)))
+                    if (ImGui::IsKeyPressed(ImGuiKeyForUppercaseLetter(ch - KEY_A)))
                     {
                         pBuffer->GetMode()->AddKeyPress((ch - KEY_A) + 'a', mod);
                         handled = true;
                     }
                 }
 
-                if (ImGui::IsKeyPressed(ImGuiKey(KEY_SPACE)))
+                if (ImGui::IsKeyPressed(ImGuiKey_Space))
                 {
                     pBuffer->GetMode()->AddKeyPress(' ', mod);
                     handled = true;
                 }
             }
 #else
-            if (ImGui::IsKeyPressed(ImGuiKey('1')))
+            if (ImGui::IsKeyPressed(ImGuiKey_1))
             {
                 SetGlobalMode(ZepMode_Standard::StaticName());
                 handled = true;
             }
-            else if (ImGui::IsKeyPressed(ImGuiKey('2')))
+            else if (ImGui::IsKeyPressed(ImGuiKey_2))
             {
                 SetGlobalMode(ZepMode_Vim::StaticName());
                 handled = true;
@@ -219,7 +230,7 @@ public:
             {
                 for (int ch = '0'; ch <= '9'; ch++)
                 {
-                    if (ImGui::IsKeyPressed(ImGuiKey(ch)))
+                    if (ImGui::IsKeyPressed(ImGuiKeyForDigit(ch - '0')))
                     {
                         pBuffer->GetMode()->AddKeyPress(ch, mod);
                         handled = true;
@@ -227,14 +238,14 @@ public:
                 }
                 for (int ch = 'A'; ch <= 'Z'; ch++)
                 {
-                    if (ImGui::IsKeyPressed(ImGuiKey(ch)))
+                    if (ImGui::IsKeyPressed(ImGuiKeyForUppercaseLetter(ch - 'A')))
                     {
                         pBuffer->GetMode()->AddKeyPress(ch - 'A' + 'a', mod);
                         handled = true;
                     }
                 }
 
-                if (ImGui::IsKeyPressed(ImGuiKey(KEY_SPACE)))
+                if (ImGui::IsKeyPressed(ImGuiKey_Space))
                 {
                     pBuffer->GetMode()->AddKeyPress(' ', mod);
                     handled = true;

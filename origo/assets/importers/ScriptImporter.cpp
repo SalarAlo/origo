@@ -7,7 +7,7 @@ namespace Origo {
 bool ScriptImporter::can_import(const std::filesystem::path& path) const {
 	auto ext = path.extension().string();
 	to_lower_in_place(ext);
-	return ext == ".lua";
+	return ext == ".noct";
 }
 
 AssetType ScriptImporter::get_asset_type() const {

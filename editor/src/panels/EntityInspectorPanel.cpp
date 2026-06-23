@@ -196,7 +196,7 @@ void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Ori
 			continue;
 
 		auto& instance = *component;
-		InspectorComponentRenderer::get_instance().draw_script_component(instance);
+		InspectorComponentRenderer::get_instance().draw_script_component(selectedEntity, instance);
 	}
 }
 

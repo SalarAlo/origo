@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "zep/mcommon/utf8/core.h"
 #include "gap_buffer.h"
 

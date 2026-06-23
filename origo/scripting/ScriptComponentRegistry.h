@@ -1,7 +1,9 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "origo/core/Action.h"
 #include "origo/core/UUID.h"
@@ -9,14 +11,20 @@
 #include "origo/scripting/ScriptComponentDescriptor.h"
 #include "origo/scripting/ScriptComponentInstance.h"
 
-#include "sol/table.hpp"
-
 namespace Origo {
+
+struct ScriptFieldDeclaration {
+	std::string Name;
+	VariantType Type;
+	Variant DefaultValue;
+};
 
 class ScriptComponentRegistry {
 public:
 	static ScriptComponentID register_or_update(ScriptComponentDescriptor descriptor);
-	static ScriptComponentID register_component_from_lua(const UUID& uuid, const std::string& name, sol::table fields);
+	static ScriptComponentDescriptor create_descriptor(const UUID& script_id, const std::string& name, std::vector<ScriptFieldDeclaration> fields);
+	static ScriptComponentID register_component(const UUID& script_id, const std::string& name, std::vector<ScriptFieldDeclaration> fields);
+	static std::vector<ScriptComponentID> replace_script_components(const UUID& script_id, std::vector<ScriptComponentDescriptor> descriptors);
 
 	static const ScriptComponentDescriptor& get(ScriptComponentID id);
 
@@ -25,7 +33,8 @@ public:
 	static bool exists(ScriptComponentID id);
 
 	static const std::unordered_map<ScriptComponentID, ScriptComponentDescriptor>& get_all() { return s_descriptors; }
-	static Action<void, ScriptComponentID> on_script_component_updated();
+	static Action<void, ScriptComponentID>& on_script_component_updated();
+	static Action<void, ScriptComponentID>& on_script_component_removed();
 
 private:
 	inline static std::unordered_map<ScriptComponentID, ScriptComponentDescriptor> s_descriptors {};

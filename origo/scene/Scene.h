@@ -87,6 +87,10 @@ public:
 		return m_script_component_manager.has(entity, type);
 	}
 
+	bool remove_script_component_if_exists(RID entity, ScriptComponentID type) {
+		return m_script_component_manager.remove_if_exists(entity, type);
+	}
+
 	template <ComponentType T, typename Func>
 	void for_each(Func&& func) {
 		m_native_component_manager.for_each<T>(std::forward<Func>(func));

@@ -8,9 +8,9 @@
 
 namespace OrigoEditor {
 
-struct TextEditableSyntaxHighlit {
+	struct TextEditableSyntaxHighlit {
 	const TextEditor::LanguageDefinition& operator()(Origo::Script* script) const {
-		return TextEditor::LanguageDefinition::Lua();
+		return TextEditor::LanguageDefinition::CPlusPlus();
 	}
 
 	const TextEditor::LanguageDefinition& operator()(Origo::Shader* shader) const {

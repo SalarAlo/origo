@@ -1,0 +1,8 @@
+import Component
+
+Component.define(
+	"StatusComponent",
+	"poisoned", "Float", 0.0,
+	"freezing", "Bool", false,
+	"nothing", "Bool", false
+);
