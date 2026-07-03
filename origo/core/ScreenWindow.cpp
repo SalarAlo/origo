@@ -159,6 +159,7 @@ void ScreenWindow::init_callback() {
 #pragma region MOUSE_SCROLL
 	glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xScroll, double yScroll) {
 		auto window_settings { static_cast<ScreenWindowSettings*>(glfwGetWindowUserPointer(window)) };
+		Input::record_scroll_delta(Vec2 { static_cast<float>(xScroll), static_cast<float>(yScroll) });
 		MouseScrollEvent mouse_scroll_event { yScroll > 0 };
 		window_settings->EventCallback(mouse_scroll_event);
 	});

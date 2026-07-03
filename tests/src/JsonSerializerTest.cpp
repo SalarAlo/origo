@@ -13,9 +13,6 @@ TEST_CASE("JsonSerializer copy preserves nested readable state") {
 	source.end_object();
 	source.end_array_object();
 	source.end_array();
-	source.begin_array("script_components");
-	source.end_array();
-
 	Origo::JsonSerializer copied;
 	copied = source;
 

@@ -8,7 +8,10 @@
 
 #include "origo/scene/SceneCommand.h"
 
-#include "origo/scripting/ScriptComponentManager.h"
+#include "origo/scripting/ComponentDataManager.h"
+#include "origo/scripting/ScriptAttachmentManager.h"
+#include "origo/scripting/ScriptExecutionSystem.h"
+#include "origo/scripting/ScriptRegistry.h"
 
 namespace Origo {
 class Scene;
@@ -56,8 +59,29 @@ public:
 		return m_native_component_manager.add_component_by_type(e, type);
 	}
 
-	void add_script_component(RID entity, ScriptComponentID type) {
-		m_script_component_manager.add(entity, type);
+	void add_component_data(RID entity, ComponentTypeID type) {
+		m_component_data_manager.add(entity, type);
+		for (const auto& [script_id, script] : ScriptRegistry::get_all()) {
+			if (script.ComponentType.Type == type)
+				add_script(entity, script_id);
+		}
+	}
+
+	void add_script(RID entity, ScriptTypeID type) {
+		m_script_attachment_manager.add(entity, type);
+		if (auto* attachment = m_script_attachment_manager.get(entity, type))
+			m_script_execution_system.on_script_added(entity, *attachment);
+	}
+
+	void sync_component_scripts() {
+		for (const auto& [entity, components] : m_component_data_manager.get_all()) {
+			for (const auto& component : components) {
+				for (const auto& [script_id, script] : ScriptRegistry::get_all()) {
+					if (script.ComponentType.Type == component.ID && !has_script(entity, script_id))
+						add_script(entity, script_id);
+				}
+			}
+		}
 	}
 
 	template <ComponentType T>
@@ -65,12 +89,48 @@ public:
 		return m_native_component_manager.get_component<T>(entity);
 	}
 
-	ScriptComponentInstance* get_script_component(RID entity, ScriptComponentID type) {
-		return m_script_component_manager.get(entity, type);
+	ComponentInstanceData* get_component_data(RID entity, ComponentTypeID type) {
+		return m_component_data_manager.get(entity, type);
 	}
 
-	const ScriptComponentInstance* get_script_component(RID entity, ScriptComponentID type) const {
-		return m_script_component_manager.get(entity, type);
+	ScriptAttachmentData* get_script(RID entity, ScriptTypeID type) {
+		return m_script_attachment_manager.get(entity, type);
+	}
+
+	const ComponentInstanceData* get_component_data(RID entity, ComponentTypeID type) const {
+		return m_component_data_manager.get(entity, type);
+	}
+
+	const ScriptAttachmentData* get_script(RID entity, ScriptTypeID type) const {
+		return m_script_attachment_manager.get(entity, type);
+	}
+
+	const ReflectedFieldValue* find_component_data_field(RID entity, std::string_view name) const {
+		return m_component_data_manager.find_field(entity, name);
+	}
+
+	const ReflectedFieldValue* find_component_data_field(RID entity, ComponentTypeID type, std::string_view name) const {
+		const auto* component = m_component_data_manager.get(entity, type);
+		if (!component)
+			return nullptr;
+
+		for (const auto& field : component->Fields) {
+			if (field.Name == name)
+				return &field;
+		}
+		return nullptr;
+	}
+
+	ReflectedFieldValue* find_component_data_field(RID entity, ComponentTypeID type, std::string_view name) {
+		auto* component = m_component_data_manager.get(entity, type);
+		if (!component)
+			return nullptr;
+
+		for (auto& field : component->Fields) {
+			if (field.Name == name)
+				return &field;
+		}
+		return nullptr;
 	}
 
 	template <ComponentType T>
@@ -83,12 +143,25 @@ public:
 		return m_native_component_manager.has_component<T>(entity);
 	}
 
-	bool has_script_component(RID entity, ScriptComponentID type) const {
-		return m_script_component_manager.has(entity, type);
+	bool has_component_data(RID entity, ComponentTypeID type) const {
+		return m_component_data_manager.has(entity, type);
 	}
 
-	bool remove_script_component_if_exists(RID entity, ScriptComponentID type) {
-		return m_script_component_manager.remove_if_exists(entity, type);
+	bool has_script(RID entity, ScriptTypeID type) const {
+		return m_script_attachment_manager.has(entity, type);
+	}
+
+	bool remove_component_data_if_exists(RID entity, ComponentTypeID type) {
+		for (const auto& [script_id, script] : ScriptRegistry::get_all()) {
+			if (script.ComponentType.Type == type)
+				remove_script_if_exists(entity, script_id);
+		}
+		return m_component_data_manager.remove_if_exists(entity, type);
+	}
+
+	bool remove_script_if_exists(RID entity, ScriptTypeID type) {
+		m_script_execution_system.on_script_removed(entity, type);
+		return m_script_attachment_manager.remove_if_exists(entity, type);
 	}
 
 	template <ComponentType T, typename Func>
@@ -123,6 +196,23 @@ public:
 		return m_native_component_manager.has_component(entity, type);
 	}
 
+	void start_scripts() {
+		sync_component_scripts();
+		m_script_execution_system.start_scene(*this, m_script_attachment_manager);
+	}
+
+	void stop_scripts() {
+		m_script_execution_system.stop_scene();
+	}
+
+	void update_scripts(float dt) {
+		m_script_execution_system.update(dt);
+	}
+
+	void fixed_update_scripts(float dt) {
+		m_script_execution_system.fixed_update(dt);
+	}
+
 #pragma endregion
 
 private:
@@ -134,7 +224,9 @@ private:
 	std::string m_name;
 
 	NativeComponentManager m_native_component_manager {};
-	ScriptComponentManager m_script_component_manager {};
+	ComponentDataManager m_component_data_manager {};
+	ScriptAttachmentManager m_script_attachment_manager {};
+	ScriptExecutionSystem m_script_execution_system {};
 	Scope<PhysicsWorld> m_physics_world {};
 
 	std::vector<Scope<SceneCommand>> m_commands {};

@@ -1,17 +1,76 @@
 {
         "entities": [
                 {
+                        "components": [],
                         "native_components": [
                                 {
                                         "data": {
+                                                "background_color": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "far": 740.0,
+                                                "fov": 90.0,
+                                                "is_primary": 1,
+                                                "near": 0.10000000149011612,
+                                                "post_processing": {
+                                                        "bloom": {
+                                                                "blur_passes": 4,
+                                                                "enabled": 1,
+                                                                "intensity": 0.07999999821186066,
+                                                                "knee": 0.44999998807907104,
+                                                                "threshold": 1.5
+                                                        },
+                                                        "chromatic_aberration": {
+                                                                "enabled": 0,
+                                                                "intensity": 0.001500000013038516
+                                                        },
+                                                        "color_adjustments": {
+                                                                "contrast": 0.05999999865889549,
+                                                                "enabled": 1,
+                                                                "hue_shift": 0.0,
+                                                                "saturation": 1.0800000429153442,
+                                                                "temperature": 0.019999999552965164,
+                                                                "tint": 0.0
+                                                        },
+                                                        "enabled": 1,
+                                                        "film_grain": {
+                                                                "enabled": 0,
+                                                                "intensity": 0.029999999329447746,
+                                                                "response": 0.5
+                                                        },
+                                                        "tone_mapping": {
+                                                                "enabled": 1,
+                                                                "exposure": 0.10000000149011612,
+                                                                "gamma": 2.200000047683716,
+                                                                "operator": 1
+                                                        },
+                                                        "vignette": {
+                                                                "color": {
+                                                                        "x": 0.0,
+                                                                        "y": 0.0,
+                                                                        "z": 0.0
+                                                                },
+                                                                "enabled": 1,
+                                                                "intensity": 0.550000011920929,
+                                                                "roundness": 1.100000023841858,
+                                                                "smoothness": 0.7200000286102295
+                                                        }
+                                                }
+                                        },
+                                        "type": "Camera"
+                                },
+                                {
+                                        "data": {
                                                 "pos": {
-                                                        "x": -3.5,
-                                                        "y": 4.0,
-                                                        "z": 5.0
+                                                        "x": 300.0,
+                                                        "y": 128.89999389648438,
+                                                        "z": 200.0
                                                 },
                                                 "rot": {
-                                                        "x": -33.0,
-                                                        "y": -33.0,
+                                                        "x": -37.400001525878906,
+                                                        "y": 44.79999923706055,
                                                         "z": 0.0
                                                 },
                                                 "scale": {
@@ -27,21 +86,13 @@
                                                 "name": "Main Camera"
                                         },
                                         "type": "Name"
-                                },
-                                {
-                                        "data": {
-                                                "far": 400.0,
-                                                "fov": 90.0,
-                                                "is_primary": 1,
-                                                "near": 0.10000000149011612
-                                        },
-                                        "type": "Camera"
                                 }
                         ],
                         "rid": "0",
-                        "script_components": []
+                        "scripts": []
                 },
                 {
+                        "components": [],
                         "native_components": [
                                 {
                                         "data": {
@@ -65,12 +116,6 @@
                                 },
                                 {
                                         "data": {
-                                                "name": "Light"
-                                        },
-                                        "type": "Name"
-                                },
-                                {
-                                        "data": {
                                                 "ambient": 0.20000000298023224,
                                                 "color_b": 1.0,
                                                 "color_g": 1.0,
@@ -78,19 +123,91 @@
                                                 "intensity": 10.0
                                         },
                                         "type": "Directional Light"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Light"
+                                        },
+                                        "type": "Name"
                                 }
                         ],
                         "rid": "1",
-                        "script_components": []
+                        "scripts": []
                 },
                 {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 15.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.25
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 350.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
                         "native_components": [
                                 {
                                         "data": {
                                                 "pos": {
-                                                        "x": 0.4995292127132416,
+                                                        "x": 90.83267211914063,
                                                         "y": 0.0,
-                                                        "z": 0.4972686767578125
+                                                        "z": 0.0
                                                 },
                                                 "rot": {
                                                         "x": 0.0,
@@ -98,64 +215,948 @@
                                                         "z": 0.0
                                                 },
                                                 "scale": {
-                                                        "x": 1.0,
-                                                        "y": 1.0,
-                                                        "z": 1.0
+                                                        "x": 0.10000000149011612,
+                                                        "y": 0.10000000149011612,
+                                                        "z": 0.10000000149011612
                                                 }
                                         },
                                         "type": "Transform"
                                 },
                                 {
                                         "data": {
-                                                "name": "Cube"
+                                                "model": "fb92ab642d21910a42aea2eea91ea5dd"
                                         },
-                                        "type": "Name"
+                                        "type": "ModelRenderer"
                                 },
                                 {
                                         "data": {
-                                                "material": "6f927fb611a0ed79d72ebc0f1652a2e8",
-                                                "mesh": "01a45b138323f9feea5e07b3825bc29b"
+                                                "name": "earth"
                                         },
-                                        "type": "MeshRenderer"
+                                        "type": "Name"
                                 }
                         ],
                         "rid": "2",
-                        "script_components": [
+                        "scripts": [
                                 {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
                                         "fields": [
                                                 {
-                                                        "id": "a30812d555a7c0b17e91eb21dc38030e",
-                                                        "name": "freezing",
-                                                        "type": "bool",
-                                                        "value": 0
-                                                },
-                                                {
-                                                        "id": "07cb4757d6c5b3fcc438da98873b0be1",
-                                                        "name": "ist_ein_bastard",
-                                                        "type": "bool",
-                                                        "value": 0
-                                                },
-                                                {
-                                                        "id": "f485e19841a4c1d4e1d116a230d3331f",
-                                                        "name": "poisoned",
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
                                                         "type": "float",
                                                         "value": 0.0
                                                 },
                                                 {
-                                                        "id": "c46461df4504c201ec424b95bf10772e",
-                                                        "name": "scared",
-                                                        "type": "bool",
-                                                        "value": 1
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 3.0
                                                 },
                                                 {
-                                                        "id": "6b31c38fa366c3c7e77302f351ba8cae",
-                                                        "name": "something",
-                                                        "type": "bool",
-                                                        "value": 1
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
                                                 }
                                         ],
-                                        "id": "c29bc4fe21da04c6d446fd68a4c3b8ac",
-                                        "name": "StatusComponent"
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "2"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 1.399999976158142
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 30.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 114.25884246826172,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.027300000190734863,
+                                                        "y": 0.027300000190734863,
+                                                        "z": 0.027300000190734863
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "89b5f9fbfad3586478963e969ea28e77"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "moon"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "4",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": -4.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -273.2791442871094,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 20.0,
+                                                        "y": 20.0,
+                                                        "z": 20.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "8d17408c7973490136f4e18b15dac840"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "sun"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "5",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 6.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.3199999928474426
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 250.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -17.60678482055664,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.09000000357627869,
+                                                        "y": 0.09000000357627869,
+                                                        "z": 0.09000000357627869
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "58c37320f833d829706cbe3cd03f3c2a"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "venus"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "6",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 4.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.47999998927116394
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 288.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 34.04224395751953,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.03830000013113022,
+                                                        "y": 0.03830000013113022,
+                                                        "z": 0.03830000013113022
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "80cee561aeda180f7010159f5b87cd72"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "mercury"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "7",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 6.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.10999999940395355
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 470.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 188.88641357421875,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.20000000298023224,
+                                                        "y": 0.20000000298023224,
+                                                        "z": 0.20000000298023224
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "34870c380f81a02a07275d25053b386e"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "jupiter"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "8",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 20.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.07999999821186066
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 570.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 287.7010498046875,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 3.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.15000000596046448,
+                                                        "y": 0.15000000596046448,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "be600515530fa04e42be58a37f7e7b43"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "saturn"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "9",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 3.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.054999999701976776
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 780.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 434.2347412109375,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.11999999731779099,
+                                                        "y": 0.11999999731779099,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "e387c0a2058c3b8ddd9b6850ce046006"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "uranus"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "10",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
+                                }
+                        ]
+                },
+                {
+                        "components": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [
+                                                {
+                                                        "field_id": "bcd06f8ef5a9127bb106b8fe6809be64",
+                                                        "name": "x_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "7b142b0f949d182b0e534e9995b2ee3c",
+                                                        "name": "y_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 5.0
+                                                },
+                                                {
+                                                        "field_id": "bfdc029d73c53167d260e0adb2688edc",
+                                                        "name": "z_degrees_per_second",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                }
+                                        ],
+                                        "name": "Spin",
+                                        "type_id": "6fc61974e116041a092eacaf29741f31",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [
+                                                {
+                                                        "field_id": "e0756a2bb2c611af840db6e0a210ba38",
+                                                        "name": "center",
+                                                        "type": "entity",
+                                                        "value": "5"
+                                                },
+                                                {
+                                                        "field_id": "6a58bdce920269340b37adb0fba70b8f",
+                                                        "name": "height_offset",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "acd67b4e6b07bae5e83316ebee3f6ac6",
+                                                        "name": "orbit_speed",
+                                                        "type": "float",
+                                                        "value": 0.04500000178813934
+                                                },
+                                                {
+                                                        "field_id": "b8d7175f1ed2802b10f39c5b5c343cd8",
+                                                        "name": "phase",
+                                                        "type": "float",
+                                                        "value": 0.0
+                                                },
+                                                {
+                                                        "field_id": "048a0850e38a89070cc132b928c0c8c4",
+                                                        "name": "radius",
+                                                        "type": "float",
+                                                        "value": 700.0
+                                                }
+                                        ],
+                                        "name": "OrbitAround",
+                                        "type_id": "a1923dfbced736f2563683d90150e25d",
+                                        "version": 0
+                                }
+                        ],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 366.2789001464844,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.11999999731779099,
+                                                        "y": 0.11999999731779099,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "829aafd5582561c850b5f66da7b0a696"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "neptune"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "11",
+                        "scripts": [
+                                {
+                                        "asset_id": "0f86ae09d1024f9a89a8b5917a8889cd",
+                                        "fields": [],
+                                        "name": "SpinSystem",
+                                        "type_id": "8ea580e6a033d42bd61c59c92b9635c0",
+                                        "version": 0
+                                },
+                                {
+                                        "asset_id": "b17bf13820ef4ca099771675b88a8711",
+                                        "fields": [],
+                                        "name": "OrbitAroundSystem",
+                                        "type_id": "878b5f788ad7614f005eb9a3cff65800",
+                                        "version": 0
                                 }
                         ]
                 }

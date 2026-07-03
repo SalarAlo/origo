@@ -32,8 +32,6 @@ TEST_CASE("PrefabSerializer preserves authored prefab payload loaded from disk")
 	writer.end_object();
 	writer.end_array_object();
 	writer.end_array();
-	writer.begin_array("script_components");
-	writer.end_array();
 	writer.save_to_file();
 
 	Origo::JsonSerializer reader(prefab_path);
@@ -90,8 +88,6 @@ TEST_CASE("Prefab payload can be instantiated from a fresh reader even if the pr
 	writer.write("name", std::string_view("ImportedPrefab"));
 	writer.end_object();
 	writer.end_array_object();
-	writer.end_array();
-	writer.begin_array("script_components");
 	writer.end_array();
 	writer.save_to_file();
 

@@ -12,6 +12,7 @@ void CameraComponentSerializer::serialize(Component* comp, ISerializer& backend)
 	backend.write("near", camera.get_near());
 	backend.write("far", camera.get_far());
 	backend.write("fov", camera.FOV);
+	backend.write("background_color", camera_component->BackgroundColor);
 	backend.write("is_primary", camera_component->IsPrimary ? 1 : 0);
 
 	backend.begin_object("post_processing");
@@ -74,6 +75,7 @@ void CameraComponentSerializer::deserialize(Component* comp, ISerializer& backen
 	backend.try_read("near", near);
 	backend.try_read("far", far);
 	backend.try_read("fov", camera.FOV);
+	backend.try_read("background_color", camera_component->BackgroundColor);
 	backend.try_read("is_primary", is_primary_int);
 
 	camera_component->IsPrimary = is_primary_int != 0;

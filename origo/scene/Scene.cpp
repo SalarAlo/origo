@@ -22,7 +22,8 @@ Scene::Scene(const Scene& other) {
 	m_entities = other.m_entities;
 
 	m_native_component_manager = other.m_native_component_manager;
-	m_script_component_manager = other.m_script_component_manager;
+	m_component_data_manager = other.m_component_data_manager;
+	m_script_attachment_manager = other.m_script_attachment_manager;
 	m_physics_world = make_scope<PhysicsWorld>();
 }
 
@@ -47,7 +48,8 @@ std::optional<RID> Scene::duplicate_entity(const RID& source, std::string_view n
 
 	RID duplicate = create_entity(duplicate_name);
 	m_native_component_manager.copy_components(source, duplicate);
-	m_script_component_manager.copy_components(source, duplicate);
+	m_component_data_manager.copy_components(source, duplicate);
+	m_script_attachment_manager.copy_scripts(source, duplicate);
 
 	if (auto* name_component = get_native_component<NameComponent>(duplicate))
 		name_component->Name = duplicate_name;
@@ -106,8 +108,10 @@ const PhysicsWorld& Scene::get_physics_world() const {
 }
 
 void Scene::remove_entity(const RID& rid) {
+	m_script_execution_system.on_entity_removed(rid);
 	m_native_component_manager.remove_all_components(rid);
-	m_script_component_manager.remove_all_components(rid);
+	m_component_data_manager.remove_all_components(rid);
+	m_script_attachment_manager.remove_all_scripts(rid);
 
 	auto it = std::remove(m_entities.begin(), m_entities.end(), rid);
 	m_entities.erase(it, m_entities.end());

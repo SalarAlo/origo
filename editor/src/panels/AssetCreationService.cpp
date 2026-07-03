@@ -27,7 +27,7 @@ namespace {
 
 std::string make_component_name_from_stem(std::string stem) {
 	if (stem.empty())
-		return "ScriptComponent";
+		return "NewComponent";
 
 	std::string result;
 	result.reserve(stem.size() + 9);
@@ -46,17 +46,21 @@ std::string make_component_name_from_stem(std::string stem) {
 	if (result.empty())
 		result = "Script";
 
-	result += "Component";
 	return result;
 }
 
 std::string make_default_noct_script(const std::filesystem::path& path) {
 	const std::string component_name = make_component_name_from_stem(path.stem().string());
-	return "import Component\n\n"
-	       "Component.define(\n"
-	       "\t\"" + component_name + "\",\n"
-	       "\t\"enabled\", \"Bool\", true\n"
-	       ");\n";
+	return "component " + component_name + "\n"
+	       "{\n"
+	       "\tenabled : Bool = true;\n"
+	       "}\n\n"
+	       "script " + component_name + "Behavior<" + component_name + ">\n"
+	       "{\n"
+	       "\tfn on_update(dt)\n"
+	       "\t{\n"
+	       "\t}\n"
+	       "}\n";
 }
 
 }

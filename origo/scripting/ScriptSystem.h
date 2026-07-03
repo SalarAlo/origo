@@ -6,10 +6,18 @@
 #include <unordered_map>
 
 #include "origo/core/UUID.h"
+#include "origo/scripting/ReflectionMetadata.h"
 
 namespace Origo {
 
 class NoctScriptRuntime;
+}
+
+namespace Noct {
+class Runtime;
+}
+
+namespace Origo {
 
 class ScriptSystem {
 public:
@@ -27,6 +35,8 @@ public:
 	static void reload_all();
 	static void reload_all_necessary();
 	static void execute(const ScriptEntry& entry, const UUID& id);
+	static void ingest_metadata(const NoctModuleMetadata& metadata);
+	static Noct::Runtime* runtime();
 
 private:
 	inline static std::unordered_map<UUID, ScriptEntry> s_scripts {};

@@ -10,6 +10,7 @@ void UpdateLayer::on_update(double dt) {
 		return;
 
 	Origo::SystemScheduler::get_instance().run_phase(Origo::GamePhase::UpdateGame, scene_ptr, dt);
+	scene_ptr->update_scripts(static_cast<float>(dt));
 }
 
 }

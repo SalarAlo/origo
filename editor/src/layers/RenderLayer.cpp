@@ -23,6 +23,7 @@ namespace {
 		const bool editing_view = mode == EditorViewMode::Editor;
 		const auto* active_camera = context.ViewportController.get_active_camera_component(mode, scene);
 		const PostProcessSettings post_settings = active_camera ? active_camera->PostProcess : default_post_process_settings();
+		renderContext.set_clear_color(active_camera ? active_camera->BackgroundColor : Vec3 { 0.04f, 0.04f, 0.067f });
 
 		if (!editing_view && !active_camera) {
 			renderContext.set_target(&context.get_render_buffer(mode));

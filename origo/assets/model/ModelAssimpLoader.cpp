@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <string>
+#include <unordered_map>
 
 #include "Model.h"
 #include "ModelInternal.h"
@@ -21,7 +22,17 @@
 namespace Origo {
 
 namespace {
-	constexpr unsigned int k_assimp_load_flags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_ImproveCacheLocality | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure;
+	constexpr unsigned int k_assimp_load_flags =
+	    aiProcess_Triangulate
+	    | aiProcess_GenNormals
+	    | aiProcess_CalcTangentSpace
+	    | aiProcess_JoinIdenticalVertices
+	    | aiProcess_ImproveCacheLocality
+	    | aiProcess_LimitBoneWeights
+#ifndef NDEBUG
+	    | aiProcess_ValidateDataStructure
+#endif
+	    ;
 
 	struct ImportedTextureHandles {
 		OptionalAssetHandle Albedo;
@@ -30,6 +41,25 @@ namespace {
 		OptionalAssetHandle Ao;
 		OptionalAssetHandle Emissive;
 	};
+
+	struct TextureCacheKey {
+		TextureType EngineTextureType;
+		std::string Path;
+
+		bool operator==(const TextureCacheKey& other) const {
+			return EngineTextureType == other.EngineTextureType && Path == other.Path;
+		}
+	};
+
+	struct TextureCacheKeyHash {
+		size_t operator()(const TextureCacheKey& key) const {
+			const auto type_hash = std::hash<int> {}(static_cast<int>(key.EngineTextureType));
+			const auto path_hash = std::hash<std::string> {}(key.Path);
+			return type_hash ^ (path_hash + 0x9e3779b9 + (type_hash << 6) + (type_hash >> 2));
+		}
+	};
+
+	using TextureHandleCache = std::unordered_map<TextureCacheKey, OptionalAssetHandle, TextureCacheKeyHash>;
 
 	struct Bounds {
 		glm::vec3 Min { 0.0f };
@@ -103,6 +133,7 @@ namespace {
 		indices.clear();
 
 		vertices.reserve(mesh.mNumVertices * 12);
+		indices.reserve(mesh.mNumFaces * 3);
 
 		for (uint32_t vertex_index = 0; vertex_index < mesh.mNumVertices; ++vertex_index) {
 			append_vertex_data(vertices, mesh, vertex_index);
@@ -235,6 +266,35 @@ void Model::load_from_assimp() {
 
 	std::vector<float> vertices;
 	std::vector<uint32_t> indices;
+	TextureHandleCache texture_cache;
+	std::vector<OptionalAssetHandle> material_cache(scene->mNumMaterials, std::nullopt);
+	auto load_cached_texture = [&](aiMaterial* ai_material,
+	                               aiTextureType assimp_texture_type,
+	                               TextureType engine_texture_type,
+	                               const std::string& debug_name) -> OptionalAssetHandle {
+		if (!ai_material)
+			return std::nullopt;
+
+		aiString texture_path;
+		if (ai_material->GetTexture(assimp_texture_type, 0, &texture_path) != AI_SUCCESS)
+			return std::nullopt;
+
+		TextureCacheKey key { engine_texture_type, texture_path.C_Str() };
+		auto cached = texture_cache.find(key);
+		if (cached != texture_cache.end())
+			return cached->second;
+
+		auto texture = try_load_material_texture(
+		    scene,
+		    ai_material,
+		    assimp_texture_type,
+		    engine_texture_type,
+		    parent_path,
+		    debug_name);
+
+		texture_cache.emplace(std::move(key), texture);
+		return texture;
+	};
 
 	for (uint32_t mesh_index = 0; mesh_index < scene->mNumMeshes; ++mesh_index) {
 		aiMesh* ai_mesh = scene->mMeshes[mesh_index];
@@ -251,37 +311,39 @@ void Model::load_from_assimp() {
 			mesh_asset->set_bounds(mesh_bounds.Min, mesh_bounds.Max);
 		}
 		aiMaterial* ai_material = scene->mMaterials[ai_mesh->mMaterialIndex];
-		auto load_texture = [&](aiTextureType assimp_texture_type, TextureType engine_texture_type, const char* debug_prefix) {
-			return try_load_material_texture(
-			    scene,
-			    ai_material,
-			    assimp_texture_type,
-			    engine_texture_type,
-			    parent_path,
-			    std::string(debug_prefix) + std::to_string(mesh_index));
-		};
+		OptionalAssetHandle& cached_material = material_cache[ai_mesh->mMaterialIndex];
+		if (!cached_material) {
+			auto load_texture = [&](aiTextureType assimp_texture_type, TextureType engine_texture_type, const char* debug_prefix) {
+				return load_cached_texture(
+				    ai_material,
+				    assimp_texture_type,
+				    engine_texture_type,
+				    std::string(debug_prefix) + std::to_string(ai_mesh->mMaterialIndex));
+			};
 
-		ImportedTextureHandles textures;
-		textures.Albedo = load_texture(aiTextureType_BASE_COLOR, TextureType::Albedo, "ModelTex_Albedo_");
-		if (!textures.Albedo)
-			textures.Albedo = load_texture(aiTextureType_DIFFUSE, TextureType::Albedo, "ModelTex_Albedo_");
+			ImportedTextureHandles textures;
+			textures.Albedo = load_texture(aiTextureType_BASE_COLOR, TextureType::Albedo, "ModelTex_Albedo_");
+			if (!textures.Albedo)
+				textures.Albedo = load_texture(aiTextureType_DIFFUSE, TextureType::Albedo, "ModelTex_Albedo_");
 
-		textures.Normal = load_texture(aiTextureType_NORMALS, TextureType::Normal, "ModelTex_Normal_");
-		if (!textures.Normal)
-			textures.Normal = load_texture(aiTextureType_HEIGHT, TextureType::Normal, "ModelTex_Normal_");
+			textures.Normal = load_texture(aiTextureType_NORMALS, TextureType::Normal, "ModelTex_Normal_");
+			if (!textures.Normal)
+				textures.Normal = load_texture(aiTextureType_HEIGHT, TextureType::Normal, "ModelTex_Normal_");
 
-		textures.MetallicRoughness = load_texture(aiTextureType_METALNESS, TextureType::MetallicRoughness, "ModelTex_MetallicRoughness_");
-		if (!textures.MetallicRoughness) {
-			textures.MetallicRoughness = load_texture(
-			    aiTextureType_DIFFUSE_ROUGHNESS,
-			    TextureType::MetallicRoughness,
-			    "ModelTex_MetallicRoughness_");
+			textures.MetallicRoughness = load_texture(aiTextureType_METALNESS, TextureType::MetallicRoughness, "ModelTex_MetallicRoughness_");
+			if (!textures.MetallicRoughness) {
+				textures.MetallicRoughness = load_texture(
+				    aiTextureType_DIFFUSE_ROUGHNESS,
+				    TextureType::MetallicRoughness,
+				    "ModelTex_MetallicRoughness_");
+			}
+
+			textures.Ao = load_texture(aiTextureType_AMBIENT_OCCLUSION, TextureType::Ao, "ModelTex_AO_");
+			textures.Emissive = load_texture(aiTextureType_EMISSIVE, TextureType::Emissive, "ModelTex_Emissive_");
+
+			cached_material = create_runtime_material(*this, ai_mesh->mMaterialIndex, model_id, ai_material, textures);
 		}
-
-		textures.Ao = load_texture(aiTextureType_AMBIENT_OCCLUSION, TextureType::Ao, "ModelTex_AO_");
-		textures.Emissive = load_texture(aiTextureType_EMISSIVE, TextureType::Emissive, "ModelTex_Emissive_");
-
-		const AssetHandle material_handle = create_runtime_material(*this, mesh_index, model_id, ai_material, textures);
+		const AssetHandle material_handle = *cached_material;
 
 		m_assimp_mesh_to_sub_mesh[mesh_index] = (int)m_sub_meshes.size();
 		m_sub_meshes.push_back({ mesh_handle, material_handle });

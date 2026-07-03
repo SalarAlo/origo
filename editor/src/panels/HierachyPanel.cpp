@@ -164,7 +164,10 @@ void HierarchyPanel::on_im_gui_render() {
 			ImGui::EndDragDropSource();
 		}
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !selected)
+		if (ImGui::IsItemHovered()
+		    && ImGui::IsMouseReleased(ImGuiMouseButton_Left)
+		    && !ImGui::IsMouseDragPastThreshold(ImGuiMouseButton_Left)
+		    && !selected)
 			m_context.set_selected_entity(entity_id);
 
 		if (ImGui::BeginPopupContextItem("EntityContextPopup")) {

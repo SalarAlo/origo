@@ -11,6 +11,7 @@ class CameraComponent : public Component {
 public:
 	bool IsPrimary { false };
 	Camera CameraObj { 1.0f };
+	Vec3 BackgroundColor { 0.04f, 0.04f, 0.067f };
 	PostProcessSettings PostProcess {};
 
 public:

@@ -45,6 +45,7 @@ void EditorRuntimeController::play() {
 
 	m_context.RuntimeScene = make_scope<Origo::Scene>(*m_context.EditorScene);
 	reset_sound_emitters(m_context.RuntimeScene.get());
+	m_context.RuntimeScene->start_scripts();
 	m_context.RuntimeState = EditorRuntimeState::Running;
 	m_context.ActiveScene = m_context.RuntimeScene.get();
 	Origo::AudioEngine::get_instance().resume();
@@ -94,6 +95,7 @@ void EditorRuntimeController::stop() {
 		return;
 
 	if (m_context.RuntimeScene) {
+		m_context.RuntimeScene->stop_scripts();
 		reset_sound_emitters(m_context.RuntimeScene.get());
 		m_context.RuntimeScene.reset();
 	}

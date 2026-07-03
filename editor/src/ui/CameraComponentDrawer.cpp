@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <glm/vec3.hpp>
 
 #include "origo/components/CameraComponent.h"
@@ -10,6 +12,15 @@ namespace OrigoEditor {
 static bool s_registered = []() {
 	InspectorDrawRegistry::get_instance().register_native_drawer<Origo::CameraComponent>("Camera", "./icons/Camera.svg", [](Origo::CameraComponent& cam) {
 		ComponentUI::draw_float_control("FOV", cam.CameraObj.FOV);
+		float near_plane = cam.CameraObj.get_near();
+		float far_plane = cam.CameraObj.get_far();
+		ComponentUI::draw_float_control("Near", near_plane, 0.01f);
+		ComponentUI::draw_float_control("Far", far_plane, 1.0f);
+		near_plane = std::max(0.001f, near_plane);
+		far_plane = std::max(near_plane + 0.001f, far_plane);
+		cam.CameraObj.set_near(near_plane);
+		cam.CameraObj.set_far(far_plane);
+		ComponentUI::draw_color_control("Background", cam.BackgroundColor);
 		ComponentUI::draw_bool_control("Is Primary", cam.IsPrimary);
 
 		const bool post_open = ComponentUI::start_region("Post Processing");

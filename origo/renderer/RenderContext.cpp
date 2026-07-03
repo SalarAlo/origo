@@ -140,6 +140,7 @@ void RenderContext::clear_frame() {
 }
 
 void RenderContext::clear() {
+	GLCall(glClearColor(m_clear_color.r, m_clear_color.g, m_clear_color.b, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 	if (m_target && m_target->get_color_attachment_count() > 1) {

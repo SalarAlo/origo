@@ -1,0 +1,17 @@
+component Spin
+{
+	x_degrees_per_second : Float = 0.0;
+	y_degrees_per_second : Float = 45.0;
+	z_degrees_per_second : Float = 0.0;
+}
+
+script SpinSystem<Spin>
+{
+	fn on_update(dt)
+	{
+		entity.rotate(
+			x_degrees_per_second * dt,
+			y_degrees_per_second * dt,
+			z_degrees_per_second * dt);
+	}
+}

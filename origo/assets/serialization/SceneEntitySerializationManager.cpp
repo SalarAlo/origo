@@ -24,7 +24,8 @@ void SceneEntitySerializationManager::serialize_entity_data(const Scene& scene, 
 	backend.write("rid", entity.to_string());
 
 	scene.m_native_component_manager.serialize_entity(entity, backend);
-	scene.m_script_component_manager.serialize_entity(entity, backend);
+	scene.m_component_data_manager.serialize_entity(entity, backend);
+	scene.m_script_attachment_manager.serialize_entity(entity, backend);
 }
 
 void SceneEntitySerializationManager::deserialize_entities(Scene& scene, ISerializer& backend) const {
@@ -56,7 +57,8 @@ void SceneEntitySerializationManager::deserialize_entity(Scene& scene, ISerializ
 
 void SceneEntitySerializationManager::deserialize_entity_components(Scene& scene, RID entity, ISerializer& backend) const {
 	deserialize_native_components(scene, entity, backend);
-	scene.m_script_component_manager.deserialize_entity(entity, backend);
+	scene.m_component_data_manager.deserialize_entity(entity, backend);
+	scene.m_script_attachment_manager.deserialize_entity(entity, backend);
 }
 
 void SceneEntitySerializationManager::deserialize_native_components(Scene& scene, RID entity, ISerializer& backend) const {

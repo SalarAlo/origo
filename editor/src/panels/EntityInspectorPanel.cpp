@@ -17,7 +17,8 @@
 #include "origo/components/NameComponent.h"
 #include "origo/components/NativeComponentRegistry.h"
 
-#include "origo/scripting/ScriptComponentRegistry.h"
+#include "origo/scripting/ComponentRegistry.h"
+#include "origo/scripting/ScriptRegistry.h"
 
 #include "ui/InspectorComponentRenderer.h"
 #include "ui/InspectorDrawRegistry.h"
@@ -47,9 +48,14 @@ namespace {
 		std::type_index Type = typeid(void);
 	};
 
-	struct ScriptPickerEntry {
+	struct ReflectedComponentPickerEntry {
 		const char* Name = nullptr;
-		Origo::ScriptComponentID ID;
+		Origo::ComponentTypeID ID;
+	};
+
+	struct BehaviorScriptPickerEntry {
+		const char* Name = nullptr;
+		Origo::ScriptTypeID ID;
 	};
 
 	bool draw_picker_row(const char* label, const char* category_label, bool enabled) {
@@ -106,7 +112,7 @@ void EntityInspectorPanel::on_im_gui_render() {
 	ImGui::SetWindowFontScale(0.9f);
 
 	draw_native_components(active_scene, selected_entity);
-	draw_script_components(active_scene, selected_entity);
+	draw_noct_types(active_scene, selected_entity);
 
 	ImGui::SetWindowFontScale(1.0f);
 
@@ -186,17 +192,25 @@ void EntityInspectorPanel::draw_native_components(Origo::Scene* activeScene, Ori
 	}
 }
 
-void EntityInspectorPanel::draw_script_components(Origo::Scene* activeScene, Origo::RID selectedEntity) {
-	for (const auto& [id, descr] : Origo::ScriptComponentRegistry::get_all()) {
-		if (!activeScene->has_script_component(selectedEntity, id))
+void EntityInspectorPanel::draw_noct_types(Origo::Scene* activeScene, Origo::RID selectedEntity) {
+	activeScene->sync_component_scripts();
+
+	for (const auto& [id, descr] : Origo::ComponentRegistry::get_all()) {
+		if (!activeScene->has_component_data(selectedEntity, id))
 			continue;
 
-		auto* component = activeScene->get_script_component(selectedEntity, id);
-		if (!component)
+		auto* component = activeScene->get_component_data(selectedEntity, id);
+		if (component)
+			InspectorComponentRenderer::get_instance().draw_reflected_component(selectedEntity, *component);
+	}
+
+	for (const auto& [id, descr] : Origo::ScriptRegistry::get_all()) {
+		if (!activeScene->has_script(selectedEntity, id))
 			continue;
 
-		auto& instance = *component;
-		InspectorComponentRenderer::get_instance().draw_script_component(selectedEntity, instance);
+		auto* script = activeScene->get_script(selectedEntity, id);
+		if (script)
+			InspectorComponentRenderer::get_instance().draw_reflected_script(selectedEntity, *script);
 	}
 }
 
@@ -233,7 +247,8 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 	        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
 		std::vector<NativePickerEntry> available_native;
 		std::vector<NativePickerEntry> unavailable_native;
-		std::vector<ScriptPickerEntry> available_script;
+		std::vector<ReflectedComponentPickerEntry> available_reflected_components;
+		std::vector<BehaviorScriptPickerEntry> available_behavior_scripts;
 
 		for (const auto& [type, entry] : InspectorDrawRegistry::get_instance().get_entries()) {
 			if (activeScene->has_native_component_by_type(selectedEntity, type))
@@ -243,11 +258,20 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 			(is_registered ? available_native : unavailable_native).push_back(NativePickerEntry { .Name = entry.Name, .Type = type });
 		}
 
-		for (const auto& [id, desc] : Origo::ScriptComponentRegistry::get_all()) {
-			if (activeScene->has_script_component(selectedEntity, id))
+		for (const auto& [id, desc] : Origo::ComponentRegistry::get_all()) {
+			if (activeScene->has_component_data(selectedEntity, id))
 				continue;
 
-			available_script.push_back(ScriptPickerEntry { .Name = desc.Name.c_str(), .ID = id });
+			available_reflected_components.push_back(ReflectedComponentPickerEntry { .Name = desc.Name.c_str(), .ID = id });
+		}
+
+		for (const auto& [id, desc] : Origo::ScriptRegistry::get_all()) {
+			if (desc.ComponentType.Type != Origo::UUID::bad())
+				continue;
+			if (activeScene->has_script(selectedEntity, id))
+				continue;
+
+			available_behavior_scripts.push_back(BehaviorScriptPickerEntry { .Name = desc.Name.c_str(), .ID = id });
 		}
 
 		auto sort_by_name = [](const auto& lhs, const auto& rhs) {
@@ -256,11 +280,12 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 
 		std::sort(available_native.begin(), available_native.end(), sort_by_name);
 		std::sort(unavailable_native.begin(), unavailable_native.end(), sort_by_name);
-		std::sort(available_script.begin(), available_script.end(), sort_by_name);
+		std::sort(available_reflected_components.begin(), available_reflected_components.end(), sort_by_name);
+		std::sort(available_behavior_scripts.begin(), available_behavior_scripts.end(), sort_by_name);
 
 		ImGui::TextUnformatted("Add Component");
 		ImGui::SameLine();
-		ImGui::TextDisabled("%zu available", available_native.size() + available_script.size());
+		ImGui::TextDisabled("%zu available", available_native.size() + available_reflected_components.size() + available_behavior_scripts.size());
 		ImGui::Separator();
 
 		ImGui::SetNextItemWidth(-1.0f);
@@ -278,17 +303,20 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 
 		std::size_t visible_available_native = 0;
 		std::size_t visible_unavailable_native = 0;
-		std::size_t visible_script = 0;
+		std::size_t visible_reflected_components = 0;
+		std::size_t visible_behavior_scripts = 0;
 
 		for (const auto& item : available_native)
 			visible_available_native += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
 		for (const auto& item : unavailable_native)
 			visible_unavailable_native += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
-		for (const auto& item : available_script)
-			visible_script += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
+		for (const auto& item : available_reflected_components)
+			visible_reflected_components += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
+		for (const auto& item : available_behavior_scripts)
+			visible_behavior_scripts += text_matches_query(item.Name, m_add_component_query) ? 1 : 0;
 
-		const std::size_t visible_addable_total = visible_available_native + visible_script;
-		const std::size_t visible_total = visible_available_native + visible_unavailable_native + visible_script;
+		const std::size_t visible_addable_total = visible_available_native + visible_reflected_components + visible_behavior_scripts;
+		const std::size_t visible_total = visible_available_native + visible_unavailable_native + visible_reflected_components + visible_behavior_scripts;
 		bool component_added = false;
 
 		if (search_changed && !m_add_component_query.empty() && visible_addable_total == 1) {
@@ -302,11 +330,21 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 				return;
 			}
 
-			for (const auto& item : available_script) {
+			for (const auto& item : available_reflected_components) {
 				if (!text_matches_query(item.Name, m_add_component_query))
 					continue;
 
-				activeScene->add_script_component(selectedEntity, item.ID);
+				activeScene->add_component_data(selectedEntity, item.ID);
+				ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+				return;
+			}
+
+			for (const auto& item : available_behavior_scripts) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				activeScene->add_script(selectedEntity, item.ID);
 				ImGui::CloseCurrentPopup();
 				ImGui::EndPopup();
 				return;
@@ -340,15 +378,33 @@ void EntityInspectorPanel::draw_add_component(Origo::Scene* activeScene, Origo::
 			}
 		}
 
-		if (visible_script > 0 && !component_added) {
-			ImGui::SeparatorText("Script Components");
-			for (const auto& item : available_script) {
+		if (visible_reflected_components > 0 && !component_added) {
+			ImGui::SeparatorText("Noct Components");
+			for (const auto& item : available_reflected_components) {
+				if (!text_matches_query(item.Name, m_add_component_query))
+					continue;
+
+				ImGui::PushID(item.Name);
+				if (draw_picker_row(item.Name, "Noct Component", true)) {
+					activeScene->add_component_data(selectedEntity, item.ID);
+					ImGui::CloseCurrentPopup();
+					component_added = true;
+					ImGui::PopID();
+					break;
+				}
+				ImGui::PopID();
+			}
+		}
+
+		if (visible_behavior_scripts > 0 && !component_added) {
+			ImGui::SeparatorText("Noct Scripts");
+			for (const auto& item : available_behavior_scripts) {
 				if (!text_matches_query(item.Name, m_add_component_query))
 					continue;
 
 				ImGui::PushID(item.Name);
 				if (draw_picker_row(item.Name, "Script", true)) {
-					activeScene->add_script_component(selectedEntity, item.ID);
+					activeScene->add_script(selectedEntity, item.ID);
 					ImGui::CloseCurrentPopup();
 					component_added = true;
 					ImGui::PopID();
@@ -417,10 +473,42 @@ void EntityInspectorPanel::draw_script_drop_target(
 
 	auto metadata = Origo::AssetDatabase::get_instance().get_metadata(uuid);
 	if (metadata.Type == Origo::AssetType::Script) {
+		bool changed = false;
 
-		auto script_id = Origo::ScriptComponentRegistry::get(uuid);
-		if (!activeScene->has_script_component(selectedEntity, script_id.ID)) {
-			activeScene->add_script_component(selectedEntity, script_id.ID);
+		auto component_ids = Origo::ComponentRegistry::find_by_asset(uuid);
+		for (Origo::ComponentTypeID component_id : component_ids) {
+			if (!activeScene->has_component_data(selectedEntity, component_id)) {
+				activeScene->add_component_data(selectedEntity, component_id);
+				changed = true;
+			}
+		}
+
+		auto script_ids = Origo::ScriptRegistry::find_by_asset(uuid);
+		for (Origo::ScriptTypeID script_id : script_ids) {
+			const auto& script = Origo::ScriptRegistry::get(script_id);
+			if (script.ComponentType.Type != Origo::UUID::bad()) {
+				if (!Origo::ComponentRegistry::exists(script.ComponentType.Type))
+					continue;
+
+				if (!activeScene->has_component_data(selectedEntity, script.ComponentType.Type)) {
+					activeScene->add_component_data(selectedEntity, script.ComponentType.Type);
+					changed = true;
+				} else if (!activeScene->has_script(selectedEntity, script_id)) {
+					activeScene->sync_component_scripts();
+					changed = true;
+				}
+				continue;
+			}
+
+			if (!activeScene->has_script(selectedEntity, script_id)) {
+				activeScene->add_script(selectedEntity, script_id);
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			ImGui::EndDragDropTarget();
+			return;
 		}
 	}
 

@@ -1,0 +1,485 @@
+{
+        "entities": [
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "far": 400.0,
+                                                "fov": 90.0,
+                                                "is_primary": 1,
+                                                "near": 0.10000000149011612,
+                                                "post_processing": {
+                                                        "bloom": {
+                                                                "blur_passes": 4,
+                                                                "enabled": 1,
+                                                                "intensity": 0.07999999821186066,
+                                                                "knee": 0.44999998807907104,
+                                                                "threshold": 1.5
+                                                        },
+                                                        "chromatic_aberration": {
+                                                                "enabled": 0,
+                                                                "intensity": 0.001500000013038516
+                                                        },
+                                                        "color_adjustments": {
+                                                                "contrast": 0.05999999865889549,
+                                                                "enabled": 1,
+                                                                "hue_shift": 0.0,
+                                                                "saturation": 1.0800000429153442,
+                                                                "temperature": 0.019999999552965164,
+                                                                "tint": 0.0
+                                                        },
+                                                        "enabled": 1,
+                                                        "film_grain": {
+                                                                "enabled": 0,
+                                                                "intensity": 0.029999999329447746,
+                                                                "response": 0.5
+                                                        },
+                                                        "tone_mapping": {
+                                                                "enabled": 1,
+                                                                "exposure": 0.10000000149011612,
+                                                                "gamma": 2.200000047683716,
+                                                                "operator": 1
+                                                        },
+                                                        "vignette": {
+                                                                "color": {
+                                                                        "x": 0.0,
+                                                                        "y": 0.0,
+                                                                        "z": 0.0
+                                                                },
+                                                                "enabled": 1,
+                                                                "intensity": 0.07999999821186066,
+                                                                "roundness": 1.100000023841858,
+                                                                "smoothness": 0.7200000286102295
+                                                        }
+                                                }
+                                        },
+                                        "type": "Camera"
+                                },
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": -3.5,
+                                                        "y": 4.0,
+                                                        "z": 5.0
+                                                },
+                                                "rot": {
+                                                        "x": -33.0,
+                                                        "y": -33.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Main Camera"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "0",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 4.0,
+                                                        "y": 4.0,
+                                                        "z": 3.0
+                                                },
+                                                "rot": {
+                                                        "x": -38.65980911254883,
+                                                        "y": -53.130104064941406,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "ambient": 0.20000000298023224,
+                                                "color_b": 1.0,
+                                                "color_g": 1.0,
+                                                "color_r": 1.0,
+                                                "intensity": 10.0
+                                        },
+                                        "type": "Directional Light"
+                                },
+                                {
+                                        "data": {
+                                                "name": "Light"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "1",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 18.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.10000000149011612,
+                                                        "y": 0.10000000149011612,
+                                                        "z": 0.10000000149011612
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "fb92ab642d21910a42aea2eea91ea5dd"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "earth"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "2",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 20.200000762939453,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.027300000190734863,
+                                                        "y": 0.027300000190734863,
+                                                        "z": 0.027300000190734863
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "89b5f9fbfad3586478963e969ea28e77"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "moon"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "4",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 20.0,
+                                                        "y": 20.0,
+                                                        "z": 20.0
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "8d17408c7973490136f4e18b15dac840"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "sun"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "5",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 12.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.09000000357627869,
+                                                        "y": 0.09000000357627869,
+                                                        "z": 0.09000000357627869
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "58c37320f833d829706cbe3cd03f3c2a"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "venus"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "6",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 8.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.03830000013113022,
+                                                        "y": 0.03830000013113022,
+                                                        "z": 0.03830000013113022
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "80cee561aeda180f7010159f5b87cd72"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "mercury"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "7",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 28.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.20000000298023224,
+                                                        "y": 0.20000000298023224,
+                                                        "z": 0.20000000298023224
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "34870c380f81a02a07275d25053b386e"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "jupiter"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "8",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 39.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.15000000596046448,
+                                                        "y": 0.15000000596046448,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "be600515530fa04e42be58a37f7e7b43"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "saturn"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "9",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 50.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.11999999731779099,
+                                                        "y": 0.11999999731779099,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "e387c0a2058c3b8ddd9b6850ce046006"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "uranus"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "10",
+                        "scripts": []
+                },
+                {
+                        "components": [],
+                        "native_components": [
+                                {
+                                        "data": {
+                                                "pos": {
+                                                        "x": 60.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                },
+                                                "rot": {
+                                                        "x": 0.0,
+                                                        "y": -0.0,
+                                                        "z": 0.0
+                                                },
+                                                "scale": {
+                                                        "x": 0.11999999731779099,
+                                                        "y": 0.11999999731779099,
+                                                        "z": 0.11999999731779099
+                                                }
+                                        },
+                                        "type": "Transform"
+                                },
+                                {
+                                        "data": {
+                                                "model": "829aafd5582561c850b5f66da7b0a696"
+                                        },
+                                        "type": "ModelRenderer"
+                                },
+                                {
+                                        "data": {
+                                                "name": "neptune"
+                                        },
+                                        "type": "Name"
+                                }
+                        ],
+                        "rid": "11",
+                        "scripts": []
+                }
+        ],
+        "name": "Sample Scene"
+}

@@ -13,6 +13,7 @@ namespace {
 
 constexpr int k_thumbnail_size = 128;
 constexpr float k_thumbnail_fov_degrees = 30.0f;
+constexpr float k_thumbnail_frame_padding = 1.18f;
 
 Origo::FrameBufferSpec create_geometry_thumbnail_buffer_spec() {
 	Origo::FrameBufferSpec spec;
@@ -27,14 +28,16 @@ Origo::FrameBufferSpec create_geometry_thumbnail_buffer_spec() {
 
 Origo::RenderView create_geometry_thumbnail_view(const glm::vec3& target, float radius) {
 	const glm::vec3 view_direction = glm::normalize(glm::vec3(0.62f, 0.42f, 0.66f));
-	const float safe_radius = std::max(radius, 0.35f);
+	const float safe_radius = std::max(radius * k_thumbnail_frame_padding, 0.35f);
 	const float half_fov = glm::radians(k_thumbnail_fov_degrees * 0.5f);
-	const float distance = std::max(safe_radius / std::tan(half_fov), safe_radius * 2.4f);
+	const float distance = std::max(safe_radius / std::sin(half_fov), safe_radius * 2.4f);
 	const Origo::Vec3 eye = target + view_direction * distance;
 	const Origo::Vec3 up { 0.0f, 1.0f, 0.0f };
+	const float near_clip = std::max(0.01f, distance - safe_radius * 2.0f);
+	const float far_clip = std::max(distance + safe_radius * 2.0f, near_clip + 1.0f);
 
 	Origo::RenderView view {};
-	view.Projection = glm::perspective(glm::radians(k_thumbnail_fov_degrees), 1.0f, 0.1f, 100.0f);
+	view.Projection = glm::perspective(glm::radians(k_thumbnail_fov_degrees), 1.0f, near_clip, far_clip);
 	view.View = glm::lookAt(eye, target, up);
 	view.CameraPosition = eye;
 	view.CameraForward = glm::normalize(target - eye);

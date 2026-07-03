@@ -1,0 +1,40 @@
+component OrbitAround
+{
+	center : Entity;
+	radius : Float = 10.0;
+	orbit_speed : Float = 0.25;
+	height_offset : Float = 0.0;
+	phase : Float = 0.0;
+}
+
+script OrbitAroundSystem<OrbitAround>
+{
+	fn on_update(dt)
+	{
+		var c = None;
+		var next_x = 0.0;
+		var next_z = 0.0;
+
+		if center == None {
+			Log.warn("OrbitAround has no center");
+		} else {
+			c = center.position();
+
+			if c != None {
+				phase = phase + orbit_speed * dt;
+
+				if phase >= Math.pi() * 2.0 {
+					phase = phase - Math.pi() * 2.0;
+				}
+				if phase < 0.0 {
+					phase = phase + Math.pi() * 2.0;
+				}
+
+				next_x = c.x + Math.cos(phase) * radius;
+				next_z = c.z + Math.sin(phase) * radius;
+
+				entity.set_position(next_x, c.y + height_offset, next_z);
+			}
+		}
+	}
+}

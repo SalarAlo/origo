@@ -5,6 +5,8 @@
 #include "origo/components/DirectionalLightData.h"
 #include "origo/components/PointLightData.h"
 
+#include "origo/core/Typedefs.h"
+
 #include "origo/renderer/FrameBuffer.h"
 #include "origo/renderer/GridRenderer.h"
 #include "origo/renderer/PostProcessSettings.h"
@@ -25,6 +27,7 @@ public:
 	void set_present_target(FrameBuffer* presentTarget) { m_present_target = presentTarget; }
 	void set_post_process_settings(const PostProcessSettings& settings) { m_post_process_settings = settings; }
 	void clear_post_process_settings() { m_post_process_settings.reset(); }
+	void set_clear_color(const Vec3& color) { m_clear_color = color; }
 	void set_skybox_material(AssetHandle skyboxMaterial);
 	void clear_skybox_material();
 
@@ -74,6 +77,7 @@ private:
 
 	RenderView m_view {};
 	bool m_has_view {};
+	Vec3 m_clear_color { 0.04f, 0.04f, 0.067f };
 
 	std::vector<RenderCommand> m_draw_queue {};
 };

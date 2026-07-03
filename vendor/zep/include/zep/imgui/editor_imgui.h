@@ -154,6 +154,25 @@ public:
             return;
         }
 
+        // Text input is layout-aware and may not correspond to the physical key
+        // identity reported by IsKeyPressed(). Process queued printable text
+        // before shortcut scans so AltGr/dead-key/programmed-keyboard input
+        // reaches the buffer as characters.
+        if (!io.KeySuper && io.InputQueueCharacters.Size > 0)
+        {
+            for (int n = 0; n < io.InputQueueCharacters.Size && io.InputQueueCharacters[n]; n++)
+            {
+                if (io.InputQueueCharacters[n] == '\r')
+                    continue;
+
+                const auto ch = io.InputQueueCharacters[n];
+                const bool isControlCharacter = ch < 32 && ch != '\t' && ch != '\n';
+                if (!isControlCharacter)
+                    pBuffer->GetMode()->AddKeyPress(ch, 0);
+            }
+            return;
+        }
+
         // Check USB Keys
         for (auto& usbKey : MapUSBKeys)
         {
